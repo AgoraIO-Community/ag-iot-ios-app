@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AgoraIotSdk'
-  s.version          = '1.0.1.6'
+  s.version          = '1.0.1.7'
   s.summary          = 'AgoraIotSdk for iot development.'
 
 # This description is used to generate tags and improve search results.
