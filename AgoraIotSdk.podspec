@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AgoraIotSdk'
-  s.version          = '1.0.1.9'
+  s.version          = '1.0.1.6'
   s.summary          = 'AgoraIotSdk for iot development.'
 
 # This description is used to generate tags and improve search results.
@@ -41,5 +41,5 @@ TODO: Add long description of the pod here.
   s.dependency 'AWSMobileClient'
   s.dependency 'AWSIoT'
   s.dependency 'EMPush'
-  s.dependency 'AgoraRtcEngine_iOS_Beta', '4.0.0-beta.1'
+  s.dependency 'AgoraRtcEngine_iOS_Beta'
 end

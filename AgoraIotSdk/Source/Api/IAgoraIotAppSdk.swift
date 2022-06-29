@@ -83,4 +83,4 @@ public protocol IAgoraIotAppSdk {
     var notificationMgr: INotificationMgr{get}
 }
 
-public let IAgoraIotSdkVersion = "1.0.1.8"
+public let IAgoraIotSdkVersion = "1.0.1.6"
