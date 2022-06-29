@@ -123,26 +123,20 @@ class AccountManager : IAccountMgr{
     }
     
     func doLogin(_ account: String, _ password: String,_ result:@escaping (Int,String)->Void) {
-        if(app.config.supportAgoraAuth){
-            doGetTokenAl(account, password, {ec,msg in
-                if(ec != ErrCode.XOK){
-                    self.rule.trans(.LOGIN_FAIL)
+        doGetTokenAl(account, password, {ec,msg in
+            if(ec != ErrCode.XOK){
+                self.rule.trans(.LOGIN_FAIL)
+                result(ec,msg)
+            }
+            else{
+                self.doLoginGw(account, password, {ec,msg in
+                    if(ec != ErrCode.XOK){
+                        self.rule.trans(.LOGIN_FAIL)
+                    }
                     result(ec,msg)
-                }
-                else{
-                    self.doLoginGw(account, password, {ec,msg in
-                        if(ec != ErrCode.XOK){
-                            self.rule.trans(.LOGIN_FAIL)
-                        }
-                        result(ec,msg)
-                    })
-                }
-            })
-        }
-        else{
-            app.context.aglab.session.token.acessToken = "Basic YWdvcmFpb3RhcGFhczphc2JoZTdjeDJuYTMwYQ=="
-            doLoginGw(account, password, result)
-        }
+                })
+            }
+        })
     }
     
     var onLogoutResult:()->Void = {}

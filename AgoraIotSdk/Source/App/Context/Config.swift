@@ -24,7 +24,6 @@ class Config {
     let calloutTimeOut:Double = 40
     var appId:String{get{return _appId}set{_appId = newValue}}
     
-    let supportAgoraAuth = true
     var agoraServerUrl:String = "" 
     var granWinServerUrl:String = ""
     var projectId:String = ""    //vender Id

@@ -22,11 +22,11 @@ target 'AgoraIoT' do
   use_frameworks!
 
   # Pods for AgoraIoT
-  pod 'AgoraIotSdk', :path => '../'
   pod 'SnapKit','5.6.0'
   pod 'IQKeyboardManagerSwift','6.5.9'
   pod 'HandyJSON','5.0.2'
   pod 'MJRefresh','3.7.5'
+  pod 'AgoraIotSdk', :path=>'../'
   pod 'DZNEmptyDataSet','1.8.1'
   pod 'SVProgressHUD','2.2.5'
   pod 'Kingfisher','6.3.1'
