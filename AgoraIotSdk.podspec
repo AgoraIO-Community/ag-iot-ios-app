@@ -37,9 +37,9 @@ TODO: Add long description of the pod here.
   s.source_files = 'AgoraIotSdk/Source/**/*.{swift,h,m}'
   s.swift_version = '5.5.6'
   
-  s.dependency 'Alamofire'
-  s.dependency 'AWSMobileClient'
-  s.dependency 'AWSIoT'
+  s.dependency 'Alamofire','5.6.0'
+  s.dependency 'AWSMobileClient','2.27.6'
+  s.dependency 'AWSIoT','2.27.6'
   s.dependency 'EMPush'
-  s.dependency 'AgoraRtcEngine_iOS_Beta'
+  s.dependency 'AgoraRtcEngine_iOS_Beta','4.0.0-beta.1'
 end

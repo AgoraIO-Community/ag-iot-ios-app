@@ -70,33 +70,33 @@ class RtcEngine : NSObject{
         log.i("rtc created engine")
         return true
     }
-    private var  _onEnterChannel : TimeCallback<(Bool,String)>? = nil
+    private var  _onEnterChannel : TimeCallback<(TaskResult,String)>? = nil
     private var  _onPeerAction : (RtcPeerAction,UInt)->Void = {b,u in}
 
-    func enterChannel(uid:UInt,token:String, name:String,info:String?,cb:@escaping(Bool,String)->Void){
+    func enterChannel(uid:UInt,token:String, name:String,info:String?,cb:@escaping(TaskResult,String)->Void){
         if(state != RtcEngine.CREATED){
             log.e("rtc state : \(state) error for enterChannel()")
-            cb(false,"rtc state: \(state) error for enter")
+            cb(.Fail,"rtc state: \(state) error for enter")
             return
         }
         guard let rtc = engine else{
             log.e("rtc engine is nil")
-            cb(false,"rtc engine if nil")
+            cb(.Fail,"rtc engine if nil")
             return
         }
         let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
         option.autoSubscribeAudio = AgoraRtcBoolOptional.of(setting.subscribeAudio)
         option.autoSubscribeVideo = AgoraRtcBoolOptional.of(setting.subscribeVideo)
         option.publishAudioTrack = AgoraRtcBoolOptional.of(true)
-        option.publishCameraTrack = AgoraRtcBoolOptional.of(true)
+        option.publishCameraTrack = AgoraRtcBoolOptional.of(false)
 
         rtc.enableAudio()
         rtc.enableVideo()
         rtc.setEnableSpeakerphone(true)
         rtc.setClientRole(.broadcaster)
         rtc.setChannelProfile(.liveBroadcasting)
-        rtc.muteLocalAudioStream(setting.publishAudio)
-        rtc.muteLocalVideoStream(setting.publishVideo)
+        rtc.muteLocalAudioStream(!setting.publishAudio)
+        rtc.muteLocalVideoStream(!setting.publishVideo)
         
         var cfg = "{\"rtc.audio.input_sample_rate\":" + setting.audioSampleRate + "}"
         rtc.setParameters(cfg)
@@ -121,12 +121,12 @@ class RtcEngine : NSObject{
         let ret = rtc.joinChannel(byToken: token, channelId: name, uid: uid, mediaOptions: option)
         if(ret != 0){
             log.e("rtc enterChannel:\(String(describing: ret))")
-            cb(false,"rtc join channel fail")
+            cb(.Fail,"rtc join channel fail")
         }
-        _onEnterChannel = TimeCallback<(Bool,String)>(cb: cb)
+        _onEnterChannel = TimeCallback<(TaskResult,String)>(cb: cb)
         _onEnterChannel?.schedule(time: 10, timeout: {
             log.e("rtc join channel timeout")
-            cb(false,"加入频道超时")
+            cb(.Fail,"加入频道超时")
         })
         peerEntered = false
     }
@@ -220,11 +220,11 @@ class RtcEngine : NSObject{
         return ret == 0 ? cb(ErrCode.XOK,"暂未实现") : cb(ErrCode.XERR_UNSUPPORTED,"暂未实现")
     }
     
-    func createAndEnter(appId:String,setting:RtcSetting,uid:UInt,name:String,token:String, info:String?,cb:@escaping (Bool,String)->Void,peerAction:@escaping(RtcPeerAction,UInt)->Void){
+    func createAndEnter(appId:String,setting:RtcSetting,uid:UInt,name:String,token:String, info:String?,cb:@escaping (TaskResult,String)->Void,peerAction:@escaping(RtcPeerAction,UInt)->Void){
         _onEnterChannel?.invalidate()
         if(!create(appId: appId, setting: setting)){
             log.w("rtc create engine error when createAndEnter")
-            cb(false,"create rtc fail")
+            cb(.Fail,"create rtc fail")
             return
         }
         _onPeerAction = peerAction
@@ -233,6 +233,7 @@ class RtcEngine : NSObject{
     
     func leaveAndDestroy(cb:@escaping (Bool)->Void){
         _onPeerAction = {b,u in}
+        log.i("rtc leaveAndDestroy when state:\(state)")
         if(state == RtcEngine.ENTERED){
             let cbLeave = {(b:Bool) in
                 if(!b){
@@ -244,6 +245,7 @@ class RtcEngine : NSObject{
             leaveChannel(cb:cbLeave)
         }
         else if(state == RtcEngine.CREATED){
+            _onEnterChannel?.invoke(args:(.Abort,"取消加入频道"))
             destroy()
             cb(true)
         }
@@ -315,7 +317,7 @@ extension RtcEngine: AgoraRtcEngineDelegate{
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
         log.i("rtc didJoinChannel \(uid)")
         state = RtcEngine.ENTERED
-        _onEnterChannel?.invoke(args:(true,"加入频道成功"))
+        _onEnterChannel?.invoke(args:(.Succ,"加入频道成功"))
     }
     func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith status:AgoraChannelStats){
         log.i("rtc didLeaveChannelWith")

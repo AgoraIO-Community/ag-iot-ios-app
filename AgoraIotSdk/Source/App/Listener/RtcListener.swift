@@ -26,13 +26,16 @@ class RtcListener : FsmRtc.IListener{
         let token = app.context.call.session.rtcToken
         log.i("listener rtc.createAndEnter(uid:\(uid) channel:\(name))")
         app.proxy.rtc.createAndEnter(appId: appId, setting: setting, uid: uid,name: name, token:token, info: "",
-                                     cb: {succ,msg in
-            if(!succ){
+                                     cb: {ret,msg in
+            if(ret == .Fail){
                 log.e("listener rtc.createAndEnter failed:\(msg)")
                 self.app.rule.trans(FsmRtc.Event.ENTER_FAIL)
             }
-            else{
+            else if(ret == .Succ){
                 self.app.rule.trans(FsmRtc.Event.ENTER_SUCC)
+            }
+            else {//Abort
+                log.i("listener rtc.createAndEnter aborted:\(msg)")
             }
         },
                                      peerAction: {act,uid in

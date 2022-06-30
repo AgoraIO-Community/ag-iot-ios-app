@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum TaskResult{
+    case Succ
+    case Fail
+    case Abort
+}
 class TimeCallback<T>{
     public typealias GenericClosure<T> = (T) -> ()
     var _callback:GenericClosure<T>

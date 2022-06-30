@@ -11,6 +11,10 @@ import Foundation
 open class Application{
     func initialize(initParam: InitParam, sdkStatus: @escaping(SdkStatus, String)->Void,callBackFilter:@escaping(Int,String)->(Int,String)) -> Int {
         
+        if(initParam.logFilePath != ""){
+            log.ouput = .debugerConsoleAndFile
+        }
+        
         Logger.shared.removeAllAsync()
         
         log.i("=================  AgoraIotSdk  ======================")
@@ -26,17 +30,12 @@ open class Application{
         _config.granWinServerUrl = initParam.masterServerUrl
         _config.projectId = initParam.projectId
         
-        
-        if(initParam.logFilePath != ""){
-            log.ouput = .debugerConsoleAndFile
-        }
-        
         _status?.setStatusHandler(handler: sdkStatus)
         _context.callBackFilter = callBackFilter
         
         _context.call.setting.rtc.logFilePath = initParam.logFilePath
         _context.call.setting.rtc.publishAudio = initParam.publishAudio
-        _context.call.setting.rtc.publishVideo = initParam.publishVideo
+        _context.call.setting.rtc.publishVideo = false
         _context.call.setting.rtc.subscribeAudio = initParam.subscribeAudio
         _context.call.setting.rtc.subscribeVideo = initParam.subscribeVideo
         
