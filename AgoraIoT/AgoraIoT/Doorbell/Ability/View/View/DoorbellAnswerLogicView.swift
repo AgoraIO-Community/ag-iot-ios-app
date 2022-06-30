@@ -148,6 +148,7 @@ class DoorbellAnswerLogicView: UIView {
     lazy var changeSoundBtn: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage.init(named: "change_voice"), for: .normal)
+        btn.setImage(UIImage.init(named: "change_voice_on"), for: .selected)
         btn.tag = 1001
         btn.addTarget(self, action: #selector(btnEvent(btn:)), for: .touchUpInside)
         return btn
@@ -231,7 +232,6 @@ class DoorbellAnswerLogicView: UIView {
                     debugPrint("接听成功")
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: cReceiveCallSuccessNotify), object: nil, userInfo: ["success":true])
                 }
-                //todo:此处应该成功后调用
                 self?.callAnswerBtnBlock?()
             } actionAck: { [weak self] ack in
                 self?.handelAnswerCallAct(ack)
@@ -269,7 +269,7 @@ class DoorbellAnswerLogicView: UIView {
         let proAlertVC = ChanceSoundAlertVC()
         proAlertVC.chanceSoundAlertBlock = { (effectId,effectName) in
             debugPrint("关闭变声弹框")
-            DoorBellManager.shared.setAudioEffect(effectId: effectId) { [weak self] success, msg in
+            DoorBellManager.shared.setAudioEffect(effectId: effectId) { success, msg in
                 if success {
                     debugPrint("变声成功")
                     if effectId == .NORMAL {

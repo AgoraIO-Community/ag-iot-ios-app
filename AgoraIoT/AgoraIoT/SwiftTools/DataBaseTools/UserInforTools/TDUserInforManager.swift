@@ -223,6 +223,8 @@ extension TDUserInforManager{
     func showProtocolAlert(){
         
         let proAlertVC = LoginProtocolAlertVC()
+        proAlertVC.proType = .userProtocol
+        proAlertVC.pageSource = .loginPage
         proAlertVC.loginProAlertVCBlock = { (type) in
             debugPrint("关闭弹框")
             DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)

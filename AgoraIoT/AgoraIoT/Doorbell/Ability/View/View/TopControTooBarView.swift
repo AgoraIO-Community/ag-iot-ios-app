@@ -272,7 +272,6 @@ class VipProgressView: UIView {
             }) { (_) in
                 
             }
-            
         }
         
     }
@@ -314,7 +313,6 @@ class VipProgressView: UIView {
     
     lazy var bgV: UIImageView = {
         let imageV = UIImageView()
-//        imageV.contentMode = .scaleAspectFit
         imageV.image = UIImage.init(named: "buttery_bg")
         return imageV
     }()
@@ -322,14 +320,12 @@ class VipProgressView: UIView {
     lazy var bottomV: UIView = {
         let vew = UIView()
         vew.backgroundColor = UIColor(hexString: "#000000")
-//        vew.layer.cornerRadius = 1.S
         return vew
     }()
     
     lazy var topV: UIView = {
         let vew = UIView()
         vew.backgroundColor = UIColor(hexString: "#D5D5D5")
-//        vew.layer.cornerRadius = 1.S
         return vew
     }()
     

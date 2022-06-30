@@ -111,7 +111,7 @@ extension VerifyInputCodeVC : VerficaCodeViewDelegate{
         }else if style == .forgotEmailCode || style == .forgotPhoneCode{
             type = .forgotPassword
         }
-        print("---\(code)")
+        debugPrint("---\(code)")
         DispatchCenter.DispatchType(type: .setPassword(account: accountText, captchaCode: code, type: type), vc: self, style: .push)
     }
 }

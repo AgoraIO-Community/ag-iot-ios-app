@@ -8,14 +8,42 @@
 import UIKit
 import WebKit
 
+public enum ProtocolType: Int{
+    
+    ///默认
+    case none = 0
+    ///隐私政策
+    case priviteProtocol = 1
+    ///用户协议
+    case userProtocol = 2
+}
+
+public enum SourcePageType: Int{
+    
+    ///默认
+    case none = 0
+    ///程序启动
+    case loginPage = 1
+    ///关于页面
+    case aboutPage = 2
+}
+
 class LoginProtocolAlertVC: UIViewController {
     
-    let  contentVStr = "我们非常重视用户的隐私保护，因此制定了本涵盖如何收集、使用、披露、分享以及存储用户的信息的《隐私条款》。用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时，我们如何收集、使用、储存和分享这些信息，以及我们为您提供的访问、更新、控制和保护这些信息的方式。"
+    let  contentVStr = "我们非常重视用户的隐私保护，因此制定了本涵盖如何收集、使用、披露、分享以及存储用户的信息的《隐私条款》。"
     
-    let  contentVStr1 = "1、用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时，我们如何收集、使用、储存和分享这些信息，以及我们为您提供的访问、更新、控制和保护这些信息的方式。收到费加罗撒娇管理监督管理；；用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时，我们如何收集、使用、储存和分666"
+    let  contentVStr1 = "1、用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时"
     
-    let protocolUrl = "https://iot-console-web.sh.agoralab.co/terms/termsofuse"
+    let userProtocolUrl = "https://iot-console-web.sh.agoralab.co/terms/termsofuse"
     let privateProUrl = "https://iot-console-web.sh.agoralab.co/terms/privacypolicy"
+    
+    ///协议类型
+    var proType:ProtocolType = .none
+    
+    ///页面来源
+    var pageSource:SourcePageType = .none
+    
+    
     
     typealias LoginProtocolAlertVCBlock = (_ type:Int) -> ()
     var loginProAlertVCBlock:LoginProtocolAlertVCBlock?
@@ -24,15 +52,21 @@ class LoginProtocolAlertVC: UIViewController {
         super.viewDidLoad()
         setupUI()
         
-//        guard let resourceURL = Bundle.main.url(forResource: "xieyi", withExtension: ".docx") else {return}
-//
-//        let request = URLRequest(url: resourceURL)
-//
-//        webView.load(request)
+        var protocolStr = ""
+        if proType == .priviteProtocol {
+            protocolStr = privateProUrl
+        }else if proType == .userProtocol{
+            protocolStr = userProtocolUrl
+        }
+         
+        guard let url: URL = URL(string: protocolStr) else { return }
+        let request = URLRequest(url: url)
+        webView.load(request)
         
-          guard let url: URL = URL(string: protocolUrl) else { return }
-          let request = URLRequest(url: url)
-          webView.load(request)
+        if pageSource == .aboutPage {
+            refuseBtn.setTitle("取消", for: .normal)
+            agreeBtn.setTitle("确定", for: .normal)
+        }
         
     }
     
@@ -118,7 +152,7 @@ class LoginProtocolAlertVC: UIViewController {
         bgV.addSubview(agreeBtn)
         agreeBtn.snp.makeConstraints { (make) in
             make.bottom.equalToSuperview().offset(-29.VS)
-            make.centerX.equalToSuperview().offset(50.S)
+            make.centerX.equalToSuperview().offset(55.S)
             make.width.equalTo(90.S)
             make.height.equalTo(40.S)
         }
@@ -126,7 +160,7 @@ class LoginProtocolAlertVC: UIViewController {
         bgV.addSubview(refuseBtn)
         refuseBtn.snp.makeConstraints { (make) in
             make.bottom.equalToSuperview().offset(-29.VS)
-            make.centerX.equalToSuperview().offset(-50.S)
+            make.centerX.equalToSuperview().offset(-55.S)
             make.width.equalTo(90.S)
             make.height.equalTo(40.S)
         }
@@ -263,7 +297,7 @@ class LoginProtocolAlertVC: UIViewController {
         
 //        textView.text = contentVStr1
         
-        guard let url: URL = URL(string: protocolUrl) else { return }
+        guard let url: URL = URL(string: userProtocolUrl) else { return }
         let request = URLRequest(url: url)
         webView.load(request)
         
@@ -280,9 +314,18 @@ class LoginProtocolAlertVC: UIViewController {
     
     @objc func closeClick(){
         
-        //退出应用
-//        UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
-        exitApplication()
+        if pageSource == .loginPage {
+            
+            //退出应用
+    //      UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+            exitApplication()
+            
+        }else if pageSource == .aboutPage{
+            
+            self.dismiss(animated: true) { }
+            
+        }
+
         
     }
     
@@ -298,10 +341,18 @@ class LoginProtocolAlertVC: UIViewController {
     
     @objc func confirmClick(){
         
-        //阅读过协议存取标识
-        TDUserInforManager.shared.saveUserProcolState()
-        self.dismiss(animated: true) { }
-        loginProAlertVCBlock!(1)//回调回去，跳转到该去的地方
+        if pageSource == .loginPage {
+            
+            //阅读过协议存取标识
+            TDUserInforManager.shared.saveUserProcolState()
+            self.dismiss(animated: true) { }
+            loginProAlertVCBlock!(1)//回调回去，跳转到该去的地方
+            
+        }else if pageSource == .aboutPage{
+            
+            self.dismiss(animated: true) { }
+            
+        }
         
     }
 

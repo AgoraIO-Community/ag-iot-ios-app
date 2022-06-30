@@ -26,7 +26,7 @@ func safeAreaBottomSpace() -> CGFloat {
     var bottomSpace:CGFloat = 0
     
     if #available(iOS 11.0, *) {
-  bottomSpace=UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 0
+       bottomSpace=UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 0
     }
     
     return bottomSpace

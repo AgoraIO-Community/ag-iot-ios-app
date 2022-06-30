@@ -8,13 +8,13 @@
 import Foundation
 
 #if DEBUG   //MARK:测试 Base
-let cBaseURL = "https://mobilemall-test.maya1618.com/"
+let cBaseURL = ""
 
 #elseif UAT //MARK:UAT Base
-let cBaseURL = "https://mobilemall-dev.maya1618.com/"
+let cBaseURL = ""
 
 #else //MARK:正式 Base
-let cBaseURL = "https://mobilemall.maya1618.com/"
+let cBaseURL = ""
 
 #endif
 

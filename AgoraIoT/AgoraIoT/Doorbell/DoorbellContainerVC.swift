@@ -40,6 +40,7 @@ class DoorbellContainerVC: UIViewController {
     //是否横屏
     var isHorizonFull : Bool = false
     
+    
     override var shouldAutorotate: Bool {
         return true
     }

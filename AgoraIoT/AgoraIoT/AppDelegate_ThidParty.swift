@@ -22,7 +22,7 @@ extension AppDelegate{
         param.rtcAppId = AgoraIotConfig.appId
         param.subscribeVideo = true
         param.subscribeAudio = true
-        //param.publishVideo = false
+        param.publishVideo = false
         param.publishAudio = true
         
         param.ntfApnsCertName = AgoraIotConfig.ntfApnsCertName

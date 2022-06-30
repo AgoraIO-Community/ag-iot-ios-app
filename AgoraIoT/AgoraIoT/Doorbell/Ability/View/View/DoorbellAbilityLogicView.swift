@@ -16,6 +16,7 @@ let cReceiveCallSuccessNotify = "cReceiveCallSuccessNotify"
 class DoorbellAbilityLogicView: UIView {
     
     var isOnCalling : Bool = false //正在通话中
+    var isChangeSodSeting : Bool = false //正在变声设置中
     
     let topMarginH : CGFloat = 66.VS
     let toolBarH : CGFloat = 56.VS
@@ -53,14 +54,19 @@ class DoorbellAbilityLogicView: UIView {
         handelChangeSoundTipText(isSuccess,effectName)
         toolBarView.handleChangeSoundSuccess(isSuccess)
         toolBarHView.handleChangeSoundSuccess(isSuccess)
+        isChangeSodSeting = true
     }
     
     @objc private func receiveCallSuccess(notification: NSNotification){
         //通话通知
         guard let isSuccess = notification.userInfo?["success"] as? Bool else { return }
-        handelCallStateText(isSuccess)
+        //如果已经设置变声通话，此处不再更改文案，避免覆盖
+        if isChangeSodSeting == false {
+            handelCallStateText(isSuccess)
+        }
         toolBarView.handelCallSuccess(isSuccess)
         toolBarHView.handelCallSuccess(isSuccess)
+        isOnCalling = true
     }
     
     deinit {

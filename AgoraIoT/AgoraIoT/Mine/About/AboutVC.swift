@@ -53,11 +53,13 @@ class AboutVC: AGBaseVC {
         attributedTips.color = .black
         let privacyRange = NSRange(location: tips.count - userProtocolTips.count - privacyTips.count - 1, length: privacyTips.count)
         let userProtocolRange =  NSRange(location: tips.count - userProtocolTips.count , length: userProtocolTips.count)
-        attributedTips.setTextHighlight(privacyRange, color: UIColor(hexRGB: 0x49A0FF), backgroundColor: .black) { _, _, _, _ in
-            print("点击隐私政策-------")
+        attributedTips.setTextHighlight(privacyRange, color: UIColor(hexRGB: 0x49A0FF), backgroundColor: .black) { [weak self]  _, _, _, _ in
+            debugPrint("点击隐私政策-------")
+            self?.showProtocolAlert(.priviteProtocol)
         }
-        attributedTips.setTextHighlight(userProtocolRange, color: UIColor(hexRGB: 0x49A0FF), backgroundColor: .black) { _, _, _, _ in
-            print("点击用户协议-------")
+        attributedTips.setTextHighlight(userProtocolRange, color: UIColor(hexRGB: 0x49A0FF), backgroundColor: .black) {[weak self]  _, _, _, _ in
+            debugPrint("点击用户协议-------")
+            self?.showProtocolAlert(.userProtocol)
         }
         tipsLabel.attributedText = attributedTips
         view.addSubview(tipsLabel)
@@ -68,4 +70,16 @@ class AboutVC: AGBaseVC {
         }
     }
     
+    //跳转用户协议和隐私政策
+    func showProtocolAlert(_ proType : ProtocolType){
+        
+        let proAlertVC = LoginProtocolAlertVC()
+        proAlertVC.proType = proType
+        proAlertVC.pageSource = .aboutPage
+        
+        proAlertVC.view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        proAlertVC.modalPresentationStyle = .overFullScreen
+        UIApplication.shared.keyWindow?.rootViewController?.present(proAlertVC, animated: true, completion: nil)
+        
+    }
 }

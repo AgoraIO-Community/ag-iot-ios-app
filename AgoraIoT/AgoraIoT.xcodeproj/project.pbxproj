@@ -84,10 +84,8 @@
 		96D97BA92828FE2B00575335 /* VideoAlertTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BA82828FE2B00575335 /* VideoAlertTipView.swift */; };
 		96D97BAB2828FE7300575335 /* TopControTooBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BAA2828FE7300575335 /* TopControTooBarView.swift */; };
 		96D97BAD2828FEA400575335 /* DoorbellAbilityLogicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BAC2828FEA400575335 /* DoorbellAbilityLogicView.swift */; };
-		96D97BAF2828FF0200575335 /* DoorbellAbilityLogicHView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BAE2828FF0200575335 /* DoorbellAbilityLogicHView.swift */; };
 		96D97BB12828FF8600575335 /* ChanceSoundAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BB02828FF8600575335 /* ChanceSoundAlertVC.swift */; };
 		96D97BB32829001E00575335 /* DoorbellAnswerLogicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BB22829001E00575335 /* DoorbellAnswerLogicView.swift */; };
-		96D97BB8282901BA00575335 /* PictureQualityAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BB7282901BA00575335 /* PictureQualityAlertVC.swift */; };
 		96E4C1042807CA5500A53A49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4C1032807CA5500A53A49 /* AppDelegate.swift */; };
 		96E4C10B2807CA5500A53A49 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96E4C1092807CA5500A53A49 /* Main.storyboard */; };
 		96E4C10D2807CA5800A53A49 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96E4C10C2807CA5800A53A49 /* Assets.xcassets */; };
@@ -97,7 +95,6 @@
 		96E4C120280801A500A53A49 /* GlobalConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4C11F280801A500A53A49 /* GlobalConstant.swift */; };
 		96E4C12A280D453000A53A49 /* AGBaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4C129280D453000A53A49 /* AGBaseVC.swift */; };
 		96E4C12C280D457500A53A49 /* HomePageMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4C12B280D457500A53A49 /* HomePageMainVC.swift */; };
-		96EE3425285B30BB00423EE8 /* xieyi01.docx in Resources */ = {isa = PBXBuildFile; fileRef = 96EE3423285B30BB00423EE8 /* xieyi01.docx */; };
 		A805ADAA281502FF00E6C6DF /* SelectWIFIVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADA9281502FF00E6C6DF /* SelectWIFIVC.swift */; };
 		A805ADAD2815242900E6C6DF /* SelectWIFIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADAC2815242900E6C6DF /* SelectWIFIView.swift */; };
 		A805ADB02816382600E6C6DF /* CreateQRCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADAF2816382600E6C6DF /* CreateQRCodeVC.swift */; };
@@ -255,10 +252,8 @@
 		96D97BA82828FE2B00575335 /* VideoAlertTipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAlertTipView.swift; sourceTree = "<group>"; };
 		96D97BAA2828FE7300575335 /* TopControTooBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopControTooBarView.swift; sourceTree = "<group>"; };
 		96D97BAC2828FEA400575335 /* DoorbellAbilityLogicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityLogicView.swift; sourceTree = "<group>"; };
-		96D97BAE2828FF0200575335 /* DoorbellAbilityLogicHView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityLogicHView.swift; sourceTree = "<group>"; };
 		96D97BB02828FF8600575335 /* ChanceSoundAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChanceSoundAlertVC.swift; sourceTree = "<group>"; };
 		96D97BB22829001E00575335 /* DoorbellAnswerLogicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAnswerLogicView.swift; sourceTree = "<group>"; };
-		96D97BB7282901BA00575335 /* PictureQualityAlertVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PictureQualityAlertVC.swift; sourceTree = "<group>"; };
 		96E4C1002807CA5500A53A49 /* AgoraIoT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AgoraIoT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96E4C1032807CA5500A53A49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		96E4C10A2807CA5500A53A49 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -270,7 +265,6 @@
 		96E4C11F280801A500A53A49 /* GlobalConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalConstant.swift; sourceTree = "<group>"; };
 		96E4C129280D453000A53A49 /* AGBaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGBaseVC.swift; sourceTree = "<group>"; };
 		96E4C12B280D457500A53A49 /* HomePageMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageMainVC.swift; sourceTree = "<group>"; };
-		96EE3423285B30BB00423EE8 /* xieyi01.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = xieyi01.docx; sourceTree = "<group>"; };
 		A805ADA9281502FF00E6C6DF /* SelectWIFIVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectWIFIVC.swift; sourceTree = "<group>"; };
 		A805ADAC2815242900E6C6DF /* SelectWIFIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectWIFIView.swift; sourceTree = "<group>"; };
 		A805ADAE28154B1F00E6C6DF /* AgoraIoT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AgoraIoT.entitlements; sourceTree = "<group>"; };
@@ -518,7 +512,6 @@
 				A89E3DE12823E17B002FFED9 /* DoorbellAbilityVC.swift */,
 				960ECFFA283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift */,
 				96D97BB02828FF8600575335 /* ChanceSoundAlertVC.swift */,
-				96D97BB7282901BA00575335 /* PictureQualityAlertVC.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -535,7 +528,6 @@
 				96D97BA82828FE2B00575335 /* VideoAlertTipView.swift */,
 				96D97BAA2828FE7300575335 /* TopControTooBarView.swift */,
 				96D97BAC2828FEA400575335 /* DoorbellAbilityLogicView.swift */,
-				96D97BAE2828FF0200575335 /* DoorbellAbilityLogicHView.swift */,
 				96D97BB22829001E00575335 /* DoorbellAnswerLogicView.swift */,
 				96C1B5C8283B9EC3005BCCB9 /* DoorbellSaveImgAlertView.swift */,
 			);
@@ -713,7 +705,6 @@
 				96E4C1032807CA5500A53A49 /* AppDelegate.swift */,
 				9697BE6228113F6300447DF9 /* AppDelegate_ThidParty.swift */,
 				962FEFE0284F2CD000DCFD59 /* AppDelegate_Push.swift */,
-				96EE3423285B30BB00423EE8 /* xieyi01.docx */,
 				962FEFF32851D2B900DCFD59 /* Localizable.strings */,
 				96E4C1092807CA5500A53A49 /* Main.storyboard */,
 				96E4C10C2807CA5800A53A49 /* Assets.xcassets */,
@@ -1110,7 +1101,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96EE3425285B30BB00423EE8 /* xieyi01.docx in Resources */,
 				96E4C1102807CA5800A53A49 /* LaunchScreen.storyboard in Resources */,
 				962FEFF12851D2B900DCFD59 /* Localizable.strings in Resources */,
 				96E4C10D2807CA5800A53A49 /* Assets.xcassets in Resources */,
@@ -1227,9 +1217,7 @@
 				A8598E292835B38600168244 /* AGCellData.swift in Sources */,
 				96827D7A2867301E0012AC84 /* LoggerManager.swift in Sources */,
 				A819963B28338FB100870CDA /* DeviceSetupHomeVC.swift in Sources */,
-				96D97BAF2828FF0200575335 /* DoorbellAbilityLogicHView.swift in Sources */,
 				967C7AAF284749BA00236F92 /* DeviceShareViewModel.swift in Sources */,
-				96D97BB8282901BA00575335 /* PictureQualityAlertVC.swift in Sources */,
 				A805ADAA281502FF00E6C6DF /* SelectWIFIVC.swift in Sources */,
 				9697BE962812B25F00447DF9 /* EXT-CutOutStr.swift in Sources */,
 				9697BE992812B25F00447DF9 /* EXT-GraphicsImage.swift in Sources */,
@@ -1488,16 +1476,16 @@
 				CODE_SIGN_ENTITLEMENTS = AgoraIoT/AgoraIoT.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1016;
+				CURRENT_PROJECT_VERSION = 1019;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraIoT/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
-				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is needed to scan QR codes";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问相机";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能始终访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "剪辑完成的视频需要保存到相册";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相机";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要您的同意,才能保存图片或视频到相册";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相册";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1516,7 +1504,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraIoT/SwiftTools/Extension/AgoraIoT-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1530,16 +1518,16 @@
 				CODE_SIGN_ENTITLEMENTS = AgoraIoT/AgoraIoT.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1016;
+				CURRENT_PROJECT_VERSION = 1019;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraIoT/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
-				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is needed to scan QR codes";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问相机";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能始终访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "剪辑完成的视频需要保存到相册";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相机";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要您的同意,才能保存图片或视频到相册";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相册";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1557,7 +1545,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraIoT/SwiftTools/Extension/AgoraIoT-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

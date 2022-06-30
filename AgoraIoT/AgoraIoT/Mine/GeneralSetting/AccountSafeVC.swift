@@ -96,8 +96,6 @@ extension AccountSafeVC{
                 AGToolHUD.showInfo(info: "退出登录成功")
                 debugPrint("退出登录成功")
                 TDUserInforManager.shared.userSignOut()
-                //todo:
-//                self?.navigationController?.popViewController(animated: true)
                 self?.tabBarController?.selectedIndex = 0
                 self?.navigationController?.popToRootViewController(animated: true)
                 DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)

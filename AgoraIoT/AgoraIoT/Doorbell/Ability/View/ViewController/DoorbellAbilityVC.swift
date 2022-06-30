@@ -41,13 +41,6 @@ class DoorbellAbilityVC: UIViewController {
         
         loadData()
         setUpUI()
-        
-//        if isReceiveCall == true {
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                self.handelAnswerVideoView()
-//            }
-//        }
-
     }
     
     // 注册通知
@@ -185,7 +178,6 @@ extension DoorbellAbilityVC {
         }
         
         AGToolHUD.showNetWorkWait()
-        
         doorbellVM.wakeupDevice(device) {[weak self] success, msg in
             
             AGToolHUD.disMiss()
@@ -221,8 +213,6 @@ extension DoorbellAbilityVC {
         }
         else if(act == .RemoteAnswer || act == .CallForward){
             debugPrint("设备接听")
-//            topAbilityV.configPeerView()
-//            topAbilityV.handelVideoTopView(tipsType: .none)
         }
         else if(act == .RemoteVideoReady){
             debugPrint("获取到首帧")
@@ -267,8 +257,7 @@ extension DoorbellAbilityVC {
             topAbilityV.handelVideoTopView(tipsType: .deviceSleep)
         }else if let value = dict["106"] as? Int{//电池电量
             debugPrint("\(String(value))")
-            //todo:暂时赋为80
-            topAbilityV.setQuantityValue(60)
+            topAbilityV.setQuantityValue(value)
         }
  
     }

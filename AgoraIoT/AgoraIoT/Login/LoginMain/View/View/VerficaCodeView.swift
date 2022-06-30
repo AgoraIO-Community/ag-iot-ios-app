@@ -181,6 +181,7 @@ class VerifyInputView: UIStackView, UITextFieldDelegate {
         textfield.isHidden = true
         textfield.keyboardType = .numberPad
         textfield.delegate = self
+//        textfield.addTarget(self, action: #selector(textDidChangeNotification(textField:)), for: .editingChanged)
         if #available(iOS 12.0, *) {
             textfield.textContentType = UITextContentType.oneTimeCode
         } else {
@@ -214,13 +215,46 @@ class VerifyInputView: UIStackView, UITextFieldDelegate {
         self.completeHandler = complete
     }
     
+    //输入内容改变时通知处理13.0以下的系统也可以适用
+//    @objc func textDidChangeNotification(textField:UITextField)  {
+//
+//        guard textField.text!.count <= (verifyCount ?? 4) else {
+//            textField.text = String(textField.text!.prefix(4))
+//            return
+//        }
+//
+//        var index = 0
+//        for char in textField.text! {
+//            verifyCodes[index].text = String(char)
+//            index += 1
+//        }
+//        changeVerifyCoder()
+//        changeCurrentCheckLabel(textField.text ?? "")
+//        guard index < (verifyCount ?? 4) else {
+//
+//            self.endEditing(true)
+//
+//            if let complete = self.completeHandler, isCompelete == false {
+//                isCompelete = true
+//                complete(textField.text!)
+//            }
+//            return
+//        }
+//        for i in Range(index...(verifyCount ?? 4) - 1) {
+//            verifyCodes[i].text = ""
+//        }
+//        isCompelete = false
+//
+//    }
+    
+    //输入内容改变时处理需要13.0以上的系统
     public func textFieldDidChangeSelection(_ textField: UITextField) {
-        
+
         guard textField.text!.count <= (verifyCount ?? 4) else {
             textField.text = String(textField.text!.prefix(4))
             return
         }
-        
+
         var index = 0
         for char in textField.text! {
             verifyCodes[index].text = String(char)
@@ -229,9 +263,9 @@ class VerifyInputView: UIStackView, UITextFieldDelegate {
         changeVerifyCoder()
         changeCurrentCheckLabel(textField.text ?? "")
         guard index < (verifyCount ?? 4) else {
-            
+
             self.endEditing(true)
-            
+
             if let complete = self.completeHandler, isCompelete == false {
                 isCompelete = true
                 complete(textField.text!)
@@ -242,7 +276,7 @@ class VerifyInputView: UIStackView, UITextFieldDelegate {
             verifyCodes[i].text = ""
         }
         isCompelete = false
-        
+
     }
     
     func changeVerifyCoder(){

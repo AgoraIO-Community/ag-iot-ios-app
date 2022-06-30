@@ -294,28 +294,28 @@ extension DoorbellAbilityView {
     }
     
     //多值列表设置属性操作
-    func setSysMultiDeviceProperty(_ model : DoorbellAbilityModel){
-        
-        guard let device = device else { return }
-        let pointId = model.abilityId
-        let value = model.abilityValue
-        
-        AGToolHUD.showNetWorkWait()
-        DoorBellManager.shared.setSynDevicecProperty(device,pointId:pointId,value: value) { [weak self] success, msg in
-            
-            AGToolHUD.disMiss()
-            if success == true {
-                AGToolHUD.showInfo(info:"设置成功" )
-                self?.handelPropertyResult()
-            }else{
-                
-                AGToolHUD.showInfo(info: "\(msg)")
-                model.abilityValue = model.lastValue
-                
-            }
-        }
-        
-    }
+//    func setSysMultiDeviceProperty(_ model : DoorbellAbilityModel){
+//
+//        guard let device = device else { return }
+//        let pointId = model.abilityId
+//        let value = model.abilityValue
+//
+//        AGToolHUD.showNetWorkWait()
+//        DoorBellManager.shared.setSynDevicecProperty(device,pointId:pointId,value: value) { [weak self] success, msg in
+//
+//            AGToolHUD.disMiss()
+//            if success == true {
+//                AGToolHUD.showInfo(info:"设置成功" )
+//                self?.handelPropertyResult()
+//            }else{
+//
+//                AGToolHUD.showInfo(info: "\(msg)")
+//                model.abilityValue = model.lastValue
+//
+//            }
+//        }
+//
+//    }
     
     //用于多值属性设置成功返回
     func handelPropertyResult(){
@@ -375,13 +375,9 @@ extension DoorbellAbilityView{
         config.maxSelectCount = 1
         config.allowEditImage = false
         config.allowEditVideo = false
-   
-//        config.showSelectBtnWhenSingleSelect = true
-//        config.maxSelectCount = 20
 
         let ps = ZLPhotoPreviewSheet()
-        ps.selectImageBlock = { [weak self] (images, assets, isOriginal) in
-            guard let image = images.first else {return }
+        ps.selectImageBlock = { (images, assets, isOriginal) in
             debugPrint("获取图片成功")
 
         }
