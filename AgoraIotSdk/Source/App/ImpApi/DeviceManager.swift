@@ -9,7 +9,7 @@ import Foundation
 
 class DeviceManager : IDeviceMgr{
     func sharePushDetail(id: String, result: @escaping (Int, String, ShareDetail?) -> Void) {
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         let token = self.app.context.gran.session.granwin_token
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
@@ -23,7 +23,7 @@ class DeviceManager : IDeviceMgr{
     
     func sharePushList(pageNo: Int, pageSize: Int, auditStatus: String, result: @escaping (Int, String, [ShareItem]?, PageTurn?) -> Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1,nil,nil)
@@ -36,7 +36,7 @@ class DeviceManager : IDeviceMgr{
     
     func shareDeviceTo(deviceNumber: String, account: String, type: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1)
@@ -49,7 +49,7 @@ class DeviceManager : IDeviceMgr{
     
     func shareDeviceAccept(deviceNickName: String, order: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1)
@@ -62,7 +62,7 @@ class DeviceManager : IDeviceMgr{
     
     func shareGetOwnDevices(result: @escaping (Int, String, [DeviceShare]?) -> Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1,nil)
@@ -75,7 +75,7 @@ class DeviceManager : IDeviceMgr{
     
     func shareWithMe(result: @escaping (Int, String, [DeviceShare]?) -> Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1,nil)
@@ -88,7 +88,7 @@ class DeviceManager : IDeviceMgr{
     
     func shareCancelable(deviceNumber: String, result: @escaping (Int, String, [DeviceCancelable]?) -> Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1,nil)
@@ -101,7 +101,7 @@ class DeviceManager : IDeviceMgr{
     
     func shareRemoveMember(deviceNumber: String, userId: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1)
@@ -114,7 +114,7 @@ class DeviceManager : IDeviceMgr{
     
     func sharePushAdd(deviceNumber: String, email: String, type: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1)
@@ -127,7 +127,7 @@ class DeviceManager : IDeviceMgr{
     
     func sharePushDel(id: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1)
@@ -146,7 +146,7 @@ class DeviceManager : IDeviceMgr{
     
     func queryProductList(result:@escaping(Int,String,[ProductInfo])->Void){
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         let venderId = self.app.config.projectId
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
@@ -160,7 +160,7 @@ class DeviceManager : IDeviceMgr{
     
     func renameDevice(device: IotDevice, newName: String, result:@escaping(Int,String)->Void) {
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1)
@@ -236,14 +236,14 @@ class DeviceManager : IDeviceMgr{
     
     func queryAllDevices(result:@escaping(Int,String,[IotDevice])->Void) {
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             self.doQueryAllDevice(result: {ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
         }
     }
     
     func addDevice(productId: String, deviceId: String,result:@escaping(Int,String)->Void){
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1)
@@ -258,7 +258,7 @@ class DeviceManager : IDeviceMgr{
 
     func removeDevice(device:IotDevice,result:@escaping(Int,String)->Void){
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(token == ""){
             let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
             result(ret.0,ret.1)
@@ -280,14 +280,14 @@ class DeviceManager : IDeviceMgr{
     func setDeviceProperty(device: IotDevice, properties: Dictionary<String, Any>, result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
             let sess = self.app.context.gran.session
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             self.app.proxy.mqtt.setDeviceStatus(account: sess.account, productId: device.productId, things_name: device.deviceId, params: properties, result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
         }
     }
     
     func getDeviceProperty(device: IotDevice, result: @escaping (Int, String, Dictionary<String, Any>?) -> Void) {
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             self.app.proxy.mqtt.getDeviceStatus(things_name: device.deviceId,result:{ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
         }
     }

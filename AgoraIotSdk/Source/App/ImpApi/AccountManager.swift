@@ -31,7 +31,7 @@ class AccountManager : IAccountMgr{
         DispatchQueue.main.async {
             
             self.app.proxy.gw.reqResetPwd(account,password, code, {ec,msg in
-                let filter = self.app.context.callBackFilter
+                let filter = self.app.context.callbackFilter
                 let ret = filter(ec,msg)
                 result(ret.0,ret.1)
             })
@@ -48,7 +48,7 @@ class AccountManager : IAccountMgr{
                     self.logout(result: result)
                 }
                 else{
-                    let filter = self.app.context.callBackFilter
+                    let filter = self.app.context.callbackFilter
                     let ret = filter(ec,msg)
                     result(ret.0,ret.1)
                 }
@@ -123,20 +123,26 @@ class AccountManager : IAccountMgr{
     }
     
     func doLogin(_ account: String, _ password: String,_ result:@escaping (Int,String)->Void) {
-        doGetTokenAl(account, password, {ec,msg in
-            if(ec != ErrCode.XOK){
-                self.rule.trans(.LOGIN_FAIL)
-                result(ec,msg)
-            }
-            else{
-                self.doLoginGw(account, password, {ec,msg in
-                    if(ec != ErrCode.XOK){
-                        self.rule.trans(.LOGIN_FAIL)
-                    }
+        if(app.config.supportAgoraAuth){
+            doGetTokenAl(account, password, {ec,msg in
+                if(ec != ErrCode.XOK){
+                    self.rule.trans(.LOGIN_FAIL)
                     result(ec,msg)
-                })
-            }
-        })
+                }
+                else{
+                    self.doLoginGw(account, password, {ec,msg in
+                        if(ec != ErrCode.XOK){
+                            self.rule.trans(.LOGIN_FAIL)
+                        }
+                        result(ec,msg)
+                    })
+                }
+            })
+        }
+        else{
+            app.context.aglab.session.token.acessToken = "Basic YWdvcmFpb3RhcGFhczphc2JoZTdjeDJuYTMwYQ=="
+            doLoginGw(account, password, result)
+        }
     }
     
     var onLogoutResult:()->Void = {}
@@ -195,7 +201,7 @@ class AccountManager : IAccountMgr{
     func register(account: String, password: String,code:String,email:String?,phone:String?, result:@escaping (Int,String)->Void) {
         DispatchQueue.main.async {
             self.doRegister(account, password, code,email,phone,{ec,msg in
-                let filter = self.app.context.callBackFilter
+                let filter = self.app.context.callbackFilter
                 let ret = filter(ec,msg)
                 result(ret.0,ret.1)
             })
@@ -211,7 +217,7 @@ class AccountManager : IAccountMgr{
             }
         }
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             var dotype = type
             if(type == "REGISTER"){
                 dotype = "REGISTER_SMS"
@@ -235,7 +241,7 @@ class AccountManager : IAccountMgr{
     
     func getCode(email: String, type: String, result:@escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             if(type == "REGISTER"){
                 self.doGetCode(email,type,{ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
             }
@@ -254,20 +260,20 @@ class AccountManager : IAccountMgr{
         let agToken = app.context.aglab.session.token.acessToken
         let traceId = app.context.call.session.traceId
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             self.app.proxy.al.reqUploadIcon(agToken, image, traceId, {ec,msg,url in let ret = filter(ec,msg);result(ret.0,ret.1,url)})
         }
     }
     
     func login(account: String, password: String,result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         app.rule.trans(FsmApp.Event.LOGIN,
                        {self.doLogin(account, password,{ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})},
                        {let ret = filter(ErrCode.XERR_BAD_STATE,"状态错误");result(ret.0,ret.1)})
     }
     
     func logout(result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         app.rule.trans(FsmApp.Event.LOGOUT,
                        {self.doLogout({ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})},
                        {let ret = filter(ErrCode.XERR_BAD_STATE,"状态错误");result(ret.0,ret.1)})
@@ -275,18 +281,18 @@ class AccountManager : IAccountMgr{
     
     private func doChangePassword(account:String,oldPwd:String,newPwd:String,result:@escaping(Int,String)->Void){
         let token = self.app.context.gran.session.granwin_token
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         app.proxy.gw.reqChangePwd(token, account,oldPwd,newPwd,{ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     
     func changePassword(account: String, oldPassword: String, newPassword: String,result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         self.doChangePassword(account: account, oldPwd: oldPassword, newPwd: newPassword, result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     func updateAccountInfo(info: AccountInfo, result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
             let token = self.app.context.gran.session.granwin_token
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             self.app.proxy.gw.reqUpdateAccountInfo(token,info,{ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
         }
     }
@@ -294,7 +300,7 @@ class AccountManager : IAccountMgr{
         DispatchQueue.main.async {
             let token = self.app.context.gran.session.granwin_token
             let account = self.app.context.gran.session.account
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             self.app.proxy.gw.reqAccountInfo(token,account,{ec,msg,info in let ret = filter(ec,msg);result(ret.0,ret.1,info)})
         }
     }

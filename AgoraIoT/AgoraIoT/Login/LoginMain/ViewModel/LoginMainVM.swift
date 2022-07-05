@@ -25,10 +25,7 @@ class LoginMainVM: NSObject {
         let result = {
             (ec:Int,msg:String)->Void in
             var hint = ErrCode.XOK == ec ? "注册成功" : "注册失败"
-            if(AgoraIotConfig.DEBUG){
-                hint = hint + ":" + msg
-            }
-            cb(ErrCode.XOK == ec ? true : false , hint)
+            cb(ErrCode.XOK == ec ? true : false , hint + ":" + msg)
         }
         sdk?.accountMgr.register(account: acc, password: pwd,code:code,email:email,phone: phone, result: result)
     }
@@ -41,10 +38,7 @@ class LoginMainVM: NSObject {
         let result = {
             (ec:Int,msg:String)->Void in
             var hint = ErrCode.XOK == ec ? "重置密码成功" : "重置密码失败"
-            if(AgoraIotConfig.DEBUG){
-                hint = hint + ":" + msg
-            }
-            cb(ErrCode.XOK == ec ? true : false , hint)
+            cb(ErrCode.XOK == ec ? true : false , hint + ":" + msg)
         }
         sdk?.accountMgr.resetPassword(account: acc, password: pwd,code:code,result: result)
     }
@@ -64,10 +58,7 @@ class LoginMainVM: NSObject {
         let result = {
             (ec:Int,msg:String)->Void in
             var hint = ErrCode.XOK == ec ? "登录成功" : "登录失败"
-            if(AgoraIotConfig.DEBUG){
-                hint = hint + ":" + msg
-            }
-            cb(ErrCode.XOK == ec ? true : false , msg)
+            cb(ErrCode.XOK == ec ? true : false , hint + ":" + msg)
         }
         sdk?.accountMgr.login(account: acc, password: pwd,result: result)
     }

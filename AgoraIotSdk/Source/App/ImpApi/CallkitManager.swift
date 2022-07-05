@@ -29,7 +29,7 @@ class CallkitManager : ICallkitMgr{
     
     func capturePeerVideoFrame(result: @escaping (Int, String, UIImage?) -> Void) {
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             self.app.proxy.rtc.capturePeerVideoFrame(cb: {ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
         }
     }
@@ -115,7 +115,7 @@ class CallkitManager : ICallkitMgr{
     
     func callHangup(result:@escaping(Int,String)->Void){
         log.i("call callHangup")
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         app.rule.trans(FsmCall.Event.LOCAL_HANGUP,
                        {self.doCallHangup(result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})},
                        {let ret = filter(ErrCode.XERR_BAD_STATE,"当前状态不正确");result(ret.0,ret.1)})
@@ -123,7 +123,7 @@ class CallkitManager : ICallkitMgr{
     
     func finiCall(result:@escaping(Int,String)->Void){
         app.rule.trans(FsmCall.Event.FINICALL)
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         let ret = filter(ErrCode.XOK,"")
         result(ret.0,ret.1)
     }
@@ -173,7 +173,7 @@ class CallkitManager : ICallkitMgr{
     func callAnswer(result:@escaping(Int,String)->Void,
                     actionAck:@escaping(ActionAck)->Void){
         log.i("call callAnswer")
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         app.rule.trans(FsmCall.Event.LOCAL_ACCEPT,
                        {self.doCallAnswer(result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)},actionAck: actionAck)},
                        {let ret = filter(ErrCode.XERR_BAD_STATE,"当前状态不正确");result(ret.0,ret.1)})
@@ -440,7 +440,7 @@ class CallkitManager : ICallkitMgr{
     }
     
     func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void,actionAck:@escaping(ActionAck)->Void) {
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         app.rule.trans(FsmCall.Event.CALL,
                        {self.doCallDial(deviceId: device.deviceId, attachMsg: attachMsg, result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)}, actionAck: actionAck)},
                        {let ret = filter(ErrCode.XERR_BAD_STATE,"状态错误");result(ret.0,ret.1)})
@@ -484,43 +484,43 @@ class CallkitManager : ICallkitMgr{
     }
     
     func muteLocalVideo(mute: Bool,result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         rtc.muteLocalVideo(mute, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     
     func muteLocaAudio(mute: Bool,result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         rtc.muteLocalAudio(mute, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     
     func mutePeerVideo(mute: Bool,result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         rtc.mutePeerVideo(mute, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     
     func mutePeerAudio(mute: Bool,result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         rtc.mutePeerAudio(mute, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     
     func setVolume(volumeLevel: Int,result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         rtc.setVolume(volumeLevel, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     
     func setAudioEffect(effectId: AudioEffectId,result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         rtc.setAudioEffect(effectId, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     
     func talkingRecordStart(result: @escaping (Int, String) -> Void) {
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         //let ret = filter(ErrCode.XERR_UNSUPPORTED,"暂未实现")
         rtc.startRecord(result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     
     func talkingRecordStop(result:@escaping (Int,String)->Void){
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         rtc.stopRecord (result:{ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
     }
     

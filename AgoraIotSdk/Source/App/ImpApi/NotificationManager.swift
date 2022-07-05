@@ -23,7 +23,7 @@ class NotificationManager : INotificationMgr{
                 if(ec == ErrCode.XOK){
                     self.app.context.push.session.pushEnabled = enable
                 }
-                let filter = self.app.context.callBackFilter
+                let filter = self.app.context.callbackFilter
                 let ret = filter(ec,msg);result(ret.0,ret.1)
                 result(ret.0,ret.1)
             })
@@ -32,7 +32,7 @@ class NotificationManager : INotificationMgr{
 
     func queryAll(result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             let ret = filter(ErrCode.XERR_UNSUPPORTED,"暂未实现");result(ret.0,ret.1)
             result(ret.0,ret.1)
         }
@@ -40,7 +40,7 @@ class NotificationManager : INotificationMgr{
 
     func queryByDevice(productKey: String, deviceId: String,result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             let ret = filter(ErrCode.XERR_UNSUPPORTED,"暂未实现");result(ret.0,ret.1)
             result(ret.0,ret.1)
         }
@@ -48,7 +48,7 @@ class NotificationManager : INotificationMgr{
 
     func delete(notificationIdList: [String],result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             let ret = filter(ErrCode.XERR_UNSUPPORTED,"暂未实现");result(ret.0,ret.1)
             result(ret.0,ret.1)
         }
@@ -56,7 +56,7 @@ class NotificationManager : INotificationMgr{
 
     func mark(markFlag: Int, notificationIdList: [String],result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             let ret = filter(ErrCode.XERR_UNSUPPORTED,"暂未实现");result(ret.0,ret.1)
             result(ret.0,ret.1)
         }

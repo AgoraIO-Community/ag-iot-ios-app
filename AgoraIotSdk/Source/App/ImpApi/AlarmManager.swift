@@ -13,7 +13,7 @@ class AlarmManager : IAlarmMgr{
         DispatchQueue.main.async {
             let tenantId = self.app.context.gran.session.cert.thingName
             let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             if(agToken == ""){
                 let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
                 result(ret.0,ret.1,nil)
@@ -26,7 +26,7 @@ class AlarmManager : IAlarmMgr{
     func queryById(alertMessageId:UInt64, result:@escaping (Int,String,IotAlarm?) -> Void){
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             if(agToken == ""){
                 let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
                 result(ret.0,ret.1,nil)
@@ -40,7 +40,7 @@ class AlarmManager : IAlarmMgr{
         DispatchQueue.main.async {
             let tenantId = self.app.context.gran.session.cert.thingName
             let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             if(agToken == ""){
                 let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
                 result(ret.0,ret.1,nil)
@@ -53,7 +53,7 @@ class AlarmManager : IAlarmMgr{
     func mark(alarmIdList: [UInt64],result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             if(agToken == ""){
                 let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
                 result(ret.0,ret.1)
@@ -66,7 +66,7 @@ class AlarmManager : IAlarmMgr{
     func delete(alarmIdList: [UInt64], result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             if(agToken == ""){
                 let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
                 result(ret.0,ret.1)
@@ -80,7 +80,7 @@ class AlarmManager : IAlarmMgr{
         DispatchQueue.main.async {
             let tenant = self.app.context.gran.session.cert.thingName
             let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             if(agToken == ""){
                 let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
                 result(ret.0,ret.1,0)
@@ -92,7 +92,7 @@ class AlarmManager : IAlarmMgr{
     
     func querySysByParam(queryParam: SysQueryParam, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
         var ids:[String] = [String]()
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         if(queryParam.deviceIds.count == 0){
             //note:try to walkaround by restoring deviceIds,because sever can't acquire device id information
             if(app.context.devices == nil || self.app.context.devices?.count == 0){
@@ -122,7 +122,7 @@ class AlarmManager : IAlarmMgr{
     func querySysById(alertMessageId:UInt64, result:@escaping (Int,String,IotAlarm?) -> Void){
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             if(self.app.context.devices == nil || self.app.context.devices?.count == 0){
                 let ret = filter(ErrCode.XERR_UNSUPPORTED,"没有查询到对应设备的告警")
                 result(ret.0,ret.1,nil)
@@ -140,7 +140,7 @@ class AlarmManager : IAlarmMgr{
     func markSys(alarmIdList: [UInt64],result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callBackFilter
+            let filter = self.app.context.callbackFilter
             if(agToken == ""){
                 let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
                 result(ret.0,ret.1)
@@ -153,7 +153,7 @@ class AlarmManager : IAlarmMgr{
     func querySysCount(productId:String?,deviceIds:[String],messageType:Int?,status:Int?,createDateBegin:Date?,createDateEnd:Date? ,result:@escaping(Int,String,UInt)->Void){
         let agToken = app.context.aglab.session.token.acessToken
         let tenant = app.context.gran.session.cert.thingName
-        let filter = self.app.context.callBackFilter
+        let filter = self.app.context.callbackFilter
         
         var ids:[String] = deviceIds
         if(deviceIds.count == 0){

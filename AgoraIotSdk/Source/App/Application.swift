@@ -9,17 +9,30 @@ import Foundation
 //import UIKit
 
 open class Application{
-    func initialize(initParam: InitParam, sdkStatus: @escaping(SdkStatus, String)->Void,callBackFilter:@escaping(Int,String)->(Int,String)) -> Int {
+    
+    func initialize(initParam: InitParam, sdkStatus: @escaping(SdkStatus, String)->Void,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int {
         
         if(initParam.logFilePath != ""){
             log.ouput = .debugerConsoleAndFile
         }
         
         Logger.shared.removeAllAsync()
-        
+        let tempAppId = initParam.rtcAppId.substring(to: 1) + "*********************" + initParam.rtcAppId.substring(from: initParam.rtcAppId.count - 1)
+        let tempAppKey = initParam.ntfAppKey.substring(to: 1) + "********" + initParam.ntfAppKey.substring(from: initParam.ntfAppKey.count - 1)
+        let tempApnCer = initParam.ntfApnsCertName.substring(to: 1) + "*******" + initParam.ntfApnsCertName.substring(from: initParam.ntfApnsCertName.count - 1)
+        let tempMaster = initParam.masterServerUrl.substring(to: 10) + "*******" + initParam.masterServerUrl.substring(from: initParam.masterServerUrl.count - 4)
+        let tempSlave = initParam.slaveServerUrl.substring(to: 10) + "*******" + initParam.slaveServerUrl.substring(from: initParam.slaveServerUrl.count - 4)
+        let projectId = initParam.projectId.substring(to: 1) + "*******" + initParam.projectId.substring(from: initParam.projectId.count - 1)
         log.i("=================  AgoraIotSdk  ======================")
         log.i("     version:   \(IAgoraIotSdkVersion)")
         log.i("       built:   \(Utils.dateTime())")
+        log.i("       appId:   \(tempAppId)")
+        log.i("      appKey:   \(tempAppKey)")
+        log.i("      ApnCer:   \(tempApnCer)")
+        log.i("   MasterUrl:   \(tempMaster)")
+        log.i("    SlaveUrl:   \(tempSlave)")
+        log.i("   projectId:   \(projectId)")
+        log.i("     logFile:   \(initParam.logFilePath)")
         log.i("======================================================")
         
         _config.appId = initParam.rtcAppId
@@ -31,7 +44,7 @@ open class Application{
         _config.projectId = initParam.projectId
         
         _status?.setStatusHandler(handler: sdkStatus)
-        _context.callBackFilter = callBackFilter
+        _context.callbackFilter = callbackFilter
         
         _context.call.setting.rtc.logFilePath = initParam.logFilePath
         _context.call.setting.rtc.publishAudio = initParam.publishAudio

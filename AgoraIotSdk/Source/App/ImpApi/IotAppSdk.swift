@@ -12,8 +12,19 @@ open class IotAppSdk : IAgoraIotAppSdk{
         return IAgoraIotSdkVersion
     }
     
+    private var _callbackFilter:(Int,String)->(Int,String) = {ec,msg in return (ec,msg)}
+    private func onCallbackFilter(ec:Int,msg:String)->(Int,String){
+        if(ec == ErrCode.XERR_TOKEN_EXPIRED){
+            self.accountMgr.logout { ec, msg in
+                log.i("sdk token expired,logout")
+            }
+        }
+        return _callbackFilter(ec,msg)
+    }
+    
     public func initialize(initParam: InitParam, sdkStatus:@escaping (SdkStatus, String)->Void,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int {
-        return app!.initialize(initParam: initParam,sdkStatus:sdkStatus,callBackFilter: callbackFilter)
+        _callbackFilter = callbackFilter
+        return app!.initialize(initParam: initParam,sdkStatus:sdkStatus,callbackFilter: onCallbackFilter)
     }
     
     private var app:Application?

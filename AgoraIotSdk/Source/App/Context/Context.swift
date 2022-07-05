@@ -221,5 +221,5 @@ class Context{
     var devices:[IotDevice]?{get{return _devices}set{_devices = newValue}}
     var products:[ProductInfo]?{get{return _products}set{_products = newValue}}
     var account:String{get{return _account}set{_account = newValue}}
-    var callBackFilter:(Int,String)->(Int,String){get{return _callBackFilter}set{_callBackFilter = newValue}}
+    var callbackFilter:(Int,String)->(Int,String){get{return _callBackFilter}set{_callBackFilter = newValue}}
 }

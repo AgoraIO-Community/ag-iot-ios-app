@@ -53,3 +53,4 @@ ExampleOC/ExampleOC.cworkspace
 AgoraIoT/Pods
 AgoraIoT/Podfile.lock
 AgoraIoT/AgoraIoT.xcworkspace
+version.sh
