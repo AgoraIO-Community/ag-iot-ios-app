@@ -50,7 +50,7 @@ ExampleOC/Pods/EmPush
 ExampleOC/Pods
 ExampleOC/Podfile.lock
 ExampleOC/ExampleOC.cworkspace
-AgoraIoT/Pods
-AgoraIoT/Podfile.lock
-AgoraIoT/AgoraIoT.xcworkspace
+AgoraIotLink/Pods
+AgoraIotLink/Podfile.lock
+AgoraIotLink/AgoraIoT.xcworkspace
 version.sh

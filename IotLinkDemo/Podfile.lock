@@ -1,0 +1,181 @@
+PODS:
+  - AgoraIotLink (1.0.1.10):
+    - AgoraRtcEngine_iOS_Beta (= 4.0.0-beta.1)
+    - Alamofire (= 5.6.0)
+    - AWSIoT (= 2.27.6)
+    - AWSMobileClient (= 2.27.6)
+    - EMPush
+  - AgoraRtcEngine_iOS_Beta (4.0.0.beta.1)
+  - Alamofire (5.6.0)
+  - AWSAuthCore (2.27.6):
+    - AWSCore (= 2.27.6)
+  - AWSCognitoIdentityProvider (2.27.6):
+    - AWSCognitoIdentityProviderASF (= 2.27.6)
+    - AWSCore (= 2.27.6)
+  - AWSCognitoIdentityProviderASF (2.27.6):
+    - AWSCore (= 2.27.6)
+  - AWSCore (2.27.6)
+  - AWSIoT (2.27.6):
+    - AWSCore (= 2.27.6)
+  - AWSMobileClient (2.27.6):
+    - AWSAuthCore (= 2.27.6)
+    - AWSCognitoIdentityProvider (= 2.27.6)
+    - AWSCognitoIdentityProviderASF (= 2.27.6)
+    - AWSCore (= 2.27.6)
+  - DZNEmptyDataSet (1.8.1)
+  - EMPush (0.1.0)
+  - HandyJSON (5.0.2)
+  - IQKeyboardManagerSwift (6.5.9)
+  - JXSegmentedView (1.3.0)
+  - Kingfisher (6.3.1)
+  - Masonry (1.1.0)
+  - MJRefresh (3.7.5)
+  - SJBaseVideoPlayer (3.6.7):
+    - Masonry
+    - SJBaseVideoPlayer/AVPlayer (= 3.6.7)
+    - SJBaseVideoPlayer/Common (= 3.6.7)
+    - SJUIKit/AttributesFactory (>= 0.0.0.38)
+    - SJUIKit/ObserverHelper
+    - SJUIKit/Queues
+    - SJUIKit/SQLite3
+  - SJBaseVideoPlayer/AVPlayer (3.6.7):
+    - Masonry
+    - SJBaseVideoPlayer/Common
+    - SJUIKit/AttributesFactory (>= 0.0.0.38)
+    - SJUIKit/ObserverHelper
+    - SJUIKit/Queues
+    - SJUIKit/SQLite3
+  - SJBaseVideoPlayer/Common (3.6.7):
+    - Masonry
+    - SJBaseVideoPlayer/ResourceLoader
+    - SJUIKit/AttributesFactory (>= 0.0.0.38)
+    - SJUIKit/ObserverHelper
+    - SJUIKit/Queues
+    - SJUIKit/SQLite3
+  - SJBaseVideoPlayer/ResourceLoader (3.6.7):
+    - Masonry
+    - SJUIKit/AttributesFactory (>= 0.0.0.38)
+    - SJUIKit/ObserverHelper
+    - SJUIKit/Queues
+    - SJUIKit/SQLite3
+  - SJUIKit/AttributesFactory (0.0.0.58):
+    - SJUIKit/AttributesFactory/Deprecated (= 0.0.0.58)
+    - SJUIKit/AttributesFactory/UIKitText (= 0.0.0.58)
+  - SJUIKit/AttributesFactory/Deprecated (0.0.0.58)
+  - SJUIKit/AttributesFactory/UIKitText (0.0.0.58)
+  - SJUIKit/ObserverHelper (0.0.0.58)
+  - SJUIKit/Queues (0.0.0.58)
+  - SJUIKit/SQLite3 (0.0.0.58):
+    - SJUIKit/SQLite3/Core (= 0.0.0.58)
+    - SJUIKit/SQLite3/Protocol (= 0.0.0.58)
+    - YYModel
+  - SJUIKit/SQLite3/Core (0.0.0.58):
+    - SJUIKit/SQLite3/Protocol
+    - YYModel
+  - SJUIKit/SQLite3/Protocol (0.0.0.58):
+    - YYModel
+  - SJVideoPlayer (3.3.3):
+    - SJBaseVideoPlayer (>= 3.6.0)
+    - SJVideoPlayer/Common (= 3.3.3)
+    - SJVideoPlayer/ControlLayers (= 3.3.3)
+    - SJVideoPlayer/ResourceLoader (= 3.3.3)
+  - SJVideoPlayer/Common (3.3.3):
+    - Masonry
+    - SJBaseVideoPlayer (>= 3.6.0)
+    - SJUIKit/AttributesFactory
+    - SJVideoPlayer/ResourceLoader
+  - SJVideoPlayer/ControlLayers (3.3.3):
+    - SJBaseVideoPlayer (>= 3.6.0)
+    - SJVideoPlayer/Common
+  - SJVideoPlayer/ResourceLoader (3.3.3):
+    - SJBaseVideoPlayer (>= 3.6.0)
+  - SnapKit (5.6.0)
+  - SVProgressHUD (2.2.5)
+  - SwiftDate (6.3.1)
+  - YYKit (1.0.9):
+    - YYKit/no-arc (= 1.0.9)
+  - YYKit/no-arc (1.0.9)
+  - YYModel (1.0.4)
+  - ZLPhotoBrowser (4.3.1):
+    - ZLPhotoBrowser/Core (= 4.3.1)
+  - ZLPhotoBrowser/Core (4.3.1)
+
+DEPENDENCIES:
+  - AgoraIotLink (from `../`)
+  - AWSAuthCore (= 2.27.6)
+  - DZNEmptyDataSet (= 1.8.1)
+  - HandyJSON (= 5.0.2)
+  - IQKeyboardManagerSwift (= 6.5.9)
+  - JXSegmentedView (= 1.3.0)
+  - Kingfisher (= 6.3.1)
+  - MJRefresh (= 3.7.5)
+  - SJVideoPlayer (= 3.3.3)
+  - SnapKit (= 5.6.0)
+  - SVProgressHUD (= 2.2.5)
+  - SwiftDate (= 6.3.1)
+  - YYKit (= 1.0.9)
+  - ZLPhotoBrowser (= 4.3.1)
+
+SPEC REPOS:
+  trunk:
+    - AgoraRtcEngine_iOS_Beta
+    - Alamofire
+    - AWSAuthCore
+    - AWSCognitoIdentityProvider
+    - AWSCognitoIdentityProviderASF
+    - AWSCore
+    - AWSIoT
+    - AWSMobileClient
+    - DZNEmptyDataSet
+    - EMPush
+    - HandyJSON
+    - IQKeyboardManagerSwift
+    - JXSegmentedView
+    - Kingfisher
+    - Masonry
+    - MJRefresh
+    - SJBaseVideoPlayer
+    - SJUIKit
+    - SJVideoPlayer
+    - SnapKit
+    - SVProgressHUD
+    - SwiftDate
+    - YYKit
+    - YYModel
+    - ZLPhotoBrowser
+
+EXTERNAL SOURCES:
+  AgoraIotLink:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  AgoraIotLink: 1798e12b3153e1994d0f88a78e29f50f12f784d1
+  AgoraRtcEngine_iOS_Beta: 9b9f5402acea6b8a30efbfe149b916dae90ddcb1
+  Alamofire: 0c07058209f211e3d32824f8e0766d7c44ac83b3
+  AWSAuthCore: 09226ae8dfc63d1338f503f53a38af2d3156267e
+  AWSCognitoIdentityProvider: 9eb24a52488d32b75d8550e8a9d1be36229ae47d
+  AWSCognitoIdentityProviderASF: 60d466e143f8bbf9d47d39c1ad58de5044a111b6
+  AWSCore: 0b6fa020f5f343a211862d702ba7a067272a60f7
+  AWSIoT: e564dc13be3a206a994bd26477b5eb660180ca1e
+  AWSMobileClient: e0ad3787f793d14c593379c2dba006e3bdad8bf1
+  DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
+  EMPush: b36c94b4ea33a69523566ead9eb721415f33f121
+  HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
+  IQKeyboardManagerSwift: 6e839c575c4aa1078d58a596e41244e77abe918f
+  JXSegmentedView: fec0d335355b6e019c494fe2e030bde8a36d2df6
+  Kingfisher: 016c8b653a35add51dd34a3aba36b580041acc74
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
+  SJBaseVideoPlayer: 52ab45c54521c9988cb5a4d9abad444152248800
+  SJUIKit: 86d5b16f8b8b17274ef8805acf965e4014629e15
+  SJVideoPlayer: bc8aa86a2922dc7416822f88bdb39d6baf4d9bd5
+  SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
+  SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  SwiftDate: 72d28954e8e1c6c1c0f917ccc8005e4f83c7d4b2
+  YYKit: 7cda43304a8dc3696c449041e2cb3107b4e236e7
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
+  ZLPhotoBrowser: bfe560c5c244dffffd2a1902a92937ce0f840510
+
+PODFILE CHECKSUM: 400c044f3f64f443debdb7fbcbd96faafd144a62
+
+COCOAPODS: 1.11.2
