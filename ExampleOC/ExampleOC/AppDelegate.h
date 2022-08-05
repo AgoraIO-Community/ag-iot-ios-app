@@ -6,7 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AgoraIotSdk-Swift.h"
+#import "AgoraIotLink-Swift.h"
 #import "IotStateDelegate.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate,IotStateDelegate,IotCallbackDelegate>

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import AgoraIotSdk
+import AgoraIotLink
 
 public class CallkitManager : NSObject,ICallkitMgr{
     @objc public func talkingRecordStop(result: @escaping (Int, String) -> Void) {
@@ -77,6 +77,10 @@ public class CallkitManager : NSObject,ICallkitMgr{
 }
 
 public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
+    @objc public func queryProductList(query: ProductQueryParam, result: @escaping (Int, String, [ProductInfo]) -> Void) {
+        return mgr.queryProductList(query: query, result: result)
+    }
+    
     @objc public func shareDeviceAccept(deviceNickName: String, order: String, result: @escaping (Int, String) -> Void) {
         return mgr.shareDeviceAccept(deviceNickName: deviceNickName, order: order, result: result)
     }
@@ -153,10 +157,6 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
     
     @objc public func addDevice(productId: String, deviceId: String, result: @escaping (Int, String) -> Void) {
         mgr.addDevice(productId: productId, deviceId: deviceId, result: result)
-    }
-    
-    @objc public func queryProductList(result: @escaping (Int, String, [ProductInfo]) -> Void) {
-        return mgr.queryProductList(result: result)
     }
     
     @objc public func queryAllDevices(result: @escaping (Int, String, [IotDevice]) -> Void) {
