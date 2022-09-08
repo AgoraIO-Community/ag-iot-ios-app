@@ -21,11 +21,10 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://gitee.com/honghaifeng2022/AgoraIotSdk'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.homepage         = 'https://github.com/AgoraIO-Community/ag-iot-ios-app'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'goooon' => 'guzhihe@agora.io' }
-  s.source           = { :git => 'git@gitee.com:honghaifeng2022/AgoraIotSdk.git', :tag => s.version.to_s }
+  s.author           = { 'support' => 'support@agora.io' }
+  s.source           = { :git => 'git@github.com:AgoraIO-Community/ag-iot-ios-app.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   s.pod_target_xcconfig = { 'VALID_ARCHS' => 'arm64 armv7 arm64e' }
   s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'x86_64 i386' }
