@@ -132,4 +132,8 @@ public protocol INotificationMgr {
      * @brief 查询是否接受推送消息
      */
     func notifyEnabled()->Bool
+    /*
+     * @brief 查询推送eid
+     */
+    func getEid()->String
 }

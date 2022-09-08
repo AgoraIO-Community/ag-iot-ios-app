@@ -8,6 +8,10 @@
 import Foundation
 
 class NotificationManager : INotificationMgr{
+    func getEid() -> String {
+        return self.app.context.push.session.eid
+    }
+    
     
     private func asyncResult(_ ec:Int,_ msg:String,_ result:@escaping(Int,String)->Void) {
         DispatchQueue.main.async {

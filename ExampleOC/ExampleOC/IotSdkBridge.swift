@@ -316,6 +316,10 @@ public class AlarmManager : NSObject,IAlarmMgr{
 }
 
 public class NotificationManager : NSObject,INotificationMgr{
+    public func getEid() -> String {
+        return mgr.getEid()
+    }
+    
     @objc public func enableNotify(enable: Bool, result: @escaping (Int, String) -> Void) {
         return mgr.enableNotify(enable: enable, result: result)
     }
