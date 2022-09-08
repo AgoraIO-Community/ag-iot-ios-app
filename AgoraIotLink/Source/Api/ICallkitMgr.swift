@@ -32,6 +32,7 @@
     case RemoteTimeout  //对端超时
     case RecordEnd      //云录停止
     case LocalTimeout   //呼叫超时
+    case AcceptFail     //本地接听失败
     
     case RemoteVideoReady //首次收到设备视频
     case RemoteAudioReady //首次收到设备音频

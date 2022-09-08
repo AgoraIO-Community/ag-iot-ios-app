@@ -11,11 +11,12 @@ import SVProgressHUD
 
 class DeviceSetupHomeCellData {
     var title = ""
-    var subTitle:String?
-    
-    init(title:String, subTitle:String? = nil) {
+    var subTitle = ""
+    var showDot = false
+    init(title:String, subTitle:String,showDot:Bool) {
         self.title = title
         self.subTitle = subTitle
+        self.showDot = showDot
     }
 }
 
@@ -27,6 +28,7 @@ class DeviceSetupHomeVC: UIViewController {
     private let warningTitle = "侦测告警设置"
     private let shareTitle = "共享设备"
     private let updateTitle = "设备固件升级"
+    private var firmware:FirmwareInfo? = nil
     
     var device: IotDevice?
     
@@ -78,8 +80,21 @@ class DeviceSetupHomeVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupData()
+        setupData(verHint: "", showDot: false)
         updateUIWithUserModel()
+    }
+    
+    override func viewWillAppear(_ animated: Bool){
+        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(device: device!) { ec, msg, info in
+            if(ErrCode.XOK == ec){
+                guard let info = info else{
+                    return
+                }
+                self.firmware = info
+                self.setupData(verHint: info.isUpgrade ? "发现新版本:\(info.upgradeVersion)" : "已是最新版本", showDot: info.isUpgrade)
+            }
+        }
+        return
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -144,17 +159,17 @@ class DeviceSetupHomeVC: UIViewController {
         
     }
     
-    private func setupData(){
-        let base = DeviceSetupHomeCellData(title: baseTitle)
+    private func setupData(verHint:String,showDot:Bool){
+        let base = DeviceSetupHomeCellData(title: baseTitle,subTitle: "",showDot: false)
 //        let warning = DeviceSetupHomeCellData(title: warningTitle)
-        let share = DeviceSetupHomeCellData(title: shareTitle)
-//        let update = DeviceSetupHomeCellData(title: updateTitle, subTitle: "已是最新版本")
+        let share = DeviceSetupHomeCellData(title: shareTitle,subTitle: "",showDot: false)
+        let update = DeviceSetupHomeCellData(title: updateTitle, subTitle: verHint,showDot: showDot)
         
         dataArray = [
             base,
 //            warning,
             share,
-//            update
+            update
         ]
         tableView.reloadData()
     }
@@ -184,7 +199,13 @@ class DeviceSetupHomeVC: UIViewController {
             deviceListVC.device = device
             navigationController?.pushViewController(deviceListVC, animated: true)
         }
-        
+    }
+    //点击固件信息
+    private func didFirmwareSetupCell(){
+        let vc = DeviceFirmwareVC()
+        vc.device = device
+        vc.firmwareInfo = firmware
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -197,7 +218,7 @@ extension DeviceSetupHomeVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellData = dataArray[indexPath.row]
         let cell:MinePageCell = tableView.dequeueReusableCell(withIdentifier: kCellID, for: indexPath) as! MinePageCell
-        cell.setImgName(nil, title: cellData.title)
+        cell.setImgName(nil, title: cellData.title,subTitle: cellData.subTitle,showDot: cellData.showDot)
         return cell
     }
     
@@ -215,7 +236,7 @@ extension DeviceSetupHomeVC: UITableViewDelegate, UITableViewDataSource {
             didSelectShareSetupCell()
             break
         case updateTitle:
-            
+            didFirmwareSetupCell()
             break
         default:
             break

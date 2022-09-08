@@ -65,7 +65,7 @@ fileprivate class Listeners{
 class DeveloperAuthenticatedIdentityProvider: AWSCognitoCredentialsProviderHelper {
     var _token:String = ""
 //    var _identityId:String? = ""
-//    var _identityProviderName:String = "granwin"
+//    var _identityProviderName:String = "iotlink"
     //var _identityPoolId:String
 //    init(identityId:String, regionType: AWSRegionType, identityPoolId: String, useEnhancedFlow: Bool, identityProviderManager: AWSIdentityProviderManager?) {
 //        self._identityId = identityId
@@ -114,28 +114,30 @@ class DeveloperAuthenticatedIdentityProvider: AWSCognitoCredentialsProviderHelpe
 
 
 class AWSMqtt{
-    //var iotManager : AWSIoTManager?  = nil
+    var cfg:Config
     var iot : AWSIoT? = nil
     var iotDataManager: AWSIoTDataManager? = nil
     var thingName:String = ""
-    //var clientId:String = ""
     var identityId:String = ""
     var appId:String = ""
     var deviceAlias:String = ""
     var subScribeWithClientCalled:Bool = false
     var credentialsProvider:AWSCognitoCredentialsProvider? = nil
-    //let AWS_IOT_DATA_MANAGER_KEY = "iotsdk-data-manager-broker2"
+
     fileprivate var listeners:[String:Listeners] = [String:Listeners]()
 
     typealias MqttStatusDeleagte = (IotMqttSession.Status)->Void
     private var _onStatusChanged:MqttStatusDeleagte = {s in log.w("mqtt _onStatusChanged not inited")}
     public var onStatusChanged:MqttStatusDeleagte{set{_onStatusChanged = newValue} get{return _onStatusChanged}}
     
-    //public var onCallIncoming:(CallSession)->Void{get{return _onCallIncoming}set{_onCallIncoming = newValue}}
     private var _onActionDesired:(ActionAck,CallSession?)->Void = {a,c in log.w("mqtt _onActionAck not inited")}
     
     public func waitForActionDesired(actionDesired:@escaping(ActionAck,CallSession?)->Void){
         _onActionDesired = actionDesired
+    }
+
+    init(cfg:Config){
+        self.cfg = cfg
     }
     
     private func dictToSession(reason:Int,desired:[String:Any]?,reported:[String:Any]?)->CallSession?{
@@ -241,65 +243,73 @@ class AWSMqtt{
         log.i("mqtt session is :\(sess)")
         return sess
     }
-    private func getActionFromReason(reason:Int)->ActionAck{
+    private func getActionFromReason(reason:Int)->(ActionAck,String){
         var action:ActionAck = .UnknownAction
+        var desc:String = "Unknown"
         if(reason == 0){
             action = .StateInited
+            desc = "StateInited"
         }
         else if(reason == 1){
             action = .LocalHangup
+            desc = "LocalHangup"
         }
         else if(reason == 2){
             action = .LocalAnswer
+            desc = "LocalAnswer"
         }
         else if(reason == 3){
             action = .RemoteHangup
+            desc = "RemoteHangup"
         }
         else if(reason == 4){
             action = .RemoteAnswer
+            desc = "RemoteAnswer"
         }
         else if(reason == 5){
             action = .RemoteTimeout
+            desc = "RemoteTimeout"
         }
         else if(reason == 6){
             action = .RecordEnd
+            desc = "RecordEnt"
         }
         else if(reason == 7){
             action = .LocalTimeout
+            desc = "LocalTimeout"
         }
         else{
             action = .UnknownAction
+            desc = "Unknown"
             log.e("unknown action reason:\(reason)")
         }
-        return action
+        return (action,desc)
     }
     private func onUpdateCommStatus(dict:[String:Any]){
         
     }
     private func onUpdateRtcStatus(desired:[String:Any],reported:[String:Any]?){
-        //log.i("mqtt onUpdateRtcStatus desired:\(desired)")
-        //log.i("mqtt onUpdateRtcStatus reported:\(reported)")
         let r = desired["reason"] as? Int
         if(r == nil){
-            log.e("mqtt reason is nil,set to default 0")
+            log.w("mqtt reason is nil,set to default 0")
         }
         let reason = r ?? 0
+        let (action,desc) = getActionFromReason(reason: reason)
+
         let sess = dictToSession(reason:reason, desired: desired,reported: reported)
         if let callStatus = desired["callStatus"] as? Int{
             switch callStatus{
-            case 1: //local idle
-                let action:ActionAck = getActionFromReason(reason: reason)
-                log.i("mqtt local idle:reason(\(reason)) action(\(action.rawValue))")
+            case 1: 
+                log.i("mqtt local idle(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))")
                 _onActionDesired(action,sess)
             case 2:
-                log.i("mqtt local calling")
+                log.i("mqtt local calling(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))")
                 _onActionDesired(.CallOutgoing,sess)
             case 3:
-                log.i("mqtt remote calling")
+                log.i("mqtt remote calling(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))")
                 _onActionDesired(.CallIncoming,sess)
-            case 4: //in talking
-                let action = getActionFromReason(reason: reason)
-                log.i("mqtt in talking reason:(\(String(describing: sess?.reason))) action(\(action.rawValue))")
+            case 4: 
+                log.i("mqtt in talking(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))")
                 _onActionDesired(.RemoteAnswer,sess)
             default:
                 log.e("mqtt unknown state for callStatus:\(callStatus)")
@@ -327,15 +337,25 @@ class AWSMqtt{
         let coreVer = AWSiOSSDKVersion
         let regionType:AWSRegionType = region.aws_regionTypeValue()
         
-        log.i("mqtt aws iot AWSiOSSDKVersion:\(AWSiOSSDKVersion) AWSIoTSDKVersion: \(iotVer) AWSiOSSDKVersion: \(coreVer) AWSMobileClientVersionNumber: \(AWSMobileClientVersionNumber) AWSAuthCoreVersionNumber: \(AWSAuthCoreVersionNumber) AWSCognitoIdentityProviderSDKVersion:\(AWSCognitoIdentityProviderSDKVersion)")
+        log.i("""
+              mqtt aws init:
+                      \t\t       thingName:         \(thingName)
+                      \t\t          region:         \(region)
+                      \t\t        endPoint:         \(endPoint)
+                      \t\t      identityId:         \(identityId)
+                      \t\t  identityPoolId:         \(identityPoolId)
+                      \t\tAWSiOSSDKVersion:         \(AWSiOSSDKVersion )
+                      \t\tAWSIoTSDKVersion:         \(iotVer)
+                      \t\tAWSiOSSDKVersion:         \(coreVer)
+                      \t\tAWSMobileClientVersionNumber: \(AWSMobileClientVersionNumber)
+                      \t\tAWSAuthCoreVersionNumber:     \(AWSAuthCoreVersionNumber)
+                      \t\tAWSCognitoIdentityProviderSDKVersion:\(AWSCognitoIdentityProviderSDKVersion)
+              """)
         
-        log.i("     thingName:\(thingName) region:\(region)")
-        log.i("     endPoint:\(endPoint)")
-        log.i("     identityId:\(identityId)")
-        log.i("     identityPoolId:\(identityPoolId)")
-        
-        AWSDDLog.sharedInstance.logLevel = .all
-        //AWSDDLog.add(AWSDDTTYLogger.sharedInstance)
+        if(cfg.mqttLogLevel == 0){
+            AWSDDLog.sharedInstance.logLevel = .all
+            AWSDDLog.add(AWSDDTTYLogger.sharedInstance)
+        }
         
         let provider = DeveloperAuthenticatedIdentityProvider(regionType: regionType, identityPoolId: identityPoolId, useEnhancedFlow: true, identityProviderManager: nil)
         provider.identityId = identityId
@@ -343,7 +363,6 @@ class AWSMqtt{
         let iotEndPoint = AWSEndpoint(urlString: "https://" + endPoint)
         
         credentialsProvider = AWSCognitoCredentialsProvider(regionType:regionType ,identityProvider:provider)
-        
         
         let controlPlaneServiceConfiguration = AWSServiceConfiguration(region:regionType,credentialsProvider:credentialsProvider)
         AWSServiceManager.default().defaultServiceConfiguration = controlPlaneServiceConfiguration
@@ -363,6 +382,7 @@ class AWSMqtt{
 
         AWSIoTDataManager.register(with: iotDataConfiguration,with:mqttConfig, forKey: thingName)
         iotDataManager = AWSIoTDataManager(forKey: thingName)
+        
         log.i("mqtt initialized")
     }
     
@@ -568,27 +588,16 @@ class AWSMqtt{
         }
         return counter == 0 ? false : true
     }
-    //topic3 = "granwin/" + clientId + "/message"
+    //topic3 = "iotlink/" + clientId + "/message"
     func onTopic3Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
         var messageType = -1
         if let type = jsonDict["messageType"] as? Int{
-//            if let type = Int(typeStr){
-//                messageType = type
-//            }
-//            else{
-//                log.w("mqtt no 'messageType' found")
-//                return false
-//            }
             messageType = type
         }
         else{
             log.w("mqtt no 'messageType' found")
             return false
         }
-//        guard let jsonData = jsonDict["data"] as? [String:Any] else{
-//            log.e("mqtt no 'state' found for \(topicRcv)")
-//            return false
-//        }
         switch(messageType){
         case 1:
             return onDeviceOnOffline(topicRcv,jsonDict)
@@ -596,7 +605,9 @@ class AWSMqtt{
             return onPropertyChanged(topicRcv,jsonDict)
         case 3:
             return onBindListUpdated(topicRcv,jsonDict)
-            
+        case 4:
+            log.w("mqtt messageType 4 for firmware upgrade notification")
+            return true
         default:
             log.e("mqtt unhandled messageType:\(messageType)")
             return false
@@ -670,6 +681,7 @@ class AWSMqtt{
                     self.subScribeWithClientCalled = true
                 }
             }
+            
             return
         }
     }
@@ -766,13 +778,17 @@ class AWSMqtt{
         self.iotDataManager?.publishData(data, onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce)
     }
     
+    public func publish(data:String,topic:String,qos:AWSIoTMQTTQoS){
+        self.iotDataManager?.publishString(data, onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce)
+    }
+    
     func subscribe(topic:String,qos:AWSIoTMQTTQoS,callback:@escaping(String,String,[String:Any])->Bool,result:@escaping (Bool)->Void){
         let ret = iotDataManager?.subscribe(toTopic: topic, qoS: qos, fullCallback: {
             (curTopic,message) ->Void in
             let payload = message.messageData
             if let jsonDict = try? JSONSerialization.jsonObject(with: payload, options:.mutableContainers) as? [String: Any]{
                 log.i("mqtt topic rec: '\(curTopic)'")
-                log.i("           json: \(jsonDict)")
+                log.v("           json: \(jsonDict)")
                 DispatchQueue.main.async {
                     if(!callback(topic,curTopic,jsonDict)){
                         log.e("mqtt message callback ret error for \(jsonDict)")
@@ -796,13 +812,6 @@ class AWSMqtt{
     
     func unsubscribe(topic:String){
         iotDataManager?.unsubscribeTopic(topic)
-    }
-    
-    struct UserControllerData{
-        let product_key:String
-        let action_type:String
-        let action_type_name:String
-        let account:String
     }
     
     func setDeviceStatus(account:String,productId:String,things_name:String,params:Dictionary<String,Any>,result: @escaping (Int, String)->Void){
@@ -831,21 +840,18 @@ class AWSMqtt{
         })
     }
     
-    private func addDeviceStatusListener(topicKey:String,result: @escaping (Int, String,Dictionary<String, Any>?)->Void){
+    private func addDeviceStatusListener(topicKey:String,result: @escaping (Int, String,Dictionary<String, Any>?,Dictionary<String, Any>?)->Void){
         DispatchQueue.main.async {
             let listener = AwsMqttTopicListener({
                 (topic,dict) in
                 guard let state = dict?["state"] as? [String:Any] else{
                     log.e("mqtt no 'state' found for \(topic)")
-                    result(ErrCode.XERR_INVALID_PARAM,"返回未知参数",nil)
+                    result(ErrCode.XERR_INVALID_PARAM,"返回未知参数",nil,nil)
                     return
                 }
-                guard let reported = state["reported"] as? [String:Any] else{
-                    log.e("mqtt no 'desired' found for \(topic)")
-                    result(ErrCode.XERR_INVALID_PARAM,"返回未知参数",nil)
-                    return
-                }
-                result(ErrCode.XOK,"收到返回状态",reported)
+                let reported = state["reported"] as? [String:Any]
+                let desired = state["desired"] as? [String:Any]
+                result(ErrCode.XOK,"收到返回状态",desired,reported)
                 self.listeners[topicKey] = nil
             })
             
@@ -854,7 +860,7 @@ class AWSMqtt{
             self.listeners[topicKey] = l
             
             let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false){tm in
-                result(ErrCode.XERR_TIMEOUT,"等待处理超时",nil)
+                result(ErrCode.XERR_TIMEOUT,"等待处理超时",nil,nil)
                 log.w("mqtt listen timeout for \(topicKey)")
                 self.listeners[topicKey] = nil
             }
@@ -862,7 +868,7 @@ class AWSMqtt{
         }
     }
     
-    func getDeviceStatus(things_name:String,result: @escaping (Int, String,Dictionary<String, Any>?)->Void){
+    func getDeviceStatus(things_name:String,result: @escaping (Int, String,Dictionary<String, Any>?,Dictionary<String, Any>?)->Void){
         let topic = "$aws/things/" + things_name + "/shadow/get"
         
         addDeviceStatusListener(topicKey:topic + "/accepted", result: result)

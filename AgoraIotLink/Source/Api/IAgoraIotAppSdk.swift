@@ -46,6 +46,7 @@ public class InitParam : NSObject{
     case InitCallFail       //登录成功后，初始化呼叫模块出错
     case InitMqttFail       //登录成功后，初始化Mqtt模块出错
     case InitPushFail       //登录成功后，初始化推送模块出错
+    case InitRtmFail        //登录成功后，初始化RTM模块出错
     case AllReady           //登录成功后，初始化过程完毕，处于就绪状态
     case Reconnected        //登录成功后，Mqtt重连成功
     case Disconnected       //登录成功后，Mqtt断开连接
@@ -97,4 +98,4 @@ public protocol IAgoraIotAppSdk {
     var notificationMgr: INotificationMgr{get}
 }
 
-public let IAgoraIotSdkVersion = "1.0.1.10"
+public let IAgoraIotSdkVersion = "1.1.0.0"

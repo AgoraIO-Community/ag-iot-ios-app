@@ -6,7 +6,7 @@
 //
 
 import Foundation
-//import UIKit
+import AgoraRtmKit
 
 open class Application{
     
@@ -40,7 +40,7 @@ open class Application{
         _config.ntfAppKey = initParam.ntfAppKey
         _config.ntfApnsCertName = initParam.ntfApnsCertName
         _config.agoraServerUrl = initParam.slaveServerUrl
-        _config.granWinServerUrl = initParam.masterServerUrl
+        _config.iotlinkServerUrl = initParam.masterServerUrl
         _config.projectId = initParam.projectId
         
         _status?.setStatusHandler(handler: sdkStatus)
@@ -51,6 +51,8 @@ open class Application{
         _context.call.setting.rtc.publishVideo = false
         _context.call.setting.rtc.subscribeAudio = initParam.subscribeAudio
         _context.call.setting.rtc.subscribeVideo = initParam.subscribeVideo
+        
+        _context.rtm.setting.appId = initParam.rtcAppId
         
         self._proxy = Proxy(event:self.status, rule:self.rule, cfg: self.config, ctx: self.context)
         
@@ -63,7 +65,7 @@ open class Application{
             return ErrCode.XERR_INVALID_PARAM
         }
         if(initParam.slaveServerUrl == ""){
-            log.e("sdk initParam.granwinUrl is empty");
+            log.e("sdk initParam.iotLinkUrl is empty");
             return ErrCode.XERR_INVALID_PARAM
         }
         if(initParam.ntfAppKey == ""){
@@ -104,7 +106,7 @@ open class Application{
     private var _proxy:Proxy?
     
     init(){
-        log.level = .info
+        log.level = .verb
         self._sdk.application = self
         self._status = StateListener(self)
         self._rule = RuleManager(self,invoke)

@@ -82,7 +82,7 @@ class ShareDeviceInfoCell: UITableViewCell {
             let startIndex = phoneNum.startIndex
             phoneNum.replaceSubrange(phoneNum.index(startIndex, offsetBy: 0)...phoneNum.index(startIndex, offsetBy: 2), with: "")
         }
-        nicknameLabel.text = phoneNum.replacePhone()
+        nicknameLabel.text = account //phoneNum.replacePhone()
 //        accountLabel.text = account
         headImgView.kf.setImage(with: URL(string: headImg ?? ""), placeholder: UIImage(named: "userimage"))
 

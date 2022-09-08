@@ -2,7 +2,7 @@
 .DS_Store
 
 # Xcode
-build/
+#build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -35,22 +35,27 @@ Carthage/Build
 # `pod install` in .travis.yml
 #
 Pods/
-ExampleSwiftUI/Pods
+Example/Pods/AgoraRtcEngine_iOS
+Example/Pods/Alamofire
+Example/Pods/AWSMobileClient
+Example/Pods/EmPush
 ExampleSwiftUI/Pods/AgoraRtcEngine_iOS
 ExampleSwiftUI/Pods/Alamofire
 ExampleSwiftUI/Pods/EmPush
 ExampleSwiftUI/Pods/AWSMobileClient
-ExampleSwiftUI/Podfile.lock
-ExampleSwiftUI/ExampleSwiftUI.xcworkspace
-ExampleSwiftUI
 ExampleOC/Pods/AgoraRtcEngine_iOS
 ExampleOC/Pods/Alamofire
 ExampleOC/Pods/AWSMobileClient
 ExampleOC/Pods/EmPush
 ExampleOC/Pods
-ExampleOC/Podfile.lock
-ExampleOC/ExampleOC.cworkspace
-AgoraIotLink/Pods
-AgoraIotLink/Podfile.lock
-AgoraIotLink/AgoraIoT.xcworkspace
+ExampleSwiftUIMpeg
+ExampleFFMpeg
+AgoraIotLink/Libs
+sdk/SwiftJSON
+sdk/SwiftJSON
+#ijkplayer
+libs/ijkplayer/ios/IJKMediaPlayer/Build
+libs/ijkplayer/ios/IJKMediaPlayer/DerivedData
+libs/SJBaseVideoPlayer/Project
+libs/SJVideoPlayer/Example
 version.sh

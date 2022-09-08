@@ -96,31 +96,60 @@ extension LoginMainVC : LoginViewDelegate{
             return
         }
         
-        if verficationAccount.isEmail == true {
-            TDUserInforManager.shared.userType = .email
-            loginAction(acc:acc,pwd:pwd)
-        }else if verficationAccount.isPhone == true {
-            TDUserInforManager.shared.userType = .phone
-            loginAction(acc:acc,pwd:pwd)
-        }else{
-            loginV.showTipsMessage("账号格式不正确")
-            return
-        }
+        loginAction(acc:acc,pwd:pwd)
+        
+//        if verficationAccount.isEmail == true {
+//            TDUserInforManager.shared.userType = .email
+//            loginAction(acc:acc,pwd:pwd)
+//        }else if verficationAccount.isPhone == true {
+//            TDUserInforManager.shared.userType = .phone
+//            loginAction(acc:acc,pwd:pwd)
+//        }else
+        //{
+        //    loginV.showTipsMessage("账号格式不正确")
+         //   return
+        //}
  
     }
         
     //忘记密码点击
-    func forgetPwdBtnClick() {
-        
-        DispatchCenter.DispatchType(type: .resetPassword, vc: self, style: .push)
-        
-    }
+//    func forgetPwdBtnClick() {
+//        
+//        DispatchCenter.DispatchType(type: .resetPassword, vc: self, style: .push)
+//        
+//    }
     
     //注册点击
-    func registerBtnClick() {
+    func registerBtnClick(acc: String, pwd: String) {
+        //note: registers
+        //DispatchCenter.DispatchType(type: .register, vc: self, style: .push)
         
-        DispatchCenter.DispatchType(type: .register, vc: self, style: .push)
+        let verficationAccount = verficationAccount(acc)
+        guard verficationAccount.isEmpty == false else {
+            //debugPrint("账号为空")
+            loginV.showTipsMessage("账号为空")
+            return
+        }
         
+        guard verficationPassword(pwd) == true else {
+            //debugPrint("密码为8至20位大小写字母及数字")
+            loginV.showTipsMessage("密码为空")
+            return
+        }
+        
+        registerAction(acc:acc,pwd:pwd)
+        
+//        if verficationAccount.isEmail == true {
+//            TDUserInforManager.shared.userType = .email
+//            registerAction(acc:acc,pwd:pwd)
+//        }else if verficationAccount.isPhone == true {
+//            TDUserInforManager.shared.userType = .phone
+//            registerAction(acc:acc,pwd:pwd)
+//        }else
+        //{
+        //    loginV.showTipsMessage("账号格式不正确")
+            return
+        //}
     }
     
 
@@ -178,9 +207,10 @@ extension LoginMainVC{
     
     //登录
     func loginAction(acc: String, pwd: String){
-        
+        loginV.hide()
         AGToolHUD.showNetWorkWait()
-        loginVM.login(acc, pwd) { [weak self] success, msg in
+        //note: login2
+        loginVM.login2(acc, pwd) { [weak self] success, msg in
             
             AGToolHUD.disMiss()
             if (success) {
@@ -198,6 +228,30 @@ extension LoginMainVC{
 
         }
         
+    }
+    
+    func registerAction(acc:String,pwd:String){
+        loginV.hide()
+        AGToolHUD.showNetWorkWait()
+        loginVM.register2(acc, pwd) { [weak self]succ, msg in
+            AGToolHUD.disMiss()
+            if (succ) {
+                debugPrint("注册成功")
+                TDUserInforManager.shared.saveAccountNumberAndLoginType(account: acc, type: false)
+                TDUserInforManager.shared.saveAccountPassWord(pwd: pwd)
+                TDUserInforManager.shared.isLogin = false
+                //登录成功发通知
+                //NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
+                //self?.dismiss(animated: true, completion: { })
+                //self?.loginV.showTipsMessage(msg)
+                //
+                AGToolHUD.showInfo(info: msg)
+                
+            }else{
+                debugPrint("注册失败")
+                self?.loginV.showTipsMessage(msg)
+            }
+        }
     }
     
 }

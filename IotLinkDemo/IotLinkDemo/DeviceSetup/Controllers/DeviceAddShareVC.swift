@@ -88,7 +88,7 @@ class DeviceAddShareVC: UIViewController {
 //            countryName = TDUserInforManager.shared.curCountryModel?.countryName ?? ""
 //        }
 //        let area = DeviceSetupHomeCellData(title: areaTitle, subTitle: countryName)
-        accountData = DeviceSetupHomeCellData(title: accountTitle)
+        accountData = DeviceSetupHomeCellData(title: accountTitle,subTitle: "",showDot: false)
         dataArray = [
 //            area,
             accountData!
@@ -104,16 +104,15 @@ class DeviceAddShareVC: UIViewController {
         
         if device.userType == 1 {
             
-            deviceShareVM.sharePushDeviceTo(device: device, account:account, type: "3") {[weak self] success, msg in
+            deviceShareVM.shareDeviceTo(device: device, account:account, type: "2") {[weak self] success, msg,uid in
                 
                 AGToolHUD.disMiss()
                 if success == true {
-                    AGToolHUD.showInfo(info: "添加成功")
+                    AGToolHUD.showInfo(info: "添加成功:\(uid)")
                     self?.navigationController?.popViewController(animated: true)
                 }else{
                     AGToolHUD.showInfo(info: msg)
                 }
-                
             }
             
         }else {
@@ -170,7 +169,7 @@ extension DeviceAddShareVC: UITableViewDelegate, UITableViewDataSource {
         let cellData = dataArray[indexPath.row]
         let cell:DeviceInfoCell = tableView.dequeueReusableCell(withIdentifier: kCellID, for: indexPath) as! DeviceInfoCell
         cell.showArrow = true
-        let isPlaceholder = cellData.title == accountTitle && cellData.subTitle?.isEmpty ?? true
+        let isPlaceholder = cellData.title == accountTitle && cellData.subTitle.isEmpty ?? true
         if isPlaceholder {
             cellData.subTitle = "请输入账号"
         }

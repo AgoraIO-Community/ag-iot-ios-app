@@ -51,7 +51,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     // 收到推送(iOS 10+)
-    @available(iOS 10.0, *) func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    @available(iOS 10.0, *)
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         
         let userInfo = notification.request.content.userInfo
         TDLog("收到的推送消息：\(userInfo) 自定义的code:\(userInfo["page_code"] ?? "未知")")
@@ -70,7 +71,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     // 触发通知动作时回调，比如点击、删除通知和点击自定义action(iOS 10+)
-    @available(iOS 10.0, *) func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    @available(iOS 10.0, *)
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
         let userInfo = response.notification.request.content.userInfo
 

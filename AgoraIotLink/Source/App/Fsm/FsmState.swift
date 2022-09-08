@@ -1,7 +1,9 @@
-//FsmState created by guzhihe@agora.io on 2022/07/15 14:11
+//FsmState created by guzhihe@agora.io on 2022/08/16 16:34
 import Foundation
 protocol IFsmStateListener{
     //srcState:idle
+    func do_INITRTM_FAIL(_ srcState:FsmState.State)
+     //srcState:idle
     func do_INITPUSH_FAIL(_ srcState:FsmState.State)
      //srcState:idle
     func do_INITCALL_FAIL(_ srcState:FsmState.State)
@@ -22,6 +24,7 @@ class FsmState : Fsm {
 
     enum Event : Int{
         case INIT           
+        case INITRTM_FAIL   
         case INITPUSH_FAIL  
         case INITCALL_FAIL  
         case INITMQTT_FAIL  
@@ -38,6 +41,7 @@ class FsmState : Fsm {
 
     let s_Event:[String] = [
         "INIT",
+        "INITRTM_FAIL",
         "INITPUSH_FAIL",
         "INITCALL_FAIL",
         "INITMQTT_FAIL",
@@ -61,7 +65,7 @@ class FsmState : Fsm {
         FsmState_P0_FsmState = [
             Node(Fsm.FLAG_RUN,Event.INIT.rawValue,State.idle.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmState_P1_idle = [
-            Node(Fsm.FLAG_NONE,Event.INITPUSH_FAIL.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_INITPUSH_FAIL(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.INITCALL_FAIL.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_INITCALL_FAIL(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.INITMQTT_FAIL.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_INITMQTT_FAIL(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.NOTREADY.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_NOTREADY(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.ALLREADY.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_ALLREADY(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
+            Node(Fsm.FLAG_NONE,Event.INITRTM_FAIL.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_INITRTM_FAIL(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.INITPUSH_FAIL.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_INITPUSH_FAIL(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.INITCALL_FAIL.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_INITCALL_FAIL(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.INITMQTT_FAIL.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_INITMQTT_FAIL(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.NOTREADY.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_NOTREADY(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.ALLREADY.rawValue,State.idle.rawValue,{(s:Int)->Void in self._listener?.do_ALLREADY(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
 
         _diagram = [
             FsmState_P0_FsmState, FsmState_P1_idle]

@@ -58,6 +58,7 @@ class MineTopView: UIView {
     private func createSubviews(){
         addSubview(imageView)
         addSubview(nameLabel)
+        addSubview(countLabel)
         addSubview(arrowButton)
         
         imageView.snp.makeConstraints { make in
@@ -68,7 +69,12 @@ class MineTopView: UIView {
         
         nameLabel.snp.makeConstraints { make in
             make.left.equalTo(imageView.snp.right).offset(18)
-            make.centerY.equalTo(imageView)
+            make.bottom.equalTo(imageView.snp.centerY)
+        }
+        
+        countLabel.snp.makeConstraints{make in
+            make.top.equalTo(nameLabel.snp.bottom)
+            make.left.equalTo(nameLabel.snp.left)
         }
         
         arrowButton.snp.makeConstraints { make in

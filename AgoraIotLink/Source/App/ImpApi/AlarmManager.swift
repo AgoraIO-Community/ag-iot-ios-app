@@ -9,96 +9,147 @@ import Foundation
 
 class AlarmManager : IAlarmMgr{
     
+    private func asyncResult(_ ec:Int,_ msg:String,_ result:@escaping(Int,String)->Void) {
+        DispatchQueue.main.async {
+            let filter = self.app.context.callbackFilter
+            let ret = filter(ec,msg)
+            result(ret.0,ret.1)
+        }
+    }
+    
+    private func asyncResultValue<T>(_ ec:Int,_ msg:String,_ data:T,_ result:@escaping(Int,String,T)->Void) {
+        DispatchQueue.main.async {
+            let filter = self.app.context.callbackFilter
+            let ret = filter(ec,msg)
+            result(ret.0,ret.1,data)
+        }
+    }
+    
+    private func asyncResultData<T>(_ ec:Int,_ msg:String,_ data:T?,_ result:@escaping(Int,String,T?)->Void) {
+        DispatchQueue.main.async {
+            let filter = self.app.context.callbackFilter
+            let ret = filter(ec,msg)
+            result(ret.0,ret.1,data)
+        }
+    }
+    
     func queryByParam(queryParam: QueryParam, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
         DispatchQueue.main.async {
-            let tenantId = self.app.context.gran.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callbackFilter
+            let tenantId = self.app.context.gyiot.session.cert.thingName
+            let agToken = self.app.context.aglab.session.token.accessToken
             if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1,nil)
+                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [IotAlarm]?, result)
                 return
             }
-            self.app.proxy.al.reqAlert(agToken, tenantId, queryParam, {ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
+            self.app.proxy.al.reqAlert(agToken, tenantId, queryParam, {ec,msg,al in self.asyncResultData(ec, msg, al, result)})
         }
     }
     
     func queryById(alertMessageId:UInt64, result:@escaping (Int,String,IotAlarm?) -> Void){
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callbackFilter
+            let agToken = self.app.context.aglab.session.token.accessToken
             if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1,nil)
+                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as IotAlarm?, result)
                 return
             }
-            self.app.proxy.al.reqAlertById(agToken,alertMessageId,{ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
+            self.app.proxy.al.reqAlertById(agToken,alertMessageId,{ec,msg,al in self.asyncResultData(ec, msg, al, result)})
         }
     }
     
     func queryByPage(queryParam: QueryParam, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
         DispatchQueue.main.async {
-            let tenantId = self.app.context.gran.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callbackFilter
+            let tenantId = self.app.context.gyiot.session.cert.thingName
+            let agToken = self.app.context.aglab.session.token.accessToken
             if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1,nil)
+                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [IotAlarm]?, result)
                 return
             }
-            self.app.proxy.al.reqAlert(agToken,tenantId, queryParam, {ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
+            self.app.proxy.al.reqAlert(agToken,tenantId, queryParam, {ec,msg,al in self.asyncResultData(ec, msg, al, result)})
         }
     }
     
     func mark(alarmIdList: [UInt64],result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callbackFilter
+            let agToken = self.app.context.aglab.session.token.accessToken
             if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1)
+                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
                 return
             }
-            self.app.proxy.al.reqAlertBatchRead(agToken, alarmIdList, {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.app.proxy.al.reqAlertBatchRead(agToken, alarmIdList, {ec,msg in self.asyncResult(ec, msg, result)})
+        }
+    }
+    
+    func addAlarm(device device:IotDevice,desc:String,result:@escaping(Int,String)->Void){
+        DispatchQueue.main.async {
+            let agToken = self.app.context.aglab.session.token.accessToken
+            let tenantId = self.app.context.gyiot.session.cert.thingName
+            if(agToken == ""){
+                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+                return
+            }
+            self.app.proxy.al.reqAddAlert(agToken, tenantId, device.productId, device.deviceId, device.deviceName, desc, result)
         }
     }
         
     func delete(alarmIdList: [UInt64], result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callbackFilter
+            let agToken = self.app.context.aglab.session.token.accessToken
             if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1)
+                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
                 return
             }
-            self.app.proxy.al.reqAlertBatchDelete(agToken,alarmIdList,{ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.app.proxy.al.reqAlertBatchDelete(agToken,alarmIdList,{ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func queryCount(productId:String?,deviceId:String?,messageType:Int?,status:Int?,createDateBegin:Date?,createDateEnd:Date? ,result:@escaping(Int,String,UInt)->Void){
         DispatchQueue.main.async {
-            let tenant = self.app.context.gran.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callbackFilter
+            let tenant = self.app.context.gyiot.session.cert.thingName
+            let agToken = self.app.context.aglab.session.token.accessToken
             if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1,0)
+                self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",0 as UInt,result)
                 return
             }
-            self.app.proxy.al.reqAlertCount(agToken, tenant, productId, deviceId, messageType: messageType, status, createDateBegin, createDateEnd, {ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
+            self.app.proxy.al.reqAlertCount(agToken, tenant, productId, deviceId, messageType: messageType, status, createDateBegin, createDateEnd, {ec,msg,al in self.asyncResultValue(ec, msg, al, result)})
+        }
+    }
+    
+    func queryAlarmImage(alertImageId:String,result:@escaping(Int,String,String?)->Void){
+        DispatchQueue.main.async {
+            let tenant = self.app.context.gyiot.session.cert.thingName
+            let agToken = self.app.context.aglab.session.token.accessToken
+            if(agToken == ""){
+                self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil,result)
+                return
+            }
+            self.app.proxy.al.reqAlertImageUrl(agToken, tenant, alertImageId) { ec, msg, url in
+                self.asyncResultValue(ec, msg, url, result)
+            }
+        }
+    }
+    
+    func queryAlarmVideoUrl(deviceId:String, beginTime:UInt64,result:@escaping(Int,String,String?)->Void){
+        DispatchQueue.main.async {
+            let tenant = self.app.context.gyiot.session.cert.thingName
+            let agToken = self.app.context.aglab.session.token.accessToken
+            let userId = self.app.context.virtualNumber
+            if(agToken == ""){
+                self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil,result)
+                return
+            }
+            self.app.proxy.al.reqAlertVideoUrl(agToken, userId, deviceId, beginTime) { ec, msg, url in
+                self.asyncResultValue(ec, msg, url, result)
+            }
         }
     }
     
     func querySysByParam(queryParam: SysQueryParam, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
         var ids:[String] = [String]()
-        let filter = self.app.context.callbackFilter
         if(queryParam.deviceIds.count == 0){
             //note:try to walkaround by restoring deviceIds,because sever can't acquire device id information
             if(app.context.devices == nil || self.app.context.devices?.count == 0){
                 log.w("current device is nil")
-                let ret = filter(ErrCode.XOK,"没有查询到对应设备的告警")
-                result(ret.0,ret.1,[])
+                self.asyncResultData(ErrCode.XOK,"没有查询到对应设备的告警",[] as [IotAlarm],result)
                 return
             }
             for item in app.context.devices!{
@@ -107,74 +158,65 @@ class AlarmManager : IAlarmMgr{
             queryParam.deviceIds = ids
         }
         DispatchQueue.main.async {
-            let tenantId = self.app.context.gran.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.acessToken
+            let tenantId = self.app.context.gyiot.session.cert.thingName
+            let agToken = self.app.context.aglab.session.token.accessToken
             
             if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1,nil)
+                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [IotAlarm]?,result)
                 return
             }
-            self.app.proxy.al.reqSysAlert(agToken, tenantId, queryParam, {ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
+            self.app.proxy.al.reqSysAlert(agToken, tenantId, queryParam, {ec,msg,al in self.asyncResultData(ec,msg,al,result)})
         }
     }
     
     func querySysById(alertMessageId:UInt64, result:@escaping (Int,String,IotAlarm?) -> Void){
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callbackFilter
+            let agToken = self.app.context.aglab.session.token.accessToken
             if(self.app.context.devices == nil || self.app.context.devices?.count == 0){
-                let ret = filter(ErrCode.XERR_UNSUPPORTED,"没有查询到对应设备的告警")
-                result(ret.0,ret.1,nil)
+                self.asyncResultData(ErrCode.XERR_UNSUPPORTED,"没有查询到对应设备的告警",nil as IotAlarm?,result)
                 return
             }
             if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1,nil)
+                self.asyncResultData(ErrCode.XERR_UNSUPPORTED,"没有查询到对应设备的告警",nil as IotAlarm?,result)
                 return
             }
-            self.app.proxy.al.reqSysAlertById(agToken,alertMessageId,{ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
+            self.app.proxy.al.reqSysAlertById(agToken,alertMessageId,{ec,msg,al in self.asyncResultData(ec, msg, al, result)})
         }
     }
     
     func markSys(alarmIdList: [UInt64],result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.acessToken
-            let filter = self.app.context.callbackFilter
+            let agToken = self.app.context.aglab.session.token.accessToken
             if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1)
+                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
                 return
             }
-            self.app.proxy.al.reqSysAlertBatchRead(agToken, alarmIdList, {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.app.proxy.al.reqSysAlertBatchRead(agToken, alarmIdList, {ec,msg in self.asyncResult(ec, msg, result)})
         }
     }
     
     func querySysCount(productId:String?,deviceIds:[String],messageType:Int?,status:Int?,createDateBegin:Date?,createDateEnd:Date? ,result:@escaping(Int,String,UInt)->Void){
-        let agToken = app.context.aglab.session.token.acessToken
-        let tenant = app.context.gran.session.cert.thingName
-        let filter = self.app.context.callbackFilter
+        let agToken = app.context.aglab.session.token.accessToken
+        let tenant = app.context.gyiot.session.cert.thingName
         
         var ids:[String] = deviceIds
         if(deviceIds.count == 0){
             //note:try to walkaround by restoring deviceIds,because sever can't acquire device id information
             if(app.context.devices == nil || self.app.context.devices?.count == 0){
                 log.w("current device is nil")
-                let ret = filter(ErrCode.XOK,"没有查询到对应设备的告警")
-                result(ret.0,ret.1,0)
+                self.asyncResultValue(ErrCode.XOK,"没有查询到对应设备的告警",0 as UInt,result)
                 return
             }
             for item in app.context.devices!{
                 ids.append(item.deviceId)
             }
         }
+        if(agToken == ""){
+            self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",0 as UInt,result)
+            return
+        }
         DispatchQueue.main.async {
-            if(agToken == ""){
-                let ret = filter(ErrCode.XERR_TOKEN_INVALID,"token 无效")
-                result(ret.0,ret.1,0)
-                return
-            }
-            self.app.proxy.al.reqSysAlertCount(agToken, tenant, productId, ids, messageType: messageType, status, createDateBegin, createDateEnd, {ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
+            self.app.proxy.al.reqSysAlertCount(agToken, tenant, productId, ids, messageType: messageType, status, createDateBegin, createDateEnd, {ec,msg,al in self.asyncResultValue(ec, msg, al, result)})
         }
     }
     

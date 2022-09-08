@@ -219,14 +219,6 @@ class NotifyMessageVC: UIViewController {
                 let data = MsgData(alarm: alarm)
                 self?.dataSource.append(data)
             }
-            /*
-            for i in 0...4 {
-                let alarm = IotAlarm(messageId: 123)
-                let data = MsgData(alarm: alarm)
-                data.alarm.fileUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
-                self?.dataSource.append(data)
-            }
-             */
             
             self?.sectionHeaderView.editButton.isEnabled = self?.dataSource.count ?? 0 > 0
     

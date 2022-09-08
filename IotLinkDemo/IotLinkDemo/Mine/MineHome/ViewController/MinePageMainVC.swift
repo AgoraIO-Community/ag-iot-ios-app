@@ -12,6 +12,7 @@ import Alamofire
 class MineCellData {
     var imgName:String = ""
     var title:String = ""
+    var subTitle:String = ""
     var showDot: Bool = false
     
     init(imgName: String, title: String) {
@@ -103,7 +104,7 @@ class MinePageMainVC: AGBaseVC {
             account.replaceSubrange(account.index(startIndex, offsetBy: 3)...account.index(startIndex, offsetBy: 6), with: "****")
         }
         AgoraIotManager.shared.sdk?.accountMgr.getAccountInfo(result: { [weak self] _, _, userInfo in
-            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: userInfo?.name ?? account)
+            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: userInfo?.name ?? account,count:DeviceManager.shared.devices?.count ?? 0)
             self?.userInfo = userInfo
         })
         // 更新是否有告警消息
@@ -177,7 +178,7 @@ extension MinePageMainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellData = dataArray[indexPath.row]
         let cell:MinePageCell = tableView.dequeueReusableCell(withIdentifier: kCellID, for: indexPath) as! MinePageCell
-        cell.setImgName(cellData.imgName, title: cellData.title, showDot: cellData.showDot)
+        cell.setImgName(cellData.imgName, title: cellData.title,subTitle: cellData.subTitle, showDot: cellData.showDot)
         return cell
     }
     

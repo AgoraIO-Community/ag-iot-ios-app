@@ -59,7 +59,7 @@ class DeviceInfoVC: UIViewController {
     }
     
     private func setupData(){
-        let deviceID = DeviceSetupHomeCellData(title: deviceIDTitle, subTitle: device?.deviceId ?? "<未知>")
+        let deviceID = DeviceSetupHomeCellData(title: deviceIDTitle, subTitle: device?.deviceId ?? "<未知>",showDot: false)
         
         dataArray = [
             deviceID

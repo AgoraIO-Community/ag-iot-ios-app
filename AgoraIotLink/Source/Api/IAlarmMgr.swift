@@ -22,20 +22,39 @@
  *
  */
 
-public class AlarmQueryParam : NSObject{
-    public var messageType : Int? = nil //设备告警：0:sound dectect,1:motion dectect, 99:other,nil: all
+//public class AlarmQueryParam : NSObject{
+//    public var messageType : Int? = nil //设备告警：0:sound dectect,1:motion dectect, 99:other,nil: all
+//
+//    public var status : Int? = nil      //0:未读,1:已读，nil：所有
+//
+//    public var createdDateBegin:Date? = nil
+//    public var createdDateEnd:Date = Date()
+//
+//    public var currentPage:Int = 1 //page index start from 1
+//    public var pageSize:Int = 5
+//
+//    public var desc:Bool = true   //sort type : asc,desc
+//
+//    public var device:IotDevice?
+//
+//    public init(dateBegin:Date? = nil){
+//        self.createdDateBegin = dateBegin
+//    }
+//}
 
+public class AlarmQueryParam : NSObject{
+    public var productId:String?
+    public var deviceId:String?
+    public var messageType : Int? = nil //设备告警：0:sound dectect,1:motion dectect, 99:other,nil: all
     public var status : Int? = nil      //0:未读,1:已读，nil：所有
     
     public var createdDateBegin:Date? = nil
-    public var createdDateEnd:Date = Date()
+    public var createdDateEnd:Date? = nil
     
     public var currentPage:Int = 1 //page index start from 1
     public var pageSize:Int = 5
     
     public var desc:Bool = true   //sort type : asc,desc
-    
-    public var device:IotDevice?
     
     public init(dateBegin:Date? = nil){
         self.createdDateBegin = dateBegin
@@ -104,6 +123,11 @@ public protocol IAlarmMgr {
      */
     func queryCount(productId:String?,deviceId:String?,messageType:Int?,status:Int?,createDateBegin:Date?,createDateEnd:Date? , result:@escaping(Int,String,UInt)->Void)
     
+    func addAlarm(device:IotDevice,desc:String,result:@escaping(Int,String)->Void)
+    
+    func queryAlarmImage(alertImageId:String,result:@escaping(Int,String,String?)->Void)
+    
+    func queryAlarmVideoUrl(deviceId:String,beginTime:UInt64,result:@escaping(Int,String,String?)->Void)
     /*
      * @brief 根据id查询告警
      * @alarmMessageId   : 告警id

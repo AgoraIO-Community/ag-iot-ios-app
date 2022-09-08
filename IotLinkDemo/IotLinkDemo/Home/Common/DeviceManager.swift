@@ -12,7 +12,7 @@ class DeviceManager {
     
     static let shared = DeviceManager()
     
-    var sdk:IAgoraIotAppSdk?{get{return gwsdk}}
+    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
 
     private (set) var devices:[IotDevice]?
     
@@ -76,21 +76,21 @@ class DeviceManager {
     }
     
     // 查询是否有未读的分享
-    func qureySharePushList(result: @escaping([ShareItem]?)->Void){
-        sdk?.deviceMgr.sharePushList(pageNo: 0, pageSize: 10, auditStatus: "f", result: { ec, msg, items, _ in
-            if ec == ErrCode.XOK {
-                result(items)
-            }
-        })
-    }
+//    func qureySharePushList(result: @escaping([ShareItem]?)->Void){
+//        sdk?.deviceMgr.sharePushList(pageNo: 0, pageSize: 10, auditStatus: "f", result: { ec, msg, items, _ in
+//            if ec == ErrCode.XOK {
+//                result(items)
+//            }
+//        })
+//    }
     
-    func acceptDevice(_ name:String,order:String, result:@escaping((Int, String)->Void)){
-        sdk?.deviceMgr.shareDeviceAccept(deviceNickName: name, order: order, result: result)
-    }
+//    func acceptDevice(_ name:String,order:String, result:@escaping((Int, String)->Void)){
+//        sdk?.deviceMgr.shareDeviceAccept(deviceNickName: name, order: order, result: result)
+//    }
     
-    func refuseDevice(id: String, result: @escaping (Int, String) -> Void){
-        sdk?.deviceMgr.sharePushDel(id: id, result: result)
-    }
+//    func refuseDevice(id: String, result: @escaping (Int, String) -> Void){
+//        sdk?.deviceMgr.sharePushDel(id: id, result: result)
+//    }
 
     func removeDevice(_ device: IotDevice,result:@escaping(Int,String)->Void) {
         sdk?.deviceMgr.removeDevice(device: device, result:result)

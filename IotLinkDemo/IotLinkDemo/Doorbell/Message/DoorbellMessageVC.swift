@@ -11,9 +11,13 @@ import DZNEmptyDataSet
 import SwiftDate
 import AgoraIotLink
 import SVProgressHUD
-import SJVideoPlayer
+//import SJVideoPlayer
 import Alamofire
 import MJRefresh
+import IJKMediaFramework
+import SJUIKit
+import SJBaseVideoPlayer
+
 
 private let kCellID = "DoorbellMsgCell"
 private let kDownloadMaxCount = 1
@@ -182,17 +186,19 @@ class DoorbellMessageVC: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         player.vc_viewWillDisappear()
+//        player.pause()
         endEditMsgList()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         player.vc_viewDidAppear()
+//        player.resume()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        player.vc_viewDidDisappear()
+        //player.vc_viewDidDisappear()
     }
     
     override var shouldAutorotate: Bool {
@@ -238,18 +244,18 @@ class DoorbellMessageVC: UIViewController {
             return
         }
         currentDownloadCount += 1
-        if let url = self.player.assetURL {
-            guard let msg = self.currentPlayingMsg else { return }
-            playerView.isDownloading = true
-            msg.isDownloading = true
-            DoorbellDownlaodManager.shared.download(url: url, completion: { [weak self] in
-                guard let wSelf = self else { return }
-                msg.isDownloading = false
-                wSelf.playerView.isDownloading = wSelf.currentPlayingMsg?.isDownloading ?? false
-            })
-        }else{
-            SVProgressHUD.showInfo(withStatus: "下载地址错误")
-        }
+//        if let url = self.player.assetURL {
+//            guard let msg = self.currentPlayingMsg else { return }
+//            playerView.isDownloading = true
+//            msg.isDownloading = true
+//            DoorbellDownlaodManager.shared.download(url: url, completion: { [weak self] in
+//                guard let wSelf = self else { return }
+//                msg.isDownloading = false
+//                wSelf.playerView.isDownloading = wSelf.currentPlayingMsg?.isDownloading ?? false
+//            })
+//        }else{
+//            SVProgressHUD.showInfo(withStatus: "下载地址错误")
+//        }
     }
     
     // 尝试删除当前播放的消息
@@ -355,9 +361,9 @@ class DoorbellMessageVC: UIViewController {
     // 获取电量信息
     private func loadPowerData(){
         guard let device = device else { return }
-        DoorBellManager.shared.getDeviceProperty(device) { [weak self] success, msg, resultDic in
+        DoorBellManager.shared.getDeviceProperty(device) { [weak self] success, msg, desired,reported in
             if success {
-                guard let dict = resultDic else { return }
+                guard let dict = desired else { return }
                 if let value = dict["106"] as? Int{
                     self?.playerView.quantityValue = value
                 }
@@ -378,7 +384,7 @@ class DoorbellMessageVC: UIViewController {
         }else{
             query = IAlarmMgr.QueryParam()
         }
-        query.status = 0
+        query.status = nil
         if isLoadMore {
             currentPage += 1
         }else{
@@ -388,7 +394,8 @@ class DoorbellMessageVC: UIViewController {
         query.pageSize = 10
         query.messageType = self.selectedMessageType
         SVProgressHUD.show()
-        query.device = device
+        query.productId = device?.productId
+        query.deviceId = device?.deviceId
         alarmMgr.queryByParam(queryParam: query) { [weak self] ec, msg, alarms in
             
             self?.tableView.mj_header?.endRefreshing()
@@ -413,6 +420,10 @@ class DoorbellMessageVC: UIViewController {
             for alarm:IotAlarm in alarmList {
                 let data = MsgData(alarm: alarm)
                 self?.dataSource.append(data)
+                Utils.loadAlertImage(alarm.imageId) { ec, msg, img in
+                    data.uiImage = img
+                    self?.tableView.reloadData()
+                }
             }
             
             /*
@@ -471,13 +482,44 @@ class DoorbellMessageVC: UIViewController {
                 SVProgressHUD.dismiss()
                 return
             }
-            guard let url = URL(string: msg.fileUrl) else {
+            
+//            guard let url = URL(string: msg.fileUrl) else {
+//                SVProgressHUD.showError(withStatus: "获取播放地址失败")
+//                SVProgressHUD.dismiss(withDelay: 2)
+//                return
+//            }
+            guard let alert = alert else{
                 SVProgressHUD.showError(withStatus: "获取播放地址失败")
                 SVProgressHUD.dismiss(withDelay: 2)
                 return
             }
-            self?.player.urlAsset =  SJVideoPlayerURLAsset(url: url)
-            SVProgressHUD.dismiss()
+            
+            Utils.loadAlertVideoUrl(alert.deviceId, alert.beginTime) { ec, msg, url in
+                if(ec == ErrCode.XOK && url != nil){
+                    let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
+                    let options = IJKFFOptions.byDefault()
+                    ijkVC.options = options
+                    self?.player.playbackController = ijkVC
+                    
+                    guard let url = URL(string: url!) else {
+                                    SVProgressHUD.showError(withStatus: "获取播放地址失败")
+                                    SVProgressHUD.dismiss(withDelay: 2)
+                                    return
+                                }
+                    self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
+                    
+                    
+        //            self?.player.play(alarm: alert!)
+                    //self?.player.play(url: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8")
+                    SVProgressHUD.dismiss()
+                }
+                else{
+                    SVProgressHUD.showError(withStatus: "获取播放地址失败")
+                    SVProgressHUD.dismiss(withDelay: 2)
+                }
+            }
+            
+            
         })
     }
     
@@ -527,7 +569,6 @@ extension DoorbellMessageVC: UITableViewDelegate, UITableViewDataSource {
         return 65
     }
 
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let data = self.dataSource[indexPath.row]
         let cell:DoorbellMsgCell = tableView.dequeueReusableCell(withIdentifier: kCellID, for: indexPath) as! DoorbellMsgCell

@@ -81,8 +81,8 @@ class ShareDeviceSetupVC: UIViewController {
     }
     
     private func setupData(){
-        let source = DeviceSetupHomeCellData(title: sourceTitle, subTitle: device?.sharer)
-        let deviceID = DeviceSetupHomeCellData(title: deviceIDTitle, subTitle: device?.deviceId)
+        let source = DeviceSetupHomeCellData(title: sourceTitle, subTitle: device?.sharer ?? "",showDot: false)
+        let deviceID = DeviceSetupHomeCellData(title: deviceIDTitle, subTitle: device?.deviceId ?? "",showDot: false)
         
         dataArray = [
             source,

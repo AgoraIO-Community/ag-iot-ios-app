@@ -8,8 +8,12 @@
 import UIKit
 import SVProgressHUD
 import AgoraIotLink
-import SJVideoPlayer
+//import SJVideoPlayer
 import Alamofire
+import IJKMediaFramework
+import SJUIKit
+import SJBaseVideoPlayer
+
 
 class MessagePlayerVC: UIViewController {
     
@@ -28,7 +32,7 @@ class MessagePlayerVC: UIViewController {
         let playerView = DoorbellPlayerView()
         playerView.clickDeleteButtonAction = { [weak self] in
             self?.playerView.pause()
-            self?.player.isFitOnScreen = false
+            //self?.player.isFitOnScreen = false
             self?.tryDeleteCurrentPlayingMsg()
         }
         playerView.clickDownloadButtonAction = {[weak self] in
@@ -38,10 +42,10 @@ class MessagePlayerVC: UIViewController {
             if self!.isDownloading {
                 return
             }
-            if let url =  self?.player.assetURL {
-                self!.isDownloading = true
-                self!.downloadCurrentPlayingVideo(url)
-            }
+//            if let url =  self?.player.assetURL {
+//                self!.isDownloading = true
+//                self!.downloadCurrentPlayingVideo(url)
+//            }
         }
         return playerView
     }()
@@ -62,6 +66,7 @@ class MessagePlayerVC: UIViewController {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.barTintColor = originBarTintColor
         self.navigationController?.navigationBar.titleTextAttributes = originTitleTextAttributes
+        player.stop()
     }
 
     
@@ -122,19 +127,41 @@ class MessagePlayerVC: UIViewController {
                 SVProgressHUD.dismiss(withDelay: 2)
                 return
             }
-            guard let msg = alert else {
+            guard let alert = alert else {
                 SVProgressHUD.dismiss()
                 return
             }
-            guard let url = URL(string: msg.fileUrl) else {
-                SVProgressHUD.showError(withStatus: "获取播放地址失败")
-                SVProgressHUD.dismiss(withDelay: 2)
-                return
+            Utils.loadAlertVideoUrl(alert.deviceId, alert.beginTime) { ec, msg, url in
+                guard let url = url else{
+                    log.e("loadAlertVideoUrl failed")
+                    SVProgressHUD.showError(withStatus: "查询视频失败\(msg)")
+                    SVProgressHUD.dismiss(withDelay: 2)
+                    return
+                }
+                guard let url = URL(string: url) else {
+                    SVProgressHUD.showError(withStatus: "获取播放地址失败")
+                    SVProgressHUD.dismiss(withDelay: 2)
+                    return
+                }
+                let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
+                let options = IJKFFOptions.byDefault()
+                ijkVC.options = options
+                self?.player.playbackController = ijkVC
+                self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
+                
+                
+    //            self?.player.play(alarm: alert!)
+                //self?.player.play(url: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8")
+                SVProgressHUD.dismiss()
             }
-            self?.player.urlAsset =  SJVideoPlayerURLAsset(url: url)
-            SVProgressHUD.dismiss()
+            
+            //self?.player.urlAsset =  SJVideoPlayerURLAsset(url: url)
+            
+            
+            
         })
     }
+    
 
     // 下载
     func downloadCurrentPlayingVideo(_ url:URL){

@@ -21,6 +21,7 @@ class MsgData:NSObject {
     var isSelected = false
     var canEdit = false
     var isDownloading = false
+    var uiImage:UIImage? = nil
     
     init(alarm:IotAlarm, isPlaying:Bool = false, isSelected:Bool = false, canEidt:Bool = false) {
         self.alarm = alarm
@@ -256,7 +257,8 @@ class DoorbellMsgCell: UITableViewCell {
     }
     
     func setMsgData(_ data: MsgData) {
-        iconImgView.kf.setImage(with: URL(string: ""), placeholder: UIImage(named: "msg_preview_placeholder"))
+        //iconImgView.kf.setImage(with: URL(string: ""), placeholder: UIImage(named: "msg_preview_placeholder"))
+        iconImgView.image = data.uiImage == nil ? UIImage(named: "msg_preview_placeholder") : data.uiImage
         playCoverView.isHidden = !data.isPlaying
         nameLabel.text = messageTypeValues[Int(data.alarm.messageType)] ?? "未知"
         infoLabel.text = data.alarm.desc

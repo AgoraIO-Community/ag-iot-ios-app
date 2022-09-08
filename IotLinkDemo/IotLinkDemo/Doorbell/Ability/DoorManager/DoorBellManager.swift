@@ -12,7 +12,7 @@ class DoorBellManager: NSObject {
 
     public static let shared = DoorBellManager()
     
-    var sdk:IAgoraIotAppSdk?{get{return gwsdk}}
+    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
 
     var volumeValue : Int = 10
     
@@ -122,12 +122,12 @@ class DoorBellManager: NSObject {
         
     }
     
-    func getDeviceProperty(_ dev:IotDevice,cb:@escaping(Bool,String,Dictionary<String, Any>?)->Void){
+    func getDeviceProperty(_ dev:IotDevice,cb:@escaping(Bool,String,Dictionary<String, Any>?,Dictionary<String, Any>?)->Void){
         
-        sdk?.deviceMgr.getDeviceProperty(device: dev, result: { ecCode, msg, resultDic in
+        sdk?.deviceMgr.getDeviceProperty(device: dev, result: { ecCode, msg, desiredDic,reportedDic in
             if ecCode == 0 {
                 debugPrint("查询设备信息：\(msg)")
-                cb(true,msg,resultDic)
+                cb(true,msg,desiredDic,reportedDic)
             }else{
                 debugPrint("查询设备信息：\(msg)")
 //                AGToolHUD.showInfo(info: "\(msg)")
@@ -165,9 +165,14 @@ class DoorBellManager: NSObject {
     }
     
     func unregister(account:String, _ cb:@escaping(Bool,String)->Void){
-        sdk?.accountMgr.unregister( result: { ec, msg in
+//        sdk?.accountMgr.unregister( result: { ec, msg in
+//            cb(ec == ErrCode.XOK ? true : false, msg)
+//        })
+        //note:
+        let password = TDUserInforManager.shared.readPasswordNumber()
+        ThirdAccountManager.reqUnRegister(account, password) { ec, msg in
             cb(ec == ErrCode.XOK ? true : false, msg)
-        })
+        }
     }
     
 }

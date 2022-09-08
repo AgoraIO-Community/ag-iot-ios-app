@@ -8,6 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		241E9514AF5C21D05B21E03E /* Pods_IotLinkDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB6EBD13EF6155EB7EC65C6A /* Pods_IotLinkDemo.framework */; };
+		84B3254928A394CA0054B369 /* ThirdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254828A394CA0054B369 /* ThirdManager.swift */; };
+		84B3254F28A50AA60054B369 /* DoorbellControlVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254E28A50AA60054B369 /* DoorbellControlVC.swift */; };
+		84B3255128A5ED190054B369 /* TextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3255028A5ED190054B369 /* TextInputView.swift */; };
+		84B3ECA028B3A0140047EE1A /* MediaPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3EC9F28B3A0140047EE1A /* MediaPlayer.swift */; };
+		84B3ECA528B470700047EE1A /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECA428B470700047EE1A /* MediaPlayer.framework */; };
+		84B3ECA728B470770047EE1A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECA628B470770047EE1A /* AudioToolbox.framework */; };
+		84B3ECA928B4707E0047EE1A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECA828B4707E0047EE1A /* AVFoundation.framework */; };
+		84B3ECAB28B470890047EE1A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECAA28B470890047EE1A /* CoreGraphics.framework */; };
+		84B3ECAD28B470900047EE1A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECAC28B470900047EE1A /* CoreMedia.framework */; };
+		84B3ECAF28B470950047EE1A /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECAE28B470950047EE1A /* CoreVideo.framework */; };
+		84B3ECB128B4709F0047EE1A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB028B4709F0047EE1A /* OpenGLES.framework */; };
+		84B3ECB328B470A90047EE1A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB228B470A90047EE1A /* QuartzCore.framework */; };
+		84B3ECB528B470AF0047EE1A /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB428B470AF0047EE1A /* VideoToolbox.framework */; };
+		84B3ECB728B470B60047EE1A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB628B470B60047EE1A /* libz.tbd */; };
+		84B3ECB928B470BD0047EE1A /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB828B470BD0047EE1A /* libbz2.tbd */; };
+		84B3ECBB28B4715B0047EE1A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECBA28B4715B0047EE1A /* UIKit.framework */; };
+		84F7453B289BBDEA00702944 /* DeviceFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */; };
+		84F7453D289BC14A00702944 /* DeviceFirmwareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */; };
+		84F7453F289BEE0500702944 /* AGFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453E289BEE0500702944 /* AGFirmwareVC.swift */; };
+		84F74541289CBDCC00702944 /* AGConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F74540289CBDCC00702944 /* AGConfirmView.swift */; };
 		9601C2FC280D5C6400D3CA49 /* MinePageMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C2FB280D5C6400D3CA49 /* MinePageMainVC.swift */; };
 		9601C2FF280D5EBF00D3CA49 /* NetWorkTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C2FE280D5EBF00D3CA49 /* NetWorkTool.swift */; };
 		9601C301280D638800D3CA49 /* TDTURLConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C300280D638800D3CA49 /* TDTURLConstant.swift */; };
@@ -17,8 +37,6 @@
 		9601C317280E4BE900D3CA49 /* LoginMainVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C316280E4BE900D3CA49 /* LoginMainVM.swift */; };
 		960ECFFB283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960ECFFA283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift */; };
 		960ECFFD283E1660005A00D0 /* DoorbellChangeSoundModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960ECFFC283E1660005A00D0 /* DoorbellChangeSoundModel.swift */; };
-		961825352817D43B00053691 /* SetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961825342817D43B00053691 /* SetPasswordVC.swift */; };
-		961825372817D49F00053691 /* ResetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961825362817D49F00053691 /* ResetPasswordVC.swift */; };
 		961825392817D4D400053691 /* SetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961825382817D4D400053691 /* SetPasswordView.swift */; };
 		9618253B2817D4EE00053691 /* ResetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9618253A2817D4EE00053691 /* ResetPasswordView.swift */; };
 		9618253E2818356600053691 /* VerficaCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9618253D2818356600053691 /* VerficaCodeView.swift */; };
@@ -50,12 +68,10 @@
 		9697BE6128113BF500447DF9 /* AgoraIotConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE6028113BF500447DF9 /* AgoraIotConfig.swift */; };
 		9697BE6328113F6300447DF9 /* AppDelegate_ThidParty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE6228113F6300447DF9 /* AppDelegate_ThidParty.swift */; };
 		9697BE6C2812873800447DF9 /* LoginBaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE6B2812873800447DF9 /* LoginBaseVC.swift */; };
-		9697BE6E281287A800447DF9 /* RegisterMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE6D281287A800447DF9 /* RegisterMainVC.swift */; };
 		9697BE702812888200447DF9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE6F2812888200447DF9 /* LoginView.swift */; };
 		9697BE722812891E00447DF9 /* PhoneInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE712812891E00447DF9 /* PhoneInputView.swift */; };
 		9697BE74281289DB00447DF9 /* LoginInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE73281289DB00447DF9 /* LoginInputView.swift */; };
 		9697BE7628128A0D00447DF9 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE7528128A0D00447DF9 /* RegisterView.swift */; };
-		9697BE7828128A9700447DF9 /* VerifyInputCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE7728128A9700447DF9 /* VerifyInputCodeVC.swift */; };
 		9697BE7A28128ADE00447DF9 /* CountrySelectVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE7928128ADE00447DF9 /* CountrySelectVC.swift */; };
 		9697BE7E28128ED800447DF9 /* DispatchCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE7D28128ED800447DF9 /* DispatchCenter.swift */; };
 		9697BE932812B25F00447DF9 /* EXT-StrFromCls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9697BE802812B25E00447DF9 /* EXT-StrFromCls.swift */; };
@@ -123,7 +139,6 @@
 		A80D5ECA282D156F0096BBDE /* PushMsgSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EC9282D156F0096BBDE /* PushMsgSettingVC.swift */; };
 		A80D5ECC282D16620096BBDE /* SwitchSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ECB282D16620096BBDE /* SwitchSettingCell.swift */; };
 		A80D5ECE282D386E0096BBDE /* AccountSafeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ECD282D386E0096BBDE /* AccountSafeVC.swift */; };
-		A80D5ED0282D39370096BBDE /* ModifyPwdVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ECF282D39370096BBDE /* ModifyPwdVC.swift */; };
 		A80D5ED2282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED1282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift */; };
 		A80D5ED4282DE4E20096BBDE /* NotifyMsgCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED3282DE4E20096BBDE /* NotifyMsgCell.swift */; };
 		A80D5ED6282DEA890096BBDE /* SystemSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED5282DEA890096BBDE /* SystemSettingVC.swift */; };
@@ -171,6 +186,26 @@
 
 /* Begin PBXFileReference section */
 		3A7F2106BF524F4575B562E1 /* Pods-IotLinkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.release.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.release.xcconfig"; sourceTree = "<group>"; };
+		84B3254828A394CA0054B369 /* ThirdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdManager.swift; sourceTree = "<group>"; };
+		84B3254E28A50AA60054B369 /* DoorbellControlVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellControlVC.swift; sourceTree = "<group>"; };
+		84B3255028A5ED190054B369 /* TextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
+		84B3EC9F28B3A0140047EE1A /* MediaPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayer.swift; sourceTree = "<group>"; };
+		84B3ECA428B470700047EE1A /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		84B3ECA628B470770047EE1A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		84B3ECA828B4707E0047EE1A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		84B3ECAA28B470890047EE1A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		84B3ECAC28B470900047EE1A /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		84B3ECAE28B470950047EE1A /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		84B3ECB028B4709F0047EE1A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		84B3ECB228B470A90047EE1A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		84B3ECB428B470AF0047EE1A /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		84B3ECB628B470B60047EE1A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		84B3ECB828B470BD0047EE1A /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		84B3ECBA28B4715B0047EE1A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareVC.swift; sourceTree = "<group>"; };
+		84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareView.swift; sourceTree = "<group>"; };
+		84F7453E289BEE0500702944 /* AGFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGFirmwareVC.swift; sourceTree = "<group>"; };
+		84F74540289CBDCC00702944 /* AGConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGConfirmView.swift; sourceTree = "<group>"; };
 		8C6A65CBF4F4809C66FEC83C /* Pods-AgoraIotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraIotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-AgoraIotLinkDemo/Pods-AgoraIotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		8DA61631220187EAFBFB57B5 /* Pods-IotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		9601C2FB280D5C6400D3CA49 /* MinePageMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinePageMainVC.swift; sourceTree = "<group>"; };
@@ -182,8 +217,6 @@
 		9601C316280E4BE900D3CA49 /* LoginMainVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginMainVM.swift; sourceTree = "<group>"; };
 		960ECFFA283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityVC_Full.swift; sourceTree = "<group>"; };
 		960ECFFC283E1660005A00D0 /* DoorbellChangeSoundModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellChangeSoundModel.swift; sourceTree = "<group>"; };
-		961825342817D43B00053691 /* SetPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPasswordVC.swift; sourceTree = "<group>"; };
-		961825362817D49F00053691 /* ResetPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordVC.swift; sourceTree = "<group>"; };
 		961825382817D4D400053691 /* SetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPasswordView.swift; sourceTree = "<group>"; };
 		9618253A2817D4EE00053691 /* ResetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordView.swift; sourceTree = "<group>"; };
 		9618253D2818356600053691 /* VerficaCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerficaCodeView.swift; sourceTree = "<group>"; };
@@ -218,12 +251,10 @@
 		9697BE6028113BF500447DF9 /* AgoraIotConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraIotConfig.swift; sourceTree = "<group>"; };
 		9697BE6228113F6300447DF9 /* AppDelegate_ThidParty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate_ThidParty.swift; sourceTree = "<group>"; };
 		9697BE6B2812873800447DF9 /* LoginBaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginBaseVC.swift; sourceTree = "<group>"; };
-		9697BE6D281287A800447DF9 /* RegisterMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterMainVC.swift; sourceTree = "<group>"; };
 		9697BE6F2812888200447DF9 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		9697BE712812891E00447DF9 /* PhoneInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneInputView.swift; sourceTree = "<group>"; };
 		9697BE73281289DB00447DF9 /* LoginInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInputView.swift; sourceTree = "<group>"; };
 		9697BE7528128A0D00447DF9 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
-		9697BE7728128A9700447DF9 /* VerifyInputCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyInputCodeVC.swift; sourceTree = "<group>"; };
 		9697BE7928128ADE00447DF9 /* CountrySelectVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountrySelectVC.swift; sourceTree = "<group>"; };
 		9697BE7D28128ED800447DF9 /* DispatchCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchCenter.swift; sourceTree = "<group>"; };
 		9697BE802812B25E00447DF9 /* EXT-StrFromCls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EXT-StrFromCls.swift"; sourceTree = "<group>"; };
@@ -293,7 +324,6 @@
 		A80D5EC9282D156F0096BBDE /* PushMsgSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushMsgSettingVC.swift; sourceTree = "<group>"; };
 		A80D5ECB282D16620096BBDE /* SwitchSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchSettingCell.swift; sourceTree = "<group>"; };
 		A80D5ECD282D386E0096BBDE /* AccountSafeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSafeVC.swift; sourceTree = "<group>"; };
-		A80D5ECF282D39370096BBDE /* ModifyPwdVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyPwdVC.swift; sourceTree = "<group>"; };
 		A80D5ED1282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMsgSectionHeaderView.swift; sourceTree = "<group>"; };
 		A80D5ED3282DE4E20096BBDE /* NotifyMsgCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMsgCell.swift; sourceTree = "<group>"; };
 		A80D5ED5282DEA890096BBDE /* SystemSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingVC.swift; sourceTree = "<group>"; };
@@ -331,7 +361,6 @@
 		A89E3DE928250DBC002FFED9 /* DoorbellMsgCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellMsgCell.swift; sourceTree = "<group>"; };
 		A89E3DEB2825FEC1002FFED9 /* DoorbellPlayerBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellPlayerBottomView.swift; sourceTree = "<group>"; };
 		A89E3DED28268D61002FFED9 /* DoorbellPlayerTopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellPlayerTopView.swift; sourceTree = "<group>"; };
-		A89E3DF12827AC29002FFED9 /* IotLinkDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IotLinkDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		A89E3DF22827AC29002FFED9 /* UIViewController+RotationControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+RotationControl.h"; sourceTree = "<group>"; };
 		A89E3DF32827AC29002FFED9 /* UIViewController+RotationControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+RotationControl.m"; sourceTree = "<group>"; };
 		A89E3DFA28290B45002FFED9 /* DoorbellSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellSectionView.swift; sourceTree = "<group>"; };
@@ -348,6 +377,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84B3ECBB28B4715B0047EE1A /* UIKit.framework in Frameworks */,
+				84B3ECB928B470BD0047EE1A /* libbz2.tbd in Frameworks */,
+				84B3ECB728B470B60047EE1A /* libz.tbd in Frameworks */,
+				84B3ECB528B470AF0047EE1A /* VideoToolbox.framework in Frameworks */,
+				84B3ECB328B470A90047EE1A /* QuartzCore.framework in Frameworks */,
+				84B3ECB128B4709F0047EE1A /* OpenGLES.framework in Frameworks */,
+				84B3ECAF28B470950047EE1A /* CoreVideo.framework in Frameworks */,
+				84B3ECAD28B470900047EE1A /* CoreMedia.framework in Frameworks */,
+				84B3ECAB28B470890047EE1A /* CoreGraphics.framework in Frameworks */,
+				84B3ECA928B4707E0047EE1A /* AVFoundation.framework in Frameworks */,
+				84B3ECA728B470770047EE1A /* AudioToolbox.framework in Frameworks */,
+				84B3ECA528B470700047EE1A /* MediaPlayer.framework in Frameworks */,
 				241E9514AF5C21D05B21E03E /* Pods_IotLinkDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -364,6 +405,24 @@
 				D4C3B17B7C6B1173874ED316 /* Pods-AgoraIotLinkDemo.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		84B3254728A394AC0054B369 /* thridParty */ = {
+			isa = PBXGroup;
+			children = (
+				84B3254828A394CA0054B369 /* ThirdManager.swift */,
+				84B3EC9F28B3A0140047EE1A /* MediaPlayer.swift */,
+			);
+			path = thridParty;
+			sourceTree = "<group>";
+		};
+		84B3254D28A50A7E0054B369 /* Control */ = {
+			isa = PBXGroup;
+			children = (
+				84B3254E28A50AA60054B369 /* DoorbellControlVC.swift */,
+				84B3255028A5ED190054B369 /* TextInputView.swift */,
+			);
+			path = Control;
 			sourceTree = "<group>";
 		};
 		9601C2F9280D5C2B00D3CA49 /* ViewController */ = {
@@ -449,10 +508,7 @@
 			isa = PBXGroup;
 			children = (
 				9601C314280E4B9D00D3CA49 /* LoginMainVC.swift */,
-				9697BE7728128A9700447DF9 /* VerifyInputCodeVC.swift */,
 				9697BE7928128ADE00447DF9 /* CountrySelectVC.swift */,
-				961825342817D43B00053691 /* SetPasswordVC.swift */,
-				961825362817D49F00053691 /* ResetPasswordVC.swift */,
 				96182542281937A300053691 /* LoginProtocolAlertVC.swift */,
 			);
 			path = ViewController;
@@ -586,8 +642,6 @@
 		9697BE64281285EB00447DF9 /* RegisterMain */ = {
 			isa = PBXGroup;
 			children = (
-				9697BE672812864900447DF9 /* Model */,
-				9697BE662812864400447DF9 /* ViewModel */,
 				9697BE652812862800447DF9 /* View */,
 			);
 			path = RegisterMain;
@@ -602,24 +656,9 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		9697BE662812864400447DF9 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		9697BE672812864900447DF9 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
 		9697BE682812867700447DF9 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				9697BE6D281287A800447DF9 /* RegisterMainVC.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -670,7 +709,6 @@
 				969994152814EBAD00910792 /* EXT-UITextField.swift */,
 				A89E3DF22827AC29002FFED9 /* UIViewController+RotationControl.h */,
 				A89E3DF32827AC29002FFED9 /* UIViewController+RotationControl.m */,
-				A89E3DF12827AC29002FFED9 /* IotLinkDemo-Bridging-Header.h */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -696,6 +734,7 @@
 		96E4C1022807CA5500A53A49 /* IotLinkDemo */ = {
 			isa = PBXGroup;
 			children = (
+				84B3254728A394AC0054B369 /* thridParty */,
 				96827D722867301E0012AC84 /* LogViewer */,
 				A819963928338F8500870CDA /* DeviceSetup */,
 				A89E3DDD2823DBCB002FFED9 /* Doorbell */,
@@ -810,6 +849,8 @@
 				A89E3DFE282A1C5E002FFED9 /* AGDatePickerVC.swift */,
 				A805ADC92816C51500E6C6DF /* AGEditAlertVC.swift */,
 				A805ADCB2817893400E6C6DF /* DeviceManager.swift */,
+				84F7453E289BEE0500702944 /* AGFirmwareVC.swift */,
+				84F74540289CBDCC00702944 /* AGConfirmView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -850,7 +891,6 @@
 				A80D5EB8282CE90C0096BBDE /* GeneralSettingVC.swift */,
 				A80D5EC9282D156F0096BBDE /* PushMsgSettingVC.swift */,
 				A80D5ECD282D386E0096BBDE /* AccountSafeVC.swift */,
-				A80D5ECF282D39370096BBDE /* ModifyPwdVC.swift */,
 				A80D5ED5282DEA890096BBDE /* SystemSettingVC.swift */,
 			);
 			path = GeneralSetting;
@@ -914,6 +954,7 @@
 				A819964A2834798D00870CDA /* DeviceInfoCell.swift */,
 				A81996552834BAE000870CDA /* ShareDeviceInfoCell.swift */,
 				A8598E262835AFEF00168244 /* ShareDetailCell.swift */,
+				84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -929,6 +970,7 @@
 				A8598E242835AE6600168244 /* ShareDeviceDetailVC.swift */,
 				A81996462834719C00870CDA /* DeviceInfoVC.swift */,
 				A81996512834876C00870CDA /* DeviceAddShareVC.swift */,
+				84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -979,6 +1021,7 @@
 		A89E3DDD2823DBCB002FFED9 /* Doorbell */ = {
 			isa = PBXGroup;
 			children = (
+				84B3254D28A50A7E0054B369 /* Control */,
 				A89E3DE02823E0FE002FFED9 /* Ability */,
 				A89E3DE32823E183002FFED9 /* Message */,
 				A89E3DDE2823DD28002FFED9 /* DoorbellContainerVC.swift */,
@@ -1036,6 +1079,18 @@
 		BB6739EF5E0F68176408BBAD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84B3ECBA28B4715B0047EE1A /* UIKit.framework */,
+				84B3ECB828B470BD0047EE1A /* libbz2.tbd */,
+				84B3ECB628B470B60047EE1A /* libz.tbd */,
+				84B3ECB428B470AF0047EE1A /* VideoToolbox.framework */,
+				84B3ECB228B470A90047EE1A /* QuartzCore.framework */,
+				84B3ECB028B4709F0047EE1A /* OpenGLES.framework */,
+				84B3ECAE28B470950047EE1A /* CoreVideo.framework */,
+				84B3ECAC28B470900047EE1A /* CoreMedia.framework */,
+				84B3ECAA28B470890047EE1A /* CoreGraphics.framework */,
+				84B3ECA828B4707E0047EE1A /* AVFoundation.framework */,
+				84B3ECA628B470770047EE1A /* AudioToolbox.framework */,
+				84B3ECA428B470700047EE1A /* MediaPlayer.framework */,
 				AB6EBD13EF6155EB7EC65C6A /* Pods_IotLinkDemo.framework */,
 			);
 			name = Frameworks;
@@ -1191,7 +1246,6 @@
 				96D97BA92828FE2B00575335 /* VideoAlertTipView.swift in Sources */,
 				9697BE7A28128ADE00447DF9 /* CountrySelectVC.swift in Sources */,
 				96E4C120280801A500A53A49 /* GlobalConstant.swift in Sources */,
-				961825352817D43B00053691 /* SetPasswordVC.swift in Sources */,
 				9697BE6C2812873800447DF9 /* LoginBaseVC.swift in Sources */,
 				A819964D2834840F00870CDA /* ShareDeviceSetupVC.swift in Sources */,
 				A805ADB22816384300E6C6DF /* QRCodeView.swift in Sources */,
@@ -1201,7 +1255,6 @@
 				9697BE74281289DB00447DF9 /* LoginInputView.swift in Sources */,
 				96C1B5C9283B9EC4005BCCB9 /* DoorbellSaveImgAlertView.swift in Sources */,
 				A89E3DFF282A1C5E002FFED9 /* AGDatePickerVC.swift in Sources */,
-				9697BE7828128A9700447DF9 /* VerifyInputCodeVC.swift in Sources */,
 				A805ADB928167C9000E6C6DF /* DeviceConnectingVC.swift in Sources */,
 				96E4C11A2807FD1F00A53A49 /* AGTabBarVC.swift in Sources */,
 				A819965D2834F5F500870CDA /* ReceiveDeviceShareVC.swift in Sources */,
@@ -1216,6 +1269,7 @@
 				965B1FA2282E6F2C0045D002 /* AGToolHUD.swift in Sources */,
 				9601C310280D6A0B00D3CA49 /* UserAccountModel.swift in Sources */,
 				A805ADC62816B40600E6C6DF /* AGAlertBaseView.swift in Sources */,
+				84B3254928A394CA0054B369 /* ThirdManager.swift in Sources */,
 				A8598E292835B38600168244 /* AGCellData.swift in Sources */,
 				96827D7A2867301E0012AC84 /* LoggerManager.swift in Sources */,
 				A819963B28338FB100870CDA /* DeviceSetupHomeVC.swift in Sources */,
@@ -1233,9 +1287,11 @@
 				A89E3DFB28290B45002FFED9 /* DoorbellSectionView.swift in Sources */,
 				A805ADCC2817893400E6C6DF /* DeviceManager.swift in Sources */,
 				9697BE6328113F6300447DF9 /* AppDelegate_ThidParty.swift in Sources */,
+				84B3ECA028B3A0140047EE1A /* MediaPlayer.swift in Sources */,
 				A8199650283484B600870CDA /* DeviceInfoCellData.swift in Sources */,
 				96D97BAB2828FE7300575335 /* TopControTooBarView.swift in Sources */,
 				9697BE972812B25F00447DF9 /* EXT-View.swift in Sources */,
+				84F7453F289BEE0500702944 /* AGFirmwareVC.swift in Sources */,
 				A89E3DEA28250DBC002FFED9 /* DoorbellMsgCell.swift in Sources */,
 				96C1B5C7283B9E93005BCCB9 /* DeviceSetUpModel.swift in Sources */,
 				A80D5EBD282CE9800096BBDE /* AboutVC.swift in Sources */,
@@ -1250,23 +1306,25 @@
 				A805ADBF281696AD00E6C6DF /* DeviceAddFailedVC.swift in Sources */,
 				9697BEA32812B25F00447DF9 /* EXT-ToModel.swift in Sources */,
 				A819964B2834798D00870CDA /* DeviceInfoCell.swift in Sources */,
+				84F7453B289BBDEA00702944 /* DeviceFirmwareVC.swift in Sources */,
 				96827D7C2867301E0012AC84 /* Extension+UIDevice.swift in Sources */,
 				961825392817D4D400053691 /* SetPasswordView.swift in Sources */,
 				A80D5EDA282E08F60096BBDE /* MessagePlayerVC.swift in Sources */,
 				9618254D281AA6C000053691 /* VerifyManager.swift in Sources */,
 				A80D5EB9282CE90C0096BBDE /* GeneralSettingVC.swift in Sources */,
 				961825552824FF0E00053691 /* DoorbellAbilityViewCell.swift in Sources */,
-				961825372817D49F00053691 /* ResetPasswordVC.swift in Sources */,
 				9697BE942812B25F00447DF9 /* EXT-UIColor.swift in Sources */,
 				962FEFF82852F4D600DCFD59 /* PassWordTextField.swift in Sources */,
 				A89E3DE82824D104002FFED9 /* DoorbellPlayerView.swift in Sources */,
 				96827D7E2867301E0012AC84 /* Extension+UI.swift in Sources */,
+				84F74541289CBDCC00702944 /* AGConfirmView.swift in Sources */,
 				A80D5ECA282D156F0096BBDE /* PushMsgSettingVC.swift in Sources */,
 				A80D5EC0282CECB80096BBDE /* PersonalInfoVC.swift in Sources */,
 				961825592824FF6E00053691 /* DoorbellAbilityViewModel.swift in Sources */,
 				A8A246C5281100FA00EAEA82 /* MainTopView.swift in Sources */,
 				A81996412834703E00870CDA /* DeviceBaseSetupVC.swift in Sources */,
 				A81996562834BAE000870CDA /* ShareDeviceInfoCell.swift in Sources */,
+				84F7453D289BC14A00702944 /* DeviceFirmwareView.swift in Sources */,
 				96182543281937A300053691 /* LoginProtocolAlertVC.swift in Sources */,
 				961825572824FF3300053691 /* DoorbellAbilityView.swift in Sources */,
 				A805ADB42816394500E6C6DF /* DeviceResetView.swift in Sources */,
@@ -1284,12 +1342,12 @@
 				9699941A28154EEF00910792 /* CountrySelectViewCell.swift in Sources */,
 				9697BE6128113BF500447DF9 /* AgoraIotConfig.swift in Sources */,
 				96E4C11C2807FD7800A53A49 /* AGNavigationVC.swift in Sources */,
-				9697BE6E281287A800447DF9 /* RegisterMainVC.swift in Sources */,
 				9601C317280E4BE900D3CA49 /* LoginMainVM.swift in Sources */,
 				9697BE7E28128ED800447DF9 /* DispatchCenter.swift in Sources */,
 				A89E3DEE28268D61002FFED9 /* DoorbellPlayerTopView.swift in Sources */,
+				84B3255128A5ED190054B369 /* TextInputView.swift in Sources */,
 				9697BEA02812B25F00447DF9 /* EXT-ViewFrame.swift in Sources */,
-				A80D5ED0282D39370096BBDE /* ModifyPwdVC.swift in Sources */,
+				84B3254F28A50AA60054B369 /* DoorbellControlVC.swift in Sources */,
 				9697BEA12812B25F00447DF9 /* EXT-UIImage.swift in Sources */,
 				A80D5ED4282DE4E20096BBDE /* NotifyMsgCell.swift in Sources */,
 				961825602825195200053691 /* DoorbellAbilityTooBarView.swift in Sources */,
@@ -1478,8 +1536,11 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1026;
-				DEVELOPMENT_TEAM = JDPG69R49Z;
+				CURRENT_PROJECT_VERSION = 1036;
+				DEVELOPMENT_TEAM = LTVVML2TCH;
+				EXCLUDED_ARCHS = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IotLinkDemo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
@@ -1498,7 +1559,99 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iotlinkdemo;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"resolv\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"AWSAuthCore\"",
+					"-framework",
+					"\"AWSCognitoIdentityProvider\"",
+					"-framework",
+					"\"AWSCognitoIdentityProviderASF\"",
+					"-framework",
+					"\"AWSCore\"",
+					"-framework",
+					"\"AWSIoT\"",
+					"-framework",
+					"\"AWSMobileClient\"",
+					"-framework",
+					"\"Accelerate\"",
+					"-framework",
+					"\"AgoraIotLink\"",
+					"-framework",
+					"\"AgoraRtmKit\"",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"AssetsLibrary\"",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"CoreFoundation\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreImage\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"DZNEmptyDataSet\"",
+					"-framework",
+					"\"EMPush\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"HandyJSON\"",
+					"-framework",
+					"\"IQKeyboardManagerSwift\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"JXSegmentedView\"",
+					"-framework",
+					"\"Kingfisher\"",
+					"-framework",
+					"\"MJRefresh\"",
+					"-framework",
+					"\"MobileCoreServices\"",
+					"-framework",
+					"\"Photos\"",
+					"-framework",
+					"\"PhotosUI\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"SVProgressHUD\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SnapKit\"",
+					"-framework",
+					"\"SwiftDate\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"YYKit\"",
+					"-framework",
+					"\"ZLPhotoBrowser\"",
+					"-weak_framework",
+					"\"Combine\"",
+					"-weak_framework",
+					"\"SwiftUI\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iotlink;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1519,8 +1672,11 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1026;
-				DEVELOPMENT_TEAM = JDPG69R49Z;
+				CURRENT_PROJECT_VERSION = 1036;
+				DEVELOPMENT_TEAM = LTVVML2TCH;
+				EXCLUDED_ARCHS = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IotLinkDemo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
@@ -1539,7 +1695,99 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iotlinkdemo;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"resolv\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"AWSAuthCore\"",
+					"-framework",
+					"\"AWSCognitoIdentityProvider\"",
+					"-framework",
+					"\"AWSCognitoIdentityProviderASF\"",
+					"-framework",
+					"\"AWSCore\"",
+					"-framework",
+					"\"AWSIoT\"",
+					"-framework",
+					"\"AWSMobileClient\"",
+					"-framework",
+					"\"Accelerate\"",
+					"-framework",
+					"\"AgoraIotLink\"",
+					"-framework",
+					"\"AgoraRtmKit\"",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"AssetsLibrary\"",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"CoreFoundation\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreImage\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"DZNEmptyDataSet\"",
+					"-framework",
+					"\"EMPush\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"HandyJSON\"",
+					"-framework",
+					"\"IQKeyboardManagerSwift\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"JXSegmentedView\"",
+					"-framework",
+					"\"Kingfisher\"",
+					"-framework",
+					"\"MJRefresh\"",
+					"-framework",
+					"\"MobileCoreServices\"",
+					"-framework",
+					"\"Photos\"",
+					"-framework",
+					"\"PhotosUI\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"SVProgressHUD\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SnapKit\"",
+					"-framework",
+					"\"SwiftDate\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"YYKit\"",
+					"-framework",
+					"\"ZLPhotoBrowser\"",
+					"-weak_framework",
+					"\"Combine\"",
+					"-weak_framework",
+					"\"SwiftUI\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iotlink;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1559,7 +1807,7 @@
 				96E4C1132807CA5800A53A49 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		96E4C1142807CA5800A53A49 /* Build configuration list for PBXNativeTarget "IotLinkDemo" */ = {
 			isa = XCConfigurationList;
@@ -1568,7 +1816,7 @@
 				96E4C1162807CA5800A53A49 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

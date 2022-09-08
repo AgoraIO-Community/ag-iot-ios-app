@@ -176,7 +176,7 @@ class TDUserInforManager: NSObject {
     //登录
     func loginAction(_ account : String, _ password : String){
         
-        loginVM.login(account, password) { [weak self] success, msg in
+        loginVM.login2(account, password) { [weak self] success, msg in
             if (success) {
                 debugPrint("登录成功")
                 self?.isLogin = true
@@ -184,6 +184,7 @@ class TDUserInforManager: NSObject {
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
             }else{
                 debugPrint("登录失败")
+                DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
             }
             
         }

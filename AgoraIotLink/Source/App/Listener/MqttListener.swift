@@ -28,26 +28,39 @@ class MqttListener : FsmMqtt.IListener{
         }
         let onMqttSubscribeResult = {(succ:Bool,msg:String) in
             //https://confluence.agoralab.co/pages/viewpage.action?pageId=944705001
-            let reported = Reported(appId: self.app.config.appId,
-                                    deviceAlias: self.app.context.call.session.deviceAlias,
-                                    pusherId: self.app.context.push.session.eid,
-                                    localRecord: false)
-            let state = State(reported: reported)
+//            let reported = Reported(appId: self.app.config.appId,
+//                                    deviceAlias: self.app.context.call.session.deviceAlias,
+//                                    pusherId: self.app.context.push.session.eid,
+//                                    localRecord: false)
+//            let state = State(reported: reported)
+//
+//
+//            guard let data = try? JSONEncoder().encode(state) else{
+//                log.e("listener encode state failed \(state)")
+//                return
+//            }
+//            let topic = "$aws/things/" + self.app.context.gran.session.cert.thingName + "/shadow/name/rtc"
+//            self.app.proxy.mqtt.publish(data:data,topic: topic,qos:.messageDeliveryAttemptedAtLeastOnce)
+            
             self.app.rule.trans(succ ? FsmMqtt.Event.SUBMIT_SUCC : FsmMqtt.Event.SUBMIT_FAIL)
             
-            guard let data = try? JSONEncoder().encode(state) else{
-                log.e("listener encode state failed \(state)")
-                return
+            if(succ){
+                let dictRtm:[String:Any] = ["appId":self.app.config.appId]
+                let reportedRtm:[String:Any] = ["reported":dictRtm]
+                let stateJsonRtm:[String:Any] = ["state":reportedRtm]
+                let strRtm = JSON(stateJsonRtm)
+                let jsonStrRtm = strRtm.rawString([.castNilToNSNull:true])
+                
+                var topicRtmUpdate = "$aws/things/" + self.app.context.gyiot.session.cert.thingName + "/shadow/name/rtm/update"
+                self.app.proxy.mqtt.publish(data: jsonStrRtm!, topic: topicRtmUpdate, qos: .messageDeliveryAttemptedAtLeastOnce)
             }
-            let topic = "$aws/things/" + self.app.context.gran.session.cert.thingName + "/shadow/name/rtc"
-            self.app.proxy.mqtt.publish(data:data,topic: topic,qos:.messageDeliveryAttemptedAtLeastOnce)
         }
         app.proxy.mqtt.subScribeWithClient(completion: onMqttSubscribeResult)
     }
     
     func do_INITMQTT(_ srcState: FsmMqtt.State) {
-        let gwsess = app.context.gran.session
-        app.proxy.mqtt.initialize(thingName:gwsess.cert.thingName, endPoint: gwsess.endPoint, token:  gwsess.pool_token,identityId: gwsess.pool_identityId,identityPoolId: gwsess.pool_identityPoolId,region: gwsess.region,appId: app.config.appId,deviceAlias: gwsess.account)
+        let gwsess = app.context.gyiot.session
+        app.proxy.mqtt.initialize(thingName:gwsess.cert.thingName, endPoint: gwsess.endPoint, token:  gwsess.pool_token,identityId: gwsess.pool_identityId,identityPoolId: gwsess.pool_identityPoolId,region: gwsess.region,appId: app.config.appId,deviceAlias: app.context.gyiot.session.account)
         
         app.rule.trans(FsmMqtt.Event.CONN)
     }

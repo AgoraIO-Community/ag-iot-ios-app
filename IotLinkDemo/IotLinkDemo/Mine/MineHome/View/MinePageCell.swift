@@ -27,6 +27,12 @@ class MinePageCell: UITableViewCell {
             make.centerY.equalTo(contentView)
         }
         
+        contentView.addSubview(subLabel)
+        subLabel.snp.makeConstraints { make in
+            make.right.equalTo(-80)
+            make.centerY.equalTo(contentView)
+        }
+        
         contentView.addSubview(dotView)
         dotView.snp.makeConstraints { make in
             make.right.equalTo(-56)
@@ -49,6 +55,13 @@ class MinePageCell: UITableViewCell {
         return label
     }()
     
+    private lazy var subLabel:UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.textColor = UIColor(hexRGB: 0x888888)
+        return label
+    }()
+    
     private lazy var dotView:UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(hexRGB: 0xFF4D4F)
@@ -64,8 +77,9 @@ class MinePageCell: UITableViewCell {
         return imgView
     }()
     
-    func setImgName(_ img:String?,title:String?, showDot:Bool = false) -> Void {
+    func setImgName(_ img:String?,title:String?,subTitle:String?, showDot:Bool = false) -> Void {
         titleLabel.text = title
+        subLabel.text = subTitle
         dotView.isHidden = !showDot
     }
 }

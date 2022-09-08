@@ -18,7 +18,7 @@ class PersonalInfoVC: UIViewController {
     private var dataArray = [AGTitleCellData]()
 
     private let headTitle = "头像"
-    private let  nicknameTitle = "昵称"
+    private let nicknameTitle = "昵称"
     
     private var headData: AGRightImageCellData?
     private var nicknameData: AGSubtitleCellData?
@@ -49,11 +49,11 @@ class PersonalInfoVC: UIViewController {
     private func refreshData(){
         
         headData = AGRightImageCellData(title: headTitle, imagUrl: self.userInfo?.avatar ?? "")
-//        nicknameData = AGSubtitleCellData(title: nicknameTitle, subtitle: self.userInfo?.name ?? "", showArrow: true)
+        //nicknameData = AGSubtitleCellData(title: nicknameTitle, subtitle: self.userInfo?.name ?? "", showArrow: true)
         
         dataArray = [
             headData!,
-//            nicknameData!
+            //nicknameData!
         ]
         tableView.reloadData()
     }

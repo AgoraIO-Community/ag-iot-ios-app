@@ -23,6 +23,12 @@ class AGToolHUD: NSObject {
         
     }
     
+    class func showHint(hint:String){
+        disMiss()
+        self.configDefaultParam()
+        SVProgressHUD.setDefaultMaskType(.none)
+        SVProgressHUD.showInfo(withStatus: hint)
+    }
     
     //显示文字和小叹号
     class func showInfo(info: String){
@@ -92,10 +98,10 @@ class AGToolHUD: NSObject {
     }
     
     //显示网络加载的等待指示
-    class func showNetWorkWait(){
+    class func showNetWorkWait(_ interval:Double = 15){
         
-        SVProgressHUD.dismiss()
-        SVProgressHUD.setBackgroundColor(UIColor.clear)
+        //SVProgressHUD.dismiss()
+        SVProgressHUD.setBackgroundColor(UIColor.gray)
         SVProgressHUD.setImageViewSize(CGSize(width: 50.S, height: 50.S))
         
         var arr = [UIImage]()
@@ -110,10 +116,32 @@ class AGToolHUD: NSObject {
         
         let img = UIImage.animatedImage(with: arr, duration: 1.2)
         
-        SVProgressHUD.setMinimumDismissTimeInterval(TimeInterval(15))
+        SVProgressHUD.setMinimumDismissTimeInterval(TimeInterval(interval))
         SVProgressHUD.show(img!, status: "")
         //        SVProgressHUD.show(withStatus: TiensLocalString("处理中,请稍候..."))
         
+    }
+    
+    class func showUpgrading(){
+        
+        //SVProgressHUD.dismiss()
+        SVProgressHUD.setBackgroundColor(UIColor.gray)
+        SVProgressHUD.setImageViewSize(CGSize(width: 50.S, height: 50.S))
+        
+        var arr = [UIImage]()
+        for i in 1..<12{
+            
+            let imgStr = "loading\(i)"
+            let tempImg = UIImage(named: imgStr)
+            if  tempImg != nil {
+                arr.append(tempImg!)
+            }
+        }
+        
+        let img = UIImage.animatedImage(with: arr, duration: 1.2)
+        
+        SVProgressHUD.setMinimumDismissTimeInterval(TimeInterval(Double.infinity))
+        SVProgressHUD.show(img!, status: "升级版本中...")
     }
     
     //显示网络加载错误的指示
@@ -131,7 +159,7 @@ class AGToolHUD: NSObject {
     }
     
     class func configDefaultParam(){
-        
+        SVProgressHUD.setDefaultMaskType(.clear)
         SVProgressHUD.setMinimumDismissTimeInterval(TimeInterval(dismissTime))
         SVProgressHUD.setBackgroundColor(UIColor.black.withAlphaComponent(0.6))
         SVProgressHUD.setImageViewSize(CGSize(width: 28, height: 28))

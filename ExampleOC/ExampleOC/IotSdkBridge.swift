@@ -77,21 +77,50 @@ public class CallkitManager : NSObject,ICallkitMgr{
 }
 
 public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
-    @objc public func queryProductList(query: ProductQueryParam, result: @escaping (Int, String, [ProductInfo]) -> Void) {
-        return mgr.queryProductList(query: query, result: result)
+    
+    @objc public func sendMessageBegin(device: IotDevice, result: @escaping (Int, String) -> Void, statusUpdated: @escaping (MessageChannelStatus, String, Data?) -> Void) {
+        return mgr.sendMessageBegin(device: device, result: result, statusUpdated: statusUpdated)
     }
     
-    @objc public func shareDeviceAccept(deviceNickName: String, order: String, result: @escaping (Int, String) -> Void) {
-        return mgr.shareDeviceAccept(deviceNickName: deviceNickName, order: order, result: result)
+    @objc public func otaGetInfo(device: IotDevice, result: @escaping (Int, String, FirmwareInfo?) -> Void) {
+        return mgr.otaGetInfo(device: device, result: result)
     }
     
-    @objc public func sharePushDetail(id: String, result: @escaping (Int, String, ShareDetail?) -> Void) {
-        return mgr.sharePushDetail(id: id, result: result)
+    @objc public func otaUpgrade(upgradeId: String, result: @escaping (Int, String) -> Void) {
+        return mgr.otaUpgrade(upgradeId: upgradeId, result: result)
     }
     
+    @objc public func otaQuery(upgradeId: String, result: @escaping (Int, String, FirmwareStatus?) -> Void) {
+        return mgr.otaQuery(upgradeId: upgradeId, result: result)
+    }
     
-    @objc public func shareDeviceTo(deviceNumber: String, account: String, type: String, result: @escaping (Int, String) -> Void) {
-        return mgr.shareDeviceTo(deviceNumber: deviceNumber, account: account, type: type, result: result)
+    @objc public func sendMessageEnd() {
+        return mgr.sendMessageEnd()
+    }
+    
+    @objc public func sendMessage(data: Data, description: String, result: @escaping (Int, String) -> Void) {
+        return mgr.sendMessage(data: data, description: description, result: result)
+    }
+    
+//    public func otaGetInfo(device: IotDevice, result: @escaping (Int, String, FirmwareInfo?) -> Void) {
+//        return mgr.otaGetInfo(device: device, result: result)
+//    }
+//
+//    public func otaUpgrade(upgradeId: String, decide: Int, result: @escaping (Int, String) -> Void) {
+//        return mgr.otaUpgrade(upgradeId: upgradeId, decide: decide, result: result)
+//    }
+    
+//    @objc public func shareDeviceAccept(deviceNickName: String, order: String, result: @escaping (Int, String) -> Void) {
+//        return mgr.shareDeviceAccept(deviceNickName: deviceNickName, order: order, result: result)
+//    }
+//
+//    @objc public func sharePushDetail(id: String, result: @escaping (Int, String, ShareDetail?) -> Void) {
+//        return mgr.sharePushDetail(id: id, result: result)
+//    }
+    
+    
+    @objc public func shareDeviceTo(deviceNumber: String, userId account: String, type: String, result: @escaping (Int, String) -> Void) {
+        return mgr.shareDeviceTo(deviceNumber: deviceNumber, userId: account, type: type, result: result)
     }
     
     @objc public func shareGetOwnDevices(result: @escaping (Int, String, [DeviceShare]?) -> Void) {
@@ -106,14 +135,14 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
         return mgr.shareRemoveMember(deviceNumber: deviceNumber, userId: userId, result: result)
     }
     
-    @objc public func sharePushAdd(deviceNumber: String, email: String, type: String, result: @escaping (Int, String) -> Void) {
-        return mgr.sharePushAdd(deviceNumber: deviceNumber, email: email, type: type, result: result)
-    }
-    
-    @objc public func sharePushList(pageNo: Int, pageSize: Int, auditStatus: String, result: @escaping (Int, String, [ShareItem]?, PageTurn?) -> Void) {
-        return mgr.sharePushList(pageNo: pageNo, pageSize: pageSize, auditStatus: auditStatus, result: result)
-        
-    }
+//    @objc public func sharePushAdd(deviceNumber: String, email: String, type: String, result: @escaping (Int, String) -> Void) {
+//        return mgr.sharePushAdd(deviceNumber: deviceNumber, email: email, type: type, result: result)
+//    }
+//    
+//    @objc public func sharePushList(pageNo: Int, pageSize: Int, auditStatus: String, result: @escaping (Int, String, [ShareItem]?, PageTurn?) -> Void) {
+//        return mgr.sharePushList(pageNo: pageNo, pageSize: pageSize, auditStatus: auditStatus, result: result)
+//        
+//    }
     
     @objc public func getOwnDevices(result: @escaping (Int, String, [DeviceShare]?) -> Void) {
         return mgr.shareGetOwnDevices(result: result)
@@ -128,9 +157,9 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
     }
 
     
-    @objc public func sharePushDel(id: String, result: @escaping (Int, String) -> Void) {
-        return mgr.sharePushDel(id: id, result: result)
-    }
+//    @objc public func sharePushDel(id: String, result: @escaping (Int, String) -> Void) {
+//        return mgr.sharePushDel(id: id, result: result)
+//    }
     
     public func register(listener: IDeviceStateListener) {
         //listener.onDeviceActionUpdated(deviceId: "abcd", actionType: "eft")
@@ -159,6 +188,10 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
         mgr.addDevice(productId: productId, deviceId: deviceId, result: result)
     }
     
+    @objc public func queryProductList(query: ProductQueryParam, result: @escaping (Int, String, [ProductInfo]) -> Void) {
+        return mgr.queryProductList(query:query,result: result)
+    }
+    
     @objc public func queryAllDevices(result: @escaping (Int, String, [IotDevice]) -> Void) {
         return mgr.queryAllDevices(result: result)
     }
@@ -175,7 +208,7 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
         return mgr.setDeviceProperty(device: device, properties: properties, result: result)
     }
     
-    @objc public func getDeviceProperty(device: IotDevice, result: @escaping (Int, String, Dictionary<String, Any>?) -> Void) {
+    @objc public func getDeviceProperty(device: IotDevice, result: @escaping (Int, String, Dictionary<String, Any>?,Dictionary<String, Any>?) -> Void) {
         return mgr.getDeviceProperty(device: device, result: result)
     }
     
@@ -187,6 +220,18 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
 }
 
 public class AlarmManager : NSObject,IAlarmMgr{
+    @objc public func addAlarm(device: IotDevice, desc: String, result: @escaping (Int, String) -> Void) {
+        return mgr.addAlarm(device: device, desc: desc, result: result)
+    }
+    
+    @objc public func queryAlarmImage(alertImageId: String, result: @escaping (Int, String, String?) -> Void) {
+        return mgr.queryAlarmImage(alertImageId: alertImageId, result: result)
+    }
+    
+    @objc public func queryAlarmVideoUrl(deviceId: String, beginTime: UInt64, result: @escaping (Int, String, String?) -> Void) {
+        return mgr.queryAlarmVideoUrl(deviceId: deviceId, beginTime: beginTime, result: result)
+    }
+    
     public func querySysCount(productId: String?, deviceIds: [String], messageType: Int?, status: Int?, createDateBegin: Date?, createDateEnd: Date?, result: @escaping (Int, String, UInt) -> Void) {
         return mgr.querySysCount(productId: productId, deviceIds: deviceIds, messageType: messageType, status: status, createDateBegin: createDateBegin, createDateEnd: createDateEnd, result: result)
     }
@@ -212,17 +257,17 @@ public class AlarmManager : NSObject,IAlarmMgr{
         return mgr.queryByParam(queryParam: queryParam, result: result)
     }
     
-    @objc public func queryByParam(type:Int,status:Int,dateBegin:Date?,dateEnd:Date = Date(),currPage:Int = 1,pageSize:Int = 5,desc:Bool = false,device:IotDevice? = nil,result:@escaping(Int,String,[IotAlarm]?)->Void){
-        let queryParam:QueryParam = QueryParam(dateBegin: dateBegin)
-        queryParam.messageType = type < 0 ? nil : type
-        queryParam.status = status < 0 ? nil : status
-        queryParam.createdDateEnd = dateEnd
-        queryParam.currentPage = currPage
-        queryParam.pageSize = pageSize
-        queryParam.desc = desc
-        queryParam.device = device
-        return mgr.queryByParam(queryParam: queryParam, result: result)
-    }
+//    @objc public func queryByParam(type:Int,status:Int,dateBegin:Date?,dateEnd:Date = Date(),currPage:Int = 1,pageSize:Int = 5,desc:Bool = false,device:IotDevice? = nil,result:@escaping(Int,String,[IotAlarm]?)->Void){
+//        let queryParam:QueryParam = QueryParam(dateBegin: dateBegin)
+//        queryParam.messageType = type < 0 ? nil : type
+//        queryParam.status = status < 0 ? nil : status
+//        queryParam.createdDateEnd = dateEnd
+//        queryParam.currentPage = currPage
+//        queryParam.pageSize = pageSize
+//        queryParam.desc = desc
+//        queryParam.deviceId = device
+//        return mgr.queryByParam(queryParam: queryParam, result: result)
+//    }
     
     @objc public func querySysByParam(type:Int,status:Int,dateBegin:Date?,dateEnd:Date = Date(),currPage:Int = 1,pageSize:Int = 5,desc:Bool = false,deviceIds:[String] = [],result:@escaping(Int,String,[IotAlarm]?)->Void){
         let queryParam:SysQueryParam = SysQueryParam(dateBegin: dateBegin)
@@ -306,17 +351,21 @@ public class NotificationManager : NSObject,INotificationMgr{
 }
 
 public class AccountManager : NSObject,IAccountMgr{
+    @objc public func login(param: LoginParam, result: @escaping (Int, String) -> Void) {
+        return mgr.login(param: param, result: result)
+    }
+    
     @objc public func updateHeadIcon(image: UIImage, result: @escaping (Int, String, String?) -> Void) {
         return mgr.updateHeadIcon(image: image, result: result)
     }
     
-    @objc public func getSms(phone: String, type: String, lang: String, result: @escaping (Int, String) -> Void) {
-        return mgr.getSms(phone: phone, type: type, lang: lang, result: result)
-    }
-    
-    @objc public func unregister(result: @escaping (Int, String) -> Void) {
-        return mgr.unregister(result: result)
-    }
+//    @objc public func getSms(phone: String, type: String, lang: String, result: @escaping (Int, String) -> Void) {
+//        return mgr.getSms(phone: phone, type: type, lang: lang, result: result)
+//    }
+//
+//    @objc public func unregister(result: @escaping (Int, String) -> Void) {
+//        return mgr.unregister(result: result)
+//    }
     
     @objc public func updateAccountInfo(info: AccountInfo, result: @escaping (Int, String) -> Void) {
         return mgr.updateAccountInfo(info: info, result: result)
@@ -326,30 +375,41 @@ public class AccountManager : NSObject,IAccountMgr{
         return mgr.getAccountInfo(result: result)
     }
     
-    @objc public func resetPassword(account: String, password: String, code: String, result: @escaping (Int, String) -> Void) {
-        return mgr.resetPassword(account: account, password: password, code: code, result: result)
+    @objc public func register(account: String, password: String,result: @escaping (Int, String) -> Void) {
+        ThirdAccountManager.reqRegister(account, password,result)
     }
     
-    @objc public func register(account: String, password: String, code: String, email: String?, phone: String?, result: @escaping (Int, String) -> Void) {
-        mgr.register(account: account, password: password, code: code, email: email, phone: phone, result: result)
-    }
-    
-    @objc public func getCode(email account: String, type: String, result: @escaping (Int, String) -> Void) {
-        mgr.getCode(email: account, type: type, result: result)
+    @objc public func urregister(account: String, password: String,result: @escaping (Int, String) -> Void) {
+        ThirdAccountManager.reqUnRegister(account, password,result)
     }
     
     @objc public func login(account: String, password: String, result: @escaping (Int, String) -> Void) {
-        mgr.login(account: account, password: password, result: result)
+        ThirdAccountManager.reqLogin(account, password) { ec, msg, param in
+            if(ec != ErrCode.XOK){
+                log.e("第三方 login failed:\(msg)(\(ec))")
+                result(ec,msg)
+                return
+            }
+            guard let param = param else {
+                log.e("第三方 login return error data")
+                result(ErrCode.XERR_ACCOUNT_LOGIN,"登录返回数据为空")
+                return
+            }
+            return self.mgr.login(param:param, result: result)
+        }
     }
     
     @objc public func logout(result: @escaping (Int, String) -> Void) {
-        mgr.logout(result: result)
+        ThirdAccountManager.reqLogout { ec, msg in
+            if(ec != ErrCode.XOK){
+                log.e("第三方 logout failed:\(msg)(\(ec))")
+                result(ec,msg)
+                return
+            }
+            self.mgr.logout(result: result)
+        }
     }
-    
-    @objc public func changePassword(account: String, oldPassword: String, newPassword: String, result: @escaping (Int, String) -> Void){
-        mgr.changePassword(account: account, oldPassword: oldPassword, newPassword: newPassword, result: result)
-    }
-    
+
     @objc public func getUserId() -> String {
         return mgr.getUserId()
     }

@@ -16,16 +16,28 @@ let cRemoteSysHangupNotify = "cRemoteSysHangupNotify"
 //被动呼叫中的通知（用户当前页收到被动呼叫）
 let cReceiveCallNotify = "cReceiveCallNotify"
 
+class DeviceInfo{
+    var info : FirmwareInfo? = nil
+    func reqFirmwareInfo(device: IotDevice,refresh:@escaping()->Void){
+        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(device: device) { ec, msg, info in
+            self.info = info
+            if(info != nil){
+                refresh()
+            }
+        }
+    }
+}
 
 class DoorbellContainerVC: UIViewController {
     
     var device: IotDevice?
-    
+    var devInfo : DeviceInfo = DeviceInfo()
     //是否来自被动呼叫
     var isReceiveCall : Bool = false
     
     private let msgVC = DoorbellMessageVC()
     private let abilityVC = DoorbellAbilityVC()
+    private let controlVC = DoorbellControlVC()
     
     private var originBarTintColor:UIColor?
     private var originTitleTextAttributes:[NSAttributedString.Key :Any]?
@@ -70,7 +82,7 @@ class DoorbellContainerVC: UIViewController {
         //配置数据源
         let dataSource = JXSegmentedTitleDataSource()
         dataSource.isTitleColorGradientEnabled = true
-        dataSource.titles = ["功能","消息"]
+        dataSource.titles = ["功能","消息","控制"]
         dataSource.titleNormalColor = UIColor(hexRGB: 0xC9C9C9)
         dataSource.titleSelectedColor = UIColor(hexRGB: 0xFFFFFF)
         segmentedDataSource = dataSource
@@ -116,7 +128,6 @@ class DoorbellContainerVC: UIViewController {
         }
   
     }
-    
     // 注册通知
     private func addObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(receiveRemoteHangup), name: Notification.Name(cRemoteHangupNotify), object: nil)
@@ -175,6 +186,15 @@ class DoorbellContainerVC: UIViewController {
         self.navigationController?.view.backgroundColor = UIColor.black
         self.navigationController?.navigationBar.barTintColor = .black
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
+        
+        devInfo.reqFirmwareInfo(device: device!) {[weak self] in
+            if(self?.devInfo.info?.isUpgrade == true){
+                self?.navigationItem.rightBarButtonItem?.image = UIImage(named: "setting_dot")!.withRenderingMode(.alwaysOriginal)
+            }
+            else{
+                self?.navigationItem.rightBarButtonItem?.image = UIImage(named: "setting")!.withRenderingMode(.alwaysOriginal)
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -217,6 +237,9 @@ extension DoorbellContainerVC: JXSegmentedListContainerViewDataSource {
         case 1:
             msgVC.device = device
             return msgVC
+        case 2:
+            controlVC.device = device
+            return controlVC
         default:
             abilityVC.device = device
             abilityVC.containerVC = self

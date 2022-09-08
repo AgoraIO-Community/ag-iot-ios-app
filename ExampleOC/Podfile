@@ -5,6 +5,8 @@ platform :ios, '13.0'
 target 'ExampleOC' do
 
   pod 'AgoraIotLink', :path => '../'
+  pod 'SwiftDate'
+  pod 'SDWebImageSwiftUI'
   
   post_install do |installer|
     installer.pods_project.targets.each do |target|

@@ -34,7 +34,7 @@ class DoorbellPlayerView: UIView {
     
     var defination: Int = 0 {
         didSet {
-            definationButton.setTitle(defination == 0 ? "标清":"高清", for: .normal)
+            definationButton.setTitle(defination == 0 ? "SD":"HD", for: .normal)
         }
     }
     
@@ -47,7 +47,7 @@ class DoorbellPlayerView: UIView {
     
     private lazy var definationButton: UIButton = {
         let btn = UIButton(type: .custom)
-        btn.setTitle("标清", for:.normal)
+        btn.setTitle("SD", for:.normal)
         btn.setTitleColor(UIColor.init(hexString: "#F3F3F3"), for: .normal)
         btn.titleLabel?.font = FontPFRegularSize(10)
         btn.layer.cornerRadius = 3.S
@@ -91,8 +91,8 @@ class DoorbellPlayerView: UIView {
         topView.backgroundColor = .red
         topView.clickFullScreenButtonAction = { [weak self] in
             if self == nil { return }
-            self!.player.onlyUsedFitOnScreen = true
-            self!.player.isFitOnScreen = !self!.player.isFullScreen
+            self!.player.onlyFitOnScreen = true
+            self!.player.isFitOnScreen = !self!.player.isFullscreen
         }
         topView.clickMuteButtonAction = { [weak self] in
             
@@ -111,9 +111,9 @@ class DoorbellPlayerView: UIView {
     lazy var player:SJVideoPlayer = {
         let player = SJVideoPlayer()
         player.defaultEdgeControlLayer.isHiddenBackButtonWhenOrientationIsPortrait = true
-        player.pauseWhenAppDidEnterBackground = false
+        player.isPausedInBackground = true
         player.resumePlaybackWhenAppDidEnterForeground = true
-        player.onlyUsedFitOnScreen = true
+        player.onlyFitOnScreen = false
         player.defaultEdgeControlLayer.bottomAdapter.removeItem(forTag: SJEdgeControlLayerBottomItem_Separator)
         player.defaultEdgeControlLayer.bottomAdapter.exchangeItem(forTag: SJEdgeControlLayerBottomItem_DurationTime, withItemForTag: SJEdgeControlLayerBottomItem_Progress)
         player.defaultEdgeControlLayer.bottomAdapter.removeItem(forTag: SJEdgeControlLayerBottomItem_Play)
@@ -154,21 +154,33 @@ class DoorbellPlayerView: UIView {
         player.controlLayerAppearManager.needAppear()
         player.controlLayerAppearManager.isDisabled = true
         
+        player.rotationObserver.onRotatingChanged = { [weak self] (mgr,isRotationing) in
+                    if self == nil {return}
+                    if isRotationing == true{
+                        self!.isRotation = !self!.isRotation
+                        self!.player.defaultEdgeControlLayer.bottomAdapter.isHidden = self!.isRotation
+                        self!.fullscreenItem.isHidden = self!.isRotation
+                        //self!.showRightView()
+                    }else{
+                        self!.switchForRotation()
+                    }
+                }
+        
         // 监听屏幕旋转
-        player.rotationObserver.rotationDidStartExeBlock = { [weak self] mgr in
-            if self == nil {return}
-            self!.isRotation = !self!.isRotation
-            self!.player.defaultEdgeControlLayer.bottomAdapter.isHidden = self!.isRotation
-            self!.fullscreenItem.isHidden = self!.isRotation
-            self!.showRightView()
-        }
+//        player.rotationObserver.rotationDidStartExeBlock = { [weak self] mgr in
+//            if self == nil {return}
+//            self!.isRotation = !self!.isRotation
+//            self!.player.defaultEdgeControlLayer.bottomAdapter.isHidden = self!.isRotation
+//            self!.fullscreenItem.isHidden = self!.isRotation
+//            self!.showRightView()
+//        }
         player.fitOnScreenObserver.fitOnScreenDidEndExeBlock = {[weak self] mgr in
             self?.switchForFullScreen()
         }
-        
-        player.rotationObserver.rotationDidEndExeBlock = { [weak self] mgr in
-            self?.switchForRotation()
-        }
+//
+//        player.rotationObserver.rotationDidEndExeBlock = { [weak self] mgr in
+//            self?.switchForRotation()
+//        }
         
         return player
     }()
@@ -264,13 +276,15 @@ class DoorbellPlayerView: UIView {
                 make.centerY.equalToSuperview().offset(10)
                 make.left.equalToSuperview().offset(80.S)
             }
-        }else if player.isFitOnScreen {
-            customBackBtn.isHidden = false
-            powerView.snp.updateConstraints { make in
-                make.centerY.equalToSuperview().offset(safeAreaTopSpace() * 0.5)
-                make.left.equalToSuperview().offset(80.S)
-            }
-        }else{
+        }
+//        else if player.isFitOnScreen {
+//            customBackBtn.isHidden = false
+//            powerView.snp.updateConstraints { make in
+//                make.centerY.equalToSuperview().offset(safeAreaTopSpace() * 0.5)
+//                make.left.equalToSuperview().offset(80.S)
+//            }
+//        }
+    else{
             customBackBtn.isHidden = true
             powerView.snp.updateConstraints { make in
                 make.centerY.equalToSuperview()
@@ -299,7 +313,7 @@ class DoorbellPlayerView: UIView {
             let bottomView = DoorbellPlayerBottomView()
             bottomView.clickRotationButtonAction = {[weak self] in
                 if self == nil { return }
-                self!.player.onlyUsedFitOnScreen = false
+                self!.player.onlyFitOnScreen = false
                 self!.player.rotate()
             }
             
@@ -331,7 +345,7 @@ class DoorbellPlayerView: UIView {
     
     // 全屏
     @objc private func didClickFullScreenButton(){
-        self.player.onlyUsedFitOnScreen = true
+        self.player.onlyFitOnScreen = true
         self.player.isFitOnScreen = !self.player.isFitOnScreen
     }
     
@@ -350,4 +364,3 @@ class DoorbellPlayerView: UIView {
         player.play()
     }
 }
-

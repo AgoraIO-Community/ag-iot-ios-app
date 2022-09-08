@@ -1,15 +1,15 @@
-//FsmCall created by guzhihe@agora.io on 2022/07/15 14:11
+//FsmCall created by guzhihe@agora.io on 2022/08/16 16:34
 import Foundation
 protocol IFsmCallListener{
     //srcState:local_viewing,accepting,waiting,remote_answered
     func do_REMOTE_JOIN(_ srcState:FsmCall.State)
-     //srcEvent:LOCAL_READY,INCOMING_HANGUP_DONE,REMOTE_HANGUP_DONE,ACK_INVALID,LOCAL_HANGUP_SUCC
+     //srcEvent:LOCAL_READY,REMOTE_HANGUP_DONE,INCOMING_HANGUP_DONE,ACK_INVALID,LOCAL_HANGUP_SUCC
     func on_callkit_ready(_ srcEvent:FsmCall.Event)
-     //srcEvent:REMOTE_LEFT,NTF_HANGUP,REMOTE_ANSWER,REMOTE_RINGING,LOCAL_ERROR
+     //srcEvent:LOCAL_JOIN_FAIL,REMOTE_LEFT,NTF_HANGUP,REMOTE_ANSWER,REMOTE_RINGING,LOCAL_ERROR
     func on_callHangup(_ srcEvent:FsmCall.Event)
      //srcEvent:
     func on_local_join_watcher(_ srcEvent:FsmCall.Event)
-     //srcEvent:INCOMING_HANGUP,VIDEOREADY
+     //srcEvent:VIDEOREADY,INCOMING_HANGUP,LOCAL_ACCEPT_ERROR
     func on_incoming_state_watcher(_ srcEvent:FsmCall.Event)
      //srcEvent:NTF_REMOTE_HANGUP
     func on_remote_state_watcher(_ srcEvent:FsmCall.Event)
@@ -33,6 +33,7 @@ class FsmCall : Fsm {
         case hanging_up     
         case local_viewing  
         case incoming_hangup
+        case incoming_local_error
         case local_join_succ
         case remote_answer_first
         case re_wait_mqtt   
@@ -53,14 +54,14 @@ class FsmCall : Fsm {
 
     enum Event : Int{
         case IDLE           
-        case NTF            
+        case LOCAL_JOIN_FAIL
+        case REMOTE_LEFT    
         case LOCAL_READY    
         case LOCAL_JOIN_SUCC
-        case INCOMING_HANGUP_DONE
-        case REMOTE_LEFT    
-        case NTF_HANGUP     
+        case NTF            
         case REMOTE_HANGUP_DONE
-        case INITCALL       
+        case INCOMING_HANGUP_DONE
+        case NTF_HANGUP     
         case CALL           
         case INCOME         
         case FINICALL       
@@ -74,19 +75,20 @@ class FsmCall : Fsm {
         case STATUS_ERROR   
         case MQTT_ACK_ERROR 
         case LOCAL_JOIN_TIMEOUT
-        case LOCAL_JOIN_FAIL
         case LOCAL_HANGUP_SUCC
         case LOCAL_HANGUP_FAIL
         case LOCAL_ACCEPT   
         case REMOTE_VIDEOREADY
         case REMOTE_JOIN    
         case LOCAL_ERROR    
-        case NTF_REMOTE_HANGUP
+        case INITCALL       
         case RESETRTC       
-        case INCOMING_HANGUP
+        case NTF_REMOTE_HANGUP
         case VIDEOREADY     
-        case CREATEANDENTER 
         case CALLIDLE       
+        case INCOMING_HANGUP
+        case LOCAL_ACCEPT_ERROR
+        case CREATEANDENTER 
         case CALL_READY     
         case ECount         
     };
@@ -108,6 +110,7 @@ class FsmCall : Fsm {
         "hanging_up",
         "local_viewing",
         "incoming_hangup",
+        "incoming_local_error",
         "local_join_succ",
         "remote_answer_first",
         "re_wait_mqtt",
@@ -128,14 +131,14 @@ class FsmCall : Fsm {
 
     let s_Event:[String] = [
         "IDLE",
-        "NTF",
+        "LOCAL_JOIN_FAIL",
+        "REMOTE_LEFT",
         "LOCAL_READY",
         "LOCAL_JOIN_SUCC",
-        "INCOMING_HANGUP_DONE",
-        "REMOTE_LEFT",
-        "NTF_HANGUP",
+        "NTF",
         "REMOTE_HANGUP_DONE",
-        "INITCALL",
+        "INCOMING_HANGUP_DONE",
+        "NTF_HANGUP",
         "CALL",
         "INCOME",
         "FINICALL",
@@ -149,19 +152,20 @@ class FsmCall : Fsm {
         "STATUS_ERROR",
         "MQTT_ACK_ERROR",
         "LOCAL_JOIN_TIMEOUT",
-        "LOCAL_JOIN_FAIL",
         "LOCAL_HANGUP_SUCC",
         "LOCAL_HANGUP_FAIL",
         "LOCAL_ACCEPT",
         "REMOTE_VIDEOREADY",
         "REMOTE_JOIN",
         "LOCAL_ERROR",
-        "NTF_REMOTE_HANGUP",
+        "INITCALL",
         "RESETRTC",
-        "INCOMING_HANGUP",
+        "NTF_REMOTE_HANGUP",
         "VIDEOREADY",
-        "CREATEANDENTER",
         "CALLIDLE",
+        "INCOMING_HANGUP",
+        "LOCAL_ACCEPT_ERROR",
+        "CREATEANDENTER",
         "CALL_READY",
         "*"
     ];
@@ -182,21 +186,22 @@ class FsmCall : Fsm {
     var FsmCall_P13_hanging_up:[Node] = Fsm.None
     var FsmCall_P14_local_viewing:[Node] = Fsm.None
     var FsmCall_P15_incoming_hangup:[Node] = Fsm.None
-    var FsmCall_P16_local_join_succ:[Node] = Fsm.None
-    var FsmCall_P17_remote_answer_first:[Node] = Fsm.None
-    var FsmCall_P18_re_wait_mqtt:[Node] = Fsm.None
-    var FsmCall_P19_local_join_watcher:[Node] = Fsm.None
-    var FsmCall_P20_accepting:[Node] = Fsm.None
-    var FsmCall_P21_remoteVReady2:[Node] = Fsm.None
-    var FsmCall_P22_incoming_state_watcher:[Node] = Fsm.None
-    var FsmCall_P23_waiting:[Node] = Fsm.None
-    var FsmCall_P24_local_join_succ_second:[Node] = Fsm.None
-    var FsmCall_P25_remote_hangingup:[Node] = Fsm.None
-    var FsmCall_P26_talking:[Node] = Fsm.None
-    var FsmCall_P27_remote_answered:[Node] = Fsm.None
-    var FsmCall_P28_remote_state_watcher:[Node] = Fsm.None
-    var FsmCall_P29_remote_dropped:[Node] = Fsm.None
-    var FsmCall_P30_remoteVReady1:[Node] = Fsm.None
+    var FsmCall_P16_incoming_local_error:[Node] = Fsm.None
+    var FsmCall_P17_local_join_succ:[Node] = Fsm.None
+    var FsmCall_P18_remote_answer_first:[Node] = Fsm.None
+    var FsmCall_P19_re_wait_mqtt:[Node] = Fsm.None
+    var FsmCall_P20_local_join_watcher:[Node] = Fsm.None
+    var FsmCall_P21_accepting:[Node] = Fsm.None
+    var FsmCall_P22_remoteVReady2:[Node] = Fsm.None
+    var FsmCall_P23_incoming_state_watcher:[Node] = Fsm.None
+    var FsmCall_P24_waiting:[Node] = Fsm.None
+    var FsmCall_P25_local_join_succ_second:[Node] = Fsm.None
+    var FsmCall_P26_remote_hangingup:[Node] = Fsm.None
+    var FsmCall_P27_talking:[Node] = Fsm.None
+    var FsmCall_P28_remote_answered:[Node] = Fsm.None
+    var FsmCall_P29_remote_state_watcher:[Node] = Fsm.None
+    var FsmCall_P30_remote_dropped:[Node] = Fsm.None
+    var FsmCall_P31_remoteVReady1:[Node] = Fsm.None
 
 
     var _listener : IFsmCallListener? = nil
@@ -220,7 +225,7 @@ class FsmCall : Fsm {
         FsmCall_P4_query_agoraLab = [
             Node(Fsm.FLAG_NONE,Event.ACK_INVALID.rawValue,State.callkit_ready.rawValue,nil,{(e:Int)->Void in self._listener?.on_callkit_ready(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE,Event.ACK_SUCC.rawValue,State.wait_mqtt_ntf.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_RINGING.rawValue,State.local_joining.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up0.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_TIMEOUT.rawValue,State.ntf_join_fail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P5_remote_incoming = [
-            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_SUCC.rawValue,State.local_viewing.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.incoming_hangup.rawValue,nil,nil),            Node(Fsm.FLAG_POST,Event.CREATEANDENTER.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_CREATEANDENTER(Event(rawValue:e)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
+            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_SUCC.rawValue,State.local_viewing.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.incoming_hangup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_FAIL.rawValue,State.incoming_local_error.rawValue,nil,nil),            Node(Fsm.FLAG_POST,Event.CREATEANDENTER.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_CREATEANDENTER(Event(rawValue:e)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P6_exited = [
             Node(Fsm.FLAG_RUN,Event.IDLE.rawValue,State.idle.rawValue,nil,nil),            Node(Fsm.FLAG_POST|Fsm.FLAG_FSM,Event.CALLIDLE.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmApp_CALLIDLE(Event(rawValue:e)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P7_FsmRtc = [
@@ -241,35 +246,37 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.LOCAL_ACCEPT.rawValue,State.accepting.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.incoming_hangup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_TIMEOUT.rawValue,State.incoming_hangup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_VIDEOREADY.rawValue,State.remoteVReady2.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_JOIN.rawValue,State.local_viewing.rawValue,{(s:Int)->Void in self._listener?.do_REMOTE_JOIN(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P15_incoming_hangup = [
             Node(Fsm.FLAG_RUN,Event.INCOMING_HANGUP_DONE.rawValue,State.callkit_ready.rawValue,nil,{(e:Int)->Void in self._listener?.on_callkit_ready(Event(rawValue:e)!)}),            Node(Fsm.FLAG_POST,Event.INCOMING_HANGUP.rawValue,State.incoming_state_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_incoming_state_watcher(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P16_local_join_succ = [
+        FsmCall_P16_incoming_local_error = [
+            Node(Fsm.FLAG_RUN,Event.LOCAL_JOIN_FAIL.rawValue,State.callHangup.rawValue,nil,{(e:Int)->Void in self._listener?.on_callHangup(Event(rawValue:e)!)}),            Node(Fsm.FLAG_POST,Event.LOCAL_ACCEPT_ERROR.rawValue,State.incoming_state_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_incoming_state_watcher(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
+        FsmCall_P17_local_join_succ = [
             Node(Fsm.FLAG_RUN,Event.LOCAL_JOIN_SUCC.rawValue,State.waiting.rawValue,nil,nil),            Node(Fsm.FLAG_POST,Event.LOCAL_JOIN_SUCC.rawValue,State.local_join_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_local_join_watcher(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P17_remote_answer_first = [
+        FsmCall_P18_remote_answer_first = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_SUCC.rawValue,State.local_join_succ_second.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_TIMEOUT.rawValue,State.ntf_join_fail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.ntf_join_fail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.ntf_join_fail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_FAIL.rawValue,State.ntf_join_fail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P18_re_wait_mqtt = [
+        FsmCall_P19_re_wait_mqtt = [
             Node(Fsm.FLAG_NONE,Event.ACK_SUCC.rawValue,State.wait_mqtt_ntf.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP_FAIL.rawValue,State.wait_mqtt_ntf.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P19_local_join_watcher = [
+        FsmCall_P20_local_join_watcher = [
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P20_accepting = [
-            Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_FAIL.rawValue,State.ntf_join_fail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.remote_hangingup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_TIMEOUT.rawValue,State.remote_hangingup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_LEFT.rawValue,State.remote_hangingup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_ANSWER.rawValue,State.talking.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_JOIN.rawValue,State.accepting.rawValue,{(s:Int)->Void in self._listener?.do_REMOTE_JOIN(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P21_remoteVReady2 = [
+        FsmCall_P21_accepting = [
+            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.remote_hangingup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_TIMEOUT.rawValue,State.remote_hangingup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_LEFT.rawValue,State.remote_hangingup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_ANSWER.rawValue,State.talking.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_JOIN.rawValue,State.accepting.rawValue,{(s:Int)->Void in self._listener?.do_REMOTE_JOIN(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
+        FsmCall_P22_remoteVReady2 = [
             Node(Fsm.FLAG_RUN,Event.NTF.rawValue,State.local_viewing.rawValue,nil,nil),            Node(Fsm.FLAG_POST,Event.VIDEOREADY.rawValue,State.incoming_state_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_incoming_state_watcher(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P22_incoming_state_watcher = [
+        FsmCall_P23_incoming_state_watcher = [
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P23_waiting = [
+        FsmCall_P24_waiting = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_ERROR.rawValue,State.callHangup.rawValue,nil,{(e:Int)->Void in self._listener?.on_callHangup(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE,Event.REMOTE_TIMEOUT.rawValue,State.callHangup.rawValue,nil,{(e:Int)->Void in self._listener?.on_callHangup(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE,Event.REMOTE_JOIN.rawValue,State.talking.rawValue,{(s:Int)->Void in self._listener?.do_REMOTE_JOIN(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.remote_hangingup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_ANSWER.rawValue,State.remote_answered.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P24_local_join_succ_second = [
+        FsmCall_P25_local_join_succ_second = [
             Node(Fsm.FLAG_RUN,Event.LOCAL_JOIN_SUCC.rawValue,State.remote_answered.rawValue,nil,nil),            Node(Fsm.FLAG_POST,Event.REMOTE_ANSWER.rawValue,State.local_join_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_local_join_watcher(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P25_remote_hangingup = [
+        FsmCall_P26_remote_hangingup = [
             Node(Fsm.FLAG_RUN,Event.REMOTE_HANGUP_DONE.rawValue,State.callkit_ready.rawValue,nil,{(e:Int)->Void in self._listener?.on_callkit_ready(Event(rawValue:e)!)}),            Node(Fsm.FLAG_POST,Event.NTF_REMOTE_HANGUP.rawValue,State.remote_state_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_remote_state_watcher(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P26_talking = [
+        FsmCall_P27_talking = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_ERROR.rawValue,State.hanging_up.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.remote_hangingup.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_LEFT.rawValue,State.remote_dropped.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_VIDEOREADY.rawValue,State.remoteVReady1.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.REMOTE_ANSWER.rawValue,State.talking.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P27_remote_answered = [
+        FsmCall_P28_remote_answered = [
             Node(Fsm.FLAG_NONE,Event.REMOTE_JOIN.rawValue,State.talking.rawValue,{(s:Int)->Void in self._listener?.do_REMOTE_JOIN(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P28_remote_state_watcher = [
+        FsmCall_P29_remote_state_watcher = [
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P29_remote_dropped = [
+        FsmCall_P30_remote_dropped = [
             Node(Fsm.FLAG_RUN,Event.REMOTE_LEFT.rawValue,State.callHangup.rawValue,nil,{(e:Int)->Void in self._listener?.on_callHangup(Event(rawValue:e)!)}),            Node(Fsm.FLAG_POST,Event.NTF_REMOTE_HANGUP.rawValue,State.remote_state_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_remote_state_watcher(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmCall_P30_remoteVReady1 = [
+        FsmCall_P31_remoteVReady1 = [
             Node(Fsm.FLAG_RUN,Event.NTF.rawValue,State.talking.rawValue,nil,nil),            Node(Fsm.FLAG_POST,Event.VIDEOREADY.rawValue,State.remote_state_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_remote_state_watcher(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
 
         _diagram = [
@@ -277,10 +284,10 @@ class FsmCall : Fsm {
             FsmCall_P4_query_agoraLab, FsmCall_P5_remote_incoming, FsmCall_P6_exited, FsmCall_P7_FsmRtc,
             FsmCall_P8_callHangup, FsmCall_P9_wait_mqtt_ntf, FsmCall_P10_local_joining, FsmCall_P11_hanging_up0,
             FsmCall_P12_ntf_join_fail, FsmCall_P13_hanging_up, FsmCall_P14_local_viewing, FsmCall_P15_incoming_hangup,
-            FsmCall_P16_local_join_succ, FsmCall_P17_remote_answer_first, FsmCall_P18_re_wait_mqtt, FsmCall_P19_local_join_watcher,
-            FsmCall_P20_accepting, FsmCall_P21_remoteVReady2, FsmCall_P22_incoming_state_watcher, FsmCall_P23_waiting,
-            FsmCall_P24_local_join_succ_second, FsmCall_P25_remote_hangingup, FsmCall_P26_talking, FsmCall_P27_remote_answered,
-            FsmCall_P28_remote_state_watcher, FsmCall_P29_remote_dropped, FsmCall_P30_remoteVReady1]
+            FsmCall_P16_incoming_local_error, FsmCall_P17_local_join_succ, FsmCall_P18_remote_answer_first, FsmCall_P19_re_wait_mqtt,
+            FsmCall_P20_local_join_watcher, FsmCall_P21_accepting, FsmCall_P22_remoteVReady2, FsmCall_P23_incoming_state_watcher,
+            FsmCall_P24_waiting, FsmCall_P25_local_join_succ_second, FsmCall_P26_remote_hangingup, FsmCall_P27_talking,
+            FsmCall_P28_remote_answered, FsmCall_P29_remote_state_watcher, FsmCall_P30_remote_dropped, FsmCall_P31_remoteVReady1]
 
     }
     //override
@@ -294,8 +301,8 @@ class FsmCall : Fsm {
     }
     //trans
     private func do_FsmRtc_RESETRTC(_ e:Event)->Void{_FsmRtc?.trans(FsmRtc.Event.RESETRTC.rawValue)}
-    private func do_FsmRtc_CREATEANDENTER(_ e:Event)->Void{_FsmRtc?.trans(FsmRtc.Event.CREATEANDENTER.rawValue)}
     private func do_FsmApp_CALLIDLE(_ e:Event)->Void{_FsmApp?.trans(FsmApp.Event.CALLIDLE.rawValue)}
+    private func do_FsmRtc_CREATEANDENTER(_ e:Event)->Void{_FsmRtc?.trans(FsmRtc.Event.CREATEANDENTER.rawValue)}
     private func do_FsmApp_CALL_READY(_ e:Event)->Void{_FsmApp?.trans(FsmApp.Event.CALL_READY.rawValue)}
     //fsm
     private var _FsmApp:Fsm? = nil

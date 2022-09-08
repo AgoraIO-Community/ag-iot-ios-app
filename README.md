@@ -11,7 +11,7 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Requirements
 
-https://docs-preprod.agora.io/cn/iot-apaas/client_media_call_ios?platform=All%20Platforms
+https://docs.agora.io/cn/iot-apaas/enable_agora_link?platform=All%20Platforms
 
 ## Installation
 

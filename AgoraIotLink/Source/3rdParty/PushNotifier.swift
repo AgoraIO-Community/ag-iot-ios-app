@@ -14,7 +14,6 @@ class PushNotifier : NSObject, UIApplicationDelegate{
     
     private var state:Int = PushNotifier.NULLED
 
-    
     static private let NULLED = 0
     static private let CREATED = 1
     static private let ENTERED = 2

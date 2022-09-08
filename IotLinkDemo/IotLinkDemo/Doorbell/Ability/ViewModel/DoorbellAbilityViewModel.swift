@@ -10,7 +10,7 @@ import AgoraIotLink
 
 class DoorbellAbilityViewModel: NSObject {
 
-    var sdk:IAgoraIotAppSdk?{get{return gwsdk}}
+    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
     
     //呼叫设备
     func wakeupDevice(_ dev:IotDevice,_ cb:@escaping(Bool,String)->Void,_ action:@escaping(ActionAck)->Void){
@@ -24,6 +24,7 @@ class DoorbellAbilityViewModel: NSObject {
         },actionAck: {s in
             var msg = "未知的设备操作"
             switch(s){
+                case .AcceptFail:msg="接听失败"
                 case .RemoteAnswer:msg = "设备接听"
                 case .RemoteHangup:msg = "设备挂断"
                 case .RemoteBusy:msg = "设备忙碌"
@@ -95,7 +96,7 @@ class DoorbellAbilityViewModel: NSObject {
         
         let dict = getDictionaryFromJSONString(jsonString: String(describing: jsonString).removingPercentEncoding!)
         
-        debugPrint(dict)
+        //debugPrint(dict)
         
         
         guard let arr = dict["dataList"] as? [[String: Any]] else {

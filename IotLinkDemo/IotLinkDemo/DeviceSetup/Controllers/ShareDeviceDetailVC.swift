@@ -85,12 +85,12 @@ class ShareDeviceDetailVC: UIViewController {
         }
         
         let head = AGRightImageCellData(title: headTitle, imagUrl: cancelUser?.avatar ?? "")
-        let account = AGSubtitleCellData(title: accountTitle, subtitle: phoneNum.replacePhone(), showArrow: false)
-//        let expire = AGSubtitleCellData(title: expireTitle, subtitle: "永久有效", showArrow: true)
+        let account = AGSubtitleCellData(title: accountTitle, subtitle: cancelUser?.appuserId ?? "", showArrow: false)
+        let expire = AGSubtitleCellData(title: expireTitle, subtitle: "永久有效", showArrow: false)
         dataArray = [
             head,
             account,
-//            expire
+            expire
         ]
         tableView.reloadData()
     }

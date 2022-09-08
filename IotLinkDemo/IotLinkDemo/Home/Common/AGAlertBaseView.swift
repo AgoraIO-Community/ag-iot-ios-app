@@ -10,7 +10,6 @@ import UIKit
 private let buttonHeight:CGFloat = 40
 
 class AGAlertBaseView: UIView {
-    
     lazy var titleLabel:UILabel = {
         let titleLabel = UILabel()
         titleLabel.font = UIFont.systemFont(ofSize: 18)
@@ -27,8 +26,6 @@ class AGAlertBaseView: UIView {
         label.textAlignment = .center
         return label
     }()
-    
-    
     
     lazy var cancelButton:UIButton = {
         let button = UIButton(type: .custom)

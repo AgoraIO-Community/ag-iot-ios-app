@@ -6,12 +6,13 @@
 //
 
 import UIKit
+import AgoraIotLink
 
 protocol LoginViewDelegate : NSObjectProtocol{
     
     func countryBtnClick()
-    func registerBtnClick()
-    func forgetPwdBtnClick()
+    func registerBtnClick(acc: String, pwd: String)
+    //func forgetPwdBtnClick()
     func loginBtnClick(acc:String,pwd:String)
     
 }
@@ -44,7 +45,7 @@ class LoginView: UIView {
         backView.addSubview(titleLabel)
 //        backView.addSubview(subTitleLabel)
 //        backView.addSubview(selectCountry)
-        backView.addSubview(forgetBtn)
+//        backView.addSubview(forgetBtn)
         backView.addSubview(phoneNumView)
         backView.addSubview(passwordView)
         backView.addSubview(tipsLabel)
@@ -96,11 +97,11 @@ class LoginView: UIView {
             make.height.equalTo(cHeight)
         }
         
-        forgetBtn.snp.makeConstraints { (make) in
-            make.top.equalTo(passwordView.snp.bottom).offset(12.VS)
-            make.right.equalTo(passwordView.snp.right).offset(-10.S)
-            make.height.equalTo(18.S)
-        }
+//        forgetBtn.snp.makeConstraints { (make) in
+//            make.top.equalTo(passwordView.snp.bottom).offset(12.VS)
+//            make.right.equalTo(passwordView.snp.right).offset(-10.S)
+//            make.height.equalTo(18.S)
+//        }
         
         tipsLabel.snp.makeConstraints { (make) in
             make.top.equalTo(passwordView.snp.bottom).offset(8.VS)
@@ -192,15 +193,15 @@ class LoginView: UIView {
         return vew
     }()
     
-    lazy var forgetBtn: UIButton = {
-        let btn = UIButton()
-        btn.setTitle("忘记密码", for: .normal)
-        btn.setTitleColor(UIColor(hexString: "#000000"), for: .normal)
-        btn.titleLabel?.font = FontPFRegularSize(13)
-        btn.titleLabel?.adjustsFontSizeToFitWidth = true
-        btn.addTarget(self, action: #selector(forgetEvent(btn:)), for: .touchUpInside)
-        return btn
-    }()
+//    lazy var forgetBtn: UIButton = {
+//        let btn = UIButton()
+//        btn.setTitle("忘记密码", for: .normal)
+//        btn.setTitleColor(UIColor(hexString: "#000000"), for: .normal)
+//        btn.titleLabel?.font = FontPFRegularSize(13)
+//        btn.titleLabel?.adjustsFontSizeToFitWidth = true
+//        btn.addTarget(self, action: #selector(forgetEvent(btn:)), for: .touchUpInside)
+//        return btn
+//    }()
     
     lazy var tipsLabel: UILabel = {
         let label = UILabel()
@@ -260,16 +261,16 @@ extension LoginView {
     }
     
     //MARK: - 忘记密码
-    @objc func forgetEvent(btn: UIButton) {
-        
-        self.delegate?.forgetPwdBtnClick()
-        
-    }
+//    @objc func forgetEvent(btn: UIButton) {
+//        
+//        self.delegate?.forgetPwdBtnClick()
+//        
+//    }
     
     //MARK: - 注册账号
     @objc func registerEvent(btn: UIButton) {
         
-        self.delegate?.registerBtnClick()
+        self.delegate?.registerBtnClick(acc: phoneNumView.textField.text ?? "", pwd: passwordView.textField.text ?? "")
         
     }
     
@@ -286,6 +287,10 @@ extension LoginView {
     func showTipsMessage(_ text: String){
         tipsLabel.isHidden = false
         tipsLabel.text = text
+    }
+    
+    func hide(){
+        tipsLabel.isHidden = true
     }
 }
 

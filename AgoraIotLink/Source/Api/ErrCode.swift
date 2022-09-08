@@ -45,6 +45,7 @@ public class ErrCode : NSObject{
     @objc public static let XERR_TIMEOUT = -10009 ///< 操作超时
     @objc public static let XERR_NETWORK = -10012              ///< 网络错误
     @objc public static let XERR_TOKEN_EXPIRED = -10015        ///< Token过期
+    @objc public static let XERR_API_RET_FAIL = -10016        ///< 调用依赖api返回失败
 
     //
     // 账号相关错误
@@ -79,6 +80,7 @@ public class ErrCode : NSObject{
     @objc public static let XERR_CALLKIT_PEER_UNREG = -40010       ///< 对端未注册
     @objc public static let XERR_CALLKIT_NO_APPID = -40011         ///< 未上报appid
     @objc public static let XERR_CALLKIT_SAME_ID = -40012         ///< 主叫和被叫同一个id
+    @objc public static let XERR_CALLKIT_APPID_DIFF = -4001         ///< 主控和被控方app id不一致
     //
     // 设备管理相关错误
     //

@@ -9,6 +9,14 @@ import Foundation
 
 extension AgoraLab{
     class api{
+        //static let http_dev = "https://third-user.sh.agoralab.co/third-party"
+        static let http_lab = "http://iot-api-gateway.sh.agoralab.co:80/api"
+                               
+        //static let authRegister = "/auth/register"
+        static let authLogin = "/auth/login"
+        //static let authUnRegister = "auth/removeAccount"
+        
+        static let control = "/call-service/v1/control/start"
         static let call = "/call-service/v1/call"
         static let answer = "/call-service/v1/answer"
         
@@ -20,10 +28,22 @@ extension AgoraLab{
         static let batchRead = "/alert-center/alert-message/v1/readMessageBatch"
         static let getById = "/alert-center/alert-message/v1/getById"
         static let getPage = "/alert-center/alert-message/v1/getPage"
+        static let getPageV2 = "/alert-center/alarm-message/v2/getPage"
+        static let getByIdV2 = "/alert-center/alarm-message/v2/getById"
+        static let singleReadV2 = "/alert-center/alarm-message/v2/readMessage"
+        static let deleteV2 = "/alert-center/alarm-message/v2/delete"
+        static let batchDeleteV2 = "/alert-center/alarm-message/v2/deleteBatch"
+        static let batchReadV2 = "/alert-center/alarm-message/v2/readMessageBatch"
+        static let addV2 = "/alert-center/alarm-message/v2/add"
+        
+        static let getImageUrl = "/file-system/image-record/v1/getByImageId"
+        static let getVideoUrl = "/cloud-recorder/video-record/v1/getByTimePoint"
         
         static let oauthRegister = "/oauth/register"
         static let oauthResetToken = "/oauth/rest-token"
         static let getAlertCount = "/alert-center/alert-message/v1/count"
+        static let getAlertCountV2 = "/alert-center/alarm-message/v2/count"
+        static let sysReadMsgBatchV2 = "/alert-center/system-message/v2/readMessageBatch"
         
         static let sysReadMsg = "/alert-center/system-message/v1/readMessage"
         static let sysReadMsgBatch = "/alert-center/system-message/v1/readMessageBatch"
@@ -46,7 +66,8 @@ extension AgoraLab{
         public static let INVALID_ANSWER = 100006  ///< 无效的Answer应答
         public static let SAME_ID = 100007         ///< 主叫和被叫不能是同一个id
         public static let APPID_NOT_REPORT = 100008 ///< 未上报app id
-        public static let SYS_ERROR = 999999      ///< 系统异常，具体原因查看错误提示信息
+        public static let APPID_NOT_SAME = 100009  ///< 主控和被控方app id必须一致>
+        public static let SYS_ERROR = 999999       ///< 系统异常，具体原因查看错误提示信息
     }
     
     struct Rsp:Decodable{
@@ -54,6 +75,48 @@ extension AgoraLab{
         let msg:String
         let timestamp:UInt64
         let success:Bool
+    }
+    
+    class Login{
+        struct LsToken : Decodable{
+            let access_token:String
+            let token_type : String
+            let refresh_token : String
+            let expires_in : UInt
+            let scope : String
+        }
+        struct Pool : Decodable{
+            let identifier : String
+            let identityId : String
+            let identityPoolId : String
+            let token : String
+        }
+        struct Proof : Decodable{
+            let accessKeyId : String
+            let secretKey : String
+            let sessionToken : String
+            let sessionExpiration : UInt64
+        }
+        struct GyToken : Decodable{
+            let endpoint:String
+            let pool : Pool?
+            let expiration : UInt64
+            let granwin_token : String
+            let proof : Proof?
+            let region : String
+            let account : String
+        }
+        struct Data : Decodable{
+            let lsToken:LsToken?
+            let gyToken:GyToken?
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Data?
+        }
     }
     
     class RestToken{
@@ -189,8 +252,8 @@ extension AgoraLab{
     class AlertMessageRead{
         struct Req : Encodable{
             let header : Header
-            let payload : Int
-            init(_ header:Header,_ index:Int){
+            let payload : UInt64
+            init(_ header:Header,_ index:UInt64){
                 self.header = header
                 self.payload = index
             }
@@ -203,6 +266,34 @@ extension AgoraLab{
             let data:Bool
         }
     }
+    
+    class ControlInfo{
+        struct Payload : Encodable{
+            let controllerId:String
+            let controlledId:String
+            init(localVirtualNumb:String,peerVirtualNumb:String){
+                controlledId = peerVirtualNumb
+                controllerId = localVirtualNumb
+            }
+        }
+        struct Req : Encodable{
+            let header : Header
+            let payload : Payload
+        }
+        //{"code":0,"msg":"SUCCESS","timestamp":1660725206380,"data":{"rtmToken":"006d0177a34373b482a9c4eb4dedcfa586aIABOc4bBb8WteljZDyvY8tDu+qBfCf2AnS0Bq1Rd++HdKEFsvPUAAAAAEADBzeFEVvn9YgEA6AMAAAAA"},"success":true}
+        struct Data : Decodable{
+            let rtmToken:String
+            //let uid:String
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Data?
+        }
+    }
+    
     class AlertMessageBatchRead{
         struct Req : Encodable{
             let header : Header
@@ -431,8 +522,306 @@ extension AgoraLab{
             let data:Data?
         }
     }
+    
+    class AlertImageUrl{
+        struct Req : Encodable{
+            let header : Header
+            let payload : String
+            init(_ header:Header,_ payload:String){
+                self.header = header
+                self.payload = payload
+            }
+        }
+        struct Data : Decodable{
+//            let recordId:UInt64
+//            let imageId:String
+//            let userId:String
+//            let productId:String
+//            let deviceName:String?
+//            let fileName:String
+//            let bucket:String
+//            let remark:String?
+//            let deleted:Bool
+//            let createBy:UInt64?
+//            let createdTime:String
+            let vodUrl:String
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Data?
+        }
+    }
+    
+    //"{\"code\":0,\"msg\":\"SUCCESS\",\"timestamp\":1661764690540,\"data\":{\"videoRecordId\":1564177602837426177,\"type\":1,\"userId\":\"100000000000000000-722626478850592768\",\"productId\":\"EJImm64m65ECOl5\",\"deviceId\":\"IVFES3LNGY2G2NRVIVBU63BVFVJVKTS7KRJVIXZQGAZA\",\"beginTime\":5198233000,\"endTime\":5198293000,\"fileName\":\"iot-one/IVFES3LNGY2G2NRVIVBU63BVFVJVKTS7KRJVIXZQGAZA_5198232520_1976191482.m3u8\",\"bucket\":\"iot-file-bucket\",\"vodUrl\":\"http://agora-iot-cdn-cn.sd-rtn.com/iot-one/IVFES3LNGY2G2NRVIVBU63BVFVJVKTS7KRJVIXZQGAZA_5198232520_1976191482.m3u8?ts=1661768290&sign=cb69bd31257013c4b59e3b9a953a0528\",\"deleted\":false,\"createdBy\":1,\"createdTime\":1661763976000},\"success\":true}"
+    class AlertVideoUrl{
+        struct Payload : Encodable{
+            let userId:String
+            let deviceId:String
+            let beginTime:UInt64
+        }
+        struct Req : Encodable{
+            let header : Header
+            let payload : Payload
+            init(_ header:Header,_ indexes:Payload){
+                self.header = header
+                self.payload = indexes
+            }
+        }
+        struct Data : Decodable{
+            let videoRecordId:UInt64
+            let type:Int ////类型，0表示计划录像，1表示报警录像，2表示主动录像，99表示所有录像
+            let userId:String
+            let productId:String
+            let deviceId:String
+            let deviceName:String?
+            let beginTime:UInt64
+            let endTime:UInt64
+            let fileName:String
+            let bucket:String
+            let remark:String?
+            let vodUrl:String
+            let deleted:Bool
+            let createdBy:UInt64
+            let createdTime:UInt64
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Data?
+        }
+    }
+    
+    class AlertMessageBatchDeleteV2{
+        struct Req : Encodable{
+            let header : Header
+            let payload : [UInt64]
+            init(_ header:Header,_ indexes:[UInt64]){
+                self.header = header
+                self.payload = indexes
+            }
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Bool
+        }
+    }
+    
+    class AlertMessageDeleteV2{
+        struct Req : Encodable{
+            let header : Header
+            let payload : UInt64
+            init(_ header:Header,_ index:UInt64){
+                self.header = header
+                self.payload = index
+            }
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Bool
+        }
+    }
+    
+    class AlertMessageBatchReadV2{
+        struct Req : Encodable{
+            let header : Header
+            let payload : [UInt64]
+            init(_ header:Header,_ indexes:[UInt64]){
+                self.header = header
+                self.payload = indexes
+            }
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Bool
+        }
+    }
+    
+    class AlertMessageAddV2{
+        struct Payload : Encodable{
+            let beginTime:UInt64
+            let tenantId:String
+            let productId:String
+            let deviceId:String
+            let deviceName:String
+            let description:String
+            let status:Int
+            let messageType:Int
+        }
+        struct Req : Encodable{
+            let header : Header
+            let payload : Payload
+            init(_ header:Header,_ payload:Payload){
+                self.header = header
+                self.payload = payload
+            }
+        }
+        
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:UInt64
+        }
+    }
+    
+    class AlertMessageReadV2{
+        struct Req : Encodable{
+            let header : Header
+            let payload : UInt64
+            init(_ header:Header,_ index:UInt64){
+                self.header = header
+                self.payload = index
+            }
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Bool
+        }
+    }
+    class AlertCountV2{
+        struct Payload : Encodable{
+            let tenantId:String?
+            var productId:String? = nil
+            var deviceId:String? = nil
+            var messageType:Int? = nil //0:sound dectect,1:motion dectect, 99:other
+            var status:Int? = nil      //0:not read,1:have read
+            var createdDateBegin:String? = nil
+            var createdDateEnd:String? = nil
+        }
+        struct Req : Encodable{
+            let header : Header
+            let payload : Payload
+            init(_ header:Header,_ payload:Payload){
+                self.header = header
+                self.payload = payload
+            }
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:UInt
+        }
+    }
+    class AlertMessageGetByIdV2{
+        struct Req : Encodable{
+            let header:Header
+            let payload:UInt64
+            init(_ header:Header,_ alertMessageId:UInt64){
+                self.header = header
+                self.payload = alertMessageId
+            }
+        }
+        struct Data : Decodable{
+            let alarmMessageId:UInt64
+            let messageType:UInt
+            let description:String?
+            let fileUrl:String?
+            let status:UInt
+            let tenantId:String
+            let productId:String
+            let deviceId:String
+            let deviceName:String
+            let deleted:Bool
+            let beginTime:UInt64
+            let createdBy:UInt
+            let createdDate:UInt64
+            let changedBy:UInt?
+            let changedDate:UInt64?
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data : Data?
+        }
+    }
+    class AlertMessageGetPageV2{
+        struct Payload : Encodable{
+            let tenantId:String
+            var productId:String? = nil
+            var deviceId:String? = nil
+            var messageType:Int? = nil //0:sound dectect,1:motion dectect, 99:other
+            var status:Int? = nil      //0:not read,1:have read
+            var createdDateBegin:String? = nil
+            var createdDateEnd:String? = nil
+        }
+        struct PageInfo : Encodable{
+            let currentPage : Int
+            let pageSize : Int
+            init(_ currPage:Int,_ pageSize:Int){
+                self.currentPage = currPage
+                self.pageSize = pageSize
+            }
+        }
+        struct SortMap : Encodable{
+            let alertMessageId : String //asc / desc, default:desc
+        }
+        struct Req : Encodable{
+            let header : Header
+            let payload : Payload
+            let pageInfo : PageInfo
+            init(_ header:Header,_ payload:Payload,_ pageInfo : PageInfo){
+                self.header = header
+                self.payload = payload
+                self.pageInfo = pageInfo
+            }
+        }
+        struct PageResults:Decodable{
+            let alarmMessageId:UInt64
+            let messageType:UInt
+            let description:String?
+            let fileUrl:String?
+            let status:UInt
+            let tenantId:String
+            let productId:String
+            let deviceId:String
+            let deviceName:String
+            let beginTime:UInt64
+            let deleted:Bool
+            let createdBy:UInt
+            let createdDate:UInt64
+            let changedBy:UInt?
+            let changedDate:UInt64?
+            let imageId:String?
+        }
+        struct Data:Decodable{
+            let pageResults:[PageResults]?
+            let pageSize:Int
+            let currentPage:Int
+            let totalCount:Int
+            let totalPage:Int
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Data?
+        }
+    }
 
-    typealias Login = Register
+    //typealias Login = Register
 
     class Alarm{
         struct RecordInfo : Decodable{
@@ -536,5 +925,179 @@ extension AgoraLab{
             let success:Bool
             let data:Data?
         }
+    }
+    
+    func handleRspGetAlarmByIdV2(_ ret:AlertMessageGetByIdV2.Rsp,_  rsp:@escaping (Int,String,IotAlarm?) -> Void){
+        if(ret.code == AgoraLab.tokenExpiredCode){
+            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+            return
+        }
+        
+        if(ret.code != 0){
+            log.e("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
+            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
+        }
+        
+        guard let data = ret.data else{
+            log.e("al handleRspGetAlarmById rsp with no data")
+            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
+        }
+        
+        let alert:IotAlarm = IotAlarm(messageId: data.alarmMessageId)
+        alert.createdDate = data.createdDate
+        alert.messageType = data.messageType
+        alert.status = data.status
+        alert.desc = data.description ?? ""
+        alert.fileUrl = data.fileUrl ?? ""
+        alert.productId = data.productId
+        alert.deviceId = data.deviceId
+        alert.deviceName = data.deviceName
+        alert.beginTime = data.beginTime
+        alert.deleted = data.deleted
+        alert.createdBy = data.createdBy
+        alert.createdDate = data.createdDate
+        alert.changedBy = data.changedBy ?? 0
+        alert.changedDate = data.changedDate ?? 0
+        rsp(ErrCode.XOK,ret.msg,alert)
+    }
+    
+    func handleRspGetImageUrl(_ ret:AlertImageUrl.Rsp,_ rsp:@escaping (Int,String,String?)->Void){
+        if(ret.code == AgoraLab.tokenExpiredCode){
+            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+            return
+        }
+        
+        if(ret.code != 0){
+            log.e("al handleRspGetImageUrl fail \(ret.msg)(\(ret.code))")
+            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
+        }
+        
+        guard let data = ret.data else{
+            log.e("al handleRspGetImageUrl rsp no data found")
+            return rsp(ErrCode.XERR_UNKNOWN,"no data found",nil)
+        }
+        
+        rsp(ErrCode.XOK,ret.msg,data.vodUrl)
+    }
+    
+    func handleRspGetVideoUrl(_ ret:AlertVideoUrl.Rsp,_ rsp:@escaping (Int,String,String?)->Void){
+        if(ret.code == AgoraLab.tokenExpiredCode){
+            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+            return
+        }
+        
+        if(ret.code != 0){
+            log.e("al handleRspGetVideoUrl fail \(ret.msg)(\(ret.code))")
+            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
+        }
+        
+        guard let data = ret.data else{
+            log.e("al handleRspGetVideoUrl rsp no data found")
+            return rsp(ErrCode.XERR_UNKNOWN,"no data found",nil)
+        }
+        
+        rsp(ErrCode.XOK,ret.msg,data.vodUrl)
+    }
+    
+    func handleRspGetAlarmPageV2(_ ret:AlertMessageGetPageV2.Rsp,_ rsp:@escaping (Int,String,[IotAlarm]?)->Void){
+        if(ret.code == AgoraLab.tokenExpiredCode){
+            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+            return
+        }
+        
+        if(ret.code != 0){
+            log.e("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
+            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
+        }
+        
+        guard let data = ret.data else{
+            log.e("al handleRspGetPage rsp no data found")
+            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
+        }
+        
+        var alerts:[IotAlarm] = []
+        if(data.totalCount == 0){
+            return rsp(ErrCode.XOK,ret.msg,alerts)
+        }
+        
+        guard let pageResults = data.pageResults else {
+            log.e("al handleRspGetPage rsp no pageResults found")
+            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
+        }
+        
+        for item in pageResults{
+            let alert:IotAlarm = IotAlarm(messageId: item.alarmMessageId)
+            alert.createdDate = item.createdDate
+            alert.messageType = item.messageType
+            alert.status = item.status
+            alert.desc = item.description ?? ""
+            alert.fileUrl = item.fileUrl ?? ""
+            alert.productId = item.productId
+            alert.deviceId = item.deviceId
+            alert.deviceName = item.deviceName
+            alert.beginTime = item.beginTime
+            alert.deleted = item.deleted
+            alert.createdBy = item.createdBy
+            alert.createdDate = item.createdDate
+            alert.changedBy = item.changedBy ?? 0
+            alert.changedDate = item.changedDate ?? 0
+            alert.imageId = item.imageId ?? ""
+            alerts.append(alert)
+            log.i("alert item \(item)")
+        }
+        rsp(ErrCode.XOK,ret.msg,alerts)
+    }
+    
+    func handleRspLogin(_ ret:Login.Rsp,_ rsp:@escaping (Int,String,LoginRspData?)->Void){
+        if(ret.code != 0){
+            log.e("al handleRspLogin fail \(ret.msg)(\(ret.code))")
+            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+        }
+        guard let data = ret.data else{
+            log.e("al handleRspLogin data is nil \(ret.msg)(\(ret.code))")
+            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+        }
+        guard let lsToken = data.lsToken else {
+            log.e("al handleRspLogin lsToken is nil \(ret.msg)(\(ret.code))")
+            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+        }
+        guard let gyToken = data.gyToken else {
+            log.e("al handleRspLogin gyToken is nil \(ret.msg)(\(ret.code))")
+            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+        }
+        guard let pool = gyToken.pool else {
+            log.e("al handleRspLogin pool is nil \(ret.msg)(\(ret.code))")
+            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+        }
+        guard let proof = gyToken.proof else {
+            log.e("al handleRspLogin proof is nil \(ret.msg)(\(ret.code))")
+            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+        }
+        
+        let ls = AgoraLabToken(tokenType: lsToken.token_type,
+                               accessToken: lsToken.access_token,
+                               refreshToken: "",
+                               expireIn: lsToken.expires_in,
+                               scope: lsToken.scope)
+        
+        let gy = IotLinkSession(granwin_token: gyToken.granwin_token,
+                                expiration: gyToken.expiration,
+                                endPoint: gyToken.endpoint,
+                                region: gyToken.region,
+                                account: gyToken.account,
+                                
+                                proof_sessionToken: proof.sessionToken,
+                                proof_secretKey: proof.secretKey,
+                                proof_accessKeyId: proof.accessKeyId,
+                                proof_sessionExpiration:proof.sessionExpiration,
+                                
+                                pool_token: pool.token,
+                                pool_identityId: pool.identityId,
+                                pool_identityPoolId: pool.identityPoolId,
+                                pool_identifier: pool.identifier)
+        
+        let rspData = LoginRspData(agToken: ls, gyToken: gy)
+        
+        rsp(ErrCode.XOK,ret.msg,rspData)
     }
 }

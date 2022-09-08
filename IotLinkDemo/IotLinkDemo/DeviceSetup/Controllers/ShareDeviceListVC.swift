@@ -151,7 +151,7 @@ extension ShareDeviceListVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellData = dataArray[indexPath.row]
         let cell:ShareDeviceInfoCell = tableView.dequeueReusableCell(withIdentifier: kCellID, for: indexPath) as! ShareDeviceInfoCell
-        cell.set(nickname: cellData.phone, account: cellData.email, headImg: cellData.avatar)
+        cell.set(nickname: cellData.phone, account: cellData.appuserId, headImg: cellData.avatar)
         return cell
     }
     

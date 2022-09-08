@@ -34,8 +34,8 @@ class LoginProtocolAlertVC: UIViewController {
     
     let  contentVStr1 = "1、用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时"
     
-    let userProtocolUrl = "https://iot-console-web.sh.agoralab.co/terms/termsofuse"
-    let privateProUrl = "https://iot-console-web.sh.agoralab.co/terms/privacypolicy"
+    let userProtocolUrl = "https://agoralink.sd-rtn.com/terms/termsofuse"
+    let privateProUrl = "https://agoralink.sd-rtn.com/terms/privacypolicy"
     
     ///协议类型
     var proType:ProtocolType = .none
@@ -79,9 +79,11 @@ class LoginProtocolAlertVC: UIViewController {
         
         bgImgV.addSubview(bgV)
         bgV.snp.makeConstraints { (make) in
-            make.width.equalTo(300.S)
-            make.height.equalTo(428.S)
-            make.centerX.centerY.equalToSuperview()
+//            make.width.equalTo(300.S)
+//            make.height.equalTo(428.S)
+//            make.centerX.centerY.equalToSuperview()
+            
+            make.top.bottom.left.right.equalToSuperview()
         }
         
         bgV.addSubview(titleLab)

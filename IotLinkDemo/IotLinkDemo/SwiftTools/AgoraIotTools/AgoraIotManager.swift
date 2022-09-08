@@ -12,10 +12,9 @@ class AgoraIotManager: NSObject {
 
     public static let shared = AgoraIotManager()
     
-    var sdk:IAgoraIotAppSdk?{get{return gwsdk}}
+    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
     
     func updateToken(deviceToken: Data){
         sdk?.notificationMgr.updateToken(deviceToken)
     }
-    
 }

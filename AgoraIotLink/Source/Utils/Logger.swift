@@ -10,14 +10,16 @@ import Foundation
 
 
 public enum LoggerLevel: Int {
-    case info = 1
+    case verb = 1
+    case info
     case debug
     case warning
     case error
     case none
-    
+    //❤️🧡💛💚💙💜🖤🤍🤎
     var name: String {
         switch self {
+            case .verb:return "🤎v"
             case .info: return "💙i"
             case .debug: return "💚d"
             case .warning: return "💛w"
@@ -154,6 +156,12 @@ public class Logger: NSObject {
 
 // MARK: - Output
 extension Logger {
+    public func level(_ level: LoggerLevel,_ message: String, currentTime: Date = Date(), fileName: String = #file, functionName: String = #function, lineNumber: Int = #line, thread: Thread = Thread.current ) {
+        log(level, message: message, currentTime: currentTime, fileName: fileName, functionName: functionName, lineNumber: lineNumber, thread: thread)
+    }
+    public func v(_ message: String, currentTime: Date = Date(), fileName: String = #file, functionName: String = #function, lineNumber: Int = #line, thread: Thread = Thread.current ) {
+        log(.verb, message: message, currentTime: currentTime, fileName: fileName, functionName: functionName, lineNumber: lineNumber, thread: thread)
+    }
     public func i(_ message: String, currentTime: Date = Date(), fileName: String = #file, functionName: String = #function, lineNumber: Int = #line, thread: Thread = Thread.current ) {
         log(.info, message: message, currentTime: currentTime, fileName: fileName, functionName: functionName, lineNumber: lineNumber, thread: thread)
     }

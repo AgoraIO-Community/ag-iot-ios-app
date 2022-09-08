@@ -40,6 +40,8 @@ public class IotAlarm : NSObject{
     @objc public var deviceId:String = ""           //设备ID
     @objc public var deviceName:String = ""         //设备名
     @objc public var deleted:Bool = false           //是否释放
+    @objc public var imageId:String = ""            //告警图片id
+    @objc public var beginTime:UInt64 = 0           //开始录制时间
     @objc public var createdBy:UInt = 0             //被谁创建
     @objc public var createdDate:UInt64 = 0         //创建日期时间戳
     @objc public var changedBy:UInt = 0             //被谁修改

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import SJVideoPlayer
+//import SJVideoPlayer
 
 class DoorbellPlayerBottomView: UIView {
     
@@ -61,13 +61,13 @@ class DoorbellPlayerBottomView: UIView {
     }()
     
     // 进度条
-    lazy var progress:SJProgressSlider = {
-        let slider = SJProgressSlider()
-        slider.trackHeight = 3
-        slider.tap.isEnabled = true
-        slider.showsBufferProgress = true
-        return slider
-    }()
+//    lazy var progress:SJProgressSlider = {
+//        let slider = SJProgressSlider()
+//        slider.trackHeight = 3
+//        slider.tap.isEnabled = true
+//        slider.showsBufferProgress = true
+//        return slider
+//    }()
     
     // 旋转
     private lazy var rotationButton:UIButton = {

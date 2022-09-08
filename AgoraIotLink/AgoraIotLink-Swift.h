@@ -8,5 +8,5 @@
 #ifndef AgoraIotSdk_Swift_h
 #define AgoraIotSdk_Swift_h
 
-
+#include "AgoraRtmKit.h"
 #endif /* AgoraIotSdk_Swift_h */

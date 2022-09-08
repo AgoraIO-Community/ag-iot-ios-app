@@ -19,7 +19,7 @@ protocol DoorbellAbilityTopViewDelegate : NSObjectProtocol{
 
 class DoorbellAbilityTopView: UIView {
 
-    var sdk:IAgoraIotAppSdk?{get{return gwsdk}}
+    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
     
     let videoH : CGFloat = 200.VS
     let topMarginH : CGFloat = 66.VS

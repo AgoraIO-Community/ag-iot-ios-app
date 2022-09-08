@@ -11,11 +11,9 @@ import AgoraIotLink
 //配置IAgoraIotAppSdk 初始化
 extension AppDelegate{
     
-    var sdk:IAgoraIotAppSdk?{get{return gwsdk}}
+    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
     
     func initAgoraIot(){
-        
-        log.level = .info
         log.i("AgoraIotManager app initialize()")
         
         let param:InitParam = InitParam()
@@ -55,6 +53,9 @@ extension AppDelegate{
                 //首帧成功可显示发通知
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteVideoReadyNotify), object: nil)
 
+            }else if(callin == .AcceptFail){
+                log.e("demo app accept error \(msg)")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil)
             }
         })
         sdk?.deviceMgr.register(listener: self)

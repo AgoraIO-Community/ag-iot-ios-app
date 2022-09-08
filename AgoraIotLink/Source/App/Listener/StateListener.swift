@@ -8,6 +8,10 @@
 import Foundation
 
 class StateListener : FsmState.IListener{
+    func do_INITRTM_FAIL(_ srcState: FsmState.State) {
+        _statusHandler(.InitRtmFail,"RTM初始化失败")
+    }
+    
     func do_INITPUSH_FAIL(_ srcState: FsmState.State) {
         _statusHandler(.InitPushFail,"推送初始化失败")
     }

@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import AgoraRtcKit
+//import AgoraRtcKit
 
-struct CallSession{
+class CallSession{
     var callerId:String = ""
     var calleeId:String = ""
     var callStatus:Int = 0
@@ -25,12 +25,19 @@ struct CallSession{
 }
 
 class CallkitManager : ICallkitMgr{
-
-    
-    func capturePeerVideoFrame(result: @escaping (Int, String, UIImage?) -> Void) {
+    private func asyncResult(_ ec:Int,_ msg:String,_ result:@escaping(Int,String)->Void) {
         DispatchQueue.main.async {
             let filter = self.app.context.callbackFilter
-            self.app.proxy.rtc.capturePeerVideoFrame(cb: {ec,msg,al in let ret = filter(ec,msg);result(ret.0,ret.1,al)})
+            let ret = filter(ec,msg)
+            result(ret.0,ret.1)
+        }
+    }
+    
+    private func asyncResultData<T>(_ ec:Int,_ msg:String,_ data:T?,_ result:@escaping(Int,String,T?)->Void) {
+        DispatchQueue.main.async {
+            let filter = self.app.context.callbackFilter
+            let ret = filter(ec,msg)
+            result(ret.0,ret.1,data)
         }
     }
     
@@ -45,10 +52,22 @@ class CallkitManager : ICallkitMgr{
         self._onPeerRinging = onCallOngoing
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
     }
+
+    private func onCallSessionUpdated(sess:CallSession){
+        self.app.context.call.session.appId = sess.appId
+        self.app.context.call.session.caller = sess.callerId
+        self.app.context.call.session.callee = sess.calleeId
+        self.app.context.call.session.sessionId = sess.sessionId
+        self.app.context.call.session.rtcToken = sess.rtcToken
+        self.app.context.call.session.channelName = sess.channelName
+        self.app.context.call.session.uid = sess.uid
+        self.app.context.call.session.peerId = sess.peerUid
+        self.app.context.call.session.cloudRecordStatus = sess.cloudRecordStatus
+    }
     
     private func onCallOngoing(ec:Int,msg:String,sess:CallSession?){
         if(ec != ErrCode.XOK){
-            log.w("call waitForDidCalling \(msg)(\(ec))")
+            log.w("call onCallOngoing \(msg)(\(ec))")
             self.app.context.call.session.callee = ""
             self.app.context.call.session.caller = ""
             self.app.rule.trans(ec == ErrCode.XERR_TIMEOUT ? FsmCall.Event.REMOTE_TIMEOUT :  FsmCall.Event.MQTT_ACK_ERROR)
@@ -59,69 +78,55 @@ class CallkitManager : ICallkitMgr{
                 self.app.rule.trans(FsmCall.Event.MQTT_ACK_ERROR)
                 return
             }
-            self.app.context.call.session.appId = sess.appId
-            self.app.context.call.session.sessionId = sess.sessionId
-            self.app.context.call.session.rtcToken = sess.rtcToken
-            self.app.context.call.session.channelName = sess.channelName
-            self.app.context.call.session.uid = sess.uid
-            self.app.context.call.session.cloudRecordStatus = sess.cloudRecordStatus
 
-            self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
-                //self.app.rule.trigger.local_join_watcher = watcher
-                //self.onActionDesired(action: .CallOutgoing, sess: nil)
-            },{
+            onCallSessionUpdated(sess: sess)
+
+            self.app.rule.trans(
+                FsmCall.Event.REMOTE_RINGING,
+                {},
+                {
                 log.e("call state error from trans REMOTE_RINGING")
                 self.app.rule.trans(FsmCall.Event.STATUS_ERROR)
             })
         }
     }
 
-    private func onCallSessionUpdated(sess:CallSession){
-        log.i("call update session according to mqtt topic")
-        self.app.context.call.session.uid = sess.uid
-        self.app.context.call.session.peerId = sess.peerUid
-        self.app.context.call.session.appId = sess.appId
-        self.app.context.call.session.caller = sess.callerId
-        self.app.context.call.session.callee = sess.calleeId
-        self.app.context.call.session.sessionId = sess.sessionId
-        self.app.context.call.session.rtcToken = sess.rtcToken
-        self.app.context.call.session.channelName = sess.channelName
-        self.app.context.call.session.cloudRecordStatus = sess.cloudRecordStatus
+    private var app:Application
+    private let rtc:RtcEngine
+    
+    init(app:Application){
+        self.app = app
+        self.rtc = app.proxy.rtc
+        self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
     }
     
-    public func doCallHangup(result:@escaping(Int,String)->Void){
+    private func doCallHangup(result:@escaping(Int,String)->Void){
         let sessionId = app.context.call.session.sessionId
         let caller = app.context.call.session.caller
         let callee = app.context.call.session.callee
-        let localId = app.context.gran.session.cert.thingName
+        let localId = app.context.gyiot.session.cert.thingName
         let req = AgoraLab.Answer.Payload(sessionId: sessionId, calleeId: callee, callerId: caller,localId: localId, answer: 1)
         let traceId:String = app.context.call.session.traceId
         let cb = { (ec:Int,msg:String,data:AgoraLab.Answer.Data?) in
-            if(ec == ErrCode.XOK){
-                log.i("call Hangup succ:\(msg)(\(ec))")
-                result(ec,msg)
-                self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
-            }
-            else{
+            if(ec != ErrCode.XOK){
                 log.e("call Hangup fail:\(msg)(\(ec)) caller:\(caller)  callee:\(callee)  local:\(localId)")
-                result(ec,msg)
-                self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
             }
+            result(ec,msg)
+            self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
         }
         app.rule.trigger.local_join_watcher = {b in}
-        let agToken = app.context.aglab.session.token.acessToken
+        let agToken = app.context.aglab.session.token.accessToken
         app.proxy.al.reqAnswer(agToken,req,traceId, cb)
     }
     
     func callHangup(result:@escaping(Int,String)->Void){
         log.i("call callHangup")
-        let filter = self.app.context.callbackFilter
         app.rule.trans(FsmCall.Event.LOCAL_HANGUP,
-                       {self.doCallHangup(result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})},
-                       {let ret = filter(ErrCode.XERR_BAD_STATE,"当前状态不正确");result(ret.0,ret.1)})
+                       {self.doCallHangup(result: {ec,msg in self.asyncResult(ec, msg, result)})},
+                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"当前状态不正确",result)})
     }
     
-    func finiCall(result:@escaping(Int,String)->Void){
+    private func finiCall(result:@escaping(Int,String)->Void){
         app.rule.trans(FsmCall.Event.FINICALL)
         let filter = self.app.context.callbackFilter
         let ret = filter(ErrCode.XOK,"")
@@ -139,7 +144,7 @@ class CallkitManager : ICallkitMgr{
         
         let caller = app.context.call.session.caller
         let callee = app.context.call.session.callee
-        let localId = app.context.gran.session.cert.thingName
+        let localId = app.context.gyiot.session.cert.thingName
         app.rule.trigger.remote_state_watcher = { s in
             actionAck(s)
         }
@@ -166,17 +171,16 @@ class CallkitManager : ICallkitMgr{
                 result(ec,msg)
             }
         }
-        let agToken = app.context.aglab.session.token.acessToken
+        let agToken = app.context.aglab.session.token.accessToken
         app.proxy.al.reqAnswer(agToken,req,traceId, cb)
     }
     
     func callAnswer(result:@escaping(Int,String)->Void,
                     actionAck:@escaping(ActionAck)->Void){
         log.i("call callAnswer")
-        let filter = self.app.context.callbackFilter
         app.rule.trans(FsmCall.Event.LOCAL_ACCEPT,
-                       {self.doCallAnswer(result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)},actionAck: actionAck)},
-                       {let ret = filter(ErrCode.XERR_BAD_STATE,"当前状态不正确");result(ret.0,ret.1)})
+                       {self.doCallAnswer(result: {ec,msg in self.asyncResult(ec, msg, result)},actionAck: actionAck)},
+                                          {self.asyncResult(ErrCode.XERR_BAD_STATE,"当前状态不正确",result)})
     }
     
     class AsyncCallback{
@@ -206,12 +210,13 @@ class CallkitManager : ICallkitMgr{
             self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
             log.i("call remote answered,waiting for remote join channel")
             if(sess == nil){
-                //log.w("call action ack:sess is nil when .RemoteAnswer")
+                log.w("call action ack:sess is nil when .RemoteAnswer")
             }
-            else{//note:该事件中未带session信息，不需要更新session
+            else{//don't update sess because mqtt return status only during normal condition
                 //self.onCallSessionUpdated(sess: sess!)
             }
-            self.app.rule.trans(FsmCall.Event.REMOTE_ANSWER,{},{self.doCallHangup(result: {ec,msg in})})
+            self.app.rule.trans(FsmCall.Event.REMOTE_ANSWER,{},{
+                self.doCallHangup(result: {ec,msg in})})
         }
         else if(action == .RemoteTimeout){
             self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
@@ -227,7 +232,7 @@ class CallkitManager : ICallkitMgr{
             self._onPeerRinging = {e,m,s in }
         }
         else if(action == .LocalHangup){
-            //no need to handle
+            //no need to handle because LocalHangup by local
         }
         else if(action == .CallIncoming){
             if(sess == nil){
@@ -235,16 +240,16 @@ class CallkitManager : ICallkitMgr{
             }
             else{
                 self.onCallSessionUpdated(sess: sess!)
-                let local = self.app.context.gran.session.cert.thingName
+                let local = self.app.context.gyiot.session.cert.thingName
                 
                 log.i("call sess caller:\(sess!.callerId) callee:\(sess!.calleeId) local:\(local)")
                 if(local != sess!.callerId){
-                    _incoming(sess!.callerId,sess!.attachedMsg, action)
+                    _incoming(sess!.callerId,sess!.attachedMsg,action)
                     self.app.rule.trigger.incoming_state_watcher = {a in
-                        self._incoming(sess!.callerId,sess!.attachedMsg, a)
+                        self._incoming(sess!.callerId,sess!.attachedMsg,a)
                     }
                 }
-                
+                //incoming call,we do not to send av first
                 self.app.context.call.setting.rtc.publishAudio = false
                 self.app.context.call.setting.rtc.publishVideo = false
                 self.app.rule.trans(FsmCall.Event.INCOME)
@@ -267,15 +272,14 @@ class CallkitManager : ICallkitMgr{
 
     private func doCallDial(deviceId:String,attachMsg:String,result:@escaping(Int,String)->Void,actionAck:@escaping(ActionAck)->Void){
         let appId = app.config.appId
-        app.context.call.session.caller = app.context.gran.session.cert.thingName//app.context.gran.session.pool_identityId
+        app.context.call.session.caller = app.context.gyiot.session.cert.thingName//app.context.gran.session.pool_identityId
         app.context.call.session.callee = deviceId
 
-        let caller = app.context.gran.session.cert.thingName
+        let caller = app.context.gyiot.session.cert.thingName
         let callee = app.context.call.session.callee
         let req = AgoraLab.Call.Payload(callerId:caller,calleeIds: [callee],attachMsg: attachMsg,appId: appId)
         let traceId:String = app.context.call.session.traceId
         
-        //app.context.call.session.sessionId = ""
         app.rule.trigger.remote_state_watcher = { s in
             actionAck(s)
         }
@@ -311,8 +315,7 @@ class CallkitManager : ICallkitMgr{
         let pr = {(ec:Int,msg:String,sess:CallSession?) in
             if(ec != ErrCode.XOK){
                 log.w("call waitForDidCalling \(msg)(\(ec))")
-                self.app.context.call.session.callee = ""
-                self.app.context.call.session.caller = ""
+                self.app.context.call.session.reset()
                 self.app.rule.trans(ec == ErrCode.XERR_TIMEOUT ? FsmCall.Event.REMOTE_TIMEOUT :  FsmCall.Event.MQTT_ACK_ERROR)
                 rcb.invoke(args: (ec,msg))
             }
@@ -325,12 +328,7 @@ class CallkitManager : ICallkitMgr{
                 }
                 
                 log.i("call reqCall remote shadow ringing session:\(sess.sessionId)")
-                self.app.context.call.session.appId = sess.appId
-                self.app.context.call.session.sessionId = sess.sessionId
-                self.app.context.call.session.rtcToken = sess.rtcToken
-                self.app.context.call.session.channelName = sess.channelName
-                self.app.context.call.session.uid = sess.uid
-                self.app.context.call.session.cloudRecordStatus = sess.cloudRecordStatus
+                self.onCallSessionUpdated(sess: sess)
 
                 self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
                     log.i("all reqCall set local_join_watcher after mqtt ack")
@@ -376,6 +374,9 @@ class CallkitManager : ICallkitMgr{
                 case AgoraLab.RspCode.SYS_ERROR:
                     ec = ErrCode.XERR_UNKNOWN
                     msg = "系统异常,具体原因查看错误提示信息"
+                case AgoraLab.RspCode.APPID_NOT_SAME:
+                    ec = ErrCode.XERR_CALLKIT_APPID_DIFF
+                    msg = "主控和被控方app id不一致"
                 case AgoraLab.RspCode.SAME_ID:
                     ec = ErrCode.XERR_CALLKIT_SAME_ID
                     msg = "主叫和被叫不能是同一个id"
@@ -385,6 +386,7 @@ class CallkitManager : ICallkitMgr{
                 case AgoraLab.RspCode.OK:
                     ec = ErrCode.XOK
                     msg = "呼叫成功"
+                
                 default:
                     ec = ErrCode.XERR_INVALID_PARAM
                     msg = "未知的呼叫返回参数:\(rsp.code)"
@@ -412,10 +414,7 @@ class CallkitManager : ICallkitMgr{
                 self.app.context.call.session.rtcToken = data.rtcToken
                 self.app.context.call.session.uid = UInt(data.uid) ?? 0
                 self.app.context.call.session.cloudRecordStatus = data.cloudRecordStatus
-                
-                //self.app.context.call.session.rtc.pairing.uid = self.app.context.call.session.uid
-                //self.app.context.call.session.deviceAlias = data.deviceAlias
-                
+                        
                 self.app.rule.trans(FsmCall.Event.ACK_SUCC,{
                     actionAck(.CallForward)
                     rcb.schedule(time:self.app.config.calloutTimeOut,timeout: {
@@ -435,115 +434,116 @@ class CallkitManager : ICallkitMgr{
         }
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
         self._onPeerRinging = pr
-        let agToken = app.context.aglab.session.token.acessToken
+        let agToken = app.context.aglab.session.token.accessToken
         app.proxy.al.reqCall(agToken,req,traceId, cbDial)
     }
     
     func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void,actionAck:@escaping(ActionAck)->Void) {
         let filter = self.app.context.callbackFilter
         app.rule.trans(FsmCall.Event.CALL,
-                       {self.doCallDial(deviceId: device.deviceId, attachMsg: attachMsg, result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)}, actionAck: actionAck)},
-                       {let ret = filter(ErrCode.XERR_BAD_STATE,"状态错误");result(ret.0,ret.1)})
+                       {self.doCallDial(deviceId: device.deviceId, attachMsg: attachMsg, result: {ec,msg in self.asyncResult(ec, msg, result)}, actionAck: actionAck)},
+                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
     }
     
     func setLocalVideoView(localView: UIView?) -> Int {
-        let uid = app.context.call.session.uid
-        let canvas = AgoraRtcVideoCanvas()
-        canvas.uid = uid
-        canvas.renderMode = app.context.call.setting.rtc.renderMode
-        canvas.view = localView
+        var ret = 0
+//        let uid = app.context.call.session.uid
+//        let canvas = AgoraRtcVideoCanvas()
+//        canvas.uid = uid
+//        canvas.renderMode = app.context.call.setting.rtc.renderMode
+//        canvas.view = localView
+//
+//        ret = app.proxy.rtc.setupLocalView()
         
-        return app.proxy.rtc.setupLocalView(local: canvas) ? ErrCode.XOK : ErrCode.XERR_UNKNOWN
+        return ret
     }
     
     func setPeerVideoView(peerView: UIView?) -> Int {
-        var paired = app.context.call.session.rtc.paired
-        
-        if(paired.count != 0){
-            log.e("call setPeerVideoView with error session count:\(paired.count)")
-            return ErrCode.XERR_UNKNOWN
-        }
+//        var paired = app.context.call.session.rtc.paired
+//
+//        if(paired.count != 0){
+//            log.e("call setPeerVideoView with error session count:\(paired.count)")
+//            return ErrCode.XERR_UNKNOWN
+//        }
         let pairing = app.context.call.session.rtc.pairing
         pairing.view = peerView
         pairing.uid = app.context.call.session.peerId
         if(pairing.uid != 0){
             log.i("call setPeerVideoView uid:\(pairing.uid) \(String(describing: peerView))")
-            let canvas = AgoraRtcVideoCanvas()
-            canvas.uid = pairing.uid
-            canvas.renderMode = app.context.call.setting.rtc.renderMode
-            canvas.view = peerView
-            paired[pairing.uid] = RtcSession.VideoView()
+            
+            let view = pairing.view
+            let uid = pairing.uid
+            
+            //paired[pairing.uid] = RtcSession.VideoView(uid: uid, view: view)
+            
             pairing.view = nil
             pairing.uid = 0
-            return app.proxy.rtc.setupRemoteView(remote: canvas) ? ErrCode.XOK : ErrCode.XERR_UNKNOWN
+            
+            return app.proxy.rtc.setupRemoteView(peerView: view, uid: uid)
         }
-        else if(peerView != nil){
-            log.e("call setPeerVideoView with no remote user joined")
+        else{
+            log.d("call setPeerVideoView with no remote user joined")
         }
-        return 0
+        return ErrCode.XERR_BAD_STATE
     }
     
     func muteLocalVideo(mute: Bool,result:@escaping (Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callbackFilter
-            self.rtc.muteLocalVideo(mute, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.rtc.muteLocalVideo(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func muteLocaAudio(mute: Bool,result:@escaping (Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callbackFilter
-            self.rtc.muteLocalAudio(mute, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.rtc.muteLocalAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func mutePeerVideo(mute: Bool,result:@escaping (Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callbackFilter
-            self.rtc.mutePeerVideo(mute, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.rtc.mutePeerVideo(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func mutePeerAudio(mute: Bool,result:@escaping (Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callbackFilter
-            self.rtc.mutePeerAudio(mute, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.rtc.mutePeerAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func setVolume(volumeLevel: Int,result:@escaping (Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callbackFilter
-            self.rtc.setVolume(volumeLevel, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.rtc.setVolume(volumeLevel, cb: {ec,msg in self.asyncResult(ec, msg,result)})
+        }
+    }
+    
+    func setDefaultAudioRouteToSpeakerphone(defaultToSpeaker: Bool, result: @escaping (Int, String) -> Void) {
+        DispatchQueue.main.async {
+            self.rtc.setDefaultAudioRouteToSpeakerphone(defaultToSpeaker: defaultToSpeaker, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func setAudioEffect(effectId: AudioEffectId,result:@escaping (Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callbackFilter
-            self.rtc.setAudioEffect(effectId, cb: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.rtc.setAudioEffect(effectId, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func talkingRecordStart(result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
-            let filter = self.app.context.callbackFilter
-            self.rtc.startRecord(result: {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.rtc.startRecord(result: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func talkingRecordStop(result:@escaping (Int,String)->Void){
         DispatchQueue.main.async {
-            let filter = self.app.context.callbackFilter
-            self.rtc.stopRecord (result:{ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
+            self.rtc.stopRecord (result:{ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
-    
-    private var app:Application
-    private let rtc:RtcEngine
-    
-    init(app:Application){
-        self.app = app
-        self.rtc = app.proxy.rtc
+
+    func capturePeerVideoFrame(result: @escaping (Int, String, UIImage?) -> Void) {
+        DispatchQueue.main.async {
+            self.app.proxy.rtc.capturePeerVideoFrame(cb: {ec,msg,img in self.asyncResultData(ec,msg,img,result)})
+        }
     }
 }

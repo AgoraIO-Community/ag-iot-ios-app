@@ -91,7 +91,7 @@ class HomePageMainVC: AGBaseVC {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         getDevicesArray()
-        checkNewShareDevice()
+        //checkNewShareDevice()
     }
     
      //检查用户登录状态
@@ -168,13 +168,13 @@ class HomePageMainVC: AGBaseVC {
     }
     
     // 获取是否有设备分享给我
-    private func checkNewShareDevice(){
-        DeviceManager.shared.qureySharePushList(result: {[weak self] items in
-            if let shareInfo = items?.first {
-                self?.showReceiveShareDevice(shareInfo: shareInfo)
-            }
-        })
-    }
+//    private func checkNewShareDevice(){
+//        DeviceManager.shared.qureySharePushList(result: {[weak self] items in
+//            if let shareInfo = items?.first {
+//                self?.showReceiveShareDevice(shareInfo: shareInfo)
+//            }
+//        })
+//    }
     
     // 获取消息列表
     private func loadAlarmDates() {
@@ -222,7 +222,7 @@ class HomePageMainVC: AGBaseVC {
             var normalDevices = [IotDevice]()
             var shareDevieces = [IotDevice]()
             for dev in devices {
-                if dev.userType == 3 {
+                if dev.sharer != "0" {
                     shareDevieces.append(dev)
                 }else{
                     normalDevices.append(dev)

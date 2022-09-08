@@ -17,7 +17,7 @@ class AccountSafeVC: UIViewController {
     
     private var dataArray = [String]()
 
-    private let modifyPwdTitle = "修改密码"
+    //private let modifyPwdTitle = "修改密码"
     private let destoryAccTitle = "注销账号"
     
     private let bgColor = UIColor.white
@@ -72,7 +72,7 @@ class AccountSafeVC: UIViewController {
     
     private func setupData(){
         dataArray = [
-            modifyPwdTitle,
+            //modifyPwdTitle,
             destoryAccTitle
         ]
         tableView.reloadData()
@@ -129,9 +129,9 @@ extension AccountSafeVC: UITableViewDelegate,UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         let title = dataArray[indexPath.row]
         switch title {
-        case modifyPwdTitle:
-            showModifyPwdVC()
-            break
+//        case modifyPwdTitle:
+//            showModifyPwdVC()
+//            break
         case destoryAccTitle:
             destoryAccountClick()
             break
@@ -142,10 +142,10 @@ extension AccountSafeVC: UITableViewDelegate,UITableViewDataSource {
     
     // MARK: - 下一页
     // 消息推送设置
-    private func showModifyPwdVC(){
-        let vc = ModifyPwdVC()
-        navigationController?.pushViewController(vc, animated: true)
-    }
+//    private func showModifyPwdVC(){
+//        let vc = ModifyPwdVC()
+//        navigationController?.pushViewController(vc, animated: true)
+//    }
     
     //注销账号
     private func destoryAccountClick(){
@@ -157,9 +157,10 @@ extension AccountSafeVC: UITableViewDelegate,UITableViewDataSource {
     
     //注销账号
     private func destoryAccount(){
-
+        AGToolHUD.showNetWorkWait()
         let account = TDUserInforManager.shared.readAccountNumber()
         DoorBellManager.shared.unregister(account: account) {[weak self] success, msg in
+            AGToolHUD.disMiss()
             if success == true{
                 AGToolHUD.showInfo(info: "账号已注销")
                 TDUserInforManager.shared.userSignOut()
