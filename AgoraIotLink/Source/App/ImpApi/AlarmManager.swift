@@ -79,7 +79,7 @@ class AlarmManager : IAlarmMgr{
         }
     }
     
-    func addAlarm(device device:IotDevice,desc:String,result:@escaping(Int,String)->Void){
+    func addAlarm(device:IotDevice,desc:String,result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.token.accessToken
             let tenantId = self.app.context.gyiot.session.cert.thingName
