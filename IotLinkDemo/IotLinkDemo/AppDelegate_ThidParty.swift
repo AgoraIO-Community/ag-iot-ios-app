@@ -29,7 +29,12 @@ extension AppDelegate{
         param.projectId = AgoraIotConfig.projectId
         
         
-        if(ErrCode.XOK != iotsdk.initialize(initParam: param,sdkStatus: { netStatus, msg in
+        if(ErrCode.XOK != iotsdk.initialize(initParam: param,sdkStatus: { sdkStatus, msg in
+            if(sdkStatus == .AllReady){
+                let eid = iotsdk.notificationMgr.getEid()
+                log.i("demo eid is \(eid)")
+            }
+            
             debugPrint("------\(msg)")
         }, callbackFilter:{ [weak self] ec, msg in
             log.i("demo app recv api result \(msg)(\(ec))")
@@ -43,6 +48,8 @@ extension AppDelegate{
         sdk?.callkitMgr.register(incoming: {[weak self] deviceId,msg,callin  in
             debugPrint("---来电呼叫---")
             if (callin == .CallIncoming) {
+                iotsdk.callkitMgr.muteLocalAudio(mute: true) { ec, msg in}
+                iotsdk.callkitMgr.muteLocalVideo(mute: true){ ec,msg in}
                 self?.receiveCall(deviceId)
             }else if(callin == .RemoteHangup){
                 log.i("demo app remote hangup")
@@ -91,6 +98,10 @@ extension AppDelegate {//监听收到被动呼叫回调等
         
         DeviceManager.shared.queryDeviceWithId(deviceId) { [weak self] _, _, dev in
             guard let device = dev else {
+               log.e("demo can't find deivce with deivceId:\(deviceId),ignore this imcoming call")
+                self?.sdk?.callkitMgr.callHangup(result: { ec, msg in
+                    log.w("demo hangup this unwanted call")
+                })
                return
             }
             self?.goToDoorBellContainerVC(device)
@@ -132,7 +143,7 @@ extension AppDelegate {//处理通用错误码，如token失效
             
         }else if errorCode == ErrCode.XOK {
             
-            debugPrint("---请求成功----")
+            //debugPrint("---请求成功----")
             
         }
     }

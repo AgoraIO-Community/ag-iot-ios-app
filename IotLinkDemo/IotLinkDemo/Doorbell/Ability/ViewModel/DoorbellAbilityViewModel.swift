@@ -49,9 +49,9 @@ class DoorbellAbilityViewModel: NSObject {
             action(s)
         })
         
-        sdk?.callkitMgr.mutePeerVideo(mute: false, result: { state, msg in
+        //sdk?.callkitMgr.mutePeerVideo(mute: false, result: { state, msg in
 
-        })
+//        })
     }
  
     //挂断设备

@@ -65,9 +65,9 @@ class DoorbellAbilityVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if isReceiveCall == false {
-            shutDownAudio(false)
-        }
+//        if isReceiveCall == false {
+//            shutDownAudio(false)
+//        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {

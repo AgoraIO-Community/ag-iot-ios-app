@@ -99,9 +99,15 @@ class RtcEngine : NSObject{
         if(_localVideoMute != nil){
             muteLocalVideo(_localVideoMute!, cb: {ec,msg in})
         }
+        else{
+            muteLocalVideo(!setting.publishVideo, cb: {ec,msg in})
+        }
         
         if(_localAudioMute != nil){
             muteLocalAudio(_localAudioMute!, cb: {ec,msg in})
+        }
+        else{
+            muteLocalAudio(!setting.publishAudio, cb: {ec,msg in})
         }
         
         if(_peerVideoMute != nil){

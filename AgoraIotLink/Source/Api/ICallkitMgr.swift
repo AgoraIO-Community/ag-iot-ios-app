@@ -117,7 +117,7 @@ public protocol ICallkitMgr {
      * @param mute: 是否禁止
      * @param result     : 调用该接口是否成功
      */
-    func muteLocaAudio(mute: Bool,result:@escaping(Int,String)->Void)
+    func muteLocalAudio(mute: Bool,result:@escaping(Int,String)->Void)
 
     /*
      * @brief 禁止/启用 拉流对端视频

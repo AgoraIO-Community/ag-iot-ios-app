@@ -27,6 +27,8 @@ class MqttListener : FsmMqtt.IListener{
             let reported : Reported
         }
         let onMqttSubscribeResult = {(succ:Bool,msg:String) in
+            self.app.rule.trans(succ ? FsmMqtt.Event.SUBMIT_SUCC : FsmMqtt.Event.SUBMIT_FAIL)
+            
             //https://confluence.agoralab.co/pages/viewpage.action?pageId=944705001
 //            let reported = Reported(appId: self.app.config.appId,
 //                                    deviceAlias: self.app.context.call.session.deviceAlias,
@@ -39,10 +41,10 @@ class MqttListener : FsmMqtt.IListener{
 //                log.e("listener encode state failed \(state)")
 //                return
 //            }
-//            let topic = "$aws/things/" + self.app.context.gran.session.cert.thingName + "/shadow/name/rtc"
+//            let topic = "$aws/things/" + self.app.context.gyiot.session.cert.thingName + "/shadow/name/rtc"
 //            self.app.proxy.mqtt.publish(data:data,topic: topic,qos:.messageDeliveryAttemptedAtLeastOnce)
             
-            self.app.rule.trans(succ ? FsmMqtt.Event.SUBMIT_SUCC : FsmMqtt.Event.SUBMIT_FAIL)
+            
             
             if(succ){
                 let dictRtm:[String:Any] = ["appId":self.app.config.appId]

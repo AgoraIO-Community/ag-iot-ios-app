@@ -30,7 +30,7 @@ class DoorBellManager: NSObject {
     
     //推本地音频到对端 mute: 是否禁止
     func muteLocalAudio(mute: Bool,cb:@escaping(Bool,String)->Void){
-        sdk?.callkitMgr.muteLocaAudio(mute: mute, result: { ec, msg in
+        sdk?.callkitMgr.muteLocalAudio(mute: mute, result: { ec, msg in
             cb(ec == ErrCode.XOK ? true : false , msg)
             debugPrint("---msg---\(msg)")
         })
@@ -140,6 +140,8 @@ class DoorBellManager: NSObject {
     func callAnswer(cb:@escaping(Bool,String)->Void,
                     actionAck:@escaping(ActionAck)->Void){
          sdk?.callkitMgr.callAnswer(result: {ec,msg in
+             self.sdk?.callkitMgr.muteLocalAudio(mute: false, result: { ec, msg in})
+             self.sdk?.callkitMgr.muteLocalVideo(mute: false, result: { ec, msg in})
             log.i("demo app callAnswer ret:\(msg)(\(ec))")
             if(ec == ErrCode.XOK){
                 cb(ec == ErrCode.XOK ? true : false , msg)

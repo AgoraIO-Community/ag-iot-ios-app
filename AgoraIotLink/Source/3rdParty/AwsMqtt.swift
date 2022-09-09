@@ -708,7 +708,7 @@ class AWSMqtt{
         let eid = enablePush ? eid : ""
 
         let qos:AWSIoTMQTTQoS = .messageDeliveryAttemptedAtLeastOnce
-        let topicUpdate = "$aws/things/" + thingName + "/shadow/name/rtc/update"
+        let topicUpdate = "$aws/things/" + thingName + "/shadow/name/rtc"
         let dict:[String:Any] = ["appId":self.appId,"deviceAlias":self.deviceAlias,"pusherId":eid,"localRecord":0,"disabledPush": enablePush ? false : true]
         let reported:[String:Any] = ["reported":dict]
         let stateJson:[String:Any] = ["state":reported]
@@ -764,7 +764,7 @@ class AWSMqtt{
         //let topicShadow = "$aws/things/" + thingName + "/shadow/get"
         //self.listeners[AWSMqtt.topic2] = Listeners();
     }
-    
+    ////https://confluence.agoralab.co/pages/viewpage.action?pageId=944705001
     public func publishPushId(id:String,enableNotify:Bool){
         updateRemoteRtcStatus(eid:id,enablePush:enableNotify)
     }
