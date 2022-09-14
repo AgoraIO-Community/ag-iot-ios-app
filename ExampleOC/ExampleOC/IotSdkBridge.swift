@@ -9,6 +9,7 @@ import Foundation
 import AgoraIotLink
 
 public class CallkitManager : NSObject,ICallkitMgr{
+    
     @objc public func talkingRecordStop(result: @escaping (Int, String) -> Void) {
         return mgr.talkingRecordStop(result: result)
     }
@@ -49,8 +50,8 @@ public class CallkitManager : NSObject,ICallkitMgr{
         return mgr.muteLocalVideo(mute: mute, result: result)
     }
     
-    @objc public func muteLocaAudio(mute: Bool, result: @escaping (Int, String) -> Void) {
-        return mgr.muteLocaAudio(mute:mute, result: result)
+    @objc public func muteLocalAudio(mute: Bool, result: @escaping (Int, String) -> Void) {
+        return mgr.muteLocalAudio(mute:mute, result: result)
     }
     
     @objc public func mutePeerVideo(mute: Bool, result: @escaping (Int, String) -> Void) {
