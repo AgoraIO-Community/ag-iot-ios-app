@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 class TriggerListener{
     private var _logout_watcher:()->Void = {}
     private var _local_join_watcher:(FsmCall.Event)->Void = {event in}
