@@ -212,7 +212,9 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 }
 
-
+- (int)ffmpegMain:(NSString*)commandStr completionBlock:(void (^)(int ec,NSString* msg))completionBlock{
+    return [self.currentPlayer ffmpegMain:commandStr completionBlock:completionBlock];
+}
 #pragma mark - PiP
 
 - (BOOL)isPictureInPictureSupported API_AVAILABLE(ios(14.0)) {

@@ -8,8 +8,14 @@
 import Foundation
 import SVProgressHUD
 import Alamofire
+import SJVideoPlayer
+import AgoraIotLink
 
-class DownloadInfo {
+class DownloadInfo : Equatable {
+    static func == (lhs: DownloadInfo, rhs: DownloadInfo) -> Bool {
+        return lhs.url == rhs.url
+    }
+    
     var url: URL?
     var request: DownloadRequest?
     var progress:Float = 0.0
@@ -23,29 +29,66 @@ class DoorbellDownlaodManager: NSObject {
     private var requests: [URL: DownloadInfo] = [URL: DownloadInfo]()
     
     private (set) var downloadInfoArray:[DownloadInfo] = [DownloadInfo]()
-    
+
     // 下载
-    func download(url: URL, start:(()->Void)? = nil, completion:(()->Void)? = nil){
+    func download(player:SJVideoPlayer,url: URL, start:(()->Void)? = nil, completion:@escaping(Bool,String)->Void){
         start?()
         let info = DownloadInfo()
         info.url = url
-        let request = AF.download(url).downloadProgress{ progress in
-            debugPrint("下载进度：\(progress.fractionCompleted)")
-            info.progress = Float(progress.fractionCompleted)
-        }.responseData {response in
-            completion?()
-            if response.error == nil, let filePath = response.fileURL {
-                let cacheFile:String = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).last ?? ""
-                var url = URL(fileURLWithPath: cacheFile)
-                url.appendPathComponent("\(filePath.lastPathComponent)")
-                url.appendPathExtension("mp4")
-                try?FileManager.default.moveItem(at: filePath, to: url)
-                if UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path) {
-                    UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, #selector(self.didFinishSavingVideo(videoPath:error:contextInfo:)), nil)
-                }
-            }
+        
+        var fileName = url.absoluteString;
+        guard let rearMark = fileName.lastIndex(of: "."),
+              let startMark = fileName.lastIndex(of: "/") else {
+              log.e("demo url error for download:\(fileName)")
+              completion(false,"解析视频信息错误")
+              return
         }
-        info.request = request
+        
+        let name = String(fileName[fileName.index(after: startMark)...fileName.index(before: rearMark)])
+        let mediaName = name + ".mp4"
+        
+        var dir = URL.init(string:NSHomeDirectory())
+        var path = dir?.appendingPathComponent("Documents").appendingPathComponent(mediaName)
+        
+        guard let path = path else{
+            log.e("demo path to download video is nil")
+            completion(false,"保存视频路径错误")
+            return
+        }
+        
+        let commandStr:String = "ffmpeg -loglevel repeat+level+warning -i \(fileName) -y \(path)"
+        
+        //log.i("demo \(commandStr)")
+        player.ffmpegMain(commandStr, completionBlock: {ec,msg in
+            if(ec == 0){
+                UISaveVideoAtPathToSavedPhotosAlbum(path.absoluteString, self, #selector(self.didFinishSavingVideo(videoPath:error:contextInfo:)), nil);
+                completion(true,msg)
+            }
+            else if(ec < 0){
+                log.e("demo download video failed:\(msg)(\(ec))")
+                completion(false,msg)
+            }
+            else{
+                log.i("progressing \(msg)(\(ec))")
+            }
+        })
+//        let request = AF.download(url).downloadProgress{ progress in
+//            debugPrint("下载进度：\(progress.fractionCompleted)")
+//            info.progress = Float(progress.fractionCompleted)
+//        }.responseData {response in
+//            completion?()
+//            if response.error == nil, let filePath = response.fileURL {
+//                let cacheFile:String = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).last ?? ""
+//                var url = URL(fileURLWithPath: cacheFile)
+//                url.appendPathComponent("\(filePath.lastPathComponent)")
+//                url.appendPathExtension("mp4")
+//                try?FileManager.default.moveItem(at: filePath, to: url)
+//                if UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path) {
+//                    UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, #selector(self.didFinishSavingVideo(videoPath:error:contextInfo:)), nil)
+//                }
+//            }
+//        }
+//        info.request = request
         if requests[url] == nil {
             requests[url] = info
             downloadInfoArray.append(info)
@@ -71,5 +114,12 @@ class DoorbellDownlaodManager: NSObject {
         let info = requests[url!]
         info?.request?.cancel()
         info?.isCanceled = true
+        requests[url!] = nil
+        guard let info = info else{
+            return
+        }
+        if let idx = downloadInfoArray.index(of: info){
+            downloadInfoArray.remove(at: idx)
+        }
     }
 }

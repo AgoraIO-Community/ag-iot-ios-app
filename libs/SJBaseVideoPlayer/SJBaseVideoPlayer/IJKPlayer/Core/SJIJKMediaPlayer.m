@@ -128,6 +128,10 @@ typedef struct {
     [self _postNotification:SJMediaPlayerPlayableDurationDidChangeNotification];
 }
 
+- (int)ffmpegMain:(NSString*)commandStr completionBlock:(void (^)(int ec,NSString* msg))completionBlock{
+    return [_player ffmpegMain:commandStr completionBlock:completionBlock];
+}
+
 - (void)play {
     _isPlayed = YES;
     

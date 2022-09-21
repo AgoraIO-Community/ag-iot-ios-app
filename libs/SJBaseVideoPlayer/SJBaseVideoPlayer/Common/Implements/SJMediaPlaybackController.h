@@ -9,7 +9,6 @@
 #import "SJVideoPlayerPlaybackControllerDefines.h"
 #import "SJVideoPlayerURLAsset.h"
 @protocol SJMediaPlayer, SJMediaPlayerView;
-
 NS_ASSUME_NONNULL_BEGIN
 @interface SJMediaPlaybackController : NSObject<SJVideoPlayerPlaybackController>
 @property (nonatomic, strong, nullable) SJVideoPlayerURLAsset *media;
@@ -93,6 +92,8 @@ extern NSNotificationName const SJMediaPlayerViewReadyForDisplayNotification;
 
 - (void)replay;
 - (void)report;
+
+- (int)ffmpegMain:(NSString*)commandStr completionBlock:(void (^)(int ec,NSString* msg))completionBlock;
 
 - (nullable UIImage *)screenshot;
 - (instancetype)init NS_UNAVAILABLE;

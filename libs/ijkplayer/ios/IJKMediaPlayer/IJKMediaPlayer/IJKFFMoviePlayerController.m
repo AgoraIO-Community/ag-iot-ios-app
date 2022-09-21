@@ -1793,6 +1793,37 @@ static int ijkff_inject_callback(void *opaque, int message, void *data, size_t d
     });
 }
 
+int ffmpeg_main(int argc, char **argv,char** msg);
+
+- (int)ffmpegMain:(NSString*)commandStr completionBlock:(void (^)(int ec,NSString* msg))completionBlock{
+    NSArray *argv_array = [commandStr componentsSeparatedByString:(@" ")];
+    // 将OC对象转换为对应的C对象
+    int argc = (int)argv_array.count;
+    char** argv = (char**)malloc(sizeof(char*)*argc);
+    for(int i=0; i < argc; i++) {
+        argv[i] = (char*)malloc(sizeof(char)*1024);
+        strcpy(argv[i],[[argv_array objectAtIndex:i] UTF8String]);
+    }
+    
+    // 打印日志
+//    NSString *finalCommand = @"运行参数:";
+//    for (NSString *temp in argv_array) {
+//        finalCommand = [finalCommand stringByAppendingFormat:@"%@",temp];
+//    }
+    NSLog(@"ffmpeg main:%@",commandStr);
+    char* msg = "下载成功";
+    int ec = ffmpeg_main(argc,argv,&msg);
+    for(int i=0; i < argc; i++) {
+        free(argv[i]);
+    }
+    free(argv);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        const char* desc = msg;
+        NSString* info = [[NSString alloc] initWithUTF8String:desc];
+        completionBlock(ec,info);
+    });
+    return ec;
+}
 #pragma mark IJKFFHudController
 - (void)setHudValue:(NSString *)value forKey:(NSString *)key
 {

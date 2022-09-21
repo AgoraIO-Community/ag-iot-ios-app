@@ -338,6 +338,25 @@ class IotLink{
                 }
             }
     }
+    
+    public func reqProperty(_ token:String,_ deviceId:String, _ productNumber:String,_ rsp:@escaping(Int,String,[Property])->Void){
+        let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
+        let params:Dictionary<String,String> = deviceId == "" ? ["productId":productNumber] : ["mac":deviceId]
+        let url = http + api.PointList
+        log.i("iotlink reqProperty \(productNumber)")
+        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
+            .validate()
+            .responseDecodable(of:PointList.Rsp.self) { (dataRsp : AFDataResponse<PointList.Rsp>) in
+                switch dataRsp.result{
+                case .success(let value):
+                    self.handleRspPointList(value, rsp)
+                case .failure(let error):
+                    log.e("iotlink reqProperty \(url) fail for \(deviceId),\(productNumber), detail: \(error) ")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",[])
+                }
+            }
+    }
+    
     public func reqRegister(_ account: String, _ password: String,_ code:String,_ email:String?,_ phone:String?,_ rsp: @escaping (Int,String)->Void){
         let clientId = arg.clientId
         let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]

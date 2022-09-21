@@ -107,6 +107,7 @@ class HomePageMainVC: AGBaseVC {
     @objc private func receiveLoginSuccess(){
         // 获取设备列表
         getDevicesArray()
+        getPropertyList();
     }
     
     // 设置UI
@@ -213,7 +214,9 @@ class HomePageMainVC: AGBaseVC {
             self?.tableView.reloadData()
         }
     }
-    
+    private func getPropertyList(){
+        DeviceManager.shared.displayPropertyList()
+    }
     // 获取设备列表
     private func getDevicesArray(){
 //        SVProgressHUD.show()

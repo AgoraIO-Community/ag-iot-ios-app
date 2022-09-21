@@ -26,16 +26,16 @@ public class CallkitManager : NSObject,ICallkitMgr{
         return mgr.register(incoming: incoming)
     }
     
-    @objc public func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void, actionAck: @escaping (ActionAck) -> Void) {
-        return mgr.callDial(device: device, attachMsg: attachMsg, result: result, actionAck: actionAck)
+    @objc public func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void, actionAck: @escaping (ActionAck) -> Void, memberState: (((MemberState, [UInt]) -> Void)?)) {
+        return mgr.callDial(device: device, attachMsg: attachMsg, result: result, actionAck: actionAck, memberState: memberState)
+    }
+    
+    @objc public func callAnswer(result: @escaping (Int, String) -> Void, actionAck: @escaping (ActionAck) -> Void, memberState: ((MemberState, [UInt]) -> Void)?) {
+        return mgr.callAnswer(result: result, actionAck: actionAck, memberState: memberState)
     }
     
     @objc public func callHangup(result: @escaping (Int, String) -> Void) {
         return mgr.callHangup(result: result)
-    }
-    
-    @objc public func callAnswer(result: @escaping (Int, String) -> Void, actionAck: @escaping (ActionAck) -> Void) {
-        return mgr.callAnswer(result: result, actionAck: actionAck)
     }
     
     @objc public func setLocalVideoView(localView: UIView?) -> Int {
@@ -46,12 +46,12 @@ public class CallkitManager : NSObject,ICallkitMgr{
         return mgr.setPeerVideoView(peerView: peerView)
     }
     
-    @objc public func muteLocalVideo(mute: Bool, result: @escaping (Int, String) -> Void) {
-        return mgr.muteLocalVideo(mute: mute, result: result)
+    @objc public func muteLocalAudio(mute: Bool, result: @escaping (Int, String) -> Void) {
+        return mgr.muteLocalAudio(mute: mute, result: result)
     }
     
-    @objc public func muteLocalAudio(mute: Bool, result: @escaping (Int, String) -> Void) {
-        return mgr.muteLocalAudio(mute:mute, result: result)
+    @objc public func muteLocalVideo(mute: Bool, result: @escaping (Int, String) -> Void) {
+        return mgr.muteLocalVideo(mute: mute, result: result)
     }
     
     @objc public func mutePeerVideo(mute: Bool, result: @escaping (Int, String) -> Void) {
@@ -78,6 +78,8 @@ public class CallkitManager : NSObject,ICallkitMgr{
 }
 
 public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
+    
+    
     
     @objc public func sendMessageBegin(device: IotDevice, result: @escaping (Int, String) -> Void, statusUpdated: @escaping (MessageChannelStatus, String, Data?) -> Void) {
         return mgr.sendMessageBegin(device: device, result: result, statusUpdated: statusUpdated)
@@ -213,6 +215,22 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
         return mgr.getDeviceProperty(device: device, result: result)
     }
     
+    @objc public func getPropertyDescription(deviceId:String, productNumber: String, result: @escaping (Int, String, [Property]) -> Void) {
+        return mgr.getPropertyDescription(deviceId:deviceId, productNumber: productNumber, result: result)
+    }
+    
+    @objc public func startPlayback(file: String, uid: UInt, result: @escaping (Int, String) -> Void, stateChanged: @escaping (PlaybackStatus, String) -> Void) {
+        return mgr.startPlayback(file: file, uid: uid, result: result, stateChanged: stateChanged)
+    }
+    
+    @objc public func setPlaybackView(peerView: UIView?) -> Int {
+        return mgr.setPlaybackView(peerView: peerView)
+    }
+    
+    @objc public func stopPlayback() {
+        return mgr.stopPlayback()
+    }
+    
     public init(mgr:IDeviceMgr) {
         self.mgr = mgr
     }
@@ -317,7 +335,7 @@ public class AlarmManager : NSObject,IAlarmMgr{
 }
 
 public class NotificationManager : NSObject,INotificationMgr{
-    public func getEid() -> String {
+    @objc public func getEid() -> String {
         return mgr.getEid()
     }
     

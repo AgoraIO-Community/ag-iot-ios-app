@@ -36,7 +36,7 @@ class AlarmManager : IAlarmMgr{
     func queryByParam(queryParam: QueryParam, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
         DispatchQueue.main.async {
             let tenantId = self.app.context.gyiot.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
                 self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [IotAlarm]?, result)
                 return
@@ -47,7 +47,7 @@ class AlarmManager : IAlarmMgr{
     
     func queryById(alertMessageId:UInt64, result:@escaping (Int,String,IotAlarm?) -> Void){
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
                 self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as IotAlarm?, result)
                 return
@@ -59,7 +59,7 @@ class AlarmManager : IAlarmMgr{
     func queryByPage(queryParam: QueryParam, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
         DispatchQueue.main.async {
             let tenantId = self.app.context.gyiot.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
                 self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [IotAlarm]?, result)
                 return
@@ -70,7 +70,7 @@ class AlarmManager : IAlarmMgr{
     
     func mark(alarmIdList: [UInt64],result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
                 self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
                 return
@@ -81,7 +81,7 @@ class AlarmManager : IAlarmMgr{
     
     func addAlarm(device:IotDevice,desc:String,result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             let tenantId = self.app.context.gyiot.session.cert.thingName
             if(agToken == ""){
                 self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
@@ -93,7 +93,7 @@ class AlarmManager : IAlarmMgr{
         
     func delete(alarmIdList: [UInt64], result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
                 self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
                 return
@@ -105,7 +105,7 @@ class AlarmManager : IAlarmMgr{
     func queryCount(productId:String?,deviceId:String?,messageType:Int?,status:Int?,createDateBegin:Date?,createDateEnd:Date? ,result:@escaping(Int,String,UInt)->Void){
         DispatchQueue.main.async {
             let tenant = self.app.context.gyiot.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
                 self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",0 as UInt,result)
                 return
@@ -117,7 +117,7 @@ class AlarmManager : IAlarmMgr{
     func queryAlarmImage(alertImageId:String,result:@escaping(Int,String,String?)->Void){
         DispatchQueue.main.async {
             let tenant = self.app.context.gyiot.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
                 self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil,result)
                 return
@@ -131,7 +131,7 @@ class AlarmManager : IAlarmMgr{
     func queryAlarmVideoUrl(deviceId:String, beginTime:UInt64,result:@escaping(Int,String,String?)->Void){
         DispatchQueue.main.async {
             let tenant = self.app.context.gyiot.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             let userId = self.app.context.virtualNumber
             if(agToken == ""){
                 self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil,result)
@@ -159,7 +159,7 @@ class AlarmManager : IAlarmMgr{
         }
         DispatchQueue.main.async {
             let tenantId = self.app.context.gyiot.session.cert.thingName
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             
             if(agToken == ""){
                 self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [IotAlarm]?,result)
@@ -171,7 +171,7 @@ class AlarmManager : IAlarmMgr{
     
     func querySysById(alertMessageId:UInt64, result:@escaping (Int,String,IotAlarm?) -> Void){
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             if(self.app.context.devices == nil || self.app.context.devices?.count == 0){
                 self.asyncResultData(ErrCode.XERR_UNSUPPORTED,"没有查询到对应设备的告警",nil as IotAlarm?,result)
                 return
@@ -186,7 +186,7 @@ class AlarmManager : IAlarmMgr{
     
     func markSys(alarmIdList: [UInt64],result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
                 self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
                 return
@@ -196,7 +196,7 @@ class AlarmManager : IAlarmMgr{
     }
     
     func querySysCount(productId:String?,deviceIds:[String],messageType:Int?,status:Int?,createDateBegin:Date?,createDateEnd:Date? ,result:@escaping(Int,String,UInt)->Void){
-        let agToken = app.context.aglab.session.token.accessToken
+        let agToken = app.context.aglab.session.accessToken
         let tenant = app.context.gyiot.session.cert.thingName
         
         var ids:[String] = deviceIds

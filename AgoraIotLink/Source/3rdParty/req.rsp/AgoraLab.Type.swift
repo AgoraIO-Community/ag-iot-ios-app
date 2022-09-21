@@ -973,7 +973,7 @@ extension AgoraLab{
         }
         
         guard let data = ret.data else{
-            log.e("al handleRspGetImageUrl rsp no data found")
+            log.e("al handleRspGetImageUrl rsp no data found,the premission may be expired")
             return rsp(ErrCode.XERR_UNKNOWN,"no data found",nil)
         }
         
@@ -992,7 +992,7 @@ extension AgoraLab{
         }
         
         guard let data = ret.data else{
-            log.e("al handleRspGetVideoUrl rsp no data found")
+            log.e("al handleRspGetVideoUrl rsp no data found,the premission may be expired")
             return rsp(ErrCode.XERR_UNKNOWN,"no data found",nil)
         }
         

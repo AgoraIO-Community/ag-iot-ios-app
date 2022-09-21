@@ -1,5 +1,5 @@
 PODS:
-  - AgoraIotLink (1.1.0.0):
+  - AgoraIotLink (1.1.0.2):
     - AgoraRtcEngine_iOS (= 4.0.0-rc.1)
     - AgoraRtm_iOS (= 1.5.0)
     - Alamofire (= 5.6.0)
@@ -78,7 +78,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AgoraIotLink: 484a082abe3c68fb131cc7f6d16579f2cf649fcb
+  AgoraIotLink: d7385e31706220005b920f00218b05eb06d87d61
   AgoraRtcEngine_iOS: 1b78af79120066c230cf9281d8587813ce6a8323
   AgoraRtm_iOS: d7eed11790c4e9a7db22497d317ed120c981de72
   Alamofire: 0c07058209f211e3d32824f8e0766d7c44ac83b3

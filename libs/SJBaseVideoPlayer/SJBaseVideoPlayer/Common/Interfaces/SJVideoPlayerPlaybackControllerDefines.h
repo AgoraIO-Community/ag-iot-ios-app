@@ -75,6 +75,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)startPictureInPicture API_AVAILABLE(ios(14.0));
 - (void)stopPictureInPicture API_AVAILABLE(ios(14.0));
 - (void)cancelPictureInPicture API_AVAILABLE(ios(14.0));
+
+- (int)ffmpegMain:(NSString*)commandStr completionBlock:(void (^)(int ec,NSString* msg))completionBlock;
 @end
 
 /// screenshot`

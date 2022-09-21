@@ -76,6 +76,7 @@ extension AppDelegate: IDeviceStateListener {//添加设备回调等
     }
     
     func onDeviceActionUpdated(deviceId: String, actionType: String) {
+        log.i("demo dev update:\(actionType):\(deviceId)")
         if actionType == "add" {
             let vc = DeviceAddSuccessVC()
             vc.deviceId = deviceId

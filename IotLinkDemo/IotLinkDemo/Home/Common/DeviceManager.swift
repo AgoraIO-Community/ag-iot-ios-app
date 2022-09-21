@@ -29,6 +29,31 @@ class DeviceManager {
         }
     }
     
+    func displayPropertyList(){
+        guard let devMgr = sdk?.deviceMgr else{
+            log.e("sdk 设备服务 未初始化")
+            return
+        }
+        let param = ProductQueryParam()
+        devMgr.queryProductList(query: param) { ec, msg, prods in
+            for prd in prods{
+                devMgr.getPropertyDescription(deviceId:"",productNumber: prd.number) { ec, msg, props in
+                    if(ec == ErrCode.XOK){
+                        for prop in props{
+                            log.i("demo dp for \(prd.number)")
+                            log.i("        pointName: \(prop.pointName)")
+                            log.i("        pointName: \(prop.pointName)")
+                            log.i("         maxValue: \(prop.maxValue)")
+                            log.i("           remark: \(prop.remark)")
+                            log.i("         markName: \(prop.markName)")
+                            log.i("           status: \(prop.status)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     /// 获取最新设备列表
     /// - Parameter cb: 回调
     func updateDevicesList(_ cb:@escaping (Bool,String,[IotDevice]?)->Void){
@@ -40,6 +65,8 @@ class DeviceManager {
             self.devices = devs
             cb(ec == ErrCode.XOK ? true : false,msg,devs)
         })
+        
+        
     }
     
     /// 通过id获取设备信息

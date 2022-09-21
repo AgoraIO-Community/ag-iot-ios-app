@@ -23,7 +23,7 @@ internal class Proxy{
     var rtm:RtmEngine{get{return _rtm!}}
     
     init(event:StateListener, rule:RuleManager,cfg:Config,ctx:Context){
-        self._rtc = RtcEngine(setting: ctx.call.setting.rtc)
+        self._rtc = RtcEngine()
         self._rtm = RtmEngine(cfg:cfg)
         self._ntf = PushNotifier(cfg: cfg)
         self._mqtt = AWSMqtt(cfg: cfg)

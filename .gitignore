@@ -58,4 +58,9 @@ libs/ijkplayer/ios/IJKMediaPlayer/Build
 libs/ijkplayer/ios/IJKMediaPlayer/DerivedData
 libs/SJBaseVideoPlayer/Project
 libs/SJVideoPlayer/Example
+libs/ijkplayer/ios/IJKMediaPlayer/IJKMediaPlayer_Products
+libs/ijkplayer/ijkmedia/fftools
+libs/ijkplayer/ios/build/universal/lib
+libs/SJBaseVideoPlayer/README.md
+libs/SJVideoPlayer/README.md
 version.sh

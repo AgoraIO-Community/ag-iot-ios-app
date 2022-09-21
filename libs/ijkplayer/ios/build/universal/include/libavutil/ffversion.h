@@ -31,6 +31,8 @@
 #       include "armv7s/ffversion.h"
 #   elif defined(__ARM_ARCH_7__)
 #       include "armv7/ffversion.h"
+#   elif defined(__ARM_ARCH_7A__)
+#       include "armv7/ffversion.h"
 #   else
 #       error Unsupport ARM architecture
 #   endif

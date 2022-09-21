@@ -24,6 +24,7 @@
 		84B3ECB728B470B60047EE1A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB628B470B60047EE1A /* libz.tbd */; };
 		84B3ECB928B470BD0047EE1A /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB828B470BD0047EE1A /* libbz2.tbd */; };
 		84B3ECBB28B4715B0047EE1A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECBA28B4715B0047EE1A /* UIKit.framework */; };
+		84D69E5628D0612A004A120C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D69E5528D0612A004A120C /* NetworkExtension.framework */; };
 		84F7453B289BBDEA00702944 /* DeviceFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */; };
 		84F7453D289BC14A00702944 /* DeviceFirmwareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */; };
 		84F7453F289BEE0500702944 /* AGFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453E289BEE0500702944 /* AGFirmwareVC.swift */; };
@@ -202,6 +203,7 @@
 		84B3ECB628B470B60047EE1A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		84B3ECB828B470BD0047EE1A /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		84B3ECBA28B4715B0047EE1A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		84D69E5528D0612A004A120C /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareVC.swift; sourceTree = "<group>"; };
 		84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareView.swift; sourceTree = "<group>"; };
 		84F7453E289BEE0500702944 /* AGFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGFirmwareVC.swift; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 		9618255A2824FF8400053691 /* DoorbellAbilityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityModel.swift; sourceTree = "<group>"; };
 		9618255D2825192600053691 /* DoorbellAbilityTopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityTopView.swift; sourceTree = "<group>"; };
 		9618255F2825195200053691 /* DoorbellAbilityTooBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityTooBarView.swift; sourceTree = "<group>"; };
+		9622675728D5E5FE00B11758 /* IotLinkDemo-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IotLinkDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		962EAA6928324A9800030C1B /* DoorbellAbilityTooBarHView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityTooBarHView.swift; sourceTree = "<group>"; };
 		962EAA6A28324A9900030C1B /* DoorbellLeftBackHView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoorbellLeftBackHView.swift; sourceTree = "<group>"; };
 		962FEFE0284F2CD000DCFD59 /* AppDelegate_Push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate_Push.swift; sourceTree = "<group>"; };
@@ -390,6 +393,7 @@
 				84B3ECA728B470770047EE1A /* AudioToolbox.framework in Frameworks */,
 				84B3ECA528B470700047EE1A /* MediaPlayer.framework in Frameworks */,
 				241E9514AF5C21D05B21E03E /* Pods_IotLinkDemo.framework in Frameworks */,
+				84D69E5628D0612A004A120C /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,6 +755,7 @@
 				96E4C10C2807CA5800A53A49 /* Assets.xcassets */,
 				96E4C10E2807CA5800A53A49 /* LaunchScreen.storyboard */,
 				96E4C1112807CA5800A53A49 /* Info.plist */,
+				9622675728D5E5FE00B11758 /* IotLinkDemo-Bridging-Header.h */,
 			);
 			path = IotLinkDemo;
 			sourceTree = "<group>";
@@ -1079,6 +1084,7 @@
 		BB6739EF5E0F68176408BBAD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84D69E5528D0612A004A120C /* NetworkExtension.framework */,
 				84B3ECBA28B4715B0047EE1A /* UIKit.framework */,
 				84B3ECB828B470BD0047EE1A /* libbz2.tbd */,
 				84B3ECB628B470B60047EE1A /* libz.tbd */,
@@ -1538,6 +1544,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1036;
 				DEVELOPMENT_TEAM = LTVVML2TCH;
+				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -1651,11 +1658,13 @@
 					"-weak_framework",
 					"\"SwiftUI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iotcallkitdemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.agora.iotsdk.demo1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = NO;
+				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "IotLinkDemo/SwiftTools/Extension/IotLinkDemo-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "IotLinkDemo/IotLinkDemo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1674,6 +1683,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1036;
 				DEVELOPMENT_TEAM = LTVVML2TCH;
+				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -1787,11 +1797,13 @@
 					"-weak_framework",
 					"\"SwiftUI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iotcallkitdemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.agora.iotsdk.demo1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = NO;
+				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "IotLinkDemo/SwiftTools/Extension/IotLinkDemo-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "IotLinkDemo/IotLinkDemo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

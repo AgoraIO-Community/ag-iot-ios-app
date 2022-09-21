@@ -9,6 +9,7 @@ import UIKit
 import IQKeyboardManagerSwift
 import SystemConfiguration.CaptiveNetwork
 import CoreLocation
+import NetworkExtension
 
 class SelectWIFIVC: UIViewController {
     
@@ -23,17 +24,49 @@ class SelectWIFIVC: UIViewController {
         return manager
     }()
 
+    private func isWifiAccountCorrect(wifiName:String,password:String,cb:@escaping(Bool,String)->Void){
+        let wifiConfig = NEHotspotConfiguration(ssid: wifiName, passphrase: password, isWEP: false)
+        wifiConfig.joinOnce = false
+        NEHotspotConfigurationManager.shared.apply(wifiConfig){ (error) in
+            guard let error = error else{
+                cb(true,"")
+                return
+            }
+            if(error._code == 13){
+                //already joined
+                cb(true,"")
+            }
+            else{
+                cb(false,"\(error)")
+            }
+        }
+    }
+    
     private lazy var selectView:SelectWIFIView = {
         let view = SelectWIFIView()
         view.clickWifiButtonAction = {[weak self] in
             self?.checkShowWifiAlert()
         }
         view.clickNextButtonAction = {[weak self] (wifiName, password) in
+//            self?.isWifiAccountCorrect(wifiName: wifiName, password: password, cb:{ec,msg in
+//                if(ec){
+//                    let vc = CreateQRCodeVC()
+//                    vc.wifiName = wifiName
+//                    vc.password = password
+//                    vc.productKey = self?.productKey
+//                    self?.navigationController?.pushViewController(vc, animated: true)
+//                }
+//                else{
+//                    AGToolHUD.showInfo(info: "无法连接网络，请确保账号密码正确:\(msg)")
+//                }
+//            })
+            
             let vc = CreateQRCodeVC()
             vc.wifiName = wifiName
             vc.password = password
             vc.productKey = self?.productKey
             self?.navigationController?.pushViewController(vc, animated: true)
+            
         }
         view.wifiTextFieldBeginEdit = {[weak self] in
             self?.checkShowWifiAlert()

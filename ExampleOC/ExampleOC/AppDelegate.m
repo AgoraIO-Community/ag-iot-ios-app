@@ -27,49 +27,86 @@
 
 -(void)filterResult:(int)errCode errMessage:(NSString*)errMessage{
     if(errCode == ErrCode.XERR_TOKEN_EXPIRED){
-        NSLog(@"token过期,退出登录:%@",errMessage);
+        NSLog(@"💙💜token过期,退出登录:%@",errMessage);
         [[IotSdk.shared getAccountMgr] logoutWithResult:^(NSInteger, NSString * _Nonnull) {
             
         }];
     }
 }
 
+-(void)queryProperty{
+    ProductQueryParam* param = [[ProductQueryParam alloc] init];
+    [[IotSdk.shared getDeviceMgr] queryProductListWithQuery:param result:^(NSInteger ec, NSString * _Nonnull msg, NSArray<ProductInfo *> * _Nonnull prods) {
+        if([prods count] == 0){
+            NSLog(@"💙💜未发现产品，请在控制台添加产品信息");
+        }
+        for( ProductInfo* a in prods){
+                [[IotSdk.shared getDeviceMgr] getPropertyDescriptionWithDeviceId:@"" productNumber:a.number result:^(NSInteger, NSString * _Nonnull, NSArray<Property *> * _Nonnull props) {
+                    if([prods count] == 0){
+                        NSLog(@"💙💜未发现该产品属性，请在控制台添加产品属性信息");
+                    }
+                    for(Property* p in props){
+                        NSLog(@"💙💜dp %@ 产品属性",a.number);
+                        NSLog(@"        pointName: %@",p.pointName);
+                        NSLog(@"         maxValue: %@",p.maxValue);
+                        NSLog(@"           remark: %@",p.remark);
+                        NSLog(@"         maxValue: %@",p.maxValue);
+                        NSLog(@"         markName: %@",p.markName);
+                        NSLog(@"           status: %lu",(unsigned long)p.status);
+                    }
+                }];
+            }
+    }];
+}
+
+-(void)queryDevice{
+    [[IotSdk.shared getDeviceMgr] queryAllDevicesWithResult:^(NSInteger, NSString * _Nonnull, NSArray<IotDevice *> * _Nonnull dev){
+        if(dev.count == 0){
+            NSLog(@"💙💜未发现设备,请先绑定设备");
+            return;
+        };
+        NSLog(@"💙💜发现设备，开始拨打第一个设备");
+        [[IotSdk.shared getCallManager] mutePeerAudioWithMute:false result:^(NSInteger ec, NSString * _Nonnull msg) {
+            NSLog(@"💙💜mute 设备:%ld %@",ec,msg);
+        }];
+        [[IotSdk.shared getCallManager] callDialWithDevice:dev[0] attachMsg:@"" result:^(NSInteger ec, NSString * _Nonnull msg) {
+            UIView* uiView = nil; //关联到自己的UIView
+            [[IotSdk.shared getCallManager] setPeerVideoViewWithPeerView:uiView];
+            NSLog(@"💙💜请求拨打电话结果:%ld,%@",ec,msg);
+        } actionAck:^(enum ActionAck ack) {
+            NSLog(@"💙💜拨打电话收到响应：%ld",ack);
+        } memberState:Nil];
+    }];
+}
+
+-(void)didLogin{
+    NSLog(@"💙💜登录成功");
+    [self queryDevice];
+    [self queryProperty];
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
     InitParam* initParam = [[InitParam alloc] init];
-    initParam.rtcAppId = @"863c0071075a45fb84ce73f51aa772d9";
+    initParam.rtcAppId = @"67*****************************50e";
     initParam.publishAudio = true;
     initParam.publishVideo = true;
     initParam.subscribeAudio = true;
     initParam.subscribeVideo = true;
-    initParam.ntfAppKey = @"523*****2012";
-    initParam.ntfApnsCertName = @"io.****od";
+    initParam.ntfAppKey = @"81**********71";
+    initParam.ntfApnsCertName = @"io.agora.iot.prod";
     initParam.masterServerUrl = @"https://app.agoralink-iot-cn.sd-rtn.com";
-    //initParam.slaveServerUrl = @"https://api.agora.io/agoralink/cn/api";  for release
-    initParam.slaveServerUrl = @"https://iot-api-gateway.sh.agoralab.co/api"; //for debug
-    initParam.projectId =@"NmiFmiU2p";
+    initParam.slaveServerUrl = @"https://api.agora.io/agoralink/cn/api" ;//  for release
+    //initParam.slaveServerUrl = @"https://iot-api-gateway.sh.agoralab.co/api"; //for debug
+    initParam.projectId =@"4O******tCF";
     
     [IotSdk.shared initializeWithInitParam:initParam sdkStatus:^(enum SdkStatus status, NSString * _Nonnull hint) {
         NSLog(@"💙💜当前状态:%@,%ld",hint,status);
         if (status == SdkStatusAllReady) {
-            [[IotSdk.shared getDeviceMgr] queryAllDevicesWithResult:^(NSInteger, NSString * _Nonnull, NSArray<IotDevice *> * _Nonnull dev){
-                if(dev.count == 0){
-                    NSLog(@"💙💜未发现设备,请先绑定设备");
-                    return;
-                };
-                NSLog(@"💙💜发现设备，开始拨打第一个设备");
-                [[IotSdk.shared getCallManager] mutePeerAudioWithMute:false result:^(NSInteger ec, NSString * _Nonnull msg) {
-                    NSLog(@"💙💜mute 设备:%ld %@",ec,msg);
-                }];
-                [[IotSdk.shared getCallManager] callDialWithDevice:dev[0] attachMsg:@"" result:^(NSInteger ec, NSString * _Nonnull msg) {
-                    UIView* uiView = nil; //关联到自己的UIView
-                    [[IotSdk.shared getCallManager] setPeerVideoViewWithPeerView:uiView];
-                    NSLog(@"💙💜请求拨打电话结果:%ld,%@",ec,msg);
-                } actionAck:^(enum ActionAck ack) {
-                    NSLog(@"💙💜拨打电话收到响应：%ld",ack);
-                }];
-            }];
+            NSString* eid = [[IotSdk.shared getNotificationManager] getEid];
+            NSLog(@"💙💜获取推送eid:%@",eid);
+            [self queryDevice];
         }
     } callback:(self)];
     
@@ -83,7 +120,7 @@
                 NSLog(@"💙💜接听来电:%@,%ld",msg,ec);
             } actionAck:^(enum ActionAck ack) {
                 NSLog(@"💙💜收到响应:%ld",ack);
-            }];
+            } memberState:Nil];
         }
     }];
     
@@ -91,13 +128,23 @@
         if(ec != 0){
             NSLog(@"💙💜注册失败:%@,尝试直接用该账号登录",msg);
             [[IotSdk.shared getAccountMgr] loginWithAccount:@"youraccount" password:@"88888888" result:^(NSInteger ec, NSString * _Nonnull msg) {
-                NSLog(@"%@",msg);
+                if(ec == ErrCode.XOK){
+                    [self didLogin];
+                }
+                else{
+                    NSLog(@"💙💜%@",msg);
+                }
             }];
         }
         else{
             NSLog(@"💙💜注册成功，开始登录");
             [[IotSdk.shared getAccountMgr] loginWithAccount:@"youraccount" password:@"88888888" result:^(NSInteger ec, NSString * _Nonnull msg) {
-                NSLog(@"%@",msg);
+                if(ec == ErrCode.XOK){
+                    [self didLogin];
+                }
+                else{
+                    NSLog(@"💙💜%@",msg);
+                }
             }];
         }
     }];

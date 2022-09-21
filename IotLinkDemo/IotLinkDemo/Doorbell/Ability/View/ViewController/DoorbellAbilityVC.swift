@@ -176,7 +176,10 @@ extension DoorbellAbilityVC {
 //            AGToolHUD.showInfo(info: "设备离线,请检查设备状态")
 //            return
 //        }
-        
+        if(!device.connected){
+            //videoTipView.tipType = .deviceOffLine
+            return;
+        }
         AGToolHUD.showNetWorkWait(Double.infinity)
         doorbellVM.wakeupDevice(device) {[weak self] success, msg in
             if(!success){

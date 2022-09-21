@@ -8,6 +8,7 @@
 import Foundation
 
 class DeviceManager : IDeviceMgr{
+
     private func asyncResult(_ ec:Int,_ msg:String,_ result:@escaping(Int,String)->Void) {
         DispatchQueue.main.async {
             let filter = self.app.context.callbackFilter
@@ -286,6 +287,17 @@ class DeviceManager : IDeviceMgr{
 //        let ret = filter(ErrCode.XERR_UNSUPPORTED,"暂未支持")
 //        result(ret.0,ret.1)
 //    }
+    func getPropertyDescription(deviceId:String,productNumber:String,result: @escaping (Int, String, [Property]) -> Void) {
+        if(deviceId != "" && productNumber != ""){
+            log.e("deviceId and productNumber can't be both empty")
+            self.asyncResultData(ErrCode.XERR_INVALID_PARAM, "参数错误", [], result)
+            return
+        }
+        DispatchQueue.main.async {
+            let token = self.app.context.gyiot.session.iotlink_token
+            self.app.proxy.gw.reqProperty(token,deviceId, productNumber, {ec,msg,p in self.asyncResultData(ec, msg, p, result)})
+            }
+     }
     
     func setDeviceProperty(device: IotDevice, properties: Dictionary<String, Any>, result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
@@ -335,7 +347,7 @@ class DeviceManager : IDeviceMgr{
 //            topicRtmUpdate = "$aws/things/" + self.app.context.virtualNumber + "/shadow/name/rtm/update"
 //            self.app.proxy.mqtt.publish(data: jsonStrRtm!, topic: topicRtmUpdate, qos: .messageDeliveryAttemptedAtLeastOnce)
 
-            let agToken = self.app.context.aglab.session.token.accessToken
+            let agToken = self.app.context.aglab.session.accessToken
             let local = self.app.context.virtualNumber
             let peer = device.deviceId
 
@@ -377,6 +389,21 @@ class DeviceManager : IDeviceMgr{
             let peerVirtualNumber = self.app.context.rtm.session.peerVirtualNumber
             self.app.proxy.rtm.sendRawMessage(toPeer: peerVirtualNumber, data: data, description: description, cb: {ec,msg in self.asyncResult(ec,msg,result)})
         }
+    }
+    
+    func startPlayback(file: String, uid: UInt, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
+        self.app.rule.trans(FsmPlay.Event.STARTPLAY,
+                            {self.app.rule.playback.start(file: file, uid: uid,result:{ec,msg in self.asyncResult(ec,msg,result)},stateChanged:stateChanged)},
+                            {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
+    }
+    
+    func setPlaybackView(peerView: UIView?) -> Int {
+        return self.app.rule.playback.setPlaybackView(peerView: peerView)
+    }
+    
+    func stopPlayback() {
+        self.app.rule.trans(FsmPlay.Event.RESETRTC,
+                            {self.app.rule.playback.stop()})
     }
     
     private var app:Application

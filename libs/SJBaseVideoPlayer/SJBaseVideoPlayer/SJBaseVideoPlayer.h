@@ -899,4 +899,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) NSURL *assetURL;
 @property (nonatomic, readonly) BOOL isPlayedToEndTime __deprecated_msg("use `isPlaybackFinished`;"); ///< 是否已播放结束(当前资源是否已播放结束)
 @end
+
+@interface SJBaseVideoPlayer (SJVideoPlayerExtendedFFMpeg)
+
+///
+/// 调用ffmpeg
+///
+- (int)ffmpegMain:(NSString*)commandStr completionBlock:(void (^)(int ec,NSString* msg))completionBlock;
+@end
 NS_ASSUME_NONNULL_END

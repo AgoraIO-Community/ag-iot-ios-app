@@ -220,7 +220,7 @@ class AccountManager : IAccountMgr{
     private func doLogin(_ param:LoginParam,_ result:@escaping (Int,String)->Void) {
         let data = param
         //self.app.context.aglab.session.userName = data.account
-        self.app.context.aglab.session.token = AgoraLabToken(
+        self.app.context.aglab.session = AgoraLabSession(
             tokenType: data.tokenType,
             accessToken: "Bearer " + data.accessToken,
             refreshToken: data.refreshToken,
@@ -365,7 +365,7 @@ class AccountManager : IAccountMgr{
     }
     
     func updateHeadIcon(image: UIImage,result:@escaping(Int,String,String?)->Void) {
-        let agToken = app.context.aglab.session.token.accessToken
+        let agToken = app.context.aglab.session.accessToken
         let traceId = app.context.call.session.traceId
         DispatchQueue.main.async {
             self.app.proxy.al.reqUploadIcon(agToken, image, traceId, {ec,msg,url in self.asyncResultData(ec,msg,url,result)})

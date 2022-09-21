@@ -25,6 +25,7 @@ class CallSession{
 }
 
 class CallkitManager : ICallkitMgr{
+    
     private func asyncResult(_ ec:Int,_ msg:String,_ result:@escaping(Int,String)->Void) {
         DispatchQueue.main.async {
             let filter = self.app.context.callbackFilter
@@ -115,7 +116,7 @@ class CallkitManager : ICallkitMgr{
             self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
         }
         app.rule.trigger.local_join_watcher = {b in}
-        let agToken = app.context.aglab.session.token.accessToken
+        let agToken = app.context.aglab.session.accessToken
         app.proxy.al.reqAnswer(agToken,req,traceId, cb)
     }
     
@@ -163,20 +164,21 @@ class CallkitManager : ICallkitMgr{
 //                        log.w("call muteLocalVideo fail:\(msg)(\(ec))")
 //                    }
 //                })
-                self.app.context.call.setting.rtc.publishVideo = false
-                self.app.context.call.setting.rtc.publishAudio = true
+                self.app.context.call.setting.publishVideo = false
+                self.app.context.call.setting.publishAudio = true
                 result(ec,msg)
             }
             else{
                 result(ec,msg)
             }
         }
-        let agToken = app.context.aglab.session.token.accessToken
+        let agToken = app.context.aglab.session.accessToken
         app.proxy.al.reqAnswer(agToken,req,traceId, cb)
     }
     
     func callAnswer(result:@escaping(Int,String)->Void,
-                    actionAck:@escaping(ActionAck)->Void){
+                    actionAck:@escaping(ActionAck)->Void,
+                    memberState:((MemberState,[UInt])->Void)?){
         log.i("call callAnswer")
         app.rule.trans(FsmCall.Event.LOCAL_ACCEPT,
                        {self.doCallAnswer(result: {ec,msg in self.asyncResult(ec, msg, result)},actionAck: actionAck)},
@@ -438,11 +440,11 @@ class CallkitManager : ICallkitMgr{
         }
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
         self._onPeerRinging = pr
-        let agToken = app.context.aglab.session.token.accessToken
+        let agToken = app.context.aglab.session.accessToken
         app.proxy.al.reqCall(agToken,req,traceId, cbDial)
     }
     
-    func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void,actionAck:@escaping(ActionAck)->Void) {
+    func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?) {
         let filter = self.app.context.callbackFilter
         app.rule.trans(FsmCall.Event.CALL,
                        {self.doCallDial(deviceId: device.deviceId, attachMsg: attachMsg, result: {ec,msg in self.asyncResult(ec, msg, result)}, actionAck: actionAck)},
@@ -450,25 +452,12 @@ class CallkitManager : ICallkitMgr{
     }
     
     func setLocalVideoView(localView: UIView?) -> Int {
-        var ret = 0
         let uid = app.context.call.session.uid
-//        let canvas = AgoraRtcVideoCanvas()
-//        canvas.uid = uid
-//        canvas.renderMode = app.context.call.setting.rtc.renderMode
-//        canvas.view = localView
-//
-        ret = app.proxy.rtc.setupLocalView(localView: localView, uid: uid)
-        
+        let ret = app.proxy.rtc.setupLocalView(localView: localView, uid: uid)
         return ret
     }
     
     func setPeerVideoView(peerView: UIView?) -> Int {
-//        var paired = app.context.call.session.rtc.paired
-//
-//        if(paired.count != 0){
-//            log.e("call setPeerVideoView with error session count:\(paired.count)")
-//            return ErrCode.XERR_UNKNOWN
-//        }
         let pairing = app.context.call.session.rtc.pairing
         pairing.view = peerView
         pairing.uid = app.context.call.session.peerId
@@ -477,8 +466,6 @@ class CallkitManager : ICallkitMgr{
             
             let view = pairing.view
             let uid = pairing.uid
-            
-            //paired[pairing.uid] = RtcSession.VideoView(uid: uid, view: view)
             
             pairing.view = nil
             pairing.uid = 0

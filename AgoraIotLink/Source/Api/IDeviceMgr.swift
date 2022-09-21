@@ -86,6 +86,22 @@ public class ProductInfo:NSObject{
         self.updateTime = updateTime
     }
 }
+
+/*
+ * @brief 设备属性描述信息
+ */
+public class Property : NSObject{
+    @objc public var markName = ""
+    @objc public var maxValue = ""
+    @objc public var params = ""
+    @objc public var pointName = ""
+    @objc public var pointType:UInt = 0
+    @objc public var productId:UInt64 = 0
+    @objc public var readType:UInt = 0
+    @objc public var remark = ""
+    @objc public var status:UInt = 0
+}
+
 /*
  *@brief 设备状态改变回调接口
  */
@@ -223,6 +239,13 @@ public class FirmwareStatus : NSObject{
     case TokenDidExpire         //token已经过期
     case UnknownError           //未知错误
 }
+@objc public enum PlaybackStatus : Int{
+    case RemoteJoin
+    case RemoteLeft
+    case LocalReady
+    case LocalError
+    case VideoReady
+}
 /*
  * @brief 设备管理接口
  */
@@ -265,7 +288,14 @@ public protocol IDeviceMgr {
      */
     func renameDevice(device:IotDevice,newName:String,result:@escaping(Int,String)->Void)
     /*
-     * @brief 修改设备属性
+     * @brief 查询所有属性描述符，触发 onQueryAllPropertyDescDone() 回调
+     *        deviceID 和 productNumber 两者取其一，另外一个参数为""
+     * @param deviceID : 根据设备ID来查询
+     * @param productNumber : 根据productNumber查询
+     */
+    func getPropertyDescription(deviceId:String,productNumber:String,result:@escaping(Int,String,[Property])->Void)
+    /*
+     * @brief 修改设备属性值
      * @param device     : 对应设备
      * @param propertites: 需要设置的属性
      * @param result     : 调用该接口的返回值以及被修改的属性
@@ -273,7 +303,7 @@ public protocol IDeviceMgr {
     func setDeviceProperty(device:IotDevice,properties:Dictionary<String,Any>,result:@escaping(Int,String)->Void)
     
     /*
-     * @brief 查询设备属性
+     * @brief 查询设备属性值
      * @param device     : 需要取得属性的设备
      * @param result     : 调用该接口的返回值,desired:期望设置给设备的参数信息，reported:设备设置成功后当前的参数信息
      */
@@ -285,12 +315,6 @@ public protocol IDeviceMgr {
      * @param type :被分享人权限 2管理员 3成员（默认成员）
      */
     func shareDeviceTo(deviceNumber:String,userId:String,type:String,result:@escaping(Int,String)->Void)
-    /*
-     * @brief 接收他人的分享，使用场景参看 sharePushList()接口
-     * @param deviceNickName:设备新昵称
-     * @param order：分享口令,来自于 sharePushList()返回列表中对应设备的 para 字段
-     */
-    //func shareDeviceAccept(deviceNickName:String,order:String,result:@escaping(Int,String)->Void)
     /*
      * @brief 用户可分享设备列表
      */
@@ -310,6 +334,12 @@ public protocol IDeviceMgr {
      * @param userId: 用户编号
      */
     func shareRemoveMember(deviceNumber:String,userId:String,result:@escaping(Int,String)->Void)
+//    /*
+//     * @brief 接收他人的分享，使用场景参看 sharePushList()接口
+//     * @param deviceNickName:设备新昵称
+//     * @param order：分享口令,来自于 sharePushList()返回列表中对应设备的 para 字段
+//     */
+//    func shareDeviceAccept(deviceNickName:String,order:String,result:@escaping(Int,String)->Void)
 //    /*
 //     * @brief 用户分享设备，生成分享推送消息，需被分享人接收分享，使用场景参看 sharePushList()接口
 //     * @param deviceNumber:设备号
@@ -359,10 +389,14 @@ public protocol IDeviceMgr {
      */
     func sendMessageEnd()
     /*
-     * @brief 发送消息给设备
+     * @brief 发送消息给设备，在sendMessageBegin()返回Connected成功后，调用sendMessageEnd()前调用该接口
      * @param device : 对端设备
      * @param data : 发送的数据，每次发送数据大小不能超过1k
      * @param description : 消息描述
      */
     func sendMessage(data:Data,description:String,result:@escaping(Int,String)->Void)
+    
+    func startPlayback(file:String,uid:UInt,result:@escaping(Int,String)->Void,stateChanged:@escaping(PlaybackStatus,String)->Void)
+    func setPlaybackView(peerView: UIView?) -> Int
+    func stopPlayback()
 }

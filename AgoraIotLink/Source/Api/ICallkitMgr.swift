@@ -22,13 +22,16 @@
  *
  */
 
+/*
+ * @brief 与对端通话时的产生的行为/事件
+ */
 @objc public enum ActionAck:Int{
     
-    case StateInited   //初始化呼叫状态
-    case LocalHangup   //本地挂断
-    case LocalAnswer   //本地接听
-    case RemoteHangup  //设备挂断
-    case RemoteAnswer  //设备接听
+    case StateInited    //初始化呼叫状态
+    case LocalHangup    //本地挂断
+    case LocalAnswer    //本地接听
+    case RemoteHangup   //设备挂断
+    case RemoteAnswer   //设备接听
     case RemoteTimeout  //对端超时
     case RecordEnd      //云录停止
     case LocalTimeout   //呼叫超时
@@ -42,6 +45,15 @@
     case CallForward   //本地去电中继
     case CallOutgoing  //本地去电振铃
     case UnknownAction //未知错误
+}
+
+/*
+ * @brief 多人呼叫时成员状态变化种类
+ */
+@objc public enum MemberState : Int{
+    case Exist      //当前已有用户(除开自己)
+    case Enter      //其他新用户接入会话
+    case Leave      //其他用户退出会话
 }
 
 @objc public enum AudioEffectId:Int{
@@ -69,12 +81,14 @@ public protocol ICallkitMgr {
      * @param attachMsg  : 呼叫时附带的信息
      * @param result     : 调用该接口是否成功
      * @param actionAck  : callDial 通话中产生的事件
+     * @param memberState: 多人通话时他人的状态
      */
     func callDial(
         device: IotDevice,
         attachMsg: String,
         result:@escaping(Int,String)->Void,
-        actionAck:@escaping(ActionAck)->Void
+        actionAck:@escaping(ActionAck)->Void,
+        memberState:(((MemberState,[UInt])->Void)?)
     )
 
     /*
@@ -87,9 +101,11 @@ public protocol ICallkitMgr {
      * @brief 接听当前来电
      * @param result     : 调用该接口是否成功
      * @param actionAck  : callAnswer 通话中的事件
+     * @param memberState: 多人通话时他人的状态
      */
     func callAnswer(result:@escaping(Int,String)->Void,
-                    actionAck:@escaping(ActionAck)->Void)
+                    actionAck:@escaping(ActionAck)->Void,
+                    memberState:((MemberState,[UInt])->Void)?)
 
     /*
      * @brief 设置本地视频显示控件，如果不设置则不显示本地视频

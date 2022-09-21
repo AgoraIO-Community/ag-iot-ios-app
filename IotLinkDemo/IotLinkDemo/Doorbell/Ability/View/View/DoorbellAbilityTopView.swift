@@ -34,6 +34,9 @@ class DoorbellAbilityTopView: UIView {
     var device: IotDevice?{
         didSet{
             logicView.device = device
+            if(device?.connected == false){
+                videoTipView.tipType = .deviceOffLine
+            }
         }
     }
     

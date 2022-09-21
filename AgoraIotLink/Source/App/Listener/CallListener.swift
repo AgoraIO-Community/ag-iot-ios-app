@@ -8,6 +8,10 @@
 import Foundation
 //import AgoraRtcKit
 class CallListener : FsmCall.IListener{
+    func on_reset_call(_ srcEvent: FsmCall.Event) {
+        app.context.call.session.reset()
+        app.rule.trigger.reset()
+    }
     
     func on_incoming_state_watcher(_ srcEvent: FsmCall.Event) {
         log.i("listener call.on_incoming_state_watcher \(srcEvent)")
@@ -45,16 +49,6 @@ class CallListener : FsmCall.IListener{
     func on_local_join_watcher(_ srcEvent: FsmCall.Event) {
         log.i("listener call.on_local_join_watcher \(srcEvent)")
         app.rule.trigger.local_join_watcher(srcEvent)
-    }
-    
-    func on_callkit_ready(_ srcEvent: FsmCall.Event) {
-        //app.context.call.session.rtc.paired.removeAll(keepingCapacity: true)
-        app.context.call.session.rtc.pairing.uid = 0
-        app.context.call.session.rtc.pairing.view = nil
-        app.rule.trigger.incoming_state_watcher = {a in}
-        app.rule.trigger.local_join_watcher = {a in}
-        app.rule.trigger.logout_watcher = {}
-        app.rule.trigger.remote_state_watcher = {a in}
     }
     
     func do_REMOTE_JOIN(_ srcState: FsmCall.State) {

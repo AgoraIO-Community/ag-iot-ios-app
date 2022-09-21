@@ -2382,4 +2382,12 @@ typedef struct _SJPlayerControlInfo {
     return self.isPlaybackFinished && self.finishedReason == SJFinishedReasonToEndTimePosition;
 }
 @end
+
+@implementation SJBaseVideoPlayer (SJVideoPlayerExtendedFFMpeg)
+- (int)ffmpegMain:(NSString*)commandStr completionBlock:(void (^)(int ec,NSString* msg))completionBlock {
+    //[self.switcher switchControlLayerForIdentifier:identifier];
+    return [_playbackController ffmpegMain:commandStr completionBlock:completionBlock];
+}
+@end
+
 NS_ASSUME_NONNULL_END

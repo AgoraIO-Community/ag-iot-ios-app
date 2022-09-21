@@ -11,7 +11,11 @@ import AgoraIotLink
 
 class ThirdAccountManager{
     class api{
-        static let http_dev = "https://third-user.sh.agoralab.co/third-party"
+        #if false //dev 环境
+            static let http_3rdParty = "https://third-user.sh.agoralab.co/third-party"
+        #elseif true //prd 环境
+            static let http_3rdParty = "https://third-user.sh3.agoralab.co/third-party"
+        #endif
         static let authRegister = "/auth/register"
         static let authLogin = "/auth/login"
         static let authUnRegister = "/auth/removeAccount"
@@ -131,7 +135,7 @@ class ThirdAccountManager{
     class func reqRegister(_ userName:String,_ password:String,_ rsp:@escaping(Int,String)->Void){
         let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
         let params = ["username":userName,"password":password]
-        let url = api.http_dev + api.authRegister
+        let url = api.http_3rdParty + api.authRegister
 
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
             .validate()
@@ -152,7 +156,7 @@ class ThirdAccountManager{
     class func reqLogin(_ username:String,_ password:String,rsp:@escaping(Int,String,LoginParam?)->Void){
         let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
         let params = ["username":username,"password":password]
-        let url = api.http_dev + api.authLogin
+        let url = api.http_3rdParty + api.authLogin
 
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
             .validate()
@@ -174,7 +178,7 @@ class ThirdAccountManager{
     class func reqUnRegister(_ account: String,_ password:String,_ rsp: @escaping (Int,String)->Void){
         let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
         let params = ["username":account,"password":password]
-        let url = api.http_dev + api.authUnRegister
+        let url = api.http_3rdParty + api.authUnRegister
 
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
             .validate()
@@ -192,7 +196,7 @@ class ThirdAccountManager{
     class func reqUseridByAccount(_ account:String,_ rsp:@escaping(Int,String,String?)->Void){
         let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
         let params = ["username":account]
-        let url = api.http_dev + api.getUid
+        let url = api.http_3rdParty + api.getUid
 
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
             .validate()

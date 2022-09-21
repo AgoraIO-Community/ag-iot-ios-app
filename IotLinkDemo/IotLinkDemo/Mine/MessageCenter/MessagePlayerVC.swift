@@ -42,10 +42,13 @@ class MessagePlayerVC: UIViewController {
             if self!.isDownloading {
                 return
             }
-//            if let url =  self?.player.assetURL {
-//                self!.isDownloading = true
-//                self!.downloadCurrentPlayingVideo(url)
-//            }
+            if let url =  self?.player.assetURL {
+                self!.isDownloading = true
+                self!.downloadCurrentPlayingVideo(url,completion: {[weak self](ec,msg) in
+                    self?.isDownloading = false
+                    log.i("demo download \(msg)(\(ec))")
+                })
+            }
         }
         return playerView
     }()
@@ -164,8 +167,8 @@ class MessagePlayerVC: UIViewController {
     
 
     // 下载
-    func downloadCurrentPlayingVideo(_ url:URL){
-        DoorbellDownlaodManager.shared.download(url: url)
+    func downloadCurrentPlayingVideo(_ url:URL,completion:@escaping(Bool,String)->Void){
+        DoorbellDownlaodManager.shared.download(player:self.player,url: url,completion:completion)
         DownloadProgressVC.show()
     }
 }

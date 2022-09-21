@@ -27,6 +27,8 @@ class DoorbellControlVC: UIViewController {
         setupUI()
     }
     
+    
+    
     lazy var periodLabel : UILabel = {
         let label:UILabel = UILabel()
         label.backgroundColor = .black
@@ -75,6 +77,18 @@ class DoorbellControlVC: UIViewController {
         vew.textField.keyboardType = UIKeyboardType.asciiCapable
         
         return vew
+    }()
+    
+    lazy var playBtn: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("播放sd卡", for: .normal)
+        btn.backgroundColor = UIColor.init(hexString: "#6A6A6A")
+        
+        btn.titleLabel?.font = FontPFMediumSize(18)
+        btn.setTitleColor(UIColor.init(hexString: "#25DEDE"), for: .normal)
+        btn.layer.cornerRadius = 10.S
+        btn.addTarget(self, action: #selector(playBtnEvent(btn:)), for: .touchUpInside)
+        return btn
     }()
     
     lazy var sendBtn: UIButton = {
@@ -131,8 +145,21 @@ class DoorbellControlVC: UIViewController {
         sliderLabel.text = String(slider.value)
     }
     
+    let videoH : CGFloat = 200.VS
+    let topMarginH : CGFloat = 1.VS
+    let bottomMarginH : CGFloat = 16.VS
+    let toolBarH : CGFloat = 56.VS
+    lazy var videoView: UIView = {
+        let videoView = UIView()
+        videoView.backgroundColor = UIColor.gray
+        return videoView
+        
+    }()
+    
     private func setupUI(){
         //view.addSubview(textToSend)
+        view.addSubview(videoView)
+        view.addSubview(playBtn)
         view.addSubview(periodLabel)
         view.addSubview(sliderLabel)
         view.addSubview(slider)
@@ -140,48 +167,61 @@ class DoorbellControlVC: UIViewController {
         view.addSubview(textField)
         view.addSubview(sendBtn)
         view.addSubview(sendRepeat)
+        
+        videoView.snp.makeConstraints { make in
+            make.top.equalTo(topMarginH)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(videoH)
+        }
 
         slider.addTarget(self, action: #selector(self.SliderChanged), for: .valueChanged)
         
+        let dist = 0
+        playBtn.snp.makeConstraints{ make in
+            make.centerY.equalToSuperview().offset(dist - 60)
+            make.centerX.equalToSuperview()
+            make.left.equalTo(100)
+            make.right.equalTo(-100)
+        }
         slider.snp.makeConstraints{ make in
-            make.centerY.equalToSuperview().offset(-120)
+            make.centerY.equalToSuperview().offset(0)
             make.centerX.equalToSuperview()
             make.left.equalTo(50)
             make.right.equalTo(-50)
             make.height.equalTo(30*ScreenHS)
         }
         sliderLabel.snp.makeConstraints{ make in
-            make.centerY.equalToSuperview().offset(-90)
+            make.centerY.equalToSuperview().offset(dist + 30)
             make.centerX.equalToSuperview()
             make.left.equalTo(100)
             make.right.equalTo(-100)
             make.height.equalTo(30)
         }
         periodLabel.snp.makeConstraints{ make in
-            make.centerY.equalToSuperview().offset(-90)
+            make.centerY.equalToSuperview().offset(dist + 30)
             make.right.equalTo(100)
             make.left.equalTo(10)
         }
         textField.snp.makeConstraints{ make in
-            make.centerY.equalToSuperview().offset(-40)
+            make.centerY.equalToSuperview().offset(dist + 70)
             make.centerX.equalToSuperview()
             make.left.equalTo(100)
             make.right.equalTo(-100)
             make.height.equalTo(50*ScreenHS)
         }
         labelSend.snp.makeConstraints{ make in
-            make.centerY.equalToSuperview().offset(-40)
+            make.centerY.equalToSuperview().offset(dist + 70)
             make.right.equalTo(100)
             make.left.equalTo(10)
         }
         sendBtn.snp.makeConstraints { make in
-            make.centerY.equalToSuperview().offset(30)
+            make.centerY.equalToSuperview().offset(dist + 110)
             make.centerX.equalToSuperview()
             make.left.equalTo(100)
             make.right.equalTo(-100)
         }
         sendRepeat.snp.makeConstraints{ make in
-            make.centerY.equalToSuperview().offset(75)
+            make.centerY.equalToSuperview().offset(dist + 150)
             make.centerX.equalToSuperview()
             make.left.equalTo(100)
             make.right.equalTo(-100)
@@ -201,6 +241,44 @@ class DoorbellControlVC: UIViewController {
             }
         }
     }
+    
+    @objc func playBtnEvent(btn:UIButton){
+        let text:String = playBtn.titleLabel?.text ?? "";
+        let file = "saf"
+        let uid:UInt = 1234
+        
+        if(text ==  "播放sd卡"){
+            AGToolHUD.showNetWorkWait()
+            AgoraIotLink.iotsdk.deviceMgr.startPlayback(file: file, uid: uid) { [weak self](ec, msg) in
+                if(ec == ErrCode.XOK){
+                    AGToolHUD.disMiss()
+                }
+                else{
+                    AGToolHUD.showfaild(info: msg, dismissBlock: {})
+                }
+            } stateChanged: { [weak self](s, info) in
+                switch(s){
+                case .LocalError:
+                    AGToolHUD.showfaild(info: info, dismissBlock: {})
+                case .RemoteJoin:
+                    log.i("demo ctrl state:\(info)(RemoteJoin)")
+                case .RemoteLeft:
+                    btn.setTitle("播放sd卡", for: .normal)
+                    log.i("demo ctrl state:\(info)(RemoteLeft)")
+                case .LocalReady:
+                    btn.setTitle("停止播放", for: .normal)
+                    log.i("demo ctrl state:\(info)(LocalReady)")
+                case .VideoReady:
+                    AgoraIotLink.iotsdk.deviceMgr.setPlaybackView(peerView: self?.videoView)
+                }
+            }
+        }
+        else{
+            AgoraIotLink.iotsdk.deviceMgr.stopPlayback()
+            btn.setTitle("播放sd卡", for: .normal)
+        }
+    }
+    
     var repeating:Bool = false
     var timer:Timer? = nil
     var msgCounter:Int = 0
@@ -227,21 +305,23 @@ class DoorbellControlVC: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        AgoraIotLink.iotsdk.deviceMgr.sendMessageBegin(device: device!) { ec, msg in
+        let result:(Int,String)->Void = { ec, msg in
             log.level(ec == ErrCode.XOK ? .info : .error, "demo sendMessageBegin() \(msg)(\(ec))")
             if(ec != ErrCode.XOK){
                 AGToolHUD.showFaild(info: msg)
             }
-        } statusUpdated: { status,msg,data in
+        }
+        let statusUpdated:(MessageChannelStatus,String,Data?)->Void = { status,msg,data in
+            log.i("demo sendMessage status updated:\(status),\(msg)")
             if(status == .DataArrived){
-                log.i("demo sendMessage status updated:\(status),\(msg)")
                 AGToolHUD.showSuccess(info: "rtm info :\(msg)")
             }
-            else if(data != nil){
+            if(data != nil){
                 log.i("demo 收到设备数据长度：" + String(data!.count))
                 AGToolHUD.showSuccess(info: "rtm info :\(msg)")
             }
         }
+        AgoraIotLink.iotsdk.deviceMgr.sendMessageBegin(device: device!,result:result,statusUpdated:statusUpdated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {

@@ -588,7 +588,7 @@ class AWSMqtt{
         }
         return counter == 0 ? false : true
     }
-    //topic3 = "iotlink/" + clientId + "/message"
+    //topic3 = "granwin/" + clientId + "/message"
     func onTopic3Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
         var messageType = -1
         if let type = jsonDict["messageType"] as? Int{
@@ -766,7 +766,9 @@ class AWSMqtt{
     }
     ////https://confluence.agoralab.co/pages/viewpage.action?pageId=944705001
     public func publishPushId(id:String,enableNotify:Bool){
-        updateRemoteRtcStatus(eid:id,enablePush:enableNotify)
+        if(!updateRemoteRtcStatus(eid:id,enablePush:enableNotify)){
+            log.e("updateRemoteRtcStatus failed")
+        }
     }
     
     public func publishEnableNotify(eid:String,enable:Bool,result:@escaping(Int,String)->Void){
@@ -782,12 +784,12 @@ class AWSMqtt{
         self.iotDataManager?.publishString(data, onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce)
     }
     
-    func subscribe(topic:String,qos:AWSIoTMQTTQoS,callback:@escaping(String,String,[String:Any])->Bool,result:@escaping (Bool)->Void){
+    private func subscribe(topic:String,qos:AWSIoTMQTTQoS,callback:@escaping(String,String,[String:Any])->Bool,result:@escaping (Bool)->Void){
         let ret = iotDataManager?.subscribe(toTopic: topic, qoS: qos, fullCallback: {
             (curTopic,message) ->Void in
             let payload = message.messageData
             if let jsonDict = try? JSONSerialization.jsonObject(with: payload, options:.mutableContainers) as? [String: Any]{
-                log.i("mqtt topic rec: '\(curTopic)'")
+                log.i("mqtt topic recv: '\(curTopic)'")
                 log.v("           json: \(jsonDict)")
                 DispatchQueue.main.async {
                     if(!callback(topic,curTopic,jsonDict)){
@@ -825,11 +827,11 @@ class AWSMqtt{
         let str = JSON(stateValue)
         let jsonStr = str.rawString([.castNilToNSNull:true])
         if(jsonStr == nil){
-            log.e("mqtt setDeviceStatus jsonStr is nil")
+            log.e("mqtt setDeviceStatus jsonStr is nil:\(str)")
             result(ErrCode.XERR_INVALID_PARAM,"输入的参数错误")
             return
         }
-        let topicGetAccepted = "$aws/things/" + things_name + "/shadow/get/accepted"
+        //let topicGetAccepted = "$aws/things/" + things_name + "/shadow/get/accepted"
         //addDeviceStatusListener(topicKey: topicGetAccepted,result: result)
         log.i("mqtt topic pub: '\(topic)' \(jsonStr!)")
         iotDataManager?.publishString(jsonStr!, onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce,ackCallback: {

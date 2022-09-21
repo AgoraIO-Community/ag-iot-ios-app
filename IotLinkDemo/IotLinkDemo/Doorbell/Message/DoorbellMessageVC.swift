@@ -244,18 +244,18 @@ class DoorbellMessageVC: UIViewController {
             return
         }
         currentDownloadCount += 1
-//        if let url = self.player.assetURL {
-//            guard let msg = self.currentPlayingMsg else { return }
-//            playerView.isDownloading = true
-//            msg.isDownloading = true
-//            DoorbellDownlaodManager.shared.download(url: url, completion: { [weak self] in
-//                guard let wSelf = self else { return }
-//                msg.isDownloading = false
-//                wSelf.playerView.isDownloading = wSelf.currentPlayingMsg?.isDownloading ?? false
-//            })
-//        }else{
-//            SVProgressHUD.showInfo(withStatus: "下载地址错误")
-//        }
+        if let url = self.player.assetURL {
+            guard let msg = self.currentPlayingMsg else { return }
+            playerView.isDownloading = true
+            msg.isDownloading = true
+            DoorbellDownlaodManager.shared.download(player:self.player, url: url, completion: { [weak self](ec,info) in
+                guard let wSelf = self else { return }
+                msg.isDownloading = false
+                wSelf.playerView.isDownloading = wSelf.currentPlayingMsg?.isDownloading ?? false
+            })
+        }else{
+            SVProgressHUD.showInfo(withStatus: "下载地址错误")
+        }
     }
     
     // 尝试删除当前播放的消息

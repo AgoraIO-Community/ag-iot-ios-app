@@ -37,7 +37,6 @@ target 'IotLinkDemo' do
   pod 'SwiftDate','6.3.1'
   pod 'ZLPhotoBrowser','4.3.1'
   
-
   #--------SJVideoPlayer播放器--------
   pod 'SJBaseVideoPlayer', :path => '../libs/SJBaseVideoPlayer'
   pod 'SJVideoPlayer', :path => '../libs/SJVideoPlayer'

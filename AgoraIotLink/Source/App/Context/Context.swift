@@ -22,10 +22,7 @@ class RtcSession{
     //var paired = [UInt:VideoView]()
 }
 
-class RtcSetting{
-    var uid:UInt = 0
-    var channel:String = ""
-    var info:String? = nil
+class PlayerSetting{
     var dimension = AgoraVideoDimension640x360
     var frameRate = AgoraVideoFrameRate.fps15
     var bitRate = AgoraVideoBitrateStandard
@@ -35,7 +32,7 @@ class RtcSetting{
     var audioSampleRate = "16000"; //16000,8000
     
     var logFilePath : String? = nil
-    var publishAudio = true ///< 通话时是否推流本地音频
+    var publishAudio = false ///< 通话时是否推流本地音频
     var publishVideo = false ///< 通话时是否推流本地视频
     var subscribeAudio = true ///< 通话时是否订阅对端音频
     var subscribeVideo = true ///< 通话时是否订阅对端视频
@@ -75,20 +72,6 @@ class IotLinkSetting{
     
 }
 
-//CallKitAcccount
-//struct CallKitAccount{
-//    //static let ACCOUNT_TYPE_DEV = 1
-//    //static let ACCOUNT_TYPE_USER = 2
-//
-//    //var accountName:String = ""
-//    //var accountType:Int = ACCOUNT_TYPE_USER
-//    //var accountValid:Bool = true
-//    //var password:String = ""
-//    //var code:String = ""
-//    //var uid:UInt? = 0   //agora uid
-//    //var online:Bool = false
-//}
-
 class CallKitSession{
     var appId = ""
     var traceId = ""
@@ -116,12 +99,25 @@ class CallKitSession{
         caller = ""
         cloudRecordStatus = 0
         deviceAlias = ""
+        rtc.pairing.uid = 0
+        rtc.pairing.view = nil
     }
 }
 
 struct CallKitSetting{
-    private var _rtc:RtcSetting = RtcSetting()
-    var rtc:RtcSetting{get{return _rtc}}
+    var dimension = AgoraVideoDimension640x360
+    var frameRate = AgoraVideoFrameRate.fps15
+    var bitRate = AgoraVideoBitrateStandard
+    var orientationMode:AgoraVideoOutputOrientationMode = .adaptative
+    var renderMode:AgoraVideoRenderMode = .fit
+    var audioType = "G722" //G722，G711
+    var audioSampleRate = "16000"; //16000,8000
+    
+    var logFilePath : String? = nil
+    var publishAudio = true ///< 通话时是否推流本地音频
+    var publishVideo = false ///< 通话时是否推流本地视频
+    var subscribeAudio = true ///< 通话时是否订阅对端音频
+    var subscribeVideo = true ///< 通话时是否订阅对端视频
 }
 
 struct AgoraLabSetting{
@@ -177,22 +173,29 @@ struct LoginRspData{
     let gyToken:IotLinkSession
 }
 
-struct AgoraLabSession{
-    var scope = "read"
-    var clientId = "9598156a7d15428f83f828a70f40aad5"
-    var secretKey = "MRbRz1kGau9BZE0gWRh9YMZSYc1Ue06v"
-    var password = "111111"
-    var userNamew = ""
-    var grantType = "password"
+class AgoraLabSession{
+
+    var tokenType:String = ""
+    var accessToken:String = ""
+    var refreshToken:String = ""
+    var expireIn:UInt = 0
+    var scope:String = ""
     
-    var token = AgoraLabToken(tokenType: "", accessToken: "", refreshToken: "", expireIn: 0, scope: "")
-    
+    init(){}
+    init(tokenType:String,accessToken:String,refreshToken:String,expireIn:UInt,scope:String){
+        self.tokenType = tokenType
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
+        self.expireIn = expireIn
+        self.scope = scope
+    }
+
     func reset(){
-        token.tokenType = ""
-        token.accessToken = ""
-        token.expireIn = 0
-        token.refreshToken = ""
-        token.scope = ""
+        tokenType = ""
+        accessToken = ""
+        expireIn = 0
+        refreshToken = ""
+        scope = ""
     }
 }
 
@@ -202,6 +205,11 @@ struct AgoraLabContext{
     
     var setting:AgoraLabSetting{get{return _setting}set{_setting = newValue}}
     var session:AgoraLabSession{get{return _session}set{_session = newValue}}
+}
+
+struct PlayerContext{
+    private var _setting = PlayerSetting()
+    var setting:PlayerSetting{get{return _setting}}
 }
 
 struct CallKitContext{
@@ -302,10 +310,10 @@ class IotLinkContext{
 }
 
 class Context{
-    //private var _account:String = ""
     private var _virtualNumber:String = ""
     private var _push:PushNtfContext = PushNtfContext()
     private var _call:CallKitContext = CallKitContext()
+    private var _player:PlayerContext = PlayerContext()
     private var _rtm:RtmKitContext = RtmKitContext();
     private var _gran:IotLinkContext = IotLinkContext()
     private var _aglab:AgoraLabContext = AgoraLabContext()
@@ -318,6 +326,7 @@ class Context{
     var gyiot:IotLinkContext{get{return _gran}}
     var aglab:AgoraLabContext{get{return _aglab}set{_aglab = newValue}}
     var call:CallKitContext{get{return _call}set{_call = newValue}}
+    var player:PlayerContext{get{return _player}}
     var rtm:RtmKitContext{get{return _rtm}set{_rtm = newValue}}
     var devices:[IotDevice]?{get{return _devices}set{_devices = newValue}}
     var products:[ProductInfo]?{get{return _products}set{_products = newValue}}

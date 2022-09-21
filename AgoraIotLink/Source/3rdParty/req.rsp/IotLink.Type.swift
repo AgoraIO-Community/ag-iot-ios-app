@@ -24,6 +24,7 @@ extension IotLink{
         static let UserInfo = "/user/info/get"
         static let UserInfoUpdate = "/user/info/update"
         static let UnbindDevice="/user/device/unbind"
+        static let PointList="/device/point/list"
         static let RenameDevice="/user/device/update"
         static let ShareToUser = "/user/device/share/touser"
         static let ShareAccept = "/user/device/accept"
@@ -462,6 +463,33 @@ extension IotLink{
         }
     }
     
+    class PointList{
+        /*
+         "{\"code\":0,\"info\":[{\"createBy\":689337881676894208,\"createTime\":1654508340853,\"deleted\":0,\"id\":693724168858570752,\"markName\":\"bbbb\",\"pointName\":\"aaa\",\"pointType\":2,\"productId\":684376917349085184,\"readType\":1,\"remark\":\"1111\",\"status\":1}],\"tip\":\"响应成功\"}"
+         */
+        struct Info : Decodable{
+            let createBy:UInt64
+            let createTime:UInt64
+            let deleted:UInt
+            let id:UInt64
+            let index:UInt?
+            let markName:String
+            let maxValue:String?
+            let params:String?
+            let pointName:String
+            let pointType:UInt
+            let productId:UInt64
+            let readType:UInt
+            let remark:String
+            let status:UInt
+        }
+        struct Rsp : Decodable{
+            let code:UInt
+            let info:[Info]?
+            let tip:String
+        }
+    }
+    
     class OtaStatus{
         struct Info : Decodable{
             let deviceId:UInt64
@@ -476,51 +504,84 @@ extension IotLink{
             let tip:String
         }
     }
-    func handleRspOtaStatus(_ otaStatusRsp:OtaStatus.Rsp,_ rsp:@escaping(Int,String,FirmwareStatus?)->Void){
-        if(otaStatusRsp.code == IotLink.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,otaStatusRsp.tip,nil)
+    func handleRspOtaStatus(_ ret:OtaStatus.Rsp,_ rsp:@escaping(Int,String,FirmwareStatus?)->Void){
+        if(ret.code == IotLink.tokenExpiredCode){
+            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.tip,nil)
             return
         }
-        if(otaStatusRsp.code != 0){
-            log.e("iotlink handleRspOtaStatus rsp error:\(otaStatusRsp.code),tip:\(otaStatusRsp.tip)")
-            rsp(ErrCode.XERR_DEVMGR_QUEYR,otaStatusRsp.tip,nil)
+        if(ret.code != 0){
+            log.e("iotlink handleRspOtaStatus rsp error:\(ret.code),tip:\(ret.tip)")
+            rsp(ErrCode.XERR_DEVMGR_QUEYR,ret.tip,nil)
             return
         }
-        if(otaStatusRsp.info == nil){
-            log.e("iotlink handleRspOtaStatus rsp info is nil:\(otaStatusRsp.code),tip:\(otaStatusRsp.tip)")
-            rsp(ErrCode.XERR_DEVMGR_QUEYR,otaStatusRsp.tip,nil)
+        if(ret.info == nil){
+            log.e("iotlink handleRspOtaStatus rsp info is nil:\(ret.code),tip:\(ret.tip)")
+            rsp(ErrCode.XERR_DEVMGR_QUEYR,ret.tip,nil)
             return
         }
-        var ret:FirmwareStatus? = nil
-        if let stats = otaStatusRsp.info{
+        var fs:FirmwareStatus? = nil
+        if let status = ret.info{
             var firmInfo = FirmwareStatus()
             firmInfo = FirmwareStatus()
-            firmInfo.deviceId = stats.mac
-            firmInfo.deviceName = stats.deviceName
-            firmInfo.deviceNumber = String(stats.deviceId)
-            firmInfo.currentVersion = stats.currentVersion
-            firmInfo.status = stats.status
-            ret = firmInfo
+            firmInfo.deviceId = status.mac
+            firmInfo.deviceName = status.deviceName
+            firmInfo.deviceNumber = String(status.deviceId)
+            firmInfo.currentVersion = status.currentVersion
+            firmInfo.status = status.status
+            fs = firmInfo
         }
-        rsp(ErrCode.XOK,otaStatusRsp.tip,ret)
+        rsp(ErrCode.XOK,ret.tip,fs)
     }
-    func handleRspOtaInfo(_ otaInfoRsp:OtaInfo.Rsp,_ rsp:@escaping (Int,String,FirmwareInfo?)->Void){
-        if(otaInfoRsp.code == IotLink.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,otaInfoRsp.tip,nil)
+    func handleRspPointList(_ ret:PointList.Rsp,_ rsp:@escaping(Int,String,[Property])->Void){
+        if(ret.code == IotLink.tokenExpiredCode){
+            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.tip,[])
             return
         }
-        if(otaInfoRsp.code != 0){
-            log.e("iotlink handleRspOtaInfo rsp error:\(otaInfoRsp.code),tip:\(otaInfoRsp.tip)")
-            rsp(ErrCode.XERR_DEVMGR_QUEYR,otaInfoRsp.tip,nil)
+        if(ret.code != 0){
+            log.e("iotlink handleRspPointList rsp error:\(ret.code),tip:\(ret.tip)")
+            rsp(ErrCode.XERR_DEVMGR_QUEYR,ret.tip,[])
             return
         }
-        if(otaInfoRsp.info == nil){
-            log.e("iotlink handleRspOtaInfo rsp info is nil:\(otaInfoRsp.code),tip:\(otaInfoRsp.tip)")
-            rsp(ErrCode.XERR_DEVMGR_QUEYR,otaInfoRsp.tip,nil)
+        if(ret.info == nil){
+            log.e("iotlink handleRspPointList rsp info is nil:\(ret.code),tip:\(ret.tip)")
+            rsp(ErrCode.XERR_DEVMGR_QUEYR,ret.tip,[])
             return
         }
-        var ret:FirmwareInfo? = nil
-        if let info = otaInfoRsp.info{
+        var prop : [Property] = []
+        if let infos = ret.info{
+            for info in infos{
+                let p = Property()
+                p.markName = info.markName
+                p.maxValue = info.maxValue ?? ""
+                p.params = info.params ?? ""
+                p.pointName = info.pointName
+                p.pointType = info.pointType
+                p.productId = info.productId
+                p.readType = info.readType
+                p.remark = info.remark
+                p.status = info.status
+                prop.append(p)
+            }
+        }
+        rsp(ErrCode.XOK,ret.tip,prop)
+    }
+    func handleRspOtaInfo(_ ret:OtaInfo.Rsp,_ rsp:@escaping (Int,String,FirmwareInfo?)->Void){
+        if(ret.code == IotLink.tokenExpiredCode){
+            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.tip,nil)
+            return
+        }
+        if(ret.code != 0){
+            log.e("iotlink handleRspOtaInfo rsp error:\(ret.code),tip:\(ret.tip)")
+            rsp(ErrCode.XERR_DEVMGR_QUEYR,ret.tip,nil)
+            return
+        }
+        if(ret.info == nil){
+            log.e("iotlink handleRspOtaInfo rsp info is nil:\(ret.code),tip:\(ret.tip)")
+            rsp(ErrCode.XERR_DEVMGR_QUEYR,ret.tip,nil)
+            return
+        }
+        var fi:FirmwareInfo? = nil
+        if let info = ret.info{
             var firmInfo = FirmwareInfo()
             firmInfo.deviceId = info.mac
             firmInfo.size = info.size ?? 0
@@ -531,8 +592,8 @@ extension IotLink{
             firmInfo.remark = info.remark ?? ""
             firmInfo.upgradeId = info.upgradeId == nil ? "" : String(info.upgradeId!)
             firmInfo.upgradeVersion = info.upgradeVersion ?? ""
-            ret = firmInfo
+            fi = firmInfo
         }
-        rsp(ErrCode.XOK,otaInfoRsp.tip,ret)
+        rsp(ErrCode.XOK,ret.tip,fi)
     }
 }

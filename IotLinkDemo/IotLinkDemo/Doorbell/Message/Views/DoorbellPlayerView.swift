@@ -146,6 +146,9 @@ class DoorbellPlayerView: UIView {
             self?.updatePlayButtonStatus()
         }
         
+        player.playbackObserver.assetStatusDidChangeExeBlock = { [weak player] _ in
+            debugPrint("assetStatusDidChangeExeBlock:\(player?.assetStatus.rawValue)")
+        }
         // 禁用手势
         player.gestureRecognizerShouldTrigger = { player,type,location in
             return false

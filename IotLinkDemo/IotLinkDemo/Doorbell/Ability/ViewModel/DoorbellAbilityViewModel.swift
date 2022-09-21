@@ -47,6 +47,8 @@ class DoorbellAbilityViewModel: NSObject {
 //                self._status.trans(FsmView.Event.BACK)
             }
             action(s)
+        },memberState:{s,a in
+            log.i("demo app member:\(a) \(s.rawValue)")
         })
         
         //sdk?.callkitMgr.mutePeerVideo(mute: false, result: { state, msg in
@@ -75,14 +77,18 @@ class DoorbellAbilityViewModel: NSObject {
             if(ec == ErrCode.XOK){
                 cb(ec == ErrCode.XOK ? true : false , msg)
             }
-        },actionAck: {ack in
+        },
+        actionAck: {ack in
             
             log.i("demo app callAnser ack:\(ack)")
             if(ack == .RemoteHangup){
             }
             actionAck(ack)
             
-        })
+        },
+        memberState:{s,a in
+             log.i("demo app member:\(a) \(s.rawValue)")
+         })
         
     }
     

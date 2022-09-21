@@ -146,14 +146,16 @@ class DoorBellManager: NSObject {
             if(ec == ErrCode.XOK){
                 cb(ec == ErrCode.XOK ? true : false , msg)
             }
-        },actionAck: {ack in
-            
+        },
+        actionAck: {ack in
             log.i("demo app callAnser ack:\(ack)")
             if(ack == .RemoteHangup){
             }
             actionAck(ack)
-            
-        })
+        },
+        memberState:{s,a in
+             log.i("demo app member:\(a) \(s.rawValue)")
+         })
         
     }
 

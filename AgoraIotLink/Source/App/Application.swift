@@ -46,11 +46,11 @@ open class Application{
         _status?.setStatusHandler(handler: sdkStatus)
         _context.callbackFilter = callbackFilter
         
-        _context.call.setting.rtc.logFilePath = initParam.logFilePath
-        _context.call.setting.rtc.publishAudio = initParam.publishAudio
-        _context.call.setting.rtc.publishVideo = false
-        _context.call.setting.rtc.subscribeAudio = initParam.subscribeAudio
-        _context.call.setting.rtc.subscribeVideo = initParam.subscribeVideo
+        _context.call.setting.logFilePath = initParam.logFilePath
+        _context.call.setting.publishAudio = initParam.publishAudio
+        _context.call.setting.publishVideo = false
+        _context.call.setting.subscribeAudio = initParam.subscribeAudio
+        _context.call.setting.subscribeVideo = initParam.subscribeVideo
         
         _context.rtm.setting.appId = initParam.rtcAppId
         
