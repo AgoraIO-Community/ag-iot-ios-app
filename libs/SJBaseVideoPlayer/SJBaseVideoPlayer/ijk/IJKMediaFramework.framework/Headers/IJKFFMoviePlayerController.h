@@ -98,6 +98,7 @@ typedef enum IJKLogLevel {
 - (BOOL)isVideoToolboxOpen;
 
 - (void)setHudValue:(NSString *)value forKey:(NSString *)key;
+- (int)ffmpegMain:(NSString*)commandStr completionBlock:(void (^)(int ec,NSString* msg))completionBlock;
 
 + (void)setLogReport:(BOOL)preferLogReport;
 + (void)setLogLevel:(IJKLogLevel)logLevel;
