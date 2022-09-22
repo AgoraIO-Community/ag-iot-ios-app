@@ -91,15 +91,20 @@ public class ProductInfo:NSObject{
  * @brief 设备属性描述信息
  */
 public class Property : NSObject{
-    @objc public var markName = ""
-    @objc public var maxValue = ""
-    @objc public var params = ""
-    @objc public var pointName = ""
-    @objc public var pointType:UInt = 0
-    @objc public var productId:UInt64 = 0
-    @objc public var readType:UInt = 0
-    @objc public var remark = ""
-    @objc public var status:UInt = 0
+    @objc public var productId:UInt64 = 0               //产品ID
+    @objc public var markName = ""                      //数据点标识
+    @objc public var maxValue = ""                      //最大值
+    @objc public var minValue = ""                      //最小值
+    @objc public var params = ""                        //类型参数值
+    @objc public var pointName = ""                     //数据点名称
+    @objc public var pointType:UInt = 0                 //数据点类型：【1】整型、【2】布尔值、【3】枚举、【4】字符串、【5】浮点型、【6】bit类型、【7】raw类型
+    @objc public var readType:UInt = 0                  //读写类型：【1】只读、【2】读写
+    @objc public var remark = ""                        //备注
+    @objc public var status:UInt = 0                    //状态：【1】启用、【2】停用
+    @objc public var createBy:UInt64 = 0                //创建人ID
+    @objc public var createTime:UInt64 = 0              //创建时间
+    @objc public var deleted:UInt = 0                   //已删除：【0】未删除、【1】已删除
+    @objc public var tip:String = ""                    //描述
 }
 
 /*

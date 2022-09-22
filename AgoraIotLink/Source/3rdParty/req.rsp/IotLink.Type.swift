@@ -475,6 +475,7 @@ extension IotLink{
             let index:UInt?
             let markName:String
             let maxValue:String?
+            let minValue:String?
             let params:String?
             let pointName:String
             let pointType:UInt
@@ -482,6 +483,7 @@ extension IotLink{
             let readType:UInt
             let remark:String
             let status:UInt
+            let tip:String?
         }
         struct Rsp : Decodable{
             let code:UInt
@@ -553,6 +555,7 @@ extension IotLink{
                 let p = Property()
                 p.markName = info.markName
                 p.maxValue = info.maxValue ?? ""
+                p.minValue = info.minValue ?? ""
                 p.params = info.params ?? ""
                 p.pointName = info.pointName
                 p.pointType = info.pointType
@@ -560,6 +563,10 @@ extension IotLink{
                 p.readType = info.readType
                 p.remark = info.remark
                 p.status = info.status
+                p.createTime = info.createTime
+                p.createBy = info.createBy
+                p.deleted = info.deleted
+                p.tip = info.tip ?? ""
                 prop.append(p)
             }
         }
