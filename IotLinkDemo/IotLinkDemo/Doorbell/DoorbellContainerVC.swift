@@ -19,7 +19,7 @@ let cReceiveCallNotify = "cReceiveCallNotify"
 class DeviceInfo{
     var info : FirmwareInfo? = nil
     func reqFirmwareInfo(device: IotDevice,refresh:@escaping()->Void){
-        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(device: device) { ec, msg, info in
+        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(deviceId: device.deviceId) { ec, msg, info in
             self.info = info
             if(info != nil){
                 refresh()

@@ -90,7 +90,7 @@ class DeviceManager {
     }
         
     func renameDevice(device: IotDevice, newName: String, result:@escaping(Int,String)->Void) {
-        sdk?.deviceMgr.renameDevice(device: device, newName: newName, result: result)
+        sdk?.deviceMgr.renameDevice(deviceId: device.deviceId, newName: newName, result: result)
     }
     
     // 查询分享给自己的设备
@@ -120,7 +120,7 @@ class DeviceManager {
 //    }
 
     func removeDevice(_ device: IotDevice,result:@escaping(Int,String)->Void) {
-        sdk?.deviceMgr.removeDevice(device: device, result:result)
+        sdk?.deviceMgr.removeDevice(deviceId: device.deviceId, result:result)
     }
     private func deviceWithId(_ id: String) -> IotDevice? {
         for device in self.devices! {

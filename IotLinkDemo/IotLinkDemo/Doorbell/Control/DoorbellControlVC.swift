@@ -321,7 +321,7 @@ class DoorbellControlVC: UIViewController {
                 AGToolHUD.showSuccess(info: "rtm info :\(msg)")
             }
         }
-        AgoraIotLink.iotsdk.deviceMgr.sendMessageBegin(device: device!,result:result,statusUpdated:statusUpdated)
+        AgoraIotLink.iotsdk.deviceMgr.sendMessageBegin(deviceId: device!.deviceId,result:result,statusUpdated:statusUpdated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {

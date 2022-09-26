@@ -85,7 +85,7 @@ class DeviceSetupHomeVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool){
-        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(device: device!) { ec, msg, info in
+        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(deviceId: device!.deviceId) { ec, msg, info in
             if(ErrCode.XOK == ec){
                 guard let info = info else{
                     return

@@ -92,7 +92,7 @@ class DeviceAddSuccessVC: UIViewController {
         if device == nil {
             return
         }
-        AgoraIotManager.shared.sdk?.deviceMgr.renameDevice(device: device!, newName: name, result:{[weak self] ec, msg in
+        AgoraIotManager.shared.sdk?.deviceMgr.renameDevice(deviceId: device!.deviceId, newName: name, result:{[weak self] ec, msg in
             if(ec == ErrCode.XOK){
                 self?.resultView.name = name
                 self?.device?.deviceName = name

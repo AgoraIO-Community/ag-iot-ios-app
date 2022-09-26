@@ -66,14 +66,14 @@ class DeviceManager : IDeviceMgr{
         }
     }
     
-    func shareDeviceTo(deviceNumber: String, userId: String, type: String, result: @escaping (Int, String) -> Void) {
+    func shareDeviceTo(deviceId: String, userId: String, type: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
             self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
             return
         }
         DispatchQueue.main.async {
-            self.app.proxy.gw.shareToUser(token: token, deviceNumber: deviceNumber, userId: userId, type: type, rsp: {ec,msg in self.asyncResult(ec, msg, result)})
+            self.app.proxy.gw.shareToUser(token: token, deviceId: deviceId, userId: userId, type: type, rsp: {ec,msg in self.asyncResult(ec, msg, result)})
         }
     }
     
@@ -110,25 +110,25 @@ class DeviceManager : IDeviceMgr{
         }
     }
     
-    func shareCancelable(deviceNumber: String, result: @escaping (Int, String, [DeviceCancelable]?) -> Void) {
+    func shareCancelable(deviceId: String, result: @escaping (Int, String, [DeviceCancelable]?) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
             self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [DeviceCancelable]?,result)
             return
         }
         DispatchQueue.main.async {
-            self.app.proxy.gw.shareCancelable(token: token, deviceNumber: deviceNumber, rsp: {ec,msg,al in self.asyncResultData(ec, msg, al, result)})
+            self.app.proxy.gw.shareCancelable(token: token, deviceId: deviceId, rsp: {ec,msg,al in self.asyncResultData(ec, msg, al, result)})
         }
     }
     
-    func shareRemoveMember(deviceNumber: String, userId: String, result: @escaping (Int, String) -> Void) {
+    func shareRemoveMember(deviceId: String, userId: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
             self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
             return
         }
         DispatchQueue.main.async {
-            self.app.proxy.gw.shareRemove(token: token, deviceNumber: deviceNumber, userId: userId, rsp: {ec,msg in self.asyncResult(ec, msg, result)})
+            self.app.proxy.gw.shareRemove(token: token, deviceId: deviceId, userId: userId, rsp: {ec,msg in self.asyncResult(ec, msg, result)})
         }
     }
     
@@ -175,7 +175,7 @@ class DeviceManager : IDeviceMgr{
         }
     }
     
-    func renameDevice(device: IotDevice, newName: String, result:@escaping(Int,String)->Void) {
+    func renameDevice(deviceId: String, newName: String, result:@escaping(Int,String)->Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         let filter = self.app.context.callbackFilter
         if(token == ""){
@@ -183,7 +183,7 @@ class DeviceManager : IDeviceMgr{
             return
         }
         DispatchQueue.main.async {
-            self.app.proxy.gw.reqRenameDevice(token, String(device.deviceNumber), newName, {ec,msg in self.asyncResult(ec, msg, result)})
+            self.app.proxy.gw.reqRenameDevice(token, deviceId, newName, {ec,msg in self.asyncResult(ec, msg, result)})
         }
     }
     
@@ -270,14 +270,14 @@ class DeviceManager : IDeviceMgr{
         }
     }
 
-    func removeDevice(device:IotDevice,result:@escaping(Int,String)->Void){
+    func removeDevice(deviceId:String,result:@escaping(Int,String)->Void){
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
             self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
             return
         }
         DispatchQueue.main.async {
-            self.app.proxy.gw.reqUnbindDevice(token,device.deviceNumber,{ec,msg in self.asyncResult(ec, msg, result)})
+            self.app.proxy.gw.reqUnbindDevice(token,deviceId,{ec,msg in self.asyncResult(ec, msg, result)})
         }
     }
     
@@ -299,22 +299,22 @@ class DeviceManager : IDeviceMgr{
             }
      }
     
-    func setDeviceProperty(device: IotDevice, properties: Dictionary<String, Any>, result: @escaping (Int, String) -> Void) {
+    func setDeviceProperty(deviceId: String, properties: Dictionary<String, Any>, result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
-            self.app.proxy.mqtt.setDeviceStatus(account: self.app.context.gyiot.session.account, productId: device.productId, things_name: device.deviceId, params: properties, result: {ec,msg in self.asyncResult(ec, msg, result)})
+            self.app.proxy.mqtt.setDeviceStatus(account: self.app.context.gyiot.session.account, things_name: deviceId, params: properties, result: {ec,msg in self.asyncResult(ec, msg, result)})
         }
     }
     
-    func getDeviceProperty(device: IotDevice, result: @escaping (Int, String, Dictionary<String, Any>?,Dictionary<String, Any>?) -> Void) {
+    func getDeviceProperty(deviceId:String, result: @escaping (Int, String, Dictionary<String, Any>?,Dictionary<String, Any>?) -> Void) {
         DispatchQueue.main.async {
-            self.app.proxy.mqtt.getDeviceStatus(things_name: device.deviceId,result:{ec,msg,d1,d2 in self.asyncResultData2(ec, msg,d1,d2, result)})
+            self.app.proxy.mqtt.getDeviceStatus(things_name: deviceId,result:{ec,msg,d1,d2 in self.asyncResultData2(ec, msg,d1,d2, result)})
         }
     }
     
-    func otaGetInfo(device:IotDevice, result: @escaping (Int, String, FirmwareInfo?) -> Void) {
+    func otaGetInfo(deviceId:String, result: @escaping (Int, String, FirmwareInfo?) -> Void) {
         DispatchQueue.main.async {
             let token = self.app.context.gyiot.session.iotlink_token
-            self.app.proxy.gw.reqOtaInfo(token,device.deviceNumber,{ec,msg,info in self.asyncResultData(ec, msg, info, result)})
+            self.app.proxy.gw.reqOtaInfo(token,deviceId,{ec,msg,info in self.asyncResultData(ec, msg, info, result)})
         }
     }
     
@@ -332,7 +332,7 @@ class DeviceManager : IDeviceMgr{
         }
     }
     
-    func sendMessageBegin(device: IotDevice,result:@escaping(Int,String)->Void,statusUpdated:@escaping(MessageChannelStatus,String,Data?)->Void) {
+    func sendMessageBegin(deviceId: String,result:@escaping(Int,String)->Void,statusUpdated:@escaping(MessageChannelStatus,String,Data?)->Void) {
         DispatchQueue.main.async {
             //todo:remove rtm shadow update below
 //            let dictRtm:[String:Any] = ["appId":self.app.config.appId]
@@ -349,7 +349,7 @@ class DeviceManager : IDeviceMgr{
 
             let agToken = self.app.context.aglab.session.accessToken
             let local = self.app.context.virtualNumber
-            let peer = device.deviceId
+            let peer = deviceId
 
             self.app.proxy.al.reqControlInfo(agToken, local, peer) { ec, msg, sess in
                 if(ErrCode.XOK == ec){

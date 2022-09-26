@@ -54,6 +54,29 @@
 		962FEFE1284F2CD000DCFD59 /* AppDelegate_Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962FEFE0284F2CD000DCFD59 /* AppDelegate_Push.swift */; };
 		962FEFF12851D2B900DCFD59 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962FEFF32851D2B900DCFD59 /* Localizable.strings */; };
 		962FEFF82852F4D600DCFD59 /* PassWordTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962FEFF72852F4D600DCFD59 /* PassWordTextField.swift */; };
+		963956D928DDBA2B0049B9C8 /* BlufiConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9639564728DDBA2B0049B9C8 /* BlufiConstants.m */; };
+		963956DA28DDBA2B0049B9C8 /* BlufiClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 9639564828DDBA2B0049B9C8 /* BlufiClient.m */; };
+		963956DB28DDBA2B0049B9C8 /* BlufiVersionResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 9639564928DDBA2B0049B9C8 /* BlufiVersionResponse.m */; };
+		963956DC28DDBA2B0049B9C8 /* BlufiStatusResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 9639564A28DDBA2B0049B9C8 /* BlufiStatusResponse.m */; };
+		963956DD28DDBA2B0049B9C8 /* BlufiScanResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 9639564B28DDBA2B0049B9C8 /* BlufiScanResponse.m */; };
+		963956DE28DDBA2B0049B9C8 /* BlufiConfigureParams.m in Sources */ = {isa = PBXBuildFile; fileRef = 9639564C28DDBA2B0049B9C8 /* BlufiConfigureParams.m */; };
+		963956DF28DDBA2B0049B9C8 /* BlufiSecurity.m in Sources */ = {isa = PBXBuildFile; fileRef = 9639565228DDBA2B0049B9C8 /* BlufiSecurity.m */; };
+		963956E028DDBA2B0049B9C8 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9639565428DDBA2B0049B9C8 /* libcrypto.a */; };
+		963956E128DDBA2B0049B9C8 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 9639565728DDBA2B0049B9C8 /* LICENSE */; };
+		963956E228DDBA2B0049B9C8 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 963956C628DDBA2B0049B9C8 /* libssl.a */; };
+		963956E328DDBA2B0049B9C8 /* BlufiDH.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956C728DDBA2B0049B9C8 /* BlufiDH.m */; };
+		963956E428DDBA2B0049B9C8 /* ESPDataConversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956C928DDBA2B0049B9C8 /* ESPDataConversion.m */; };
+		963956E528DDBA2B0049B9C8 /* ESPPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956CA28DDBA2B0049B9C8 /* ESPPeripheral.m */; };
+		963956E628DDBA2B0049B9C8 /* ESPFBYBLEHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956CB28DDBA2B0049B9C8 /* ESPFBYBLEHelper.m */; };
+		963956E728DDBA2B0049B9C8 /* BlufiNotifyData.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956D628DDBA2B0049B9C8 /* BlufiNotifyData.m */; };
+		963956E828DDBA2B0049B9C8 /* BlufiFrameCtrlData.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956D728DDBA2B0049B9C8 /* BlufiFrameCtrlData.m */; };
+		963956EF28DDBBCA0049B9C8 /* SearchFailBluefiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956E928DDBBC90049B9C8 /* SearchFailBluefiView.swift */; };
+		963956F028DDBBCA0049B9C8 /* ConnectFailBluefiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956EA28DDBBCA0049B9C8 /* ConnectFailBluefiView.swift */; };
+		963956F128DDBBCB0049B9C8 /* ConnectBluefiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956EB28DDBBCA0049B9C8 /* ConnectBluefiView.swift */; };
+		963956F228DDBBCB0049B9C8 /* BluefiResultCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956EC28DDBBCA0049B9C8 /* BluefiResultCell.swift */; };
+		963956F328DDBBCB0049B9C8 /* ConnectItemLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956ED28DDBBCA0049B9C8 /* ConnectItemLabel.swift */; };
+		963956F428DDBBCB0049B9C8 /* SearchBluefiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956EE28DDBBCA0049B9C8 /* SearchBluefiView.swift */; };
+		963956F628DDBBD70049B9C8 /* BluefiResultVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956F528DDBBD70049B9C8 /* BluefiResultVC.swift */; };
 		965B1F9D282D237F0045D002 /* DoorBellManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965B1F9C282D237F0045D002 /* DoorBellManager.swift */; };
 		965B1FA2282E6F2C0045D002 /* AGToolHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965B1FA1282E6F2C0045D002 /* AGToolHUD.swift */; };
 		966BA9012864380000DE8958 /* SelectHeardImgVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966BA9002864380000DE8958 /* SelectHeardImgVC.swift */; };
@@ -239,6 +262,153 @@
 		962FEFF52851D30100DCFD59 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		962FEFF62851D30100DCFD59 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		962FEFF72852F4D600DCFD59 /* PassWordTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassWordTextField.swift; sourceTree = "<group>"; };
+		9639564728DDBA2B0049B9C8 /* BlufiConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiConstants.m; sourceTree = "<group>"; };
+		9639564828DDBA2B0049B9C8 /* BlufiClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiClient.m; sourceTree = "<group>"; };
+		9639564928DDBA2B0049B9C8 /* BlufiVersionResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiVersionResponse.m; sourceTree = "<group>"; };
+		9639564A28DDBA2B0049B9C8 /* BlufiStatusResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiStatusResponse.m; sourceTree = "<group>"; };
+		9639564B28DDBA2B0049B9C8 /* BlufiScanResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiScanResponse.m; sourceTree = "<group>"; };
+		9639564C28DDBA2B0049B9C8 /* BlufiConfigureParams.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiConfigureParams.m; sourceTree = "<group>"; };
+		9639564D28DDBA2B0049B9C8 /* BlufiStatusResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiStatusResponse.h; sourceTree = "<group>"; };
+		9639564E28DDBA2B0049B9C8 /* BlufiVersionResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiVersionResponse.h; sourceTree = "<group>"; };
+		9639565028DDBA2B0049B9C8 /* BlufiSecurity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiSecurity.h; sourceTree = "<group>"; };
+		9639565128DDBA2B0049B9C8 /* BlufiDH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiDH.h; sourceTree = "<group>"; };
+		9639565228DDBA2B0049B9C8 /* BlufiSecurity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiSecurity.m; sourceTree = "<group>"; };
+		9639565428DDBA2B0049B9C8 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcrypto.a; sourceTree = "<group>"; };
+		9639565628DDBA2B0049B9C8 /* opensslconf-template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "opensslconf-template.h"; sourceTree = "<group>"; };
+		9639565728DDBA2B0049B9C8 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		9639565928DDBA2B0049B9C8 /* pem2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pem2.h; sourceTree = "<group>"; };
+		9639565A28DDBA2B0049B9C8 /* kdf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdf.h; sourceTree = "<group>"; };
+		9639565B28DDBA2B0049B9C8 /* pem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pem.h; sourceTree = "<group>"; };
+		9639565C28DDBA2B0049B9C8 /* asyncerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asyncerr.h; sourceTree = "<group>"; };
+		9639565D28DDBA2B0049B9C8 /* md2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md2.h; sourceTree = "<group>"; };
+		9639565E28DDBA2B0049B9C8 /* ssl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl3.h; sourceTree = "<group>"; };
+		9639565F28DDBA2B0049B9C8 /* ossl_typ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ossl_typ.h; sourceTree = "<group>"; };
+		9639566028DDBA2B0049B9C8 /* dtls1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dtls1.h; sourceTree = "<group>"; };
+		9639566128DDBA2B0049B9C8 /* err.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = err.h; sourceTree = "<group>"; };
+		9639566228DDBA2B0049B9C8 /* bn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bn.h; sourceTree = "<group>"; };
+		9639566328DDBA2B0049B9C8 /* blowfish.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blowfish.h; sourceTree = "<group>"; };
+		9639566428DDBA2B0049B9C8 /* cms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cms.h; sourceTree = "<group>"; };
+		9639566528DDBA2B0049B9C8 /* engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
+		9639566628DDBA2B0049B9C8 /* conf_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_api.h; sourceTree = "<group>"; };
+		9639566728DDBA2B0049B9C8 /* x509.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509.h; sourceTree = "<group>"; };
+		9639566828DDBA2B0049B9C8 /* asn1_mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1_mac.h; sourceTree = "<group>"; };
+		9639566928DDBA2B0049B9C8 /* objectserr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objectserr.h; sourceTree = "<group>"; };
+		9639566A28DDBA2B0049B9C8 /* opensslconf_ios_x86_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslconf_ios_x86_64.h; sourceTree = "<group>"; };
+		9639566B28DDBA2B0049B9C8 /* cmserr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmserr.h; sourceTree = "<group>"; };
+		9639566C28DDBA2B0049B9C8 /* ui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui.h; sourceTree = "<group>"; };
+		9639566D28DDBA2B0049B9C8 /* opensslconf_tvos_x86_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslconf_tvos_x86_64.h; sourceTree = "<group>"; };
+		9639566E28DDBA2B0049B9C8 /* sha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha.h; sourceTree = "<group>"; };
+		9639566F28DDBA2B0049B9C8 /* symhacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = symhacks.h; sourceTree = "<group>"; };
+		9639567028DDBA2B0049B9C8 /* asn1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1.h; sourceTree = "<group>"; };
+		9639567128DDBA2B0049B9C8 /* bioerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bioerr.h; sourceTree = "<group>"; };
+		9639567228DDBA2B0049B9C8 /* opensslconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslconf.h; sourceTree = "<group>"; };
+		9639567328DDBA2B0049B9C8 /* bio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bio.h; sourceTree = "<group>"; };
+		9639567428DDBA2B0049B9C8 /* rc2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rc2.h; sourceTree = "<group>"; };
+		9639567528DDBA2B0049B9C8 /* dh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dh.h; sourceTree = "<group>"; };
+		9639567628DDBA2B0049B9C8 /* x509v3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509v3.h; sourceTree = "<group>"; };
+		9639567728DDBA2B0049B9C8 /* conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf.h; sourceTree = "<group>"; };
+		9639567828DDBA2B0049B9C8 /* rand_drbg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rand_drbg.h; sourceTree = "<group>"; };
+		9639567928DDBA2B0049B9C8 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
+		9639567A28DDBA2B0049B9C8 /* pemerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pemerr.h; sourceTree = "<group>"; };
+		9639567B28DDBA2B0049B9C8 /* x509_vfy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509_vfy.h; sourceTree = "<group>"; };
+		9639567C28DDBA2B0049B9C8 /* txt_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = txt_db.h; sourceTree = "<group>"; };
+		9639567D28DDBA2B0049B9C8 /* comperr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comperr.h; sourceTree = "<group>"; };
+		9639567E28DDBA2B0049B9C8 /* cterr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cterr.h; sourceTree = "<group>"; };
+		9639567F28DDBA2B0049B9C8 /* safestack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = safestack.h; sourceTree = "<group>"; };
+		9639568028DDBA2B0049B9C8 /* ecdsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecdsa.h; sourceTree = "<group>"; };
+		9639568128DDBA2B0049B9C8 /* sslerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sslerr.h; sourceTree = "<group>"; };
+		9639568228DDBA2B0049B9C8 /* rc5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rc5.h; sourceTree = "<group>"; };
+		9639568328DDBA2B0049B9C8 /* uierr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uierr.h; sourceTree = "<group>"; };
+		9639568428DDBA2B0049B9C8 /* x509v3err.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509v3err.h; sourceTree = "<group>"; };
+		9639568528DDBA2B0049B9C8 /* objects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objects.h; sourceTree = "<group>"; };
+		9639568628DDBA2B0049B9C8 /* pkcs12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pkcs12.h; sourceTree = "<group>"; };
+		9639568728DDBA2B0049B9C8 /* crypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto.h; sourceTree = "<group>"; };
+		9639568828DDBA2B0049B9C8 /* opensslv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslv.h; sourceTree = "<group>"; };
+		9639568928DDBA2B0049B9C8 /* evperr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = evperr.h; sourceTree = "<group>"; };
+		9639568A28DDBA2B0049B9C8 /* pkcs7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pkcs7.h; sourceTree = "<group>"; };
+		9639568B28DDBA2B0049B9C8 /* obj_mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = obj_mac.h; sourceTree = "<group>"; };
+		9639568C28DDBA2B0049B9C8 /* ct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ct.h; sourceTree = "<group>"; };
+		9639568D28DDBA2B0049B9C8 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
+		9639568E28DDBA2B0049B9C8 /* buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
+		9639568F28DDBA2B0049B9C8 /* ssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl.h; sourceTree = "<group>"; };
+		9639569028DDBA2B0049B9C8 /* srp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = srp.h; sourceTree = "<group>"; };
+		9639569128DDBA2B0049B9C8 /* camellia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camellia.h; sourceTree = "<group>"; };
+		9639569228DDBA2B0049B9C8 /* opensslconf_ios_arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslconf_ios_arm64.h; sourceTree = "<group>"; };
+		9639569328DDBA2B0049B9C8 /* dherr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dherr.h; sourceTree = "<group>"; };
+		9639569428DDBA2B0049B9C8 /* evp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = evp.h; sourceTree = "<group>"; };
+		9639569528DDBA2B0049B9C8 /* e_os2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = e_os2.h; sourceTree = "<group>"; };
+		9639569628DDBA2B0049B9C8 /* md4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md4.h; sourceTree = "<group>"; };
+		9639569728DDBA2B0049B9C8 /* hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac.h; sourceTree = "<group>"; };
+		9639569828DDBA2B0049B9C8 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
+		9639569928DDBA2B0049B9C8 /* engineerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engineerr.h; sourceTree = "<group>"; };
+		9639569A28DDBA2B0049B9C8 /* comp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comp.h; sourceTree = "<group>"; };
+		9639569B28DDBA2B0049B9C8 /* pkcs12err.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pkcs12err.h; sourceTree = "<group>"; };
+		9639569C28DDBA2B0049B9C8 /* cast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cast.h; sourceTree = "<group>"; };
+		9639569D28DDBA2B0049B9C8 /* rc4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rc4.h; sourceTree = "<group>"; };
+		9639569E28DDBA2B0049B9C8 /* stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
+		9639569F28DDBA2B0049B9C8 /* des.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = des.h; sourceTree = "<group>"; };
+		963956A028DDBA2B0049B9C8 /* ocsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ocsp.h; sourceTree = "<group>"; };
+		963956A128DDBA2B0049B9C8 /* ec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ec.h; sourceTree = "<group>"; };
+		963956A228DDBA2B0049B9C8 /* ecdh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecdh.h; sourceTree = "<group>"; };
+		963956A328DDBA2B0049B9C8 /* rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rand.h; sourceTree = "<group>"; };
+		963956A428DDBA2B0049B9C8 /* opensslconf_tvos_arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslconf_tvos_arm64.h; sourceTree = "<group>"; };
+		963956A528DDBA2B0049B9C8 /* ecerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecerr.h; sourceTree = "<group>"; };
+		963956A628DDBA2B0049B9C8 /* ts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ts.h; sourceTree = "<group>"; };
+		963956A728DDBA2B0049B9C8 /* cryptoerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cryptoerr.h; sourceTree = "<group>"; };
+		963956A828DDBA2B0049B9C8 /* storeerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = storeerr.h; sourceTree = "<group>"; };
+		963956A928DDBA2B0049B9C8 /* buffererr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffererr.h; sourceTree = "<group>"; };
+		963956AA28DDBA2B0049B9C8 /* seed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = seed.h; sourceTree = "<group>"; };
+		963956AB28DDBA2B0049B9C8 /* modes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = modes.h; sourceTree = "<group>"; };
+		963956AC28DDBA2B0049B9C8 /* ssl2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl2.h; sourceTree = "<group>"; };
+		963956AD28DDBA2B0049B9C8 /* tserr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tserr.h; sourceTree = "<group>"; };
+		963956AE28DDBA2B0049B9C8 /* rsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rsa.h; sourceTree = "<group>"; };
+		963956AF28DDBA2B0049B9C8 /* ripemd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ripemd.h; sourceTree = "<group>"; };
+		963956B028DDBA2B0049B9C8 /* whrlpool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = whrlpool.h; sourceTree = "<group>"; };
+		963956B128DDBA2B0049B9C8 /* tls1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tls1.h; sourceTree = "<group>"; };
+		963956B228DDBA2B0049B9C8 /* rsaerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rsaerr.h; sourceTree = "<group>"; };
+		963956B328DDBA2B0049B9C8 /* randerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = randerr.h; sourceTree = "<group>"; };
+		963956B428DDBA2B0049B9C8 /* mdc2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdc2.h; sourceTree = "<group>"; };
+		963956B528DDBA2B0049B9C8 /* ocsperr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ocsperr.h; sourceTree = "<group>"; };
+		963956B628DDBA2B0049B9C8 /* x509err.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509err.h; sourceTree = "<group>"; };
+		963956B728DDBA2B0049B9C8 /* pkcs7err.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pkcs7err.h; sourceTree = "<group>"; };
+		963956B828DDBA2B0049B9C8 /* dsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsa.h; sourceTree = "<group>"; };
+		963956B928DDBA2B0049B9C8 /* kdferr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdferr.h; sourceTree = "<group>"; };
+		963956BA28DDBA2B0049B9C8 /* srtp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = srtp.h; sourceTree = "<group>"; };
+		963956BB28DDBA2B0049B9C8 /* asn1t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1t.h; sourceTree = "<group>"; };
+		963956BC28DDBA2B0049B9C8 /* dsaerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsaerr.h; sourceTree = "<group>"; };
+		963956BD28DDBA2B0049B9C8 /* bnerr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bnerr.h; sourceTree = "<group>"; };
+		963956BE28DDBA2B0049B9C8 /* conferr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conferr.h; sourceTree = "<group>"; };
+		963956BF28DDBA2B0049B9C8 /* cmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmac.h; sourceTree = "<group>"; };
+		963956C028DDBA2B0049B9C8 /* ebcdic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebcdic.h; sourceTree = "<group>"; };
+		963956C128DDBA2B0049B9C8 /* opensslconf_ios_arm64e.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslconf_ios_arm64e.h; sourceTree = "<group>"; };
+		963956C228DDBA2B0049B9C8 /* store.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = store.h; sourceTree = "<group>"; };
+		963956C328DDBA2B0049B9C8 /* idea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = idea.h; sourceTree = "<group>"; };
+		963956C428DDBA2B0049B9C8 /* lhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lhash.h; sourceTree = "<group>"; };
+		963956C528DDBA2B0049B9C8 /* asn1err.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1err.h; sourceTree = "<group>"; };
+		963956C628DDBA2B0049B9C8 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libssl.a; sourceTree = "<group>"; };
+		963956C728DDBA2B0049B9C8 /* BlufiDH.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiDH.m; sourceTree = "<group>"; };
+		963956C928DDBA2B0049B9C8 /* ESPDataConversion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ESPDataConversion.m; sourceTree = "<group>"; };
+		963956CA28DDBA2B0049B9C8 /* ESPPeripheral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ESPPeripheral.m; sourceTree = "<group>"; };
+		963956CB28DDBA2B0049B9C8 /* ESPFBYBLEHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ESPFBYBLEHelper.m; sourceTree = "<group>"; };
+		963956CC28DDBA2B0049B9C8 /* ESPPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESPPeripheral.h; sourceTree = "<group>"; };
+		963956CD28DDBA2B0049B9C8 /* ESPDataConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESPDataConversion.h; sourceTree = "<group>"; };
+		963956CE28DDBA2B0049B9C8 /* ESPFBYBLEHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESPFBYBLEHelper.h; sourceTree = "<group>"; };
+		963956CF28DDBA2B0049B9C8 /* BlufiConfigureParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiConfigureParams.h; sourceTree = "<group>"; };
+		963956D028DDBA2B0049B9C8 /* BlufiScanResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiScanResponse.h; sourceTree = "<group>"; };
+		963956D128DDBA2B0049B9C8 /* BlufiConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiConstants.h; sourceTree = "<group>"; };
+		963956D228DDBA2B0049B9C8 /* BlufiClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiClient.h; sourceTree = "<group>"; };
+		963956D328DDBA2B0049B9C8 /* ESPHeaderFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESPHeaderFiles.h; sourceTree = "<group>"; };
+		963956D528DDBA2B0049B9C8 /* BlufiFrameCtrlData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiFrameCtrlData.h; sourceTree = "<group>"; };
+		963956D628DDBA2B0049B9C8 /* BlufiNotifyData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiNotifyData.m; sourceTree = "<group>"; };
+		963956D728DDBA2B0049B9C8 /* BlufiFrameCtrlData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiFrameCtrlData.m; sourceTree = "<group>"; };
+		963956D828DDBA2B0049B9C8 /* BlufiNotifyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiNotifyData.h; sourceTree = "<group>"; };
+		963956E928DDBBC90049B9C8 /* SearchFailBluefiView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchFailBluefiView.swift; sourceTree = "<group>"; };
+		963956EA28DDBBCA0049B9C8 /* ConnectFailBluefiView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectFailBluefiView.swift; sourceTree = "<group>"; };
+		963956EB28DDBBCA0049B9C8 /* ConnectBluefiView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectBluefiView.swift; sourceTree = "<group>"; };
+		963956EC28DDBBCA0049B9C8 /* BluefiResultCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluefiResultCell.swift; sourceTree = "<group>"; };
+		963956ED28DDBBCA0049B9C8 /* ConnectItemLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectItemLabel.swift; sourceTree = "<group>"; };
+		963956EE28DDBBCA0049B9C8 /* SearchBluefiView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBluefiView.swift; sourceTree = "<group>"; };
+		963956F528DDBBD70049B9C8 /* BluefiResultVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluefiResultVC.swift; sourceTree = "<group>"; };
 		965B1F9C282D237F0045D002 /* DoorBellManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoorBellManager.swift; sourceTree = "<group>"; };
 		965B1FA1282E6F2C0045D002 /* AGToolHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AGToolHUD.swift; sourceTree = "<group>"; };
 		966BA9002864380000DE8958 /* SelectHeardImgVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectHeardImgVC.swift; sourceTree = "<group>"; };
@@ -380,6 +550,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				963956E228DDBA2B0049B9C8 /* libssl.a in Frameworks */,
 				84B3ECBB28B4715B0047EE1A /* UIKit.framework in Frameworks */,
 				84B3ECB928B470BD0047EE1A /* libbz2.tbd in Frameworks */,
 				84B3ECB728B470B60047EE1A /* libz.tbd in Frameworks */,
@@ -391,6 +562,7 @@
 				84B3ECAB28B470890047EE1A /* CoreGraphics.framework in Frameworks */,
 				84B3ECA928B4707E0047EE1A /* AVFoundation.framework in Frameworks */,
 				84B3ECA728B470770047EE1A /* AudioToolbox.framework in Frameworks */,
+				963956E028DDBA2B0049B9C8 /* libcrypto.a in Frameworks */,
 				84B3ECA528B470700047EE1A /* MediaPlayer.framework in Frameworks */,
 				241E9514AF5C21D05B21E03E /* Pods_IotLinkDemo.framework in Frameworks */,
 				84D69E5628D0612A004A120C /* NetworkExtension.framework in Frameworks */,
@@ -597,6 +769,209 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		9639564528DDBA2B0049B9C8 /* BlufiLibrary */ = {
+			isa = PBXGroup;
+			children = (
+				9639564628DDBA2B0049B9C8 /* Response */,
+				9639564D28DDBA2B0049B9C8 /* BlufiStatusResponse.h */,
+				9639564E28DDBA2B0049B9C8 /* BlufiVersionResponse.h */,
+				9639564F28DDBA2B0049B9C8 /* Security */,
+				963956C828DDBA2B0049B9C8 /* ESPAPPSourcesCenter */,
+				963956CF28DDBA2B0049B9C8 /* BlufiConfigureParams.h */,
+				963956D028DDBA2B0049B9C8 /* BlufiScanResponse.h */,
+				963956D128DDBA2B0049B9C8 /* BlufiConstants.h */,
+				963956D228DDBA2B0049B9C8 /* BlufiClient.h */,
+				963956D328DDBA2B0049B9C8 /* ESPHeaderFiles.h */,
+				963956D428DDBA2B0049B9C8 /* Data */,
+			);
+			path = BlufiLibrary;
+			sourceTree = "<group>";
+		};
+		9639564628DDBA2B0049B9C8 /* Response */ = {
+			isa = PBXGroup;
+			children = (
+				9639564728DDBA2B0049B9C8 /* BlufiConstants.m */,
+				9639564828DDBA2B0049B9C8 /* BlufiClient.m */,
+				9639564928DDBA2B0049B9C8 /* BlufiVersionResponse.m */,
+				9639564A28DDBA2B0049B9C8 /* BlufiStatusResponse.m */,
+				9639564B28DDBA2B0049B9C8 /* BlufiScanResponse.m */,
+				9639564C28DDBA2B0049B9C8 /* BlufiConfigureParams.m */,
+			);
+			path = Response;
+			sourceTree = "<group>";
+		};
+		9639564F28DDBA2B0049B9C8 /* Security */ = {
+			isa = PBXGroup;
+			children = (
+				9639565028DDBA2B0049B9C8 /* BlufiSecurity.h */,
+				9639565128DDBA2B0049B9C8 /* BlufiDH.h */,
+				9639565228DDBA2B0049B9C8 /* BlufiSecurity.m */,
+				9639565328DDBA2B0049B9C8 /* openssl */,
+				963956C728DDBA2B0049B9C8 /* BlufiDH.m */,
+			);
+			path = Security;
+			sourceTree = "<group>";
+		};
+		9639565328DDBA2B0049B9C8 /* openssl */ = {
+			isa = PBXGroup;
+			children = (
+				9639565428DDBA2B0049B9C8 /* libcrypto.a */,
+				9639565528DDBA2B0049B9C8 /* include */,
+				963956C628DDBA2B0049B9C8 /* libssl.a */,
+			);
+			path = openssl;
+			sourceTree = "<group>";
+		};
+		9639565528DDBA2B0049B9C8 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				9639565628DDBA2B0049B9C8 /* opensslconf-template.h */,
+				9639565728DDBA2B0049B9C8 /* LICENSE */,
+				9639565828DDBA2B0049B9C8 /* openssl */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		9639565828DDBA2B0049B9C8 /* openssl */ = {
+			isa = PBXGroup;
+			children = (
+				9639565928DDBA2B0049B9C8 /* pem2.h */,
+				9639565A28DDBA2B0049B9C8 /* kdf.h */,
+				9639565B28DDBA2B0049B9C8 /* pem.h */,
+				9639565C28DDBA2B0049B9C8 /* asyncerr.h */,
+				9639565D28DDBA2B0049B9C8 /* md2.h */,
+				9639565E28DDBA2B0049B9C8 /* ssl3.h */,
+				9639565F28DDBA2B0049B9C8 /* ossl_typ.h */,
+				9639566028DDBA2B0049B9C8 /* dtls1.h */,
+				9639566128DDBA2B0049B9C8 /* err.h */,
+				9639566228DDBA2B0049B9C8 /* bn.h */,
+				9639566328DDBA2B0049B9C8 /* blowfish.h */,
+				9639566428DDBA2B0049B9C8 /* cms.h */,
+				9639566528DDBA2B0049B9C8 /* engine.h */,
+				9639566628DDBA2B0049B9C8 /* conf_api.h */,
+				9639566728DDBA2B0049B9C8 /* x509.h */,
+				9639566828DDBA2B0049B9C8 /* asn1_mac.h */,
+				9639566928DDBA2B0049B9C8 /* objectserr.h */,
+				9639566A28DDBA2B0049B9C8 /* opensslconf_ios_x86_64.h */,
+				9639566B28DDBA2B0049B9C8 /* cmserr.h */,
+				9639566C28DDBA2B0049B9C8 /* ui.h */,
+				9639566D28DDBA2B0049B9C8 /* opensslconf_tvos_x86_64.h */,
+				9639566E28DDBA2B0049B9C8 /* sha.h */,
+				9639566F28DDBA2B0049B9C8 /* symhacks.h */,
+				9639567028DDBA2B0049B9C8 /* asn1.h */,
+				9639567128DDBA2B0049B9C8 /* bioerr.h */,
+				9639567228DDBA2B0049B9C8 /* opensslconf.h */,
+				9639567328DDBA2B0049B9C8 /* bio.h */,
+				9639567428DDBA2B0049B9C8 /* rc2.h */,
+				9639567528DDBA2B0049B9C8 /* dh.h */,
+				9639567628DDBA2B0049B9C8 /* x509v3.h */,
+				9639567728DDBA2B0049B9C8 /* conf.h */,
+				9639567828DDBA2B0049B9C8 /* rand_drbg.h */,
+				9639567928DDBA2B0049B9C8 /* md5.h */,
+				9639567A28DDBA2B0049B9C8 /* pemerr.h */,
+				9639567B28DDBA2B0049B9C8 /* x509_vfy.h */,
+				9639567C28DDBA2B0049B9C8 /* txt_db.h */,
+				9639567D28DDBA2B0049B9C8 /* comperr.h */,
+				9639567E28DDBA2B0049B9C8 /* cterr.h */,
+				9639567F28DDBA2B0049B9C8 /* safestack.h */,
+				9639568028DDBA2B0049B9C8 /* ecdsa.h */,
+				9639568128DDBA2B0049B9C8 /* sslerr.h */,
+				9639568228DDBA2B0049B9C8 /* rc5.h */,
+				9639568328DDBA2B0049B9C8 /* uierr.h */,
+				9639568428DDBA2B0049B9C8 /* x509v3err.h */,
+				9639568528DDBA2B0049B9C8 /* objects.h */,
+				9639568628DDBA2B0049B9C8 /* pkcs12.h */,
+				9639568728DDBA2B0049B9C8 /* crypto.h */,
+				9639568828DDBA2B0049B9C8 /* opensslv.h */,
+				9639568928DDBA2B0049B9C8 /* evperr.h */,
+				9639568A28DDBA2B0049B9C8 /* pkcs7.h */,
+				9639568B28DDBA2B0049B9C8 /* obj_mac.h */,
+				9639568C28DDBA2B0049B9C8 /* ct.h */,
+				9639568D28DDBA2B0049B9C8 /* async.h */,
+				9639568E28DDBA2B0049B9C8 /* buffer.h */,
+				9639568F28DDBA2B0049B9C8 /* ssl.h */,
+				9639569028DDBA2B0049B9C8 /* srp.h */,
+				9639569128DDBA2B0049B9C8 /* camellia.h */,
+				9639569228DDBA2B0049B9C8 /* opensslconf_ios_arm64.h */,
+				9639569328DDBA2B0049B9C8 /* dherr.h */,
+				9639569428DDBA2B0049B9C8 /* evp.h */,
+				9639569528DDBA2B0049B9C8 /* e_os2.h */,
+				9639569628DDBA2B0049B9C8 /* md4.h */,
+				9639569728DDBA2B0049B9C8 /* hmac.h */,
+				9639569828DDBA2B0049B9C8 /* aes.h */,
+				9639569928DDBA2B0049B9C8 /* engineerr.h */,
+				9639569A28DDBA2B0049B9C8 /* comp.h */,
+				9639569B28DDBA2B0049B9C8 /* pkcs12err.h */,
+				9639569C28DDBA2B0049B9C8 /* cast.h */,
+				9639569D28DDBA2B0049B9C8 /* rc4.h */,
+				9639569E28DDBA2B0049B9C8 /* stack.h */,
+				9639569F28DDBA2B0049B9C8 /* des.h */,
+				963956A028DDBA2B0049B9C8 /* ocsp.h */,
+				963956A128DDBA2B0049B9C8 /* ec.h */,
+				963956A228DDBA2B0049B9C8 /* ecdh.h */,
+				963956A328DDBA2B0049B9C8 /* rand.h */,
+				963956A428DDBA2B0049B9C8 /* opensslconf_tvos_arm64.h */,
+				963956A528DDBA2B0049B9C8 /* ecerr.h */,
+				963956A628DDBA2B0049B9C8 /* ts.h */,
+				963956A728DDBA2B0049B9C8 /* cryptoerr.h */,
+				963956A828DDBA2B0049B9C8 /* storeerr.h */,
+				963956A928DDBA2B0049B9C8 /* buffererr.h */,
+				963956AA28DDBA2B0049B9C8 /* seed.h */,
+				963956AB28DDBA2B0049B9C8 /* modes.h */,
+				963956AC28DDBA2B0049B9C8 /* ssl2.h */,
+				963956AD28DDBA2B0049B9C8 /* tserr.h */,
+				963956AE28DDBA2B0049B9C8 /* rsa.h */,
+				963956AF28DDBA2B0049B9C8 /* ripemd.h */,
+				963956B028DDBA2B0049B9C8 /* whrlpool.h */,
+				963956B128DDBA2B0049B9C8 /* tls1.h */,
+				963956B228DDBA2B0049B9C8 /* rsaerr.h */,
+				963956B328DDBA2B0049B9C8 /* randerr.h */,
+				963956B428DDBA2B0049B9C8 /* mdc2.h */,
+				963956B528DDBA2B0049B9C8 /* ocsperr.h */,
+				963956B628DDBA2B0049B9C8 /* x509err.h */,
+				963956B728DDBA2B0049B9C8 /* pkcs7err.h */,
+				963956B828DDBA2B0049B9C8 /* dsa.h */,
+				963956B928DDBA2B0049B9C8 /* kdferr.h */,
+				963956BA28DDBA2B0049B9C8 /* srtp.h */,
+				963956BB28DDBA2B0049B9C8 /* asn1t.h */,
+				963956BC28DDBA2B0049B9C8 /* dsaerr.h */,
+				963956BD28DDBA2B0049B9C8 /* bnerr.h */,
+				963956BE28DDBA2B0049B9C8 /* conferr.h */,
+				963956BF28DDBA2B0049B9C8 /* cmac.h */,
+				963956C028DDBA2B0049B9C8 /* ebcdic.h */,
+				963956C128DDBA2B0049B9C8 /* opensslconf_ios_arm64e.h */,
+				963956C228DDBA2B0049B9C8 /* store.h */,
+				963956C328DDBA2B0049B9C8 /* idea.h */,
+				963956C428DDBA2B0049B9C8 /* lhash.h */,
+				963956C528DDBA2B0049B9C8 /* asn1err.h */,
+			);
+			path = openssl;
+			sourceTree = "<group>";
+		};
+		963956C828DDBA2B0049B9C8 /* ESPAPPSourcesCenter */ = {
+			isa = PBXGroup;
+			children = (
+				963956C928DDBA2B0049B9C8 /* ESPDataConversion.m */,
+				963956CA28DDBA2B0049B9C8 /* ESPPeripheral.m */,
+				963956CB28DDBA2B0049B9C8 /* ESPFBYBLEHelper.m */,
+				963956CC28DDBA2B0049B9C8 /* ESPPeripheral.h */,
+				963956CD28DDBA2B0049B9C8 /* ESPDataConversion.h */,
+				963956CE28DDBA2B0049B9C8 /* ESPFBYBLEHelper.h */,
+			);
+			path = ESPAPPSourcesCenter;
+			sourceTree = "<group>";
+		};
+		963956D428DDBA2B0049B9C8 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				963956D528DDBA2B0049B9C8 /* BlufiFrameCtrlData.h */,
+				963956D628DDBA2B0049B9C8 /* BlufiNotifyData.m */,
+				963956D728DDBA2B0049B9C8 /* BlufiFrameCtrlData.m */,
+				963956D828DDBA2B0049B9C8 /* BlufiNotifyData.h */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 		965B1F9B282D230C0045D002 /* DoorManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -782,6 +1157,7 @@
 		96E4C11D2807FF6500A53A49 /* SwiftTools */ = {
 			isa = PBXGroup;
 			children = (
+				9639564528DDBA2B0049B9C8 /* BlufiLibrary */,
 				9618254B281AA6C000053691 /* VerifyTools */,
 				9697BE7F2812B1EA00447DF9 /* Extension */,
 				9697BE7C28128E6000447DF9 /* DispatchCenter */,
@@ -841,6 +1217,12 @@
 				A805ADB32816394500E6C6DF /* DeviceResetView.swift */,
 				A805ADBC2816891800E6C6DF /* DeviceItemLabel.swift */,
 				A805ADC22816A17500E6C6DF /* ConnectResultView.swift */,
+				963956EC28DDBBCA0049B9C8 /* BluefiResultCell.swift */,
+				963956EB28DDBBCA0049B9C8 /* ConnectBluefiView.swift */,
+				963956EA28DDBBCA0049B9C8 /* ConnectFailBluefiView.swift */,
+				963956ED28DDBBCA0049B9C8 /* ConnectItemLabel.swift */,
+				963956EE28DDBBCA0049B9C8 /* SearchBluefiView.swift */,
+				963956E928DDBBC90049B9C8 /* SearchFailBluefiView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1019,6 +1401,7 @@
 				A805ADBA2816876600E6C6DF /* DeviceConnectTimeoutVC.swift */,
 				A805ADBE281696AD00E6C6DF /* DeviceAddFailedVC.swift */,
 				A805ADC0281696F100E6C6DF /* DeviceAddSuccessVC.swift */,
+				963956F528DDBBD70049B9C8 /* BluefiResultVC.swift */,
 			);
 			path = DeviceConnect;
 			sourceTree = "<group>";
@@ -1168,6 +1551,7 @@
 				962FEFF12851D2B900DCFD59 /* Localizable.strings in Resources */,
 				96E4C10D2807CA5800A53A49 /* Assets.xcassets in Resources */,
 				96E4C10B2807CA5500A53A49 /* Main.storyboard in Resources */,
+				963956E128DDBA2B0049B9C8 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1225,13 +1609,16 @@
 				96E4C12A280D453000A53A49 /* AGBaseVC.swift in Sources */,
 				960ECFFB283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift in Sources */,
 				A80D5ECE282D386E0096BBDE /* AccountSafeVC.swift in Sources */,
+				963956DE28DDBA2B0049B9C8 /* BlufiConfigureParams.m in Sources */,
 				A80D5ED6282DEA890096BBDE /* SystemSettingVC.swift in Sources */,
+				963956DF28DDBA2B0049B9C8 /* BlufiSecurity.m in Sources */,
 				96D97BAD2828FEA400575335 /* DoorbellAbilityLogicView.swift in Sources */,
 				9697BEA52812B25F00447DF9 /* EXT-ImageVSet.swift in Sources */,
 				A864171A2844C34100E2F2C4 /* DownloadProgressVC.swift in Sources */,
 				A80D5EAE282B745C0096BBDE /* DoorbellSelectAllView.swift in Sources */,
 				9699941C28154F8000910792 /* CountryModel.swift in Sources */,
 				96827D7D2867301E0012AC84 /* Extension+UIColor.swift in Sources */,
+				963956E428DDBA2B0049B9C8 /* ESPDataConversion.m in Sources */,
 				A80D5ECC282D16620096BBDE /* SwitchSettingCell.swift in Sources */,
 				962EAA6C28324A9900030C1B /* DoorbellLeftBackHView.swift in Sources */,
 				966BA9012864380000DE8958 /* SelectHeardImgVC.swift in Sources */,
@@ -1243,6 +1630,8 @@
 				9601C315280E4B9D00D3CA49 /* LoginMainVC.swift in Sources */,
 				9697BE982812B25F00447DF9 /* EXT-UIButton.swift in Sources */,
 				A80D5EB1282CDF690096BBDE /* MineTopView.swift in Sources */,
+				963956F328DDBBCB0049B9C8 /* ConnectItemLabel.swift in Sources */,
+				963956F128DDBBCB0049B9C8 /* ConnectBluefiView.swift in Sources */,
 				96D97BB32829001E00575335 /* DoorbellAnswerLogicView.swift in Sources */,
 				A80D5EBB282CE91F0096BBDE /* MessageCenterVC.swift in Sources */,
 				A819965B2834CFCE00870CDA /* EditNicknameVC.swift in Sources */,
@@ -1253,6 +1642,7 @@
 				9697BE7A28128ADE00447DF9 /* CountrySelectVC.swift in Sources */,
 				96E4C120280801A500A53A49 /* GlobalConstant.swift in Sources */,
 				9697BE6C2812873800447DF9 /* LoginBaseVC.swift in Sources */,
+				963956F028DDBBCA0049B9C8 /* ConnectFailBluefiView.swift in Sources */,
 				A819964D2834840F00870CDA /* ShareDeviceSetupVC.swift in Sources */,
 				A805ADB22816384300E6C6DF /* QRCodeView.swift in Sources */,
 				9697BE952812B25F00447DF9 /* EXT-CreateWithSB.swift in Sources */,
@@ -1274,9 +1664,11 @@
 				96827D7B2867301E0012AC84 /* LoggerViewController.swift in Sources */,
 				965B1FA2282E6F2C0045D002 /* AGToolHUD.swift in Sources */,
 				9601C310280D6A0B00D3CA49 /* UserAccountModel.swift in Sources */,
+				963956EF28DDBBCA0049B9C8 /* SearchFailBluefiView.swift in Sources */,
 				A805ADC62816B40600E6C6DF /* AGAlertBaseView.swift in Sources */,
 				84B3254928A394CA0054B369 /* ThirdManager.swift in Sources */,
 				A8598E292835B38600168244 /* AGCellData.swift in Sources */,
+				963956DA28DDBA2B0049B9C8 /* BlufiClient.m in Sources */,
 				96827D7A2867301E0012AC84 /* LoggerManager.swift in Sources */,
 				A819963B28338FB100870CDA /* DeviceSetupHomeVC.swift in Sources */,
 				967C7AAF284749BA00236F92 /* DeviceShareViewModel.swift in Sources */,
@@ -1293,6 +1685,7 @@
 				A89E3DFB28290B45002FFED9 /* DoorbellSectionView.swift in Sources */,
 				A805ADCC2817893400E6C6DF /* DeviceManager.swift in Sources */,
 				9697BE6328113F6300447DF9 /* AppDelegate_ThidParty.swift in Sources */,
+				963956D928DDBA2B0049B9C8 /* BlufiConstants.m in Sources */,
 				84B3ECA028B3A0140047EE1A /* MediaPlayer.swift in Sources */,
 				A8199650283484B600870CDA /* DeviceInfoCellData.swift in Sources */,
 				96D97BAB2828FE7300575335 /* TopControTooBarView.swift in Sources */,
@@ -1307,8 +1700,11 @@
 				960ECFFD283E1660005A00D0 /* DoorbellChangeSoundModel.swift in Sources */,
 				A805ADBB2816876600E6C6DF /* DeviceConnectTimeoutVC.swift in Sources */,
 				9697BE9B2812B25F00447DF9 /* EXT-CheckStr.swift in Sources */,
+				963956E828DDBA2B0049B9C8 /* BlufiFrameCtrlData.m in Sources */,
 				A805ADC32816A17500E6C6DF /* ConnectResultView.swift in Sources */,
 				A89E3DE52823E1AA002FFED9 /* DoorbellMessageVC.swift in Sources */,
+				963956E528DDBA2B0049B9C8 /* ESPPeripheral.m in Sources */,
+				963956DB28DDBA2B0049B9C8 /* BlufiVersionResponse.m in Sources */,
 				A805ADBF281696AD00E6C6DF /* DeviceAddFailedVC.swift in Sources */,
 				9697BEA32812B25F00447DF9 /* EXT-ToModel.swift in Sources */,
 				A819964B2834798D00870CDA /* DeviceInfoCell.swift in Sources */,
@@ -1319,6 +1715,7 @@
 				9618254D281AA6C000053691 /* VerifyManager.swift in Sources */,
 				A80D5EB9282CE90C0096BBDE /* GeneralSettingVC.swift in Sources */,
 				961825552824FF0E00053691 /* DoorbellAbilityViewCell.swift in Sources */,
+				963956F228DDBBCB0049B9C8 /* BluefiResultCell.swift in Sources */,
 				9697BE942812B25F00447DF9 /* EXT-UIColor.swift in Sources */,
 				962FEFF82852F4D600DCFD59 /* PassWordTextField.swift in Sources */,
 				A89E3DE82824D104002FFED9 /* DoorbellPlayerView.swift in Sources */,
@@ -1327,9 +1724,11 @@
 				A80D5ECA282D156F0096BBDE /* PushMsgSettingVC.swift in Sources */,
 				A80D5EC0282CECB80096BBDE /* PersonalInfoVC.swift in Sources */,
 				961825592824FF6E00053691 /* DoorbellAbilityViewModel.swift in Sources */,
+				963956E628DDBA2B0049B9C8 /* ESPFBYBLEHelper.m in Sources */,
 				A8A246C5281100FA00EAEA82 /* MainTopView.swift in Sources */,
 				A81996412834703E00870CDA /* DeviceBaseSetupVC.swift in Sources */,
 				A81996562834BAE000870CDA /* ShareDeviceInfoCell.swift in Sources */,
+				963956F628DDBBD70049B9C8 /* BluefiResultVC.swift in Sources */,
 				84F7453D289BC14A00702944 /* DeviceFirmwareView.swift in Sources */,
 				96182543281937A300053691 /* LoginProtocolAlertVC.swift in Sources */,
 				961825572824FF3300053691 /* DoorbellAbilityView.swift in Sources */,
@@ -1338,9 +1737,11 @@
 				A86417182844BAA900E2F2C4 /* DoorbellDownlaodManager.swift in Sources */,
 				A82A85AA28127F6700E27229 /* NetworkTipsView.swift in Sources */,
 				969994142814EA9A00910792 /* LoginTextField.swift in Sources */,
+				963956F428DDBBCB0049B9C8 /* SearchBluefiView.swift in Sources */,
 				9697BEA42812B25F00447DF9 /* EXT-UILabel.swift in Sources */,
 				9697BE9D2812B25F00447DF9 /* EXT-IBInspectable.swift in Sources */,
 				966BA90428643CFB00DE8958 /* UserHeardImgModel.swift in Sources */,
+				963956E728DDBA2B0049B9C8 /* BlufiNotifyData.m in Sources */,
 				A81996602835193700870CDA /* ReceiveDeviceShareView.swift in Sources */,
 				A81996492834724900870CDA /* DeviceInfoView.swift in Sources */,
 				A81996472834719C00870CDA /* DeviceInfoVC.swift in Sources */,
@@ -1366,12 +1767,15 @@
 				9618255B2824FF8400053691 /* DoorbellAbilityModel.swift in Sources */,
 				9697BE932812B25F00447DF9 /* EXT-StrFromCls.swift in Sources */,
 				A805ADBD2816891800E6C6DF /* DeviceItemLabel.swift in Sources */,
+				963956DC28DDBA2B0049B9C8 /* BlufiStatusResponse.m in Sources */,
+				963956E328DDBA2B0049B9C8 /* BlufiDH.m in Sources */,
 				962FEFE1284F2CD000DCFD59 /* AppDelegate_Push.swift in Sources */,
 				A81996522834876C00870CDA /* DeviceAddShareVC.swift in Sources */,
 				9601C2FC280D5C6400D3CA49 /* MinePageMainVC.swift in Sources */,
 				A82A85AD281295FD00E27229 /* DeviceResetVC.swift in Sources */,
 				A80D5EC8282D110C0096BBDE /* GeneralSettingCell.swift in Sources */,
 				A89E3DFD2829E87B002FFED9 /* AGActionSheetVC.swift in Sources */,
+				963956DD28DDBA2B0049B9C8 /* BlufiScanResponse.m in Sources */,
 				A81996432834705B00870CDA /* DeviceWarningSetupVC.swift in Sources */,
 				969994162814EBAD00910792 /* EXT-UITextField.swift in Sources */,
 				A8598E2B283C929200168244 /* AGBaseModel.swift in Sources */,
@@ -1549,8 +1953,37 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSAuthCore/AWSAuthCore.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCognitoIdentityProvider/AWSCognitoIdentityProvider.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCognitoIdentityProviderASF/AWSCognitoIdentityProviderASF.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCore/AWSCore.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSIoT/AWSIoT.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSMobileClient/AWSMobileClient.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AgoraIotLink/AgoraIotLink.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Alamofire/Alamofire.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/HandyJSON/HandyJSON.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/JXSegmentedView/JXSegmentedView.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Kingfisher/Kingfisher.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/MJRefresh/MJRefresh.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Masonry/Masonry.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJBaseVideoPlayer/SJBaseVideoPlayer.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJUIKit/SJUIKit.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJVideoPlayer/SJVideoPlayer.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SVProgressHUD/SVProgressHUD.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SnapKit/SnapKit.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftDate/SwiftDate.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/YYKit/YYKit.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/YYModel/YYModel.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/ZLPhotoBrowser/ZLPhotoBrowser.framework/Headers\"",
+					"$(PROJECT_DIR)/IotLinkDemo/SwiftTools/BlufiLibrary/Security/openssl/include/",
+				);
 				INFOPLIST_FILE = IotLinkDemo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = " 需要您的同意，才能访问蓝牙";
 				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问相机";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
@@ -1564,6 +1997,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/IotLinkDemo/SwiftTools/BlufiLibrary/Security/openssl",
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
@@ -1688,8 +2125,37 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSAuthCore/AWSAuthCore.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCognitoIdentityProvider/AWSCognitoIdentityProvider.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCognitoIdentityProviderASF/AWSCognitoIdentityProviderASF.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCore/AWSCore.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSIoT/AWSIoT.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSMobileClient/AWSMobileClient.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AgoraIotLink/AgoraIotLink.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Alamofire/Alamofire.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/HandyJSON/HandyJSON.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/JXSegmentedView/JXSegmentedView.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Kingfisher/Kingfisher.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/MJRefresh/MJRefresh.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Masonry/Masonry.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJBaseVideoPlayer/SJBaseVideoPlayer.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJUIKit/SJUIKit.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJVideoPlayer/SJVideoPlayer.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SVProgressHUD/SVProgressHUD.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SnapKit/SnapKit.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftDate/SwiftDate.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/YYKit/YYKit.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/YYModel/YYModel.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/ZLPhotoBrowser/ZLPhotoBrowser.framework/Headers\"",
+					"$(PROJECT_DIR)/IotLinkDemo/SwiftTools/BlufiLibrary/Security/openssl/include/",
+				);
 				INFOPLIST_FILE = IotLinkDemo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = " 需要您的同意，才能访问蓝牙";
 				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问相机";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
@@ -1703,6 +2169,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/IotLinkDemo/SwiftTools/BlufiLibrary/Security/openssl",
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (

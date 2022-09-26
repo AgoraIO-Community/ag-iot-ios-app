@@ -13,7 +13,7 @@ public class DoorBell{
     var dict:Dictionary<String,Any> = [:]
     
     public func sync(devMgr:IDeviceMgr,result:@escaping(Int,String)->Void){
-        devMgr.setDeviceProperty(device: dev, properties: dict, result: {
+        devMgr.setDeviceProperty(deviceId:dev.deviceId, properties: dict, result: {
             (ec,msg) in
             self.dict.removeAll()
             result(ec,msg)

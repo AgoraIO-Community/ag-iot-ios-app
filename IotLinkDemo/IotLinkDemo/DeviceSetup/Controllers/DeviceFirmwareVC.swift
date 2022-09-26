@@ -28,7 +28,7 @@ class DeviceFirmwareVC: UIViewController {
         self.title = "设备固件升级"
         if(firmwareInfo == nil){
             SVProgressHUD.show()
-            AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(device: device) { ec, msg, info in
+            AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(deviceId: device.deviceId) { ec, msg, info in
                 SVProgressHUD.dismiss()
                 if(ErrCode.XOK == ec){
                     guard let info = info else{
@@ -170,7 +170,7 @@ class DeviceFirmwareVC: UIViewController {
     private func setupData(){
         if(firmwareInfo == nil){
             SVProgressHUD.show()
-            AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(device: device) { ec, msg, info in
+            AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(deviceId: device.deviceId) { ec, msg, info in
                 SVProgressHUD.dismiss()
                 if(ErrCode.XOK == ec){
                     guard let info = info else{
@@ -192,7 +192,7 @@ class DeviceFirmwareVC: UIViewController {
         if device == nil {
             return
         }
-        AgoraIotManager.shared.sdk?.deviceMgr.renameDevice(device: device!, newName: name, result:{[weak self] ec, msg in
+        AgoraIotManager.shared.sdk?.deviceMgr.renameDevice(deviceId: device!.deviceId, newName: name, result:{[weak self] ec, msg in
             if(ec == ErrCode.XOK){
                 //self?.headerView.name = name
                 self?.device?.deviceName = name

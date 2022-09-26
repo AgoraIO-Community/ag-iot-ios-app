@@ -25,25 +25,24 @@ import Foundation
 
 public class UserInfo : NSObject{
     @objc public var name:String?
-    @objc public var avatar:String?     //用户头像
-    @objc public var sex:Int = 0        //性别：【1】男、【2】女  【0】未知
-    @objc public var age:Int = 0        //年龄：【0】未知
-    @objc public var birthday:String?
-    @objc public var height:NSNumber?   //身高，单位：cm
-    @objc public var weight:NSNumber?   //体重，单位：kg
-    @objc public var countryId:String?  //国家编号
-    @objc public var country:String?    //国家
-    @objc public var provinceId:String?
-    @objc public var province:String?
-    @objc public var cityId:String?
-    @objc public var city:String?
-    @objc public var areaId:String?
-    @objc public var area:String?
-    @objc public var address:String?
-    @objc public var background:String?
-    
-    @objc let email:String?
-    @objc let phone:String?
+    @objc public var avatar:String?                   //用户头像
+    @objc public var sex:Int = 0                      //性别：【1】男、【2】女  【0】未知
+    @objc public var age:Int = 0                      //年龄：【0】未知
+    @objc public var birthday:String?                 //生日
+    @objc public var height:NSNumber?                 //身高，单位：cm
+    @objc public var weight:NSNumber?                 //体重，单位：kg
+    @objc public var countryId:String?                //国家编号
+    @objc public var country:String?                  //国家
+    @objc public var provinceId:String?               //省份id
+    @objc public var province:String?                 //省份
+    @objc public var cityId:String?                   //城市id
+    @objc public var city:String?                     //城市
+    @objc public var areaId:String?                   //地区id
+    @objc public var area:String?                     //地区
+    @objc public var address:String?                  //地址
+    @objc public var background:String?               //背景
+    @objc let email:String?                           //邮箱
+    @objc let phone:String?                           //电话
     
     public override init(){
         self.email = ""

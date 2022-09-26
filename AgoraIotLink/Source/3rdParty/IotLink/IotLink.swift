@@ -289,7 +289,7 @@ class IotLink{
     }
     public func reqRenameDevice(_ token:String,_ deviceId:String,_ deviceNickName:String, _ rsp: @escaping (Int,String)->Void){
         let header:HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
-        let params:Dictionary<String,String> = ["deviceId":deviceId,"deviceNickName":deviceNickName]
+        let params:Dictionary<String,String> = ["mac":deviceId,"deviceNickName":deviceNickName]
         let url = http + api.RenameDevice
         log.i("iotlink renameDevice \(deviceId) with name:\(deviceNickName)")
         AF.request(url,method: .post, parameters: params,encoder: JSONParameterEncoder.default,headers: header)
@@ -315,7 +315,7 @@ class IotLink{
     public func reqUnbindDevice(_ token:String,_ deviceId:String,_ rsp: @escaping (Int,String)->Void){
         //let params:Dictionary = ["token":token,"deviceId":String(deviceId)]
         let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
-        let params:Dictionary<String,String> = ["deviceId":deviceId]
+        let params:Dictionary<String,String> = ["mac":deviceId]
         let url = http + api.UnbindDevice
         log.i("iotlink unbind \(deviceId)")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
@@ -415,11 +415,11 @@ class IotLink{
         })
     }
     
-    func reqOtaInfo(_ token:String,_ deviceNumber:String, _ rsp:@escaping(Int,String,FirmwareInfo?)->Void){
+    func reqOtaInfo(_ token:String,_ deviceId:String, _ rsp:@escaping(Int,String,FirmwareInfo?)->Void){
         let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
-        let params:Dictionary<String,String> = ["deviceId":deviceNumber]
+        let params:Dictionary<String,String> = ["mac":deviceId]
         let url = http + api.OtaGetInfo
-        log.i("iotlink reqOtaInfo \(deviceNumber)")
+        log.i("iotlink reqOtaInfo \(deviceId)")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of:OtaInfo.Rsp.self) { (dataRsp : AFDataResponse<OtaInfo.Rsp>) in

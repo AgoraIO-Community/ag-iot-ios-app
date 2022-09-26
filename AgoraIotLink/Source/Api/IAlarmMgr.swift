@@ -42,19 +42,19 @@
 //    }
 //}
 
+/*
+ * @brief 告警查询参数
+ */
 public class AlarmQueryParam : NSObject{
-    public var productId:String?
-    public var deviceId:String?
-    public var messageType : Int? = nil //设备告警：0:sound dectect,1:motion dectect, 99:other,nil: all
-    public var status : Int? = nil      //0:未读,1:已读，nil：所有
-    
-    public var createdDateBegin:Date? = nil
-    public var createdDateEnd:Date? = nil
-    
-    public var currentPage:Int = 1 //page index start from 1
-    public var pageSize:Int = 5
-    
-    public var desc:Bool = true   //sort type : asc,desc
+    public var productId:String?                         //产品id
+    public var deviceId:String?                          //设备id
+    public var messageType : Int? = nil                  //设备告警：0:sound dectect,1:motion dectect, 99:other,nil: all
+    public var status : Int? = nil                       //0:未读,1:已读，nil：所有
+    public var createdDateBegin:Date? = nil              //开始时间
+    public var createdDateEnd:Date? = nil                //结束时间
+    public var currentPage:Int = 1                       //page index start from 1
+    public var pageSize:Int = 5                          //分页大小
+    public var desc:Bool = true                          //sort type : asc,desc
     
     public init(dateBegin:Date? = nil){
         self.createdDateBegin = dateBegin
@@ -62,18 +62,14 @@ public class AlarmQueryParam : NSObject{
 }
 
 public class SysAlarmQueryParam : NSObject{
-    public var messageType : Int? = nil  //系统告警：1:设备上线 2:设备下线 3:设备绑定 4:设备解绑 99 其他
-    public var status : Int? = nil       //0:未读,1:已读，nil：所有
-    
-    public var createdDateBegin:Date? = nil
-    public var createdDateEnd:Date = Date()
-    
-    public var currentPage:Int = 1 //page index start from 1
-    public var pageSize:Int = 5
-    
-    public var desc:Bool = true   //sort type : asc,desc
-    
-    public var deviceIds:[String] = []  //注意：当查询所有设备的信息时，需要填充所有设备的deviceId!!
+    public var messageType : Int? = nil                  //系统告警：1:设备上线 2:设备下线 3:设备绑定 4:设备解绑 99 其他
+    public var status : Int? = nil                       //0:未读,1:已读，nil：所有
+    public var createdDateBegin:Date? = nil              //开始时间
+    public var createdDateEnd:Date = Date()              //结束时间
+    public var currentPage:Int = 1                       //page index start from 1
+    public var pageSize:Int = 5                          //分页大小
+    public var desc:Bool = true                          //sort type : asc,desc
+    public var deviceIds:[String] = []                   //注意：当查询所有设备的信息时，需要填充所有设备的deviceId!!
     
     public init(dateBegin:Date? = nil){
         self.createdDateBegin = dateBegin

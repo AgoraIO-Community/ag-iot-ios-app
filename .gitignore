@@ -61,6 +61,16 @@ libs/SJVideoPlayer/Example
 libs/ijkplayer/ios/IJKMediaPlayer/IJKMediaPlayer_Products
 libs/ijkplayer/ijkmedia/fftools
 libs/ijkplayer/ios/build/universal/lib
+libs/ijkplayer/ios/build/universal/lib/libavcodec.a
+libs/ijkplayer/ios/build/universal/lib/libavfilter.a
+libs/ijkplayer/ios/build/universal/lib/libavformat.a
+libs/ijkplayer/ios/build/universal/lib/libavutil.a
+libs/ijkplayer/ios/build/universal/lib/libswresample.a
+libs/ijkplayer/ios/build/universal/lib/libswscale.a
+libs/SJBaseVideoPlayer/SJBaseVideoPlayer/ijk/IJKMediaFramework.framework/IJKMediaFramework
+libs/ijkplayer/ios/IJKMediaDemo/
 libs/SJBaseVideoPlayer/README.md
+IotLinkDemo/Podfile.lock
+ExampleOC/Podfile.lock
 libs/SJVideoPlayer/README.md
 version.sh

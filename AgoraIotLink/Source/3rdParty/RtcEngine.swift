@@ -40,6 +40,7 @@ class RtcEngine : NSObject{
     private var peerEntered:Bool = false
     private var isSnapShoting : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
     private var _onImageCaptured:(Int,String,UIImage?)->Void = {ec,msg,img in}
+    private var _networkStatus : RtcNetworkStatus = RtcNetworkStatus()
     
     static private let IDLED = 0
     static private let CREATED = 1
@@ -62,7 +63,7 @@ class RtcEngine : NSObject{
             rtc.setLogFile(setting.logFilePath!)
         }
         else{
-            rtc.setLogFilter(AgoraLogFilter.error.rawValue)
+            //rtc.setLogFilter(AgoraLogFilter.error.rawValue)
         }
 
         rtc.setClientRole(.broadcaster)
@@ -456,6 +457,10 @@ class RtcEngine : NSObject{
         self._onImageCaptured = cb
         isSnapShoting.setValue(true)
     }
+    
+    func getNetworkStatus()->RtcNetworkStatus{
+        return _networkStatus
+    }
 }
 
 extension RtcEngine: AgoraRtcEngineDelegate{
@@ -498,6 +503,31 @@ extension RtcEngine: AgoraRtcEngineDelegate{
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteAudioFrameOfUid uid: UInt, elapsed: Int) {
         log.i("rtc firstRemoteAudioFrameDecodedOfUid first audio frame decoded \(uid)")
         _onPeerAction(.AudioReady,uid)
+    }
+    func rtcEngine(_ engine: AgoraRtcEngineKit, reportRtcStats stats: AgoraChannelStats) {
+        _networkStatus.totalDuration = stats.duration;
+        _networkStatus.txBytes = stats.txBytes
+        _networkStatus.rxBytes = stats.rxBytes
+        _networkStatus.txKBitRate = stats.txKBitrate;
+        _networkStatus.rxKBitRate = stats.rxKBitrate;
+        _networkStatus.txAudioBytes = stats.txAudioBytes;
+        _networkStatus.rxAudioBytes = stats.rxAudioBytes;
+        _networkStatus.txVideoBytes = stats.txVideoBytes;
+        _networkStatus.rxVideoBytes = stats.rxVideoBytes;
+        _networkStatus.txAudioKBitRate = stats.txAudioKBitrate;
+        _networkStatus.rxAudioKBitRate = stats.rxAudioKBitrate;
+        _networkStatus.txVideoKBitRate = stats.txVideoKBitrate;
+        _networkStatus.rxVideoKBitRate = stats.rxVideoKBitrate;
+        _networkStatus.txPacketLossRate = stats.txPacketLossRate;
+        _networkStatus.rxPacketLossRate = stats.rxPacketLossRate;
+        _networkStatus.lastmileDelay = stats.lastmileDelay;
+        _networkStatus.connectTimeMs = stats.connectTimeMs;
+        _networkStatus.cpuAppUsage = stats.cpuAppUsage;
+        _networkStatus.cpuTotalUsage = stats.cpuTotalUsage;
+        _networkStatus.users = stats.userCount;
+        _networkStatus.memoryAppUsageRatio = stats.memoryAppUsageRatio;
+        _networkStatus.memoryTotalUsageRatio = stats.memoryTotalUsageRatio;
+        _networkStatus.memoryAppUsageInKbytes = stats.memoryAppUsageInKbytes;
     }
 }
 

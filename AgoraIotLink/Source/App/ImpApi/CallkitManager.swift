@@ -25,7 +25,6 @@ class CallSession{
 }
 
 class CallkitManager : ICallkitMgr{
-    
     private func asyncResult(_ ec:Int,_ msg:String,_ result:@escaping(Int,String)->Void) {
         DispatchQueue.main.async {
             let filter = self.app.context.callbackFilter
@@ -536,5 +535,9 @@ class CallkitManager : ICallkitMgr{
         DispatchQueue.main.async {
             self.app.proxy.rtc.capturePeerVideoFrame(cb: {ec,msg,img in self.asyncResultData(ec,msg,img,result)})
         }
+    }
+    
+    func getNetworkStatus() -> RtcNetworkStatus {
+        return self.app.proxy.rtc.getNetworkStatus()
     }
 }

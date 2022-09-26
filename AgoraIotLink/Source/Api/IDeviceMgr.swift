@@ -21,35 +21,37 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-
+/*
+ * @breif 查询产品信息时的输入参数
+ */
 public class ProductQueryParam : NSObject{
-    @objc public var pageNo:Int = -1             //查询的页码，<0表示不设置该参数
-    @objc public var pageSize:UInt = 0           //分页大小，0 表示不设置该参数
-    @objc public var productTypeId:UInt64 = 0    //产品类型型号, 0 表示不设置该参数
-    @objc public var productId:UInt64 = 0        //产品型号,0 表示不设置该参数
-    @objc public var blurry:String = ""          //保留
+    @objc public var pageNo:Int = -1                    //查询的页码，<0表示不设置该参数
+    @objc public var pageSize:UInt = 0                  //分页大小，0 表示不设置该参数
+    @objc public var productTypeId:UInt64 = 0           //产品类型型号, 0 表示不设置该参数
+    @objc public var productId:UInt64 = 0               //产品型号,0 表示不设置该参数
+    @objc public var blurry:String = ""                 //保留
 }
 /*
  *@brief 产品信息
  */
 public class ProductInfo:NSObject{
-    @objc public var alias : String = ""            //别名
-    @objc public var bindType:UInt = 0              //绑定类型
-    @objc public var connectType : UInt = 0         //连接类型
-    @objc public var createTime : UInt64 = 0        //创建时间
-    @objc public var deleted : UInt = 0             //是否删除
-    @objc public var number : String = ""           //设备号
-    @objc public var imgBig : String = ""           //大图标
-    @objc public var imgSmall : String = ""         //小图标
-    @objc public var merchantId : UInt64 = 0        //租户号
-    @objc public var merchantName : String = ""     //租户名
-    @objc public var name : String = ""             //名称
-    @objc public var id : String = ""               //id
-    @objc public var productTypeId : UInt64  = 0    //类型id
-    @objc public var productTypeName : String = ""  //类型名
-    @objc public var status : UInt = 0              //状态
-    @objc public var updateBy : UInt64 = 0          //更新
-    @objc public var updateTime : UInt64 = 0        //更新时间
+    @objc public var alias : String = ""                //别名
+    @objc public var bindType:UInt = 0                  //绑定类型
+    @objc public var connectType : UInt = 0             //连接类型
+    @objc public var createTime : UInt64 = 0            //创建时间
+    @objc public var deleted : UInt = 0                 //是否删除
+    @objc public var number : String = ""               //设备号
+    @objc public var imgBig : String = ""               //大图标
+    @objc public var imgSmall : String = ""             //小图标
+    @objc public var merchantId : UInt64 = 0            //租户号
+    @objc public var merchantName : String = ""         //租户名
+    @objc public var name : String = ""                 //名称
+    @objc public var id : String = ""                   //id
+    @objc public var productTypeId : UInt64  = 0        //类型id
+    @objc public var productTypeName : String = ""      //类型名
+    @objc public var status : UInt = 0                  //状态
+    @objc public var updateBy : UInt64 = 0              //更新
+    @objc public var updateTime : UInt64 = 0            //更新时间
     public init(alias:String,
                 bindType:UInt,
                 connectType:UInt,
@@ -132,124 +134,146 @@ public protocol IDeviceStateListener{
      */
     func onDevicePropertyUpdated(deviceId:String,deviceNumber:String,props:[String:Any]?)
 }
-
+/*
+ * @breif 分享设备信息
+ */
 public class DeviceShare : NSObject{
-    @objc public var nickName:String = ""      //用户设备昵称
-    @objc public var count:Int = 0             //设备被分享次数
-    @objc public var time:UInt64 = 0           //创建时间
-    @objc public var deviceNumber:String = ""  //设备编号
-    @objc public var deviceId:String = ""      //设备id
+    @objc public var nickName:String = ""               //用户设备昵称
+    @objc public var count:Int = 0                      //设备被分享次数
+    @objc public var time:UInt64 = 0                    //创建时间
+    @objc public var deviceNumber:String = ""           //设备编号
+    @objc public var deviceId:String = ""               //设备id
 }
-
+/*
+ * @breif 可取消共享设备的信息
+ */
 public class DeviceCancelable : NSObject{
-    @objc public var appuserId:String  = ""     //用户ID
-    @objc public var avatar:String = ""         //用户头像
-    @objc public var connect:Bool = false       //连接中
-    @objc public var createTime:UInt64 = 0      //创建时间
-    @objc public var deviceNumber:String = ""   //设备号
-    @objc public var deviceNickname:String = "" //设备名称
-    @objc public var email:String = ""          //用户邮箱
-    @objc public var deviceId:String = ""       //设备id
-    @objc public var nickName:String = ""       //用户昵称
-    @objc public var phone:String = ""          //用户手机
-    @objc public var productId:String = ""      //产品Id
-    @objc public var productKey:String = ""     //产品Key
-    @objc public var sharer:String = ""         //分享人ID
-    @objc public var uType:String = ""          //用户角色 1所有者 2管理员 3成员
-    @objc public var updateTime:UInt64 = 0      //更新时间
+    @objc public var appuserId:String  = ""             //用户ID
+    @objc public var avatar:String = ""                 //用户头像
+    @objc public var connect:Bool = false               //连接中
+    @objc public var createTime:UInt64 = 0              //创建时间
+    @objc public var deviceNumber:String = ""           //设备号
+    @objc public var deviceNickname:String = ""         //设备名称
+    @objc public var email:String = ""                  //用户邮箱
+    @objc public var deviceId:String = ""               //设备id
+    @objc public var nickName:String = ""               //用户昵称
+    @objc public var phone:String = ""                  //用户手机
+    @objc public var productId:String = ""              //产品Id
+    @objc public var productKey:String = ""             //产品Key
+    @objc public var sharer:String = ""                 //分享人ID
+    @objc public var uType:String = ""                  //用户角色 1所有者 2管理员 3成员
+    @objc public var updateTime:UInt64 = 0              //更新时间
 }
-
+/*
+ * @brief 共享设备的信息
+ */
 public class ShareDetail : NSObject{
-    @objc public var auditStatus:Bool = false   //消息处理状态 【t】已处理、【f】未处理
-    @objc public var content:String = ""        //推送内容
-    @objc public var createBy:UInt64 = 0        //创建人ID
-    @objc public var createTime:UInt64 = 0      //创建时间
-    @objc public var deleted:Int = 0            //已删除：【0】未删除、【1】已删除
-    @objc public var id:UInt64 = 0              //主键
-    @objc public var merchantId:UInt64 = 0      //商户ID
-    @objc public var merchantName:String = ""   //商户名称
-    @objc public var msgType:Int = 0            //消息类型【1】设备分享消息
-    @objc public var para:String = ""           //分享口令
-    @objc public var permission:Int = 0         //推送的权限【2】管理员 ，【3】成员
-    @objc public var status:Int = 0             //状态：【1】发送成功、【2】发送失败 、【3】待发送
-    @objc public var title:String = ""          //推送标题
-    @objc public var type:Int = 0               //推送类型【1】App消息 【2】短信消息 【3】邮箱信息
-    @objc public var updateBy:UInt64 = 0        //更新人ID
-    @objc public var updateTime:UInt64 = 0      //更新时间
-    @objc public var userId:UInt64 = 0          //用户ID（被分享人ID）
+    @objc public var auditStatus:Bool = false           //消息处理状态 【t】已处理、【f】未处理
+    @objc public var content:String = ""                //推送内容
+    @objc public var createBy:UInt64 = 0                //创建人ID
+    @objc public var createTime:UInt64 = 0              //创建时间
+    @objc public var deleted:Int = 0                    //已删除：【0】未删除、【1】已删除
+    @objc public var id:UInt64 = 0                      //主键
+    @objc public var merchantId:UInt64 = 0              //商户ID
+    @objc public var merchantName:String = ""           //商户名称
+    @objc public var msgType:Int = 0                    //消息类型【1】设备分享消息
+    @objc public var para:String = ""                   //分享口令
+    @objc public var permission:Int = 0                 //推送的权限【2】管理员 ，【3】成员
+    @objc public var status:Int = 0                     //状态：【1】发送成功、【2】发送失败 、【3】待发送
+    @objc public var title:String = ""                  //推送标题
+    @objc public var type:Int = 0                       //推送类型【1】App消息 【2】短信消息 【3】邮箱信息
+    @objc public var updateBy:UInt64 = 0                //更新人ID
+    @objc public var updateTime:UInt64 = 0              //更新时间
+    @objc public var userId:UInt64 = 0                  //用户ID（被分享人ID）
 }
-
+/*
+ * @brief 共享设备消息的描述
+ */
 public class ShareItem : NSObject{
-    @objc public var auditStatus:Bool = false   //消息处理状态 【t】已处理、【f】未处理
-    @objc public var content:String = ""        //推送内容
-    @objc public var createBy:UInt64 = 0        //创建者ID
-    @objc public var createTime:UInt64 = 0      //创建时间
-    @objc public var deleted:Int = 0            //已删除：【0】未删除、【1】已删除
-    @objc public var deviceNumber:UInt64 = 0    //对应IotDevice里面的deviceNumber
-    @objc public var id:UInt64 = 0              //该条信息ID
-    @objc public var img:String = ""            //产品图片地址
-    @objc public var merchantId:UInt64 = 0      //商户ID
-    @objc public var merchantName:String = ""   //商户名称
-    @objc public var msgType:Int = 0            //消息类型【1】设备分享消息
-    @objc public var para:String = ""           //分享口令,shareDeviceAccept()的order
-    @objc public var permission:Int = 0         //推送的权限【2】管理员 ，【3】成员
-    @objc public var productName:String = ""    //产品名称
-    @objc public var pushTime:UInt64 = 0        //定时推送时间
-    @objc public var shareName:String = ""      //分享设备名称
-    @objc public var status:Int = 0             //状态：【1】发送成功、【2】发送失败 、【3】待发送
-    @objc public var title:String = ""          //推送标题
-    @objc public var type:Int = 0               //推送类型【1】App消息 【2】短信消息 【3】邮箱
-    @objc public var userId:UInt64 = 0          //用户ID（被分享人ID）
+    @objc public var auditStatus:Bool = false           //消息处理状态 【t】已处理、【f】未处理
+    @objc public var content:String = ""                //推送内容
+    @objc public var createBy:UInt64 = 0                //创建者ID
+    @objc public var createTime:UInt64 = 0              //创建时间
+    @objc public var deleted:Int = 0                    //已删除：【0】未删除、【1】已删除
+    @objc public var deviceNumber:UInt64 = 0            //对应IotDevice里面的deviceNumber
+    @objc public var id:UInt64 = 0                      //该条信息ID
+    @objc public var img:String = ""                    //产品图片地址
+    @objc public var merchantId:UInt64 = 0              //商户ID
+    @objc public var merchantName:String = ""           //商户名称
+    @objc public var msgType:Int = 0                    //消息类型【1】设备分享消息
+    @objc public var para:String = ""                   //分享口令,shareDeviceAccept()的order
+    @objc public var permission:Int = 0                 //推送的权限【2】管理员 ，【3】成员
+    @objc public var productName:String = ""            //产品名称
+    @objc public var pushTime:UInt64 = 0                //定时推送时间
+    @objc public var shareName:String = ""              //分享设备名称
+    @objc public var status:Int = 0                     //状态：【1】发送成功、【2】发送失败 、【3】待发送
+    @objc public var title:String = ""                  //推送标题
+    @objc public var type:Int = 0                       //推送类型【1】App消息 【2】短信消息 【3】邮箱
+    @objc public var userId:UInt64 = 0                  //用户ID（被分享人ID）
 }
-
+/*
+ * @breif 换页信息
+ */
 public class PageTurn:NSObject{
-    @objc public var currentPage : Int = 0             //当前页
-    @objc public var pageCount : Int = 0               //页面总数
-    @objc public var firstPage : Int = 0               //首页索引
-    @objc public var prevPage : Int = 0                //上一页面索引
-    @objc public var nextPage : Int = 0                //下一页面索引
-    @objc public var page : Int = 0                    //请求页
-    @objc public var pageSize : Int = 0                //请求的页内容条数
-    @objc public var rowCount : Int = 0                //记录数
-    @objc public var start : Int = 0                   //当前页开始条数
-    @objc public var end : Int = 0                     //当前页结束条数
-    @objc public var startIndex : Int = 0              //开始记录
+    @objc public var currentPage : Int = 0              //当前页
+    @objc public var pageCount : Int = 0                //页面总数
+    @objc public var firstPage : Int = 0                //首页索引
+    @objc public var prevPage : Int = 0                 //上一页面索引
+    @objc public var nextPage : Int = 0                 //下一页面索引
+    @objc public var page : Int = 0                     //请求页
+    @objc public var pageSize : Int = 0                 //请求的页内容条数
+    @objc public var rowCount : Int = 0                 //记录数
+    @objc public var start : Int = 0                    //当前页开始条数
+    @objc public var end : Int = 0                      //当前页结束条数
+    @objc public var startIndex : Int = 0               //开始记录
 }
+/*
+ * @biref 固件版本信息
+ */
 public class FirmwareInfo : NSObject{
-    @objc public var  releaseTime:UInt64 = 0       //发布时间
-    @objc public var  size:UInt = 0                //文件大小
-    @objc public var  currentVersion:String = ""   //设备当前MCU版本
-    @objc public var  upgradeVersion:String = ""   //最新固件版本
-    @objc public var  remark:String = ""           //备注说明
-    @objc public var  isUpgrade:Bool = false       //是否可以升级
-    @objc public var  deviceNumber:UInt64 = 0      //设备号
-    @objc public var  upgradeId:String = ""        //升级记录id
-    @objc public var  deviceId:String = ""         //设备ID
+    @objc public var  releaseTime:UInt64 = 0            //发布时间
+    @objc public var  size:UInt = 0                     //文件大小
+    @objc public var  currentVersion:String = ""        //设备当前MCU版本
+    @objc public var  upgradeVersion:String = ""        //最新固件版本
+    @objc public var  remark:String = ""                //备注说明
+    @objc public var  isUpgrade:Bool = false            //是否可以升级
+    @objc public var  deviceNumber:UInt64 = 0           //设备号
+    @objc public var  upgradeId:String = ""             //升级记录id
+    @objc public var  deviceId:String = ""              //设备ID
 }
+/*
+ * @brief 固件升级状态事件
+ */
 public class FirmwareStatus : NSObject{
-    @objc public var  deviceNumber:String = ""      //设备号
-    @objc public var  deviceName:String = ""        //设备名
-    @objc public var  deviceId:String = ""          //设备ID
-    @objc public var  currentVersion:String = ""    //当前版本
-    @objc public var  status:Int = 0                //设备升级状态【1】升级完成、【2】升级失败、【3】升级取消、【4】待升级、【5】升级中
+    @objc public var  deviceNumber:String = ""          //设备号
+    @objc public var  deviceName:String = ""            //设备名
+    @objc public var  deviceId:String = ""              //设备ID
+    @objc public var  currentVersion:String = ""        //当前版本
+    @objc public var  status:Int = 0                    //设备升级状态【1】升级完成、【2】升级失败、【3】升级取消、【4】待升级、【5】升级中
 }
+/*
+ * @brief rtm通信时的状态事件
+ */
 @objc public enum MessageChannelStatus : Int{
-    case DataArrived            //收到数据
-    case Disconnected           //连接断开
-    case Connecting             //连接中
-    case Connected              //连接成功
-    case Reconnecting           //重连中
-    case Aborted                //中断
-    case TokenWillExpire        //token将要过期
-    case TokenDidExpire         //token已经过期
-    case UnknownError           //未知错误
+    case DataArrived                                    //收到数据
+    case Disconnected                                   //连接断开
+    case Connecting                                     //连接中
+    case Connected                                      //连接成功
+    case Reconnecting                                   //重连中
+    case Aborted                                        //中断
+    case TokenWillExpire                                //token将要过期
+    case TokenDidExpire                                 //token已经过期
+    case UnknownError                                   //未知错误
 }
+/*
+ * @brief 播放sd卡时的状态事件
+ */
 @objc public enum PlaybackStatus : Int{
-    case RemoteJoin
-    case RemoteLeft
-    case LocalReady
-    case LocalError
-    case VideoReady
+    case RemoteJoin                                     //设备连接成功
+    case RemoteLeft                                     //设备断开
+    case LocalReady                                     //本地准备好播放
+    case LocalError                                     //本地错误
+    case VideoReady                                     //收到远端视频
 }
 /*
  * @brief 设备管理接口
@@ -281,17 +305,17 @@ public protocol IDeviceMgr {
     func addDevice(productId: String, deviceId: String,result:@escaping(Int,String)->Void)
     /*
      * @brief 移除设备
-     * @param device     : 设备
+     * @param deviceId   : 设备Id
      * @param result     : 调用该接口的返回值
      */
-    func removeDevice(device:IotDevice,result:@escaping(Int,String)->Void)
+    func removeDevice(deviceId:String,result:@escaping(Int,String)->Void)
     /*
      * @brief 修改设备名
-     * @param device     : 设备
+     * @param deviceId     : 设备Id
      * @param newName    : 新名字
      * @param result     : 调用该接口的返回值
      */
-    func renameDevice(device:IotDevice,newName:String,result:@escaping(Int,String)->Void)
+    func renameDevice(deviceId:String,newName:String,result:@escaping(Int,String)->Void)
     /*
      * @brief 查询所有属性描述符，触发 onQueryAllPropertyDescDone() 回调
      *        deviceID 和 productNumber 两者取其一，另外一个参数为""
@@ -301,25 +325,25 @@ public protocol IDeviceMgr {
     func getPropertyDescription(deviceId:String,productNumber:String,result:@escaping(Int,String,[Property])->Void)
     /*
      * @brief 修改设备属性值
-     * @param device     : 对应设备
+     * @param deviceId   : 设备对应id
      * @param propertites: 需要设置的属性
      * @param result     : 调用该接口的返回值以及被修改的属性
      */
-    func setDeviceProperty(device:IotDevice,properties:Dictionary<String,Any>,result:@escaping(Int,String)->Void)
+    func setDeviceProperty(deviceId:String, properties:Dictionary<String,Any>,result:@escaping(Int,String)->Void)
     
     /*
      * @brief 查询设备属性值
-     * @param device     : 需要取得属性的设备
+     * @param deviceId   : 设备对应id
      * @param result     : 调用该接口的返回值,desired:期望设置给设备的参数信息，reported:设备设置成功后当前的参数信息
      */
-    func getDeviceProperty(device:IotDevice,result:@escaping(Int,String,_ desired:Dictionary<String, Any>?,_ reported:Dictionary<String, Any>?)->Void)
+    func getDeviceProperty(deviceId:String,result:@escaping(Int,String,_ desired:Dictionary<String, Any>?,_ reported:Dictionary<String, Any>?)->Void)
     /*
      * @brief 分享设备给其他人
-     * @param device:被分享的设备
-     * @param userId:分享对象
-     * @param type :被分享人权限 2管理员 3成员（默认成员）
+     * @param deviceId  : 被分享的设备Id
+     * @param userId    : 分享对象
+     * @param type      : 被分享人权限 2管理员 3成员（默认成员）
      */
-    func shareDeviceTo(deviceNumber:String,userId:String,type:String,result:@escaping(Int,String)->Void)
+    func shareDeviceTo(deviceId:String,userId:String,type:String,result:@escaping(Int,String)->Void)
     /*
      * @brief 用户可分享设备列表
      */
@@ -330,78 +354,90 @@ public protocol IDeviceMgr {
     func shareWithMe(result:@escaping(Int,String,[DeviceShare]?)->Void)
     /*
      * @brief 查询分享出去的设备
-     * @param deviceNumber:设备号
+     * @param deviceId   : 设备Id
      */
-    func shareCancelable(deviceNumber:String,result:@escaping(Int,String,[DeviceCancelable]?)->Void)
+    func shareCancelable(deviceId:String,result:@escaping(Int,String,[DeviceCancelable]?)->Void)
     /*
      * @brief 设备所有者解除分享权限 同时发送消息给被分享者
-     * @param deviceNumber:设备号
-     * @param userId: 用户编号
+     * @param deviceId       : 设备Id
+     * @param userId         : 用户编号
      */
-    func shareRemoveMember(deviceNumber:String,userId:String,result:@escaping(Int,String)->Void)
+    func shareRemoveMember(deviceId:String,userId:String,result:@escaping(Int,String)->Void)
 //    /*
 //     * @brief 接收他人的分享，使用场景参看 sharePushList()接口
-//     * @param deviceNickName:设备新昵称
-//     * @param order：分享口令,来自于 sharePushList()返回列表中对应设备的 para 字段
+//     * @param deviceNickName   : 设备新昵称
+//     * @param order            : 分享口令,来自于 sharePushList()返回列表中对应设备的 para 字段
 //     */
 //    func shareDeviceAccept(deviceNickName:String,order:String,result:@escaping(Int,String)->Void)
 //    /*
 //     * @brief 用户分享设备，生成分享推送消息，需被分享人接收分享，使用场景参看 sharePushList()接口
-//     * @param deviceNumber:设备号
-//     * @email :被分享人账号
-//     * @type  :被分享权限 2--管理员; 3--成员
+//     * @param deviceNumber     : 设备号
+//     * @email                  : 被分享人账号
+//     * @type                   : 被分享权限 2--管理员; 3--成员
 //     */
 //    func sharePushAdd(deviceNumber:String,email:String,type:String,result:@escaping(Int,String)->Void)
 //    /*
 //     * @brief 删除用户分享设备推送信息，使用场景参看 sharePushList()接口
-//     * @id : 对应ShareItem.id
+//     * @id                     : 对应ShareItem.id
 //     */
 //    func sharePushDel(id:String,result:@escaping(Int,String)->Void)
 //    /*
 //     * @brief 设备推送消息-详情，使用场景参看 sharePushList()接口
-//     * @id : 对应ShareItem.id
+//     * @id                     : 对应ShareItem.id
 //     */
 //    func sharePushDetail(id:String,result:@escaping(Int,String,ShareDetail?)->Void)
 //    /*
 //     * @brief 按分页方式查询接收的分享消息列表，场景： 当用户A使用sharePushAdd()将设备分享给用户B时，用户B使用该接口查询消息，之后可以用sharePushDetail（）查看详情，用sharePushDel（）拒绝，用shareDeviceAccept（）接受分享
-//     * @param auditStatus : 消息处理状态 【t】已处理、【f】未处理
+//     * @param auditStatus      : 消息处理状态 【t】已处理、【f】未处理
 //     */
 //    func sharePushList(pageNo:Int,pageSize:Int,auditStatus:String,result:@escaping(Int,String,[ShareItem]?,PageTurn?)->Void)
     /*
      * @brief 获取设备的固件信息
-     * @param deviceId : 设备的id
+     * @param deviceId           : 设备的id
      */
-    func otaGetInfo(device:IotDevice,result:@escaping(Int,String,FirmwareInfo?)->Void)
+    func otaGetInfo(deviceId:String,result:@escaping(Int,String,FirmwareInfo?)->Void)
     /*
      * @brief ota升级固件
-     * @param upgradeId : MCU版本中的 升级ID,来自于otaGetInfo()返回的FirmwareInfo.upgradeId
+     * @param upgradeId          : MCU版本中的 升级ID,来自于otaGetInfo()返回的FirmwareInfo.upgradeId
      */
     func otaUpgrade(upgradeId:String,result:@escaping(Int,String)->Void)
     /*
      * @brief ota升级固件状态查询
-     * @param upgradeId : MCU版本中的 升级ID
+     * @param upgradeId          : MCU版本中的 升级ID
      */
     func otaQuery(upgradeId:String,result:@escaping(Int,String,FirmwareStatus?)->Void)
     /*
      * @brief 开始发送消息给设备
-     * @param device : 对端设备
-     * @param result : 调用sendMessageBegin()是否成功
-     * @param statusUpdated ： 在sendMessageBegin()和sendMessageEnd()之间，状态变化回调
+     * @param deviceId           : 对端设备Id
+     * @param result             : 调用sendMessageBegin()是否成功
+     * @param statusUpdated      : 在sendMessageBegin()和sendMessageEnd()之间，状态变化回调
      */
-    func sendMessageBegin(device:IotDevice,result:@escaping(Int,String)->Void,statusUpdated:@escaping(_ status:MessageChannelStatus,_ msg:String,_ data:Data?)->Void)
+    func sendMessageBegin(deviceId:String,result:@escaping(Int,String)->Void,statusUpdated:@escaping(_ status:MessageChannelStatus,_ msg:String,_ data:Data?)->Void)
     /*
      * @brief 结束发送消息给设备
      */
     func sendMessageEnd()
     /*
      * @brief 发送消息给设备，在sendMessageBegin()返回Connected成功后，调用sendMessageEnd()前调用该接口
-     * @param device : 对端设备
-     * @param data : 发送的数据，每次发送数据大小不能超过1k
-     * @param description : 消息描述
+     * @param device           : 对端设备
+     * @param data             : 发送的数据，每次发送数据大小不能超过1k
+     * @param description      : 消息描述
      */
     func sendMessage(data:Data,description:String,result:@escaping(Int,String)->Void)
-    
+    /*
+     * @brief 开始播放sd卡上的视频记录
+     * @param file             : 文件url
+     * @param uid              : 本地分配的uid
+     */
     func startPlayback(file:String,uid:UInt,result:@escaping(Int,String)->Void,stateChanged:@escaping(PlaybackStatus,String)->Void)
+    /*
+     * @brief 将播放的视频和view关联
+     * @param peerView         : 需要关联的UIView
+     * @return                 : 0 成功，非零：失败
+     */
     func setPlaybackView(peerView: UIView?) -> Int
+    /*
+     * @param 停止播放
+     */
     func stopPlayback()
 }

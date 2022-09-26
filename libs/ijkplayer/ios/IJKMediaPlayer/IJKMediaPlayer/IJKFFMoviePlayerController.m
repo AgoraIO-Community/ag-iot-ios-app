@@ -180,6 +180,22 @@ void IJKFFIOStatCompleteRegister(void (*cb)(const char *url,
 
     self = [super init];
     if (self) {
+        
+//        NSFileManager *fileManger = [NSFileManager defaultManager];
+//        ///沙盒Documents路径
+//        NSString *documents = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+//        //拼接文件绝对路径
+//        NSString *path = [documents stringByAppendingPathComponent:@"IVFESSRUKNJTMNCJNVFDKLLNPFSG633SMJSWY3A_1663818150353_1799990306.mp4"];
+//       
+//       NSMutableString *commandStr = [NSMutableString new];
+//        
+//        [commandStr setString:@"ffmpeg -i http://agora-iot-cdn-na.sd-rtn.com/iot-one/IVFESSRUKNJTMNCJNVFDKLLNPFSG633SMJSWY3A_1663818150353_1799990306.m3u8?ts=1663832896&sign=2a1029538ba1cbeb7e993bbaaf514de7 -y "];
+//        [ commandStr appendString:path];
+//        
+//        [self ffmpegMain:commandStr completionBlock:^(int ec, NSString *msg) {
+//                    
+//        }];
+        
         ijkmp_global_init();
         ijkmp_global_set_inject_callback(ijkff_inject_callback);
 

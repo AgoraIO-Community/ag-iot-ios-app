@@ -789,7 +789,7 @@ class AWSMqtt{
             (curTopic,message) ->Void in
             let payload = message.messageData
             if let jsonDict = try? JSONSerialization.jsonObject(with: payload, options:.mutableContainers) as? [String: Any]{
-                log.i("mqtt topic recv: '\(curTopic)'")
+                log.i("mqtt topic rec: '\(curTopic)'")
                 log.v("           json: \(jsonDict)")
                 DispatchQueue.main.async {
                     if(!callback(topic,curTopic,jsonDict)){
@@ -816,9 +816,10 @@ class AWSMqtt{
         iotDataManager?.unsubscribeTopic(topic)
     }
     
-    func setDeviceStatus(account:String,productId:String,things_name:String,params:Dictionary<String,Any>,result: @escaping (Int, String)->Void){
+    func setDeviceStatus(account:String,things_name:String,params:Dictionary<String,Any>,result: @escaping (Int, String)->Void){
         let topic = "$aws/things/" + things_name + "/shadow/update"
-        let userControllerData = ["product_key":productId,"action_type":"1","action_type_name":"android","account":account]
+        //let userControllerData = ["product_key":productId,"action_type":"1","action_type_name":"android","account":account]
+        let userControllerData = ["action_type":"1","action_type_name":"android","account":account]
         var dict = params
         dict["userControllerData"] = userControllerData
         let desiredValue = ["desired":dict]

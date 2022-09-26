@@ -56,7 +56,7 @@ class DoorbellDownlaodManager: NSObject {
             return
         }
         
-        let commandStr:String = "ffmpeg -loglevel repeat+level+warning -i \(fileName) -y \(path)"
+        let commandStr:String = "ffmpeg -loglevel repeat+level+warning -i \(fileName) -y \(path.absoluteString)"
         
         //log.i("demo \(commandStr)")
         player.ffmpegMain(commandStr, completionBlock: {ec,msg in

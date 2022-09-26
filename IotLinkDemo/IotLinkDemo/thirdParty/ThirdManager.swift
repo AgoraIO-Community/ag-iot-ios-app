@@ -12,9 +12,9 @@ import Kingfisher
 
 class ThirdAccountManager{
     class api{
-    #if false //dev 环境
+    #if true //dev 环境
         static let http_3rdParty = "https://third-user.sh.agoralab.co/third-party"
-    #elseif true //prd 环境
+    #elseif false //prd 环境
         static let http_3rdParty = "https://third-user.sh3.agoralab.co/third-party"
     #endif
         static let authRegister = "/auth/register"

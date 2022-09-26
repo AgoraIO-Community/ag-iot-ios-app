@@ -25,7 +25,7 @@ class DeviceShareViewModel: NSObject {
                 cb(false , msg,nil)
                 return
             }
-            self.sdk?.deviceMgr.shareDeviceTo(deviceNumber:device.deviceNumber,userId:uid,type:type, result: { ec, msg in
+            self.sdk?.deviceMgr.shareDeviceTo(deviceId:device.deviceId,userId:uid,type:type, result: { ec, msg in
                 if(ec != ErrCode.XOK){
                     log.e("demo shareDeviceTo() fail for account:\(account),uid:\(uid)")
                 }
@@ -62,7 +62,7 @@ class DeviceShareViewModel: NSObject {
     
     //取消自己共享给别人的设备
     func cancelShare(device:IotDevice,cb:@escaping(Bool,String,[DeviceCancelable]?)->Void){
-        sdk?.deviceMgr.shareCancelable(deviceNumber:device.deviceNumber,result: { ec, msg,deviceCancelable in
+        sdk?.deviceMgr.shareCancelable(deviceId:device.deviceId,result: { ec, msg,deviceCancelable in
             if(ec != ErrCode.XOK){
                 log.e("demo cancelShare() fail for device:\(device.deviceId)")
             }
@@ -75,7 +75,7 @@ class DeviceShareViewModel: NSObject {
     
     //设备所有者解除分享权限 同时发送消息给被分享者
     func removeMember(deviceId:String,userId:String,cb:@escaping(Bool,String)->Void){
-        sdk?.deviceMgr.shareRemoveMember(deviceNumber:deviceId,userId:userId,result: { ec, msg in
+        sdk?.deviceMgr.shareRemoveMember(deviceId:deviceId,userId:userId,result: { ec, msg in
             if(ec != ErrCode.XOK){
                 log.e("demo removeMember() fail for device:\(deviceId)")
             }

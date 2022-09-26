@@ -50,7 +50,7 @@ public class Logger: NSObject {
     public var showThread: Bool = false
     
     // MARK: - Init
-    private let isolationQueue = DispatchQueue(label: "com.crafttang.isolation", qos: .background, attributes: .concurrent)
+    private let isolationQueue = DispatchQueue(label: "com.crafttang.isolation", qos: .background)
     private let serialQueue = DispatchQueue(label: "com.crafttang.swiftylog")
     private let logSubdiretory = FileManager.documentDirectoryURL.appendingPathComponent(fileExtension)
 

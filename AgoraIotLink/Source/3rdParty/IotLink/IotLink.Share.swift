@@ -8,9 +8,9 @@ import Foundation
 import Alamofire
 
 extension IotLink{
-    public func shareToUser(token:String,deviceNumber:String,userId:String,type:String,rsp:@escaping(Int,String)->Void){
+    public func shareToUser(token:String,deviceId:String,userId:String,type:String,rsp:@escaping(Int,String)->Void){
         let header : HTTPHeaders = ["Content-Type":"text/html; charset=utf-8", "token":token]
-        let params:Dictionary = ["deviceId":deviceNumber,"userId":userId,"type":type]
+        let params:Dictionary = ["mac":deviceId,"userId":userId,"type":type]
         let url = http + api.ShareToUser
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: header)
             .validate()
@@ -20,7 +20,7 @@ extension IotLink{
                     DispatchQueue.main.async {
                         var ec = ErrCode.XOK
                         if(value.code != 0){
-                            log.e("gw shareToUser \(url) fail,\(deviceNumber) for \(userId), detail: \(value.tip)(\(value.code)) ")
+                            log.e("gw shareToUser \(url) fail,\(deviceId) for \(userId), detail: \(value.tip)(\(value.code)) ")
                         }
                         else{
                             log.i("gw shareToUser: \(value.tip)(\(value.code))")
@@ -229,9 +229,6 @@ extension IotLink{
             let uType:String
             let updateTime:UInt64
         }
-        /*
-         {"code":0,"info":[{"appuserId":"686044235892076544","connect":false,"createTime":1654506410562,"deviceId":"689613094541373440","deviceNickname":"Ag给我的","email":"goooon@126.com","mac":"IVFES3LNGY2G2NRVIVBU63BVFU3DQOBYHEYDGMRVHA4DMMRT","nickName":"goon","productId":"684391604434317312","productKey":"EJImm64m65ECOl5","sharer":"686044235892076544","uType":"2","updateTime":0},{"appuserId":"693984974375477248","connect":false,"createTime":1654605588469,"deviceId":"689613094541373440","deviceNickname":"sdasd","mac":"IVFES3LNGY2G2NRVIVBU63BVFU3DQOBYHEYDGMRVHA4DMMRT","nickName":"ddae","productId":"684391604434317312","productKey":"EJImm64m65ECOl5","sharer":"693984974375477248","uType":"3","updateTime":0}],"tip":"响应成功"}
-         */
         struct Rsp:Decodable{
             let code:Int
             let tip:String
@@ -239,9 +236,9 @@ extension IotLink{
         }
     }
     
-    public func shareCancelable(token:String,deviceNumber:String,rsp:@escaping(Int,String,[DeviceCancelable]?)->Void){
+    public func shareCancelable(token:String,deviceId:String,rsp:@escaping(Int,String,[DeviceCancelable]?)->Void){
         let header : HTTPHeaders = ["Content-Type":"text/html; charset=utf-8", "token":token]
-        let params:[String:String] = ["deviceId":deviceNumber]
+        let params:[String:String] = ["mac":deviceId]
         let url = http + api.ShareCancel
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: header)
             .validate()
@@ -252,7 +249,7 @@ extension IotLink{
                         var ec = ErrCode.XOK
                         var devsCancel:[DeviceCancelable]? = nil
                         if(value.code != 0 || value.info == nil){
-                            log.e("gw shareCancelable \(url) fail for \(deviceNumber) detail: \(value.tip)(\(value.code)) ")
+                            log.e("gw shareCancelable \(url) fail for \(deviceId) detail: \(value.tip)(\(value.code)) ")
                         }
                         else{
                             log.i("gw shareCancelable: \(value.tip)(\(value.code))")
@@ -283,7 +280,7 @@ extension IotLink{
                         }
                         else{
                             if(value.code != 0){
-                                log.e("gw shareCancelable failed: for \(deviceNumber) \(value.tip)(\(value.code))")
+                                log.e("gw shareCancelable failed: for \(deviceId) \(value.tip)(\(value.code))")
                                 ec = ErrCode.XERR_UNKNOWN
                             }
                             rsp(ec,value.tip,devsCancel)
@@ -291,7 +288,7 @@ extension IotLink{
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {
-                        log.e("gw shareCancelable \(url) fail for \(deviceNumber) detail: \(error) ")
+                        log.e("gw shareCancelable \(url) fail for \(deviceId) detail: \(error) ")
                         rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
                     }
                 }
@@ -311,9 +308,9 @@ extension IotLink{
     }
     
     
-    public func shareRemove(token:String,deviceNumber:String,userId:String,rsp:@escaping(Int,String)->Void){
+    public func shareRemove(token:String,deviceId:String,userId:String,rsp:@escaping(Int,String)->Void){
         let header : HTTPHeaders = ["Content-Type":"text/html; charset=utf-8", "token":token]
-        let params:[String:String] = ["deviceId":deviceNumber,"userId":userId]
+        let params:[String:String] = ["mac":deviceId,"userId":userId]
         let url = http + api.ShareRemove
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: header)
             .validate()
@@ -323,7 +320,7 @@ extension IotLink{
                     DispatchQueue.main.async {
                         var ec = ErrCode.XOK
                         if(value.code != 0){
-                            log.e("gw shareRemove \(url) fail for \(deviceNumber), detail: \(value.tip)(\(value.code)) ")
+                            log.e("gw shareRemove \(url) fail for \(deviceId), detail: \(value.tip)(\(value.code)) ")
                         }
                         else{
                             log.i("gw shareRemove: \(value.tip)(\(value.code))")
@@ -341,7 +338,7 @@ extension IotLink{
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {
-                        log.e("gw shareRemove \(url) fail for \(deviceNumber), detail: \(error) ")
+                        log.e("gw shareRemove \(url) fail for \(deviceId), detail: \(error) ")
                         rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
                     }
                 }

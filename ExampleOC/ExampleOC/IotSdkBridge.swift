@@ -70,6 +70,10 @@ public class CallkitManager : NSObject,ICallkitMgr{
         return mgr.setAudioEffect(effectId: effectId, result: result)
     }
     
+    @objc public func getNetworkStatus() -> RtcNetworkStatus {
+        return mgr.getNetworkStatus()
+    }
+    
     public init(mgr:ICallkitMgr) {
         self.mgr = mgr
     }
@@ -81,12 +85,12 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
     
     
     
-    @objc public func sendMessageBegin(device: IotDevice, result: @escaping (Int, String) -> Void, statusUpdated: @escaping (MessageChannelStatus, String, Data?) -> Void) {
-        return mgr.sendMessageBegin(device: device, result: result, statusUpdated: statusUpdated)
+    @objc public func sendMessageBegin(deviceId: String, result: @escaping (Int, String) -> Void, statusUpdated: @escaping (MessageChannelStatus, String, Data?) -> Void) {
+        return mgr.sendMessageBegin(deviceId: deviceId, result: result, statusUpdated: statusUpdated)
     }
     
-    @objc public func otaGetInfo(device: IotDevice, result: @escaping (Int, String, FirmwareInfo?) -> Void) {
-        return mgr.otaGetInfo(device: device, result: result)
+    @objc public func otaGetInfo(deviceId: String, result: @escaping (Int, String, FirmwareInfo?) -> Void) {
+        return mgr.otaGetInfo(deviceId: deviceId, result: result)
     }
     
     @objc public func otaUpgrade(upgradeId: String, result: @escaping (Int, String) -> Void) {
@@ -122,20 +126,20 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
 //    }
     
     
-    @objc public func shareDeviceTo(deviceNumber: String, userId account: String, type: String, result: @escaping (Int, String) -> Void) {
-        return mgr.shareDeviceTo(deviceNumber: deviceNumber, userId: account, type: type, result: result)
+    @objc public func shareDeviceTo(deviceId: String, userId account: String, type: String, result: @escaping (Int, String) -> Void) {
+        return mgr.shareDeviceTo(deviceId: deviceId, userId: account, type: type, result: result)
     }
     
     @objc public func shareGetOwnDevices(result: @escaping (Int, String, [DeviceShare]?) -> Void) {
         return mgr.shareGetOwnDevices(result: result)
     }
     
-    @objc public func shareCancelable(deviceNumber: String, result: @escaping (Int, String, [DeviceCancelable]?) -> Void) {
-        return mgr.shareCancelable(deviceNumber: deviceNumber, result: result)
+    @objc public func shareCancelable(deviceId: String, result: @escaping (Int, String, [DeviceCancelable]?) -> Void) {
+        return mgr.shareCancelable(deviceId: deviceId, result: result)
     }
     
-    @objc public func shareRemoveMember(deviceNumber: String, userId: String, result: @escaping (Int, String) -> Void) {
-        return mgr.shareRemoveMember(deviceNumber: deviceNumber, userId: userId, result: result)
+    @objc public func shareRemoveMember(deviceId: String, userId: String, result: @escaping (Int, String) -> Void) {
+        return mgr.shareRemoveMember(deviceId: deviceId, userId: userId, result: result)
     }
     
 //    @objc public func sharePushAdd(deviceNumber: String, email: String, type: String, result: @escaping (Int, String) -> Void) {
@@ -155,8 +159,8 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
         return mgr.shareWithMe(result: result)
     }
     
-    @objc public func removeMember(deviceNumber: String, userId: String, result: @escaping (Int, String) -> Void) {
-        return mgr.shareRemoveMember(deviceNumber: deviceNumber, userId: userId, result: result)
+    @objc public func removeMember(deviceId: String, userId: String, result: @escaping (Int, String) -> Void) {
+        return mgr.shareRemoveMember(deviceId: deviceId, userId: userId, result: result)
     }
 
     
@@ -199,20 +203,20 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
         return mgr.queryAllDevices(result: result)
     }
     
-    @objc public func removeDevice(device: IotDevice, result: @escaping (Int, String) -> Void) {
-        return mgr.removeDevice(device: device, result: result)
+    @objc public func removeDevice(deviceId: String, result: @escaping (Int, String) -> Void) {
+        return mgr.removeDevice(deviceId: deviceId, result: result)
     }
     
-    @objc public func renameDevice(device: IotDevice, newName: String, result: @escaping (Int, String) -> Void) {
-        return mgr.renameDevice(device: device, newName: newName, result: result)
+    @objc public func renameDevice(deviceId: String, newName: String, result: @escaping (Int, String) -> Void) {
+        return mgr.renameDevice(deviceId: deviceId, newName: newName, result: result)
     }
     
-    @objc public func setDeviceProperty(device: IotDevice, properties: Dictionary<String, Any>, result: @escaping (Int, String) -> Void) {
-        return mgr.setDeviceProperty(device: device, properties: properties, result: result)
+    @objc public func setDeviceProperty(deviceId: String, properties: Dictionary<String, Any>, result: @escaping (Int, String) -> Void) {
+        return mgr.setDeviceProperty(deviceId: deviceId, properties: properties, result: result)
     }
     
-    @objc public func getDeviceProperty(device: IotDevice, result: @escaping (Int, String, Dictionary<String, Any>?,Dictionary<String, Any>?) -> Void) {
-        return mgr.getDeviceProperty(device: device, result: result)
+    @objc public func getDeviceProperty(deviceId: String, result: @escaping (Int, String, Dictionary<String, Any>?,Dictionary<String, Any>?) -> Void) {
+        return mgr.getDeviceProperty(deviceId: deviceId, result: result)
     }
     
     @objc public func getPropertyDescription(deviceId:String, productNumber: String, result: @escaping (Int, String, [Property]) -> Void) {

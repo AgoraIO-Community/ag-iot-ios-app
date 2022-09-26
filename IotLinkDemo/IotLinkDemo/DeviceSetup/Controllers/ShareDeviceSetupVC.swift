@@ -96,7 +96,7 @@ class ShareDeviceSetupVC: UIViewController {
         AGToolHUD.showNetWorkWait()
         guard let device = device else { return }
         
-        deviceShareVM.removeMember(deviceId: device.deviceNumber, userId:device.userId) { success, msg in
+        deviceShareVM.removeMember(deviceId: device.deviceId, userId:device.userId) { success, msg in
             AGToolHUD.disMiss()
             if success == true {
                 AGToolHUD.showInfo(info: "已移除分享")

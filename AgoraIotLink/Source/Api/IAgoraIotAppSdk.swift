@@ -25,31 +25,31 @@
  * @brief 初始化参数
  */
 public class InitParam : NSObject{
-    @objc public var rtcAppId: String = ""      ///appId
-    @objc public var logFilePath : String? = nil    ///< 设置日志路径
-    @objc public var publishAudio = true    ///< 通话时是否推流本地音频
-    @objc public var publishVideo = false    ///< 通话时是否推流本地视频
-    @objc public var subscribeAudio = true  ///< 通话时是否订阅对端音频
-    @objc public var subscribeVideo = true  ///< 通话时是否订阅对端视频
-    @objc public var ntfAppKey: String = "" ///<离线推送的appkey
-    @objc public var ntfApnsCertName:String = ""///<离线推送的AnpsCertName
-    @objc public var masterServerUrl:String = ""   ///< 主服务器后台地址
-    @objc public var slaveServerUrl:String = ""   ///< 副服务器后台地址
-    @objc public var projectId:String = ""  ///< 项目Id,作为查询产品列表的过滤条件
+    @objc public var rtcAppId: String = ""              // appId
+    @objc public var logFilePath : String? = nil        // 设置日志路径
+    @objc public var publishAudio = true                // 通话时是否推流本地音频
+    @objc public var publishVideo = false               // 通话时是否推流本地视频
+    @objc public var subscribeAudio = true              // 通话时是否订阅对端音频
+    @objc public var subscribeVideo = true              // 通话时是否订阅对端视频
+    @objc public var ntfAppKey: String = ""             // 离线推送的appkey
+    @objc public var ntfApnsCertName:String = ""        // 离线推送的AnpsCertName
+    @objc public var masterServerUrl:String = ""        // 主服务器后台地址
+    @objc public var slaveServerUrl:String = ""         // 副服务器后台地址
+    @objc public var projectId:String = ""              // 项目Id,作为查询产品列表的过滤条件
 }
 
 /*
  * @brief sdk状态
  */
 @objc public enum SdkStatus : Int{
-    case NotReady           //登录成功但还在初始化各个子模块中，处于未就绪状态
-    case InitCallFail       //登录成功后，初始化呼叫模块出错
-    case InitMqttFail       //登录成功后，初始化Mqtt模块出错
-    case InitPushFail       //登录成功后，初始化推送模块出错
-    case InitRtmFail        //登录成功后，初始化RTM模块出错
-    case AllReady           //登录成功后，初始化过程完毕，处于就绪状态
-    case Reconnected        //登录成功后，Mqtt重连成功
-    case Disconnected       //登录成功后，Mqtt断开连接
+    case NotReady                                       //登录成功但还在初始化各个子模块中，处于未就绪状态
+    case InitCallFail                                   //登录成功后，初始化呼叫模块出错
+    case InitMqttFail                                   //登录成功后，初始化Mqtt模块出错
+    case InitPushFail                                   //登录成功后，初始化推送模块出错
+    case InitRtmFail                                    //登录成功后，初始化RTM模块出错
+    case AllReady                                       //登录成功后，初始化过程完毕，处于就绪状态
+    case Reconnected                                    //登录成功后，Mqtt重连成功
+    case Disconnected                                   //登录成功后，Mqtt断开连接
 }
 
 /*
@@ -98,4 +98,4 @@ public protocol IAgoraIotAppSdk {
     var notificationMgr: INotificationMgr{get}
 }
 
-public let IAgoraIotSdkVersion = "1.1.0.4"
+public let IAgoraIotSdkVersion = "1.1.0.5"

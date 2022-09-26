@@ -114,7 +114,7 @@ class DoorBellManager: NSObject {
     
     func setDeviceProperty(_ dev:IotDevice,dict:Dictionary<String,Any>,cb:@escaping(Bool,String)->Void){
         log.i("------设置属性：\(dict)")
-        sdk?.deviceMgr.setDeviceProperty(device: dev, properties: dict, result: {
+        sdk?.deviceMgr.setDeviceProperty(deviceId: dev.deviceId, properties: dict, result: {
             (ec,msg) in
             log.i("demo app sync result:\(msg)(\(ec)))")
             cb(ec == ErrCode.XOK ? true : false,msg)
@@ -124,7 +124,7 @@ class DoorBellManager: NSObject {
     
     func getDeviceProperty(_ dev:IotDevice,cb:@escaping(Bool,String,Dictionary<String, Any>?,Dictionary<String, Any>?)->Void){
         
-        sdk?.deviceMgr.getDeviceProperty(device: dev, result: { ecCode, msg, desiredDic,reportedDic in
+        sdk?.deviceMgr.getDeviceProperty(deviceId: dev.deviceId, result: { ecCode, msg, desiredDic,reportedDic in
             if ecCode == 0 {
                 debugPrint("查询设备信息：\(msg)")
                 cb(true,msg,desiredDic,reportedDic)

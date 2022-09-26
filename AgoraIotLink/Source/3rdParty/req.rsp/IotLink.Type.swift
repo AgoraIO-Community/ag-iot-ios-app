@@ -481,7 +481,7 @@ extension IotLink{
             let pointType:UInt
             let productId:UInt64
             let readType:UInt
-            let remark:String
+            let remark:String?
             let status:UInt
             let tip:String?
         }
@@ -561,7 +561,7 @@ extension IotLink{
                 p.pointType = info.pointType
                 p.productId = info.productId
                 p.readType = info.readType
-                p.remark = info.remark
+                p.remark = info.remark ?? ""
                 p.status = info.status
                 p.createTime = info.createTime
                 p.createBy = info.createBy
