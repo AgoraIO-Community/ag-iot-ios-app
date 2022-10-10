@@ -126,7 +126,7 @@ class TopControTooBarView: UIView {
         label.textAlignment = .left
         label.adjustsFontSizeToFitWidth = true
         label.backgroundColor = UIColor.clear
-        label.text = ""
+        label.text = "通话人数:0"
         return label
     }()
 
@@ -189,7 +189,7 @@ class TopControTooBarView: UIView {
         }
         DoorBellManager.shared.mutePeerAudio(mute: isShutAudio) { success, msg in
             if success{
-                debugPrint("设置静音成功")
+                log.i("设置静音成功")
                 btn.isSelected = !btn.isSelected
             }
          }

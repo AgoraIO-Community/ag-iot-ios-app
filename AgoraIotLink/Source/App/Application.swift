@@ -12,7 +12,7 @@ open class Application{
     
     func initialize(initParam: InitParam, sdkStatus: @escaping(SdkStatus, String)->Void,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int {
         
-        if(initParam.logFilePath != ""){
+        if(initParam.logFilePath != nil){
             log.ouput = .debugerConsoleAndFile
         }
         
@@ -46,7 +46,7 @@ open class Application{
         _status?.setStatusHandler(handler: sdkStatus)
         _context.callbackFilter = callbackFilter
         
-        _context.call.setting.logFilePath = initParam.logFilePath
+        _context.call.setting.logFilePath = initParam.logFilePath ?? ""
         _context.call.setting.publishAudio = initParam.publishAudio
         _context.call.setting.publishVideo = false
         _context.call.setting.subscribeAudio = initParam.subscribeAudio

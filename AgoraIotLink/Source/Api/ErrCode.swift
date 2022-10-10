@@ -29,7 +29,7 @@ public class ErrCode : NSObject{
     // 0: 表示正确
     @objc public static let XERR_NONE = 0                               ///< 成功
     @objc public static let XOK = 0                                     ///< 成功
-    @objc public static let XERR_TOKEN_INVALID = -3                     ///< Token过期
+    //@objc public static let XERR_TOKEN_INVALID = -3                     ///< Token过期
     //
     // 通用错误码
     //
@@ -44,7 +44,7 @@ public class ErrCode : NSObject{
     @objc public static let XERR_BUFFER_UNDERFLOW = -10008              ///< 缓冲区中数据过多放不下
     @objc public static let XERR_TIMEOUT = -10009                       ///< 操作超时
     @objc public static let XERR_NETWORK = -10012                       ///< 网络错误
-    @objc public static let XERR_TOKEN_EXPIRED = -10015                 ///< Token过期
+    @objc public static let XERR_TOKEN_INVALID = -10015                 ///< Token无效
     @objc public static let XERR_API_RET_FAIL = -10016                  ///< 调用依赖api返回失败
     //
     // 账号相关错误

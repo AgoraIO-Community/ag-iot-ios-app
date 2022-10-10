@@ -147,6 +147,7 @@ class DoorbellContainerVC: UIViewController {
     }
     
     @objc func leftBtnDidClick(){
+        DoorBellManager.shared.hungUpAnswer { success, msg in }
         navigationController?.popViewController(animated: true)
     }
     

@@ -39,6 +39,7 @@ public class IotDevice : NSObject {
     @objc public var updateTime : UInt64                    //最后一次更新时间戳
     @objc public var productInfo : ProductInfo?             //产品信息
     @objc public var connected : Bool                       //是否在线
+    @objc public var alias : String                         //别名
     @objc public var props: Dictionary<String,Any>? = nil   //<设备属性>
     
     init(userId:String ,
@@ -52,9 +53,12 @@ public class IotDevice : NSObject {
          productNumber:String,
          
          sharer:String,
-         createTime:UInt64 = 0,
-         updateTime:UInt64 = 0,
-         connected:Bool){
+         createTime:UInt64,
+         updateTime:UInt64,
+         
+         alias:String,
+         connected:Bool,
+         props:Dictionary<String,String>?){
         self.userId = userId
         self.userType = userType
         self.deviceId = deviceId
@@ -69,6 +73,8 @@ public class IotDevice : NSObject {
         self.createTime = createTime
         self.updateTime = updateTime
         self.connected = connected
+        self.alias = alias
+        self.props = props
     }
 }
 

@@ -11,13 +11,14 @@ import AgoraIotLink
 class DoorbellAbilityViewModel: NSObject {
 
     var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
-    
+    var members:Int = 0
     //呼叫设备
     func wakeupDevice(_ dev:IotDevice,_ cb:@escaping(Bool,String)->Void,_ action:@escaping(ActionAck)->Void){
         guard let callMgr = sdk?.callkitMgr else{
             cb(false,"sdk 呼叫服务 未初始化")
             return
         }
+        members = 0
         callMgr.callDial(device:dev,attachMsg: "",result:{
             (ec,msg) in
             cb(ec == ErrCode.XOK ? true : false , msg)
@@ -49,6 +50,8 @@ class DoorbellAbilityViewModel: NSObject {
             action(s)
         },memberState:{s,a in
             log.i("demo app member:\(a) \(s.rawValue)")
+            if(s == .Enter){self.members = self.members - 1}
+            if(s == .Leave){self.members = self.members + 1}
         })
         
         //sdk?.callkitMgr.mutePeerVideo(mute: false, result: { state, msg in
@@ -63,6 +66,7 @@ class DoorbellAbilityViewModel: NSObject {
             cb(false,"sdk 呼叫服务 未初始化")
             return
         }
+        members = 0
         iotsdk.callkitMgr.callHangup(result: { ec, msg in
             log.i("demo app call Hangup result:\(msg)(\(ec))")
             cb(ec == ErrCode.XOK ? true : false,msg)
@@ -88,6 +92,8 @@ class DoorbellAbilityViewModel: NSObject {
         },
         memberState:{s,a in
              log.i("demo app member:\(a) \(s.rawValue)")
+             if(s == .Enter){self.members = self.members - 1}
+             if(s == .Leave){self.members = self.members + 1}
          })
         
     }

@@ -426,10 +426,9 @@ public protocol IDeviceMgr {
     func sendMessage(data:Data,description:String,result:@escaping(Int,String)->Void)
     /*
      * @brief 开始播放sd卡上的视频记录
-     * @param file             : 文件url
-     * @param uid              : 本地分配的uid
+     * @param channelName      : 频道名
      */
-    func startPlayback(file:String,uid:UInt,result:@escaping(Int,String)->Void,stateChanged:@escaping(PlaybackStatus,String)->Void)
+    func startPlayback(channelName:String,result:@escaping(Int,String)->Void,stateChanged:@escaping(PlaybackStatus,String)->Void)
     /*
      * @brief 将播放的视频和view关联
      * @param peerView         : 需要关联的UIView

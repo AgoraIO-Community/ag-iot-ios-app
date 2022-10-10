@@ -35,9 +35,11 @@ class AgoraLab {
         }.responseDecodable(of:UploadImage.Rsp.self){(dataRsp:AFDataResponse<UploadImage.Rsp>) in
             switch dataRsp.result{
             case .success(let ret):
-                log.i("al reqUploadIcon rsp:'\(ret.msg)(\(ret.code))'")
+                if(ret.code != 0){
+                    log.w("al reqUploadIcon rsp:'\(ret.msg)(\(ret.code))'")
+                }
                 if(ret.code == AgoraLab.tokenExpiredCode){
-                    rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+                    rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
                     return
                 }
                 rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_INVALID_PARAM,"上传图片:\(ret.msg)(\(ret.code))",ret.data)
@@ -52,6 +54,7 @@ class AgoraLab {
         let header = Header(traceId: traceId)
         let req = Call.Req(header: header, payload: reqPayload)
         let headers : HTTPHeaders = ["Authorization":token]
+        //let url = api.http_multicall + api.callV2
         let url = http + api.call
         log.i("al reqCall \(req)")
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
@@ -59,12 +62,14 @@ class AgoraLab {
             .responseDecodable(of:Call.Rsp.self){(dataRsp:AFDataResponse<Call.Rsp>) in
                 switch dataRsp.result{
                 case .success(let ret):
-                    log.i("al reqCall rsp:'\(ret.msg)(\(ret.code))'")
+                    if(ret.code != 0){
+                        log.w("al reqCall rsp:'\(ret.msg)(\(ret.code))' from:\(url)")
+                    }
                     if(ret.code == AgoraLab.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+                        rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
                         return
                     }
-                    var ec = ErrCode.XERR_CALLKIT_DIAL
+                    var ec = ErrCode.XERR_API_RET_FAIL
                     if(ret.code == 100001){
                         ec = ErrCode.XERR_CALLKIT_PEER_BUSY
                     }
@@ -80,6 +85,7 @@ class AgoraLab {
         let header = Header()
         let req = Answer.Req(header: header, payload: reqPayload)
         let act = reqPayload.answer == 0 ? "accept" : "hangup"
+        //let url = api.http_multicall + api.answerV2
         let url = http + api.answer
         log.i("al reqAnswer '\(act)' by local:\(reqPayload.localId) with: callee:\(reqPayload.calleeId) by caller:\(reqPayload.callerId) sess:\(reqPayload.sessionId)")
         let headers : HTTPHeaders = ["Authorization":token]
@@ -88,19 +94,19 @@ class AgoraLab {
             .responseDecodable(of:Answer.Rsp.self){(dataRsp:AFDataResponse<Answer.Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
-                    log.i("al reqAnswer '\(act)' rsp: '\(value.success)(\(value.code))'")
+                    if(value.code != 0){
+                        log.w("al reqAnswer '\(act)' fail \(value.msg)(\(value.code)) from \(url)")
+                    }
                     if(value.code == AgoraLab.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg,nil)
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.msg,nil)
                         return
                     }
                     let op = reqPayload.answer == 0 ? "接听电话操作:" : "挂断电话操作:"
                     let ret = value.success ? "成功" : "失败("+String(value.code)+")"
-                    if(!value.success){
-                        log.e("al reqAnswer fail \(value.msg)(\(value.code))")
-                    }
-                    rsp(value.success ? ErrCode.XOK : ErrCode.XERR_CALLKIT_ANSWER,  op + ret, value.data)
+                    
+                    rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,  op + ret, value.data)
                 case .failure(let error):
-                    log.e("al reqAnswer \(url) failed,detail:\(error) ")
+                    log.e("al reqAnswer '\(act)' \(url) failed,detail:\(error) ")
                     rsp(ErrCode.XERR_NETWORK,reqPayload.answer == 0 ? "接听电话操作失败" : "挂断电话失败",nil)
                 }
             }
@@ -135,9 +141,9 @@ class AgoraLab {
                 switch dataRsp.result{
                 case .success(let ret):
                     if(ret.code != 0){
-                        log.e("al reqRegister fail \(ret.msg)(\(ret.code))")
+                        log.w("al reqRegister fail \(ret.msg)(\(ret.code))")
                     }
-                    rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
+                    rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,ret.msg)
                 case .failure(let error):
                     log.e("al reqRegister \(url) fail for \(userName), detail: \(error) ")
                     rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -192,12 +198,14 @@ class AgoraLab {
                   .responseDecodable(of:AlertMessageRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertDelete \(req) return code \(value.code)")
-                            if(value.code == AgoraLab.tokenExpiredCode){
+                            if(value.code != 0){
+                                log.w("al reqAlertDelete \(req) return code \(value.code)")
+                            }
+                            if(value.code == AgoraLab.tokenInvalidCode){
                                 rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertDelete \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -216,12 +224,14 @@ class AgoraLab {
                   .responseDecodable(of:AlertMessageBatchRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertBatchDelete rsp \(value.msg)(\(value.code))")
-                            if(value.code == AgoraLab.tokenExpiredCode){
+                            if(value.code != 0){
+                                log.w("al reqAlertBatchDelete rsp \(value.msg)(\(value.code))")
+                            }
+                            if(value.code == AgoraLab.tokenInvalidCode){
                                 rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertBatchDelete \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -239,12 +249,14 @@ class AgoraLab {
                   .responseDecodable(of:AlertMessageRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertRead rsp \(value.msg)(\(value.code))")
-                            if(value.code == AgoraLab.tokenExpiredCode){
+                            if(value.code != 0){
+                                log.w("al reqAlertRead rsp \(value.msg)(\(value.code))")
+                            }
+                            if(value.code == AgoraLab.tokenInvalidCode){
                                 rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertRead \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -263,12 +275,14 @@ class AgoraLab {
                   .responseDecodable(of:AlertMessageBatchRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertBatchRead rsp:\(value.msg)(\(value.code))")
-                            if(value.code == AgoraLab.tokenExpiredCode){
+                            if(value.code != 0){
+                                log.w("al reqAlertBatchRead rsp:\(value.msg)(\(value.code))")
+                            }
+                            if(value.code == AgoraLab.tokenInvalidCode){
                                 rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertBatchRead \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -311,12 +325,15 @@ class AgoraLab {
                         else{
                             log.e("al reqAlertById rsp no data found")
                         }
-                        log.i("al reqAlertById rsp \(value.msg)(\(value.code)) with \(String(describing: alerts)) alerts")
-                        if(value.code == AgoraLab.tokenExpiredCode){
+                        
+                        if(value.code != 0){
+                            log.w("al reqAlertById rsp \(value.msg)(\(value.code)) with \(String(describing: alerts)) alerts")
+                        }
+                        if(value.code == AgoraLab.tokenInvalidCode){
                             rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg,nil)
                             return
                         }
-                        rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg,alerts)
+                        rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,alerts)
                     case .failure(let error):
                         log.e("al reqAlertById \(url) fail for \(req), detail: \(error) ")
                         rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
@@ -339,18 +356,20 @@ class AgoraLab {
         let req = AlertCount.Req(header,payload)
         let url = http + api.getAlertCount
         let headers : HTTPHeaders = ["Authorization":token]
-        log.i("al reqAlertCount \(req)")
+        log.v("al reqAlertCount \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertCount.Rsp.self){(dataRsp:AFDataResponse<AlertCount.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertCount rsp \(value.msg)(\(value.code)) with \(value.data) alerts")
-                            if(value.code == AgoraLab.tokenExpiredCode){
+                            if(value.code != 0){
+                                log.w("al reqAlertCount rsp \(value.msg)(\(value.code)) with \(value.data) alerts")
+                            }
+                            if(value.code == AgoraLab.tokenInvalidCode){
                                 rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg,0)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg,value.data)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,value.data)
                         case .failure(let error):
                             log.e("al reqAlertCount \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",0)
@@ -386,7 +405,7 @@ class AgoraLab {
         let req = AlertMessageGetPage.Req(header,payload!,pageInfo)
         let url = http + api.getPage
         let headers : HTTPHeaders = ["Authorization":token]
-        log.i("al reqAlert \(req)")
+        log.v("al reqAlert \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertMessageGetPage.Rsp.self){(dataRsp:AFDataResponse<AlertMessageGetPage.Rsp>) in
@@ -412,19 +431,21 @@ class AgoraLab {
                                         alert.changedBy = item.changedBy ?? 0
                                         alert.changedDate = item.changedDate ?? 0
                                         alerts.append(alert)
-                                        log.i("alert item \(item)")
+                                        log.v("alert item \(item)")
                                     }
                                 }
                             }
                             else{
                                 log.e("al reqAlert rsp no data found")
                             }
-                            log.i("al reqAlert rsp \(value.msg)(\(value.code)) with \(alerts.count) alerts")
-                            if(value.code == AgoraLab.tokenExpiredCode){
+                            if(value.code != 0){
+                                log.w("al reqAlert rsp \(value.msg)(\(value.code)) with \(alerts.count) alerts")
+                            }
+                            if(value.code == AgoraLab.tokenInvalidCode){
                                 rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg,nil)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg,alerts)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,alerts)
                         case .failure(let error):
                             log.e("al reqAlert \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
@@ -444,12 +465,14 @@ class AgoraLab {
                   .responseDecodable(of:AlertMessageAddV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageAddV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAddAlert rsp \(value.msg)(\(value.code))")
+                            if(value.code != 0){
+                                log.i("al reqAddAlert rsp \(value.msg)(\(value.code))")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAddAlert \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -461,17 +484,20 @@ class AgoraLab {
         let req = AlertMessageReadV2.Req(header,index)
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.singleReadV2
+        log.v("al reqAlertRead \(index)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertMessageReadV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageReadV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertRead rsp \(value.msg)(\(value.code))")
+                            if(value.code != 0){
+                                log.w("al reqAlertRead rsp \(value.msg)(\(value.code))")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertRead \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -484,18 +510,20 @@ class AgoraLab {
         let req = AlertMessageBatchReadV2.Req(header,indexes)
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.batchReadV2
-        log.i("al reqAlertBatchRead \(indexes)")
+        log.v("al reqAlertBatchRead \(indexes)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertMessageBatchReadV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchReadV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertBatchRead rsp:\(value.msg)(\(value.code))")
+                            if(value.code != 0){
+                                log.w("al reqAlertBatchRead rsp:\(value.msg)(\(value.code))")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertBatchRead \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -518,18 +546,20 @@ class AgoraLab {
         let req = AlertCountV2.Req(header,payload)
         let url = http + api.getAlertCountV2
         let headers : HTTPHeaders = ["Authorization":token]
-        log.i("al reqAlertCount \(req)")
+        log.v("al reqAlertCount \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertCountV2.Rsp.self){(dataRsp:AFDataResponse<AlertCountV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertCount rsp \(value.msg)(\(value.code)) with \(value.data) alerts")
+                            if(value.code != 0){
+                                log.w("al reqAlertCount rsp \(value.msg)(\(value.code)) with \(value.data) alerts")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg,0)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg,0)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg,value.data)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,value.data)
                         case .failure(let error):
                             log.e("al reqAlertCount \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",0)
@@ -541,7 +571,7 @@ class AgoraLab {
         let header = Header()
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.getByIdV2
-        log.i("al reqAlertById \(alertMessageId)")
+        log.v("al reqAlertById \(alertMessageId)")
         let req = AlertMessageGetById.Req(header,alertMessageId)
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
@@ -571,7 +601,7 @@ class AgoraLab {
         let req = AlertMessageGetPageV2.Req(header,payload,pageInfo)
         let url = http + api.getPageV2
         let headers : HTTPHeaders = ["Authorization":token]
-        log.i("al reqAlert \(req)")
+        log.v("al reqAlert \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertMessageGetPageV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageGetPageV2.Rsp>) in
@@ -590,17 +620,20 @@ class AgoraLab {
         let req = AlertMessageRead.Req(header,index)
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.deleteV2
+        log.v("al reqAlertDelete \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertMessageDeleteV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageDeleteV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertDelete \(req) return code \(value.code)")
+                            if(value.code != 0){
+                                log.w("al reqAlertDelete \(req) return code \(value.code)")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertDelete \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -613,18 +646,20 @@ class AgoraLab {
         let req = AlertMessageBatchRead.Req(header,indexes)
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.batchDeleteV2
-        log.i("al reqAlertBatchDelete \(indexes)")
+        log.v("al reqAlertBatchDelete \(indexes)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertMessageBatchDeleteV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchDeleteV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqAlertBatchDelete rsp \(value.msg)(\(value.code))")
+                            if(value.code != 0){
+                                log.w("al reqAlertBatchDelete rsp \(value.msg)(\(value.code))")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertBatchDelete \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -637,7 +672,7 @@ class AgoraLab {
         let req = AlertImageUrl.Req(header, alertImageId)
         let url = http + api.getImageUrl
         let headers : HTTPHeaders = ["Authorization":token]
-        log.i("al reqAlertImageUrl \(req)")
+        log.v("al reqAlertImageUrl \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertImageUrl.Rsp.self){(dataRsp:AFDataResponse<AlertImageUrl.Rsp>) in
@@ -657,7 +692,7 @@ class AgoraLab {
         let req = AlertVideoUrl.Req(header, payload)
         let url = http + api.getVideoUrl
         let headers : HTTPHeaders = ["Authorization":token]
-        log.i("al reqAlertVideoUrl \(req)")
+        log.v("al reqAlertVideoUrl \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertVideoUrl.Rsp.self){(dataRsp:AFDataResponse<AlertVideoUrl.Rsp>) in
@@ -677,17 +712,20 @@ class AgoraLab {
         let req = AlertMessageRead.Req(header,index)
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.sysReadMsg
+        log.v("al reqSysAlertRead \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
               .responseDecodable(of:AlertMessageRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqSysAlertRead rsp \(value.msg)(\(value.code))")
+                            if(value.code != 0){
+                                log.w("al reqSysAlertRead rsp \(value.msg)(\(value.code))")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqSysAlertRead \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -700,18 +738,20 @@ class AgoraLab {
         let req = AlertMessageBatchRead.Req(header,indexes)
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.sysReadMsgBatch
-        log.i("al reqSysAlertBatchRead \(indexes)")
+        log.v("al reqSysAlertBatchRead \(indexes)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:AlertMessageBatchRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqSysAlertBatchRead rsp:\(value.msg)(\(value.code))")
+                            if(value.code != 0){
+                                log.w("al reqSysAlertBatchRead rsp:\(value.msg)(\(value.code))")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqSysAlertBatchRead \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
@@ -734,7 +774,7 @@ class AgoraLab {
         let req = SysAlertMessageGetPage.Req(header,payload,pageInfo)
         let url = http + api.sysGetPage
         let headers : HTTPHeaders = ["Authorization":token]
-        log.i("al reqSysAlert \(req)")
+        log.v("al reqSysAlert \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:SysAlertMessageGetPage.Rsp.self){(dataRsp:AFDataResponse<SysAlertMessageGetPage.Rsp>) in
@@ -767,12 +807,14 @@ class AgoraLab {
                             else{
                                 log.e("al reqSysAlert rsp no data found")
                             }
-                            log.i("al reqSysAlert rsp \(value.msg)(\(value.code)) with \(alerts.count) alerts")
+                            if(value.code != 0){
+                                log.w("al reqSysAlert rsp \(value.msg)(\(value.code)) with \(alerts.count) alerts")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg,nil)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg,nil)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg,alerts)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,alerts)
                         case .failure(let error):
                             log.e("al reqSysAlert \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
@@ -784,7 +826,7 @@ class AgoraLab {
         let header = Header()
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.sysGetById
-        log.i("al reqSysAlertById \(alertMessageId)")
+        log.v("al reqSysAlertById \(alertMessageId)")
         let req = AlertMessageGetById.Req(header,alertMessageId)
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
@@ -815,12 +857,14 @@ class AgoraLab {
                             else{
                                 log.e("al reqSysAlertById rsp no data found")
                             }
-                            log.i("al reqSysAlertById rsp \(value.msg)(\(value.code)) with \(String(describing: alerts)) alerts")
+                            if(value.code != 0){
+                                log.w("al reqSysAlertById rsp \(value.msg)(\(value.code)) with \(String(describing: alerts)) alerts")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg,nil)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg,nil)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg,alerts)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,alerts)
                         case .failure(let error):
                             log.e("al reqSysAlertById \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
@@ -843,19 +887,21 @@ class AgoraLab {
         let req = SysAlertCount.Req(header,payload)
         
         let headers : HTTPHeaders = ["Authorization":token]
-        log.i("al reqSysAlertCount \(req)")
+        log.v("al reqSysAlertCount \(req)")
         let url = http + api.sysGetAlertCount
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:SysAlertCount.Rsp.self){(dataRsp:AFDataResponse<SysAlertCount.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.i("al reqSysAlertCount rsp \(value.msg)(\(value.code)) with \(value.data) alerts")
+                            if(value.code != 0){
+                                log.w("al reqSysAlertCount rsp \(value.msg)(\(value.code)) with \(value.data) alerts")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg,0)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg,0)
                                 return
                             }
-                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_ALARM_NOT_FOUND,value.msg,value.data)
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,value.data)
                         case .failure(let error):
                             log.e("al reqSysAlertCount \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",0)
@@ -868,16 +914,18 @@ class AgoraLab {
         let payload = ControlInfo.Payload(localVirtualNumb : localVirtualNumber, peerVirtualNumb: peerVirtualNumber)
         let req = ControlInfo.Req(header:header,payload: payload)
         let headers : HTTPHeaders = ["Authorization":token]
-        let url = api.http_lab + api.control
-        log.i("al reqControlInfo localVirtualNumb:\(localVirtualNumber) peerVirtualNumb:\(peerVirtualNumber)")
+        let url = http + api.control
+        log.v("al reqControlInfo localVirtualNumb:\(localVirtualNumber) peerVirtualNumb:\(peerVirtualNumber)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
                   .validate()
                   .responseDecodable(of:ControlInfo.Rsp.self){(dataRsp:AFDataResponse<ControlInfo.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
-                            log.level(value.code == 0 ? .info : .error, "al reqControlInfo rsp:\(value.msg)(\(value.code))")
+                            if(value.code != 0){
+                                log.w("al reqControlInfo rsp:\(value.msg)(\(value.code))")
+                            }
                             if(value.code == AgoraLab.tokenExpiredCode){
-                                rsp(ErrCode.XERR_TOKEN_EXPIRED,value.msg,nil)
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg,nil)
                                 return
                             }
                             var sess:RtmSession? = nil
@@ -890,6 +938,41 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,sess)
                         case .failure(let error):
                             log.e("al reqControlInfo \(url) fail for \(req), detail: \(error) ")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                        }
+                    }
+    }
+    
+    func reqPlayerToekn(_ token:String,_ appId:String,_ channelName:String,_ rsp:@escaping(Int,String,PlayerSession?)->Void){
+        let header = Header()
+        let payload = RtcToken.Payload(appId: appId, channelName: channelName)
+        let req = RtcToken.Req(header:header,payload: payload)
+        let headers : HTTPHeaders = ["Authorization":token]
+        let url = http + api.rtcToken
+        log.v("al reqRtcToekn appId:\(appId) channelName:\(channelName)")
+        AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
+                  .validate()
+                  .responseDecodable(of:RtcToken.Rsp.self){(dataRsp:AFDataResponse<RtcToken.Rsp>) in
+                        switch dataRsp.result{
+                        case .success(let value):
+                            if(value.code != 0){
+                                log.w("al reqRtcToekn rsp:\(value.msg)(\(value.code))")
+                            }
+                            if(value.code == AgoraLab.tokenExpiredCode){
+                                rsp(ErrCode.XERR_TOKEN_INVALID,value.msg,nil)
+                                return
+                            }
+                            var sess:PlayerSession? = nil
+                            if let data = value.data {
+                                sess = PlayerSession()
+                                //sess?.loginId = data.uid
+                                sess?.token = data.rtcToken
+                                sess?.channelName = data.channelName
+                                sess?.uid = data.uid
+                            }
+                            rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,sess)
+                        case .failure(let error):
+                            log.e("al reqRtcToekn \(url) fail for \(req), detail: \(error) ")
                             rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
                         }
                     }

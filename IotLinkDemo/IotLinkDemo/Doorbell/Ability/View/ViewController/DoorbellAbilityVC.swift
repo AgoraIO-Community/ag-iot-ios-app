@@ -312,7 +312,7 @@ extension DoorbellAbilityVC {
 
         DoorBellManager.shared.mutePeerAudio(mute: isShutAudio) { success, msg in
             if success{
-                debugPrint("设置静音成功")
+                log.i("设置静音成功")
             }
          }
     }
@@ -337,13 +337,13 @@ extension DoorbellAbilityVC{
             handUpDevice()
         }else if let count = viewControllers?.count, count > 0, viewControllers?[count-2] == containerVC {
             //push跳转到下个页面
-            shutDownAudio(true)
+            //shutDownAudio(true)
         }else if let count = viewControllers?.count, count > 0, viewControllers?[count-1] == containerVC {
             //present跳转到下个页面
-            shutDownAudio(true)
+            //shutDownAudio(true)
         }else{
             //返回上个页面
-            handUpDevice()
+            //handUpDevice()
         }
     }
 }

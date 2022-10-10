@@ -26,7 +26,7 @@
  */
 public class InitParam : NSObject{
     @objc public var rtcAppId: String = ""              // appId
-    @objc public var logFilePath : String? = nil        // 设置日志路径
+    @objc public var logFilePath : String? = ""         // 设置日志路径 ,nil:不保存到文件,"":保存到默认路径
     @objc public var publishAudio = true                // 通话时是否推流本地音频
     @objc public var publishVideo = false               // 通话时是否推流本地视频
     @objc public var subscribeAudio = true              // 通话时是否订阅对端音频
@@ -98,4 +98,4 @@ public protocol IAgoraIotAppSdk {
     var notificationMgr: INotificationMgr{get}
 }
 
-public let IAgoraIotSdkVersion = "1.1.0.5"
+public let IAgoraIotSdkVersion = "1.1.0.6"

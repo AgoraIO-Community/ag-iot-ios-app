@@ -161,11 +161,12 @@ class DoorBellManager: NSObject {
 
     //挂断来电
     func hungUpAnswer(cb:@escaping(Bool,String)->Void){
-        
-        sdk?.callkitMgr.callHangup(result: {ec,msg in
-            log.i("demo app callHangup ret:\(msg)(\(ec))")
-            cb(ec == ErrCode.XOK ? true : false , msg)
-        })
+        if(sdk?.callkitMgr.getNetworkStatus().isBusy == true){
+            sdk?.callkitMgr.callHangup(result: {ec,msg in
+                log.i("demo app callHangup ret:\(msg)(\(ec))")
+                cb(ec == ErrCode.XOK ? true : false , msg)
+            })
+        }
     }
     
     func unregister(account:String, _ cb:@escaping(Bool,String)->Void){

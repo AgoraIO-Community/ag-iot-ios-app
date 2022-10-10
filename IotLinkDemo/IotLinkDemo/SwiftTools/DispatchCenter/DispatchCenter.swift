@@ -127,10 +127,10 @@ public class DispatchCenter {
                 
         if let tabVC = rootVC as? UITabBarController,let navVC = tabVC.children[tabVC.selectedIndex] as? UINavigationController {
             
-            if let presentedVC = rootVC?.presentedViewController,presentedVC.isKind(of: UINavigationController.classForCoder())   {
-                //return
-                return presentedVC as? UINavigationController
-            }
+//            if let presentedVC = rootVC?.presentedViewController,presentedVC.isKind(of: UINavigationController.classForCoder())   {
+//                //return
+//                return presentedVC as? UINavigationController
+//            }
             
             //return
             return navVC

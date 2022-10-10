@@ -17,8 +17,6 @@ class RtmEngine : NSObject{
     private var config:Config
     private var state:Int = IDLED
     
-    //private var onDataArrived : (String,Data)->Void = {peer,data in log.i("rtm recv data from \(peer)")}
-    
     init(cfg:Config) {
         self.config = cfg
         self.state = RtmEngine.IDLED
@@ -42,7 +40,7 @@ class RtmEngine : NSObject{
         switch(e){
         case .ok:
             ec = ErrCode.XOK
-            msg = "登录成功"
+            msg = "登录成功,开始连接..."
         case .unknown:
             ec = ErrCode.XERR_UNKNOWN
         case .rejected:
@@ -75,9 +73,8 @@ class RtmEngine : NSObject{
             cb(.Fail,msg)
         }
         else{
-            log.i("rtm login result:\(msg)(\(e))")
+            log.i("rtm login status:\(msg)(\(e.rawValue)) ...")
             self._statusUpdated = statusUpdated
-            //cb(.Succ,msg)
             self._enterCallback = cb
         }
     }
@@ -286,7 +283,7 @@ extension RtmEngine : AgoraRtmDelegate{
             self._statusUpdated?(.Connecting,"connecting",nil)
         case .connected:
             if(self._enterCallback != nil){
-                self._enterCallback?(.Succ,"发送消息准备完成")
+                self._enterCallback?(.Succ,"连接完成,可以发送消息")
                 self._enterCallback = nil
             }
             else{
@@ -302,7 +299,7 @@ extension RtmEngine : AgoraRtmDelegate{
     }
     
     func rtmKit(_ kit: AgoraRtmKit, connectionStateChanged state: AgoraRtmConnectionState, reason: AgoraRtmConnectionChangeReason) {
-        log.i("rtm connectionStateChanged to \(state) reason \(reason)")
+        log.i("rtm connectionStateChanged to \(state.rawValue) reason \(reason.rawValue)")
         DispatchQueue.main.async {
             self.sendStateUpdated(state,reason)
         }

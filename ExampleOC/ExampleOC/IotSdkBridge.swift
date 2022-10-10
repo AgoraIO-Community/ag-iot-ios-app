@@ -83,8 +83,6 @@ public class CallkitManager : NSObject,ICallkitMgr{
 
 public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
     
-    
-    
     @objc public func sendMessageBegin(deviceId: String, result: @escaping (Int, String) -> Void, statusUpdated: @escaping (MessageChannelStatus, String, Data?) -> Void) {
         return mgr.sendMessageBegin(deviceId: deviceId, result: result, statusUpdated: statusUpdated)
     }
@@ -223,8 +221,8 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
         return mgr.getPropertyDescription(deviceId:deviceId, productNumber: productNumber, result: result)
     }
     
-    @objc public func startPlayback(file: String, uid: UInt, result: @escaping (Int, String) -> Void, stateChanged: @escaping (PlaybackStatus, String) -> Void) {
-        return mgr.startPlayback(file: file, uid: uid, result: result, stateChanged: stateChanged)
+    @objc public func startPlayback(channelName:String, result: @escaping (Int, String) -> Void, stateChanged: @escaping (PlaybackStatus, String) -> Void) {
+        return mgr.startPlayback(channelName: channelName, result: result, stateChanged: stateChanged)
     }
     
     @objc public func setPlaybackView(peerView: UIView?) -> Int {
@@ -251,8 +249,8 @@ public class AlarmManager : NSObject,IAlarmMgr{
         return mgr.queryAlarmImage(alertImageId: alertImageId, result: result)
     }
     
-    @objc public func queryAlarmVideoUrl(deviceId: String, beginTime: UInt64, result: @escaping (Int, String, String?) -> Void) {
-        return mgr.queryAlarmVideoUrl(deviceId: deviceId, beginTime: beginTime, result: result)
+    @objc public func queryAlarmVideoUrl(deviceId: String, tenantId:String, beginTime: UInt64, result: @escaping (Int, String, String?) -> Void) {
+        return mgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId:tenantId, beginTime: beginTime, result: result)
     }
     
     public func querySysCount(productId: String?, deviceIds: [String], messageType: Int?, status: Int?, createDateBegin: Date?, createDateEnd: Date?, result: @escaping (Int, String, UInt) -> Void) {

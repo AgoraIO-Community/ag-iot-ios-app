@@ -494,7 +494,7 @@ class DoorbellMessageVC: UIViewController {
                 return
             }
             
-            Utils.loadAlertVideoUrl(alert.deviceId, alert.beginTime) { ec, msg, url in
+            Utils.loadAlertVideoUrl(alert.deviceId,alert.tenantId, alert.beginTime) { ec, msg, url in
                 if(ec == ErrCode.XOK && url != nil){
                     let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
                     let options = IJKFFOptions.byDefault()

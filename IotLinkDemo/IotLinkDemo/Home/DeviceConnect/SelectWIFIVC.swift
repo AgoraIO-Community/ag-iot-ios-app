@@ -61,18 +61,19 @@ class SelectWIFIVC: UIViewController {
 //                }
 //            })
             
-//            let vc = BluefiResultVC()
-//            vc.wifiName = wifiName
-//            vc.password = password
-//            vc.productKey = self?.productKey
-//
-//            self?.navigationController?.pushViewController(vc, animated: true)
-            
-            let vc = CreateQRCodeVC()
+            //跳转蓝牙配网
+            let vc = BluefiResultVC()
             vc.wifiName = wifiName
             vc.password = password
             vc.productKey = self?.productKey
             self?.navigationController?.pushViewController(vc, animated: true)
+            
+            //跳转二维码扫描配网
+//            let vc = CreateQRCodeVC()
+//            vc.wifiName = wifiName
+//            vc.password = password
+//            vc.productKey = self?.productKey
+//            self?.navigationController?.pushViewController(vc, animated: true)
             
         }
         view.wifiTextFieldBeginEdit = {[weak self] in

@@ -9,8 +9,10 @@ import Foundation
 
 extension AgoraLab{
     class api{
-        //static let http_dev = "https://third-user.sh.agoralab.co/third-party"
-        static let http_lab = "http://iot-api-gateway.sh.agoralab.co:80/api"
+        //内部临时测试使用接口
+        //static let http_dev = "https://third-user.sh.agoralab.co/third-party" //for alert test
+        //static let http_lab = "http://iot-api-gateway.sh.agoralab.co:80/api"  //for rtm test
+        //static let http_multicall = "https://iot-api-gateway.sh.agoralab.co/api" //for multicall test
                                
         static let authLogin =          "/auth/login"
         static let oauthRegister =      "/oauth/register"
@@ -19,6 +21,9 @@ extension AgoraLab{
         static let control =            "/call-service/v1/control/start"
         static let call =               "/call-service/v1/call"
         static let answer =             "/call-service/v1/answer"
+        static let rtcToken =           "/call-service/v1/getRtcToken"
+        static let callV2 =             "/call-service/v2/call"
+        static let answerV2 =           "/call-service/v2/answer"
         
         static let add =                "/alert-center/alert-message/v1/add"
         static let delete =             "/alert-center/alert-message/v1/delete"
@@ -260,6 +265,34 @@ extension AgoraLab{
             let timestamp:UInt64
             let success:Bool
             let data:Bool
+        }
+    }
+    
+    class RtcToken{
+        struct Payload : Encodable{
+            let appId:String
+            let channelName:String
+            init(appId:String,channelName:String){
+                self.appId = appId
+                self.channelName = channelName
+            }
+        }
+        struct Req : Encodable{
+            let header : Header
+            let payload : Payload
+        }
+        struct Data : Decodable{
+            let rtcToken : String
+            let channelName : String
+            let uid : UInt
+        }
+        
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Data?
         }
     }
     
@@ -551,7 +584,6 @@ extension AgoraLab{
         }
     }
     
-    //"{\"code\":0,\"msg\":\"SUCCESS\",\"timestamp\":1661764690540,\"data\":{\"videoRecordId\":1564177602837426177,\"type\":1,\"userId\":\"100000000000000000-722626478850592768\",\"productId\":\"EJImm64m65ECOl5\",\"deviceId\":\"IVFES3LNGY2G2NRVIVBU63BVFVJVKTS7KRJVIXZQGAZA\",\"beginTime\":5198233000,\"endTime\":5198293000,\"fileName\":\"iot-one/IVFES3LNGY2G2NRVIVBU63BVFVJVKTS7KRJVIXZQGAZA_5198232520_1976191482.m3u8\",\"bucket\":\"iot-file-bucket\",\"vodUrl\":\"http://agora-iot-cdn-cn.sd-rtn.com/iot-one/IVFES3LNGY2G2NRVIVBU63BVFVJVKTS7KRJVIXZQGAZA_5198232520_1976191482.m3u8?ts=1661768290&sign=cb69bd31257013c4b59e3b9a953a0528\",\"deleted\":false,\"createdBy\":1,\"createdTime\":1661763976000},\"success\":true}"
     class AlertVideoUrl{
         struct Payload : Encodable{
             let userId:String
@@ -925,12 +957,13 @@ extension AgoraLab{
     
     func handleRspGetAlarmByIdV2(_ ret:AlertMessageGetByIdV2.Rsp,_  rsp:@escaping (Int,String,IotAlarm?) -> Void){
         if(ret.code == AgoraLab.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+            log.w("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
+            rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
             return
         }
         
         if(ret.code != 0){
-            log.e("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
+            log.w("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
             return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
         }
         
@@ -954,17 +987,19 @@ extension AgoraLab{
         alert.createdDate = data.createdDate
         alert.changedBy = data.changedBy ?? 0
         alert.changedDate = data.changedDate ?? 0
+        alert.tenantId = data.tenantId
         rsp(ErrCode.XOK,ret.msg,alert)
     }
     
     func handleRspGetImageUrl(_ ret:AlertImageUrl.Rsp,_ rsp:@escaping (Int,String,String?)->Void){
         if(ret.code == AgoraLab.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+            log.w("al handleRspGetImageUrl fail \(ret.msg)(\(ret.code))")
+            rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
             return
         }
         
         if(ret.code != 0){
-            log.e("al handleRspGetImageUrl fail \(ret.msg)(\(ret.code))")
+            log.w("al handleRspGetImageUrl fail \(ret.msg)(\(ret.code))")
             return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
         }
         
@@ -978,17 +1013,18 @@ extension AgoraLab{
     
     func handleRspGetVideoUrl(_ ret:AlertVideoUrl.Rsp,_ rsp:@escaping (Int,String,String?)->Void){
         if(ret.code == AgoraLab.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+            log.w("al handleRspGetVideoUrl fail \(ret.msg)(\(ret.code))")
+            rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
             return
         }
         
         if(ret.code != 0){
-            log.e("al handleRspGetVideoUrl fail \(ret.msg)(\(ret.code))")
+            log.w("al handleRspGetVideoUrl fail \(ret.msg)(\(ret.code))")
             return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
         }
         
         guard let data = ret.data else{
-            log.e("al handleRspGetVideoUrl rsp no data found,the premission may be expired")
+            log.w("al handleRspGetVideoUrl rsp no data found,the premission may be expired")
             return rsp(ErrCode.XERR_UNKNOWN,"no data found",nil)
         }
         
@@ -997,12 +1033,13 @@ extension AgoraLab{
     
     func handleRspGetAlarmPageV2(_ ret:AlertMessageGetPageV2.Rsp,_ rsp:@escaping (Int,String,[IotAlarm]?)->Void){
         if(ret.code == AgoraLab.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.msg,nil)
+            log.w("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
+            rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
             return
         }
         
         if(ret.code != 0){
-            log.e("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
+            log.w("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
             return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
         }
         
@@ -1039,35 +1076,35 @@ extension AgoraLab{
             alert.changedDate = item.changedDate ?? 0
             alert.imageId = item.imageId ?? ""
             alerts.append(alert)
-            log.i("alert item \(item)")
+            log.v("alert item \(item)")
         }
         rsp(ErrCode.XOK,ret.msg,alerts)
     }
     
     func handleRspLogin(_ ret:Login.Rsp,_ rsp:@escaping (Int,String,LoginRspData?)->Void){
         if(ret.code != 0){
-            log.e("al handleRspLogin fail \(ret.msg)(\(ret.code))")
-            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+            log.w("al handleRspLogin fail \(ret.msg)(\(ret.code))")
+            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
         }
         guard let data = ret.data else{
             log.e("al handleRspLogin data is nil \(ret.msg)(\(ret.code))")
-            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
         }
         guard let lsToken = data.lsToken else {
             log.e("al handleRspLogin lsToken is nil \(ret.msg)(\(ret.code))")
-            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
         }
         guard let gyToken = data.gyToken else {
             log.e("al handleRspLogin gyToken is nil \(ret.msg)(\(ret.code))")
-            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
         }
         guard let pool = gyToken.pool else {
             log.e("al handleRspLogin pool is nil \(ret.msg)(\(ret.code))")
-            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
         }
         guard let proof = gyToken.proof else {
             log.e("al handleRspLogin proof is nil \(ret.msg)(\(ret.code))")
-            return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
+            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
         }
         
         let ls = AgoraLabToken(tokenType: lsToken.token_type,

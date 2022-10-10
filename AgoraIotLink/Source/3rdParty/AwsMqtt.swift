@@ -16,7 +16,10 @@ fileprivate class AwsMqttTopicListener : NSObject{
     typealias CB = (String, Dictionary<String, Any>?)->Void
     var cb:CB?
     var timer:Timer?
-    init(_ cb:@escaping CB){
+//    init(_ cb:@escaping CB){
+//        self.cb = cb
+//    }
+    func setCallback(cb:@escaping CB){
         self.cb = cb
     }
     func setTimer(timer:Timer){
@@ -30,7 +33,7 @@ fileprivate class AwsMqttTopicListener : NSObject{
         timer = nil
     }
     func invalidate(){
-        timer!.invalidate()
+        timer?.invalidate()
         timer = nil
     }
 }
@@ -40,11 +43,13 @@ fileprivate class Listeners{
     func append(_ l:AwsMqttTopicListener){
         listeners.append(l)
     }
-    
+    func isEmpty()->Bool{
+        return listeners.isEmpty
+    }
     func invoke(topic:String,dict:Dictionary<String,Any>)->Bool{
         if(!self.listeners.isEmpty){
             self.listeners[0].invoke(topic: topic, dict: dict)
-            self.listeners.remove(at: 0)
+            //self.listeners.remove(at: 0)
             return true
         }
         return false
@@ -61,10 +66,51 @@ fileprivate class Listeners{
     }
 }
 
+class DeveloperAuthenticatedIdentityProviderInChina: AWSCognitoCredentialsProviderHelper {
+    var _token:String = ""
+    var _vendorIdentityId:String? = ""
+    
+    override func token() -> AWSTask<NSString> {
+        return AWSTask<NSString>(result: self._token as NSString )
+    }
+    
+    override var identityProviderName:String{get{
+            return "cognito-identity.cn-north-1.amazonaws.com.cn";
+        }
+    }
+//    override func logins () -> AWSTask<NSDictionary> {
+//        let tokens : NSDictionary = ["cognito-identity.amazonaws.com": self._token]
+//        let t = tokens as NSDictionary
+//        return AWSTask<NSDictionary>(result: t)
+//    }
+//    override var identityProviderName: String{
+//        return self._identityProviderName
+//    }
+    override func getIdentityId() -> AWSTask<NSString> {
+        return AWSTask<NSString>(result: self._vendorIdentityId as NSString?)
+    }
+//    override var identityPoolId: String{
+//        get{return self.identityPoolId}
+//    }
+    public var vendorIdentityId: String?{
+        get{
+            return _vendorIdentityId
+        }
+        set{
+            _vendorIdentityId = newValue
+        }
+    }
+
+    var stoken:String{
+        set{_token = newValue}
+        get{return _token}
+    }
+}
+
 // this custom class is dedicated for getting getting aws dev auth identity credentials
 class DeveloperAuthenticatedIdentityProvider: AWSCognitoCredentialsProviderHelper {
     var _token:String = ""
-//    var _identityId:String? = ""
+    var _vendorIdentityId:String? = ""
 //    var _identityProviderName:String = "iotlink"
     //var _identityPoolId:String
 //    init(identityId:String, regionType: AWSRegionType, identityPoolId: String, useEnhancedFlow: Bool, identityProviderManager: AWSIdentityProviderManager?) {
@@ -77,10 +123,10 @@ class DeveloperAuthenticatedIdentityProvider: AWSCognitoCredentialsProviderHelpe
         return AWSTask<NSString>(result: self._token as NSString )
     }
     
-    override var identityProviderName:String{get{
-        return "cognito-identity.cn-north-1.amazonaws.com.cn";
-    }
-    }
+//    override var identityProviderName:String{get{
+//        return "cognito-identity.us-west-2.amazonaws.com"//cognito-identity.cn-north-1.amazonaws.com.cn";
+//    }
+//    }
 //    override func logins () -> AWSTask<NSDictionary> {
 //        let tokens : NSDictionary = ["cognito-identity.amazonaws.com": self._token]
 //        let t = tokens as NSDictionary
@@ -90,18 +136,28 @@ class DeveloperAuthenticatedIdentityProvider: AWSCognitoCredentialsProviderHelpe
 //        return self._identityProviderName
 //    }
     override func getIdentityId() -> AWSTask<NSString> {
-        return AWSTask<NSString>(result: self.identityId as NSString?)
+        return AWSTask<NSString>(result: self._vendorIdentityId as NSString?)
     }
 //    override var identityPoolId: String{
 //        get{return self.identityPoolId}
 //    }
-//    override var identityId: String?{
-//        get{
-//        return _identityId
-//    }
-//        set{
-//            _identityId = newValue}
-//    }
+    public var vendorIdentityId: String?{
+        get{
+            return _vendorIdentityId
+        }
+        set{
+            _vendorIdentityId = newValue
+        }
+    }
+    
+    override var identityId: String?{
+        get{
+            return _vendorIdentityId
+        }
+        set{
+            //_identityId2 = newValue
+        }
+    }
     var stoken:String{
         set{_token = newValue}
         get{return _token}
@@ -110,8 +166,6 @@ class DeveloperAuthenticatedIdentityProvider: AWSCognitoCredentialsProviderHelpe
 //        return AWSTask<NSString>(result: self._identityId as NSString?)
 //    }
 }
-
-
 
 class AWSMqtt{
     var cfg:Config
@@ -337,6 +391,11 @@ class AWSMqtt{
         let coreVer = AWSiOSSDKVersion
         let regionType:AWSRegionType = region.aws_regionTypeValue()
         
+        var useChinaIdProvider = false
+        if(regionType == .CNNorth1 || regionType == .CNNorthWest1){
+            useChinaIdProvider = true
+        }
+        
         log.i("""
               mqtt aws init:
                       \t\t       thingName:         \(thingName)
@@ -350,6 +409,7 @@ class AWSMqtt{
                       \t\tAWSMobileClientVersionNumber: \(AWSMobileClientVersionNumber)
                       \t\tAWSAuthCoreVersionNumber:     \(AWSAuthCoreVersionNumber)
                       \t\tAWSCognitoIdentityProviderSDKVersion:\(AWSCognitoIdentityProviderSDKVersion)
+                      \t\tuseChinaIdProvider:       \(useChinaIdProvider)
               """)
         
         if(cfg.mqttLogLevel == 0){
@@ -357,12 +417,25 @@ class AWSMqtt{
             AWSDDLog.add(AWSDDTTYLogger.sharedInstance)
         }
         
-        let provider = DeveloperAuthenticatedIdentityProvider(regionType: regionType, identityPoolId: identityPoolId, useEnhancedFlow: true, identityProviderManager: nil)
-        provider.identityId = identityId
-        provider.stoken = token
-        let iotEndPoint = AWSEndpoint(urlString: "https://" + endPoint)
         
-        credentialsProvider = AWSCognitoCredentialsProvider(regionType:regionType ,identityProvider:provider)
+        if(useChinaIdProvider){
+            let provider = DeveloperAuthenticatedIdentityProviderInChina(regionType: regionType, identityPoolId: identityPoolId, useEnhancedFlow: true, identityProviderManager: nil)
+            
+            provider.vendorIdentityId = identityId
+            provider.stoken = token
+            
+            credentialsProvider = AWSCognitoCredentialsProvider(regionType:regionType ,identityProvider:provider)
+        }
+        else{
+            let provider = DeveloperAuthenticatedIdentityProvider(regionType: regionType, identityPoolId: identityPoolId, useEnhancedFlow: true, identityProviderManager: nil)
+            
+            provider.vendorIdentityId = identityId
+            provider.stoken = token
+            
+            credentialsProvider = AWSCognitoCredentialsProvider(regionType:regionType ,identityProvider:provider)
+        }
+        
+        let iotEndPoint = AWSEndpoint(urlString: "https://" + endPoint)
         
         let controlPlaneServiceConfiguration = AWSServiceConfiguration(region:regionType,credentialsProvider:credentialsProvider)
         AWSServiceManager.default().defaultServiceConfiguration = controlPlaneServiceConfiguration
@@ -843,38 +916,75 @@ class AWSMqtt{
         })
     }
     
-    private func addDeviceStatusListener(topicKey:String,result: @escaping (Int, String,Dictionary<String, Any>?,Dictionary<String, Any>?)->Void){
+    private func resetListener(accept:String,la:AwsMqttTopicListener,reject:String,lr:AwsMqttTopicListener){
+        la.invalidate()
+        lr.invalidate()
+        self.listeners[accept]?.remove(la)
+        self.listeners[reject]?.remove(lr)
+        
+        if(self.listeners[accept]?.isEmpty() == true){
+            self.listeners[accept] = nil
+        }
+        
+        if(self.listeners[reject]?.isEmpty() == true){
+            self.listeners[reject] = nil
+        }
+    }
+    
+    private func addDeviceStatusListener(topic:String,result: @escaping (Int, String,Dictionary<String, Any>?,Dictionary<String, Any>?)->Void){
+        let topicAccept = topic + "/accepted"
+        let topicReject = topic + "/rejected"
         DispatchQueue.main.async {
-            let listener = AwsMqttTopicListener({
-                (topic,dict) in
+            let lreject = AwsMqttTopicListener()
+            let laccept = AwsMqttTopicListener()
+            
+            lreject.setCallback(cb:{
+                [weak self](topic,dict) in
+                self?.resetListener(accept: topicAccept, la: laccept, reject: topicReject, lr: lreject)
+                result(ErrCode.XERR_INVALID_PARAM,"无属性表",nil,nil)
+            })
+            
+            laccept.setCallback(cb:{
+                [weak self](topic,dict) in
+                
+                self?.resetListener(accept: topicAccept, la: laccept, reject: topicReject, lr: lreject)
+                
                 guard let state = dict?["state"] as? [String:Any] else{
                     log.e("mqtt no 'state' found for \(topic)")
-                    result(ErrCode.XERR_INVALID_PARAM,"返回未知参数",nil,nil)
+                    result(ErrCode.XERR_INVALID_PARAM,"返回无效参数",nil,nil)
                     return
                 }
                 let reported = state["reported"] as? [String:Any]
                 let desired = state["desired"] as? [String:Any]
                 result(ErrCode.XOK,"收到返回状态",desired,reported)
-                self.listeners[topicKey] = nil
             })
             
-            let l = Listeners()
-            l.append(listener)
-            self.listeners[topicKey] = l
-            
-            let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false){tm in
-                result(ErrCode.XERR_TIMEOUT,"等待处理超时",nil,nil)
-                log.w("mqtt listen timeout for \(topicKey)")
-                self.listeners[topicKey] = nil
+            if(self.listeners[topicAccept]?.isEmpty() != false){
+                let la = Listeners()
+                self.listeners[topicAccept] = la
             }
-            listener.setTimer(timer: timer)
+            self.listeners[topicAccept]?.append(laccept)
+            
+            if(self.listeners[topicReject]?.isEmpty() != false){
+                let la = Listeners()
+                self.listeners[topicReject] = la
+            }
+            self.listeners[topicReject]?.append(lreject)
+            
+            let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false){
+                [weak self]tm in
+                result(ErrCode.XERR_TIMEOUT,"等待处理超时",nil,nil)
+                log.w("mqtt listen timeout for \(topicAccept)")
+                self?.resetListener(accept: topicAccept, la: laccept, reject: topicReject, lr: lreject)
+            }
+            laccept.setTimer(timer: timer)
         }
     }
     
     func getDeviceStatus(things_name:String,result: @escaping (Int, String,Dictionary<String, Any>?,Dictionary<String, Any>?)->Void){
         let topic = "$aws/things/" + things_name + "/shadow/get"
         
-        addDeviceStatusListener(topicKey:topic + "/accepted", result: result)
+        addDeviceStatusListener(topic:topic, result: result)
         
         log.i("mqtt topic pub: '\(topic)'")
         self.iotDataManager?.publishString("", onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce,ackCallback: {
@@ -882,30 +992,31 @@ class AWSMqtt{
         })
     }
     
-    func getClientDesired(clientId:String, result: @escaping (Int, String,Dictionary<String, Any>?)->Void){
-        let topic = "$aws/things/" + clientId + "/shadow/name/rtc/get"
-        DispatchQueue.main.async {
-            let listener = AwsMqttTopicListener({
-                (topic,dict) in
-                //todo
-            })
-            if let l = self.listeners[topic] {
-                l.append(listener)
-                let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false){tm in
-                    result(ErrCode.XERR_TIMEOUT,"等待处理超时",nil)
-                    l.remove(listener)
-                }
-                listener.setTimer(timer: timer)
-            }
-            else{
-                log.e("mqtt no listener for topic:'\(AWSMqtt.topic1)'")
-            }
-            
-            self.iotDataManager?.publishString("", onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce,ackCallback: {
-                log.i("mqtt publish ack for \(topic)")
-            })
-        }
-    }
+//    func getClientDesired(clientId:String, result: @escaping (Int, String,Dictionary<String, Any>?)->Void){
+//        let topic = "$aws/things/" + clientId + "/shadow/name/rtc/get"
+//        DispatchQueue.main.async {
+//            let listener = AwsMqttTopicListener()
+//            listener.setCallback(cb:{
+//                (topic,dict) in
+//                //todo
+//            })
+//            if let l = self.listeners[topic] {
+//                l.append(listener)
+//                let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false){tm in
+//                    result(ErrCode.XERR_TIMEOUT,"等待处理超时",nil)
+//                    l.remove(listener)
+//                }
+//                listener.setTimer(timer: timer)
+//            }
+//            else{
+//                log.e("mqtt no listener for topic:'\(AWSMqtt.topic1)'")
+//            }
+//
+//            self.iotDataManager?.publishString("", onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce,ackCallback: {
+//                log.i("mqtt publish ack for \(topic)")
+//            })
+//        }
+//    }
     
     struct StateValue{
         let reported:Any?

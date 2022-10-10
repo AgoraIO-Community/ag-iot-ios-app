@@ -23,6 +23,7 @@
  */
 
 public class RtcNetworkStatus : NSObject{
+    public var isBusy : Bool             = false //是否在工作中（从开始呼叫到结束呼叫）
     public var totalDuration : UInt      = 0
     public var txBytes : UInt            = 0
     public var rxBytes : UInt            = 0
@@ -52,7 +53,6 @@ public class RtcNetworkStatus : NSObject{
  * @brief 与对端通话时的产生的行为/事件
  */
 @objc public enum ActionAck:Int{
-    
     case StateInited                    //初始化呼叫状态
     case LocalHangup                    //本地挂断
     case LocalAnswer                    //本地接听
@@ -206,7 +206,7 @@ public protocol ICallkitMgr {
      */
     func capturePeerVideoFrame(result:@escaping(Int,String,UIImage?)->Void)
     /*
-    * @brief 获取当前网络状态
+     * @brief 获取当前网络状态
      * @return 返回RTC网络状态信息
      */
     func getNetworkStatus()->RtcNetworkStatus

@@ -12,15 +12,19 @@ import Kingfisher
 
 class ThirdAccountManager{
     class api{
-    #if true //dev 环境
+    #if true //dev 国内环境
         static let http_3rdParty = "https://third-user.sh.agoralab.co/third-party"
-    #elseif false //prd 环境
+    #elseif true //prd 国内环境
         static let http_3rdParty = "https://third-user.sh3.agoralab.co/third-party"
+    #elseif false //dev 国外
+        static let http_3rdParty = "https://third-user.la3.agoralab.co/third-party"
+    #elseif false //prd 国外
+        
     #endif
-        static let authRegister = "/auth/register"
-        static let authLogin = "/auth/login"
-        static let authUnRegister = "/auth/removeAccount"
-        static let getUid = "/auth/getUidByUsername"
+        static let authRegister =    "/auth/register"
+        static let authLogin =       "/auth/login"
+        static let authUnRegister =  "/auth/removeAccount"
+        static let getUid =          "/auth/getUidByUsername"
         
         struct Rsp:Decodable{
             let code:Int
@@ -208,6 +212,7 @@ class ThirdAccountManager{
         }
     }
 }
+
 class Utils{
     class private func loadAlertById(_ alertImageId:String,_ rsp:@escaping(Int,String,UIImage?)->Void){
         AgoraIotLink.iotsdk.alarmMgr.queryAlarmImage(alertImageId: alertImageId) { ec, msg, url in
@@ -243,18 +248,18 @@ class Utils{
                     rsp(ErrCode.XOK,"从cache加载图片",data.image)
                 }
                 else{
-                    log.i("第三方 retrieveImage is nil,al 从网络下载图片:\(alertImageId)")
+                    log.v("第三方 retrieveImage is nil,al 从网络下载图片:\(alertImageId)")
                     self.loadAlertById(alertImageId, rsp)
                 }
             case .failure(let err):
-                log.i("第三方 retrieveImage fail,al 从网络下载图片:\(err)")
+                log.e("第三方 retrieveImage fail,al 从网络下载图片:\(err)")
                 //log.e("al loadImage failed(\(err)):\(msg) for \(alertMessageId) url:\(String(describing: url))")
                 self.loadAlertById(alertImageId, rsp)
             }
         }
     }
     
-    class func loadAlertVideoUrl(_ deviceId:String,_ beginTime:UInt64,_ rsp:@escaping(Int,String,String?)->Void){
-        AgoraIotLink.iotsdk.alarmMgr.queryAlarmVideoUrl(deviceId: deviceId, beginTime: beginTime,result: rsp)
+    class func loadAlertVideoUrl(_ deviceId:String,_ tenantId:String, _ beginTime:UInt64,_ rsp:@escaping(Int,String,String?)->Void){
+        AgoraIotLink.iotsdk.alarmMgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId: tenantId, beginTime: beginTime,result: rsp)
     }
 }

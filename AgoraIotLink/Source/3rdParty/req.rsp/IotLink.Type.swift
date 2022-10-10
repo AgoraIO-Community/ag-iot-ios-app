@@ -42,7 +42,7 @@ extension IotLink{
     }
     
     static let appShadowProductKey = "EJIEEItkledlS46SI"
-    static let tokenExpiredCode = 1010 //10006
+    static let tokenInvalidCode = 1010 //10006
     //https://confluence.agoralab.co/pages/viewpage.action?pageId=940802349
     struct Rsp: Decodable{
             let code:Int
@@ -222,6 +222,8 @@ extension IotLink{
                 let deviceId:String
                 let connect:Bool
                 let mac:String
+                let alias:String
+                let props:Dictionary<String,String>?
                 let deviceNickname:String
                 
             }
@@ -267,18 +269,14 @@ extension IotLink{
         static let clientId = "100000000000000000"
     }
     func handleRspCert(_ certRsp:CertGet.Rsp,_ rsp:@escaping(Int,String,IotLinkSession.Cert?)->Void){
-        if(certRsp.code == IotLink.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,certRsp.tip,nil)
-            return
-        }
         if(certRsp.code != 0){
-            log.e("iotlink handleRspCert rsp error:\(certRsp.code),tip:\(certRsp.tip)")
-            rsp(ErrCode.XERR_ACCOUNT_LOGIN,certRsp.tip,nil)
+            log.w("iotlink handleRspCert rsp error:\(certRsp.code),tip:\(certRsp.tip)")
+            rsp(certRsp.code == IotLink.tokenInvalidCode ? ErrCode.XERR_TOKEN_INVALID : ErrCode.XERR_API_RET_FAIL,certRsp.tip,nil)
             return;
         }
         guard let info = certRsp.info else{
             log.e("iotlink handleRspCert rsp info is null")
-            rsp(ErrCode.XERR_ACCOUNT_LOGIN,certRsp.tip,nil)
+            rsp(ErrCode.XERR_INVALID_PARAM,certRsp.tip,nil)
             return
         }
         var cert = IotLinkSession.Cert()
@@ -291,12 +289,11 @@ extension IotLink{
         cert.region = info.region
         cert.deviceId = info.deviceId
         
-        log.i("iotlink thingName: \(cert.thingName)")
         rsp(ErrCode.XOK,certRsp.tip,cert)
     }
     func handleRspLogin(_ loginRsp:Login.Rsp,_ rsp: @escaping (Int,String,IotLinkSession?)->Void){
         if(loginRsp.code != 0){
-            log.e("iotlink handleRspLogin rsp error:\(loginRsp.code),tip:\(loginRsp.tip)")
+            log.w("iotlink handleRspLogin rsp error:\(loginRsp.code),tip:\(loginRsp.tip)")
             var ec = ErrCode.XERR_ACCOUNT_LOGIN
             if(loginRsp.code == 10002){
                 ec = ErrCode.XERR_ACCOUNT_NOT_EXIST
@@ -309,7 +306,7 @@ extension IotLink{
         }
         guard let info = loginRsp.info else{
             log.e("iotlink handleRspLogin rsp info is null")
-            rsp(ErrCode.XERR_ACCOUNT_LOGIN,loginRsp.tip,nil)
+            rsp(ErrCode.XERR_INVALID_PARAM,loginRsp.tip,nil)
             return
         }
         let sess = IotLinkSession()
@@ -323,40 +320,33 @@ extension IotLink{
         sess.pool_identityId = info.pool.identityId
         sess.pool_identityPoolId = info.pool.identityPoolId
         sess.region = info.region
-        
-        log.i("iotlink token: \(sess.iotlink_token)")
-        log.i("iotlink poolIdentifier: \(info.pool.identifier)")
 
         rsp(ErrCode.XOK,loginRsp.tip,sess)
     }
     func handleRspAccountInfo(_ infoRsp:UserInfoGet.Rsp,_ rsp: @escaping (Int,String,UserInfo?)->Void){
-        if(infoRsp.code == IotLink.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,infoRsp.tip,nil)
+        if(infoRsp.code != 0){
+            log.w("iotlink reqAccountInfo failed:\(infoRsp.tip)(\(infoRsp.code))")
+            rsp(infoRsp.code == IotLink.tokenInvalidCode ? ErrCode.XERR_TOKEN_INVALID : ErrCode.XERR_API_RET_FAIL,infoRsp.tip,nil)
+            return
         }
-        else{
-            var userInfo:UserInfo? = nil
-            if(infoRsp.code != 0){
-                log.e("iotlink reqAccountInfo failed:\(infoRsp.tip)(\(infoRsp.code))")
-            }
-            else if(infoRsp.info == nil){
-                log.e("iotlink reqAccountInfo value.info is nil")
-            }
-            else{
-                let info = infoRsp.info!
-                userInfo = UserInfo(name: info.name, avatar: info.avatar, sex: info.sex ?? 0, age: info.age ?? 0, birthday: info.birthday, height: info.height, weight: info.weight, countryId: info.countryId, country: info.country, provinceId: info.provinceId, province: info.province, cityId: info.cityId, city: info.city, areaId: info.areaId, area: info.area, address: info.address, background: info.background, email: info.email, phone: info.phone)
-            }
-            rsp(infoRsp.code == 0 ? ErrCode.XOK : ErrCode.XERR_INVALID_PARAM,infoRsp.tip,userInfo)
+        
+        var userInfo:UserInfo? = nil
+        guard let info = infoRsp.info else{
+            log.e("iotlink reqAccountInfo value.info is nil")
+            rsp(ErrCode.XERR_INVALID_PARAM,infoRsp.tip,userInfo)
+            return
         }
+        
+        userInfo = UserInfo(name: info.name, avatar: info.avatar, sex: info.sex ?? 0, age: info.age ?? 0, birthday: info.birthday, height: info.height, weight: info.weight, countryId: info.countryId, country: info.country, provinceId: info.provinceId, province: info.province, cityId: info.cityId, city: info.city, areaId: info.areaId, area: info.area, address: info.address, background: info.background, email: info.email, phone: info.phone)
+        
+        rsp(ErrCode.XOK,infoRsp.tip,userInfo)
+        
     }
     func handleRspProductList(_ prdListRsp:ProductList.Rsp,_ rsp:@escaping (Int,String,[ProductInfo])->Void){
         var prds:[ProductInfo] = []
-        if(prdListRsp.code == IotLink.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,prdListRsp.tip,[])
-            return
-        }
         if(prdListRsp.code != 0){
-            log.e("iotlink handleRspProductList rsp error:\(prdListRsp.code),tip:\(prdListRsp.tip)")
-            rsp(ErrCode.XERR_DEVMGR_QUEYR,prdListRsp.tip,prds)
+            log.w("iotlink handleRspProductList rsp error:\(prdListRsp.code),tip:\(prdListRsp.tip)")
+            rsp(prdListRsp.code == IotLink.tokenInvalidCode ? ErrCode.XERR_TOKEN_INVALID : ErrCode.XERR_API_RET_FAIL,prdListRsp.tip,[])
             return
         }
         if(prdListRsp.list != nil){
@@ -391,12 +381,13 @@ extension IotLink{
     }
     func handleRspDevList(_ devListRsp:DevList.Rsp,_ rsp:@escaping (Int,String,[IotDevice])->Void){
         var devs:[IotDevice] = []
-        if(devListRsp.code == IotLink.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,devListRsp.tip,devs)
+        if(devListRsp.code == IotLink.tokenInvalidCode){
+            log.w("iotlink handleRspDevList rsp error:\(devListRsp.code),tip:\(devListRsp.tip)")
+            rsp(ErrCode.XERR_TOKEN_INVALID,devListRsp.tip,devs)
             return
         }
         if(devListRsp.code != 0){
-            log.e("iotlink handleRspDevList rsp error:\(devListRsp.code),tip:\(devListRsp.tip)")
+            log.w("iotlink handleRspDevList rsp error:\(devListRsp.code),tip:\(devListRsp.tip)")
             rsp(ErrCode.XERR_DEVMGR_QUEYR,devListRsp.tip,devs)
             return
         }
@@ -437,8 +428,10 @@ extension IotLink{
                     sharer:item.sharer,
                     createTime:item.createTime,
                     updateTime:item.updateTime,
-
-                    connected: item.connect
+                
+                    alias: item.alias,
+                    connected: item.connect,
+                    props: item.props
                 ))
             }
         }
@@ -507,8 +500,8 @@ extension IotLink{
         }
     }
     func handleRspOtaStatus(_ ret:OtaStatus.Rsp,_ rsp:@escaping(Int,String,FirmwareStatus?)->Void){
-        if(ret.code == IotLink.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.tip,nil)
+        if(ret.code == IotLink.tokenInvalidCode){
+            rsp(ErrCode.XERR_TOKEN_INVALID,ret.tip,nil)
             return
         }
         if(ret.code != 0){
@@ -535,8 +528,8 @@ extension IotLink{
         rsp(ErrCode.XOK,ret.tip,fs)
     }
     func handleRspPointList(_ ret:PointList.Rsp,_ rsp:@escaping(Int,String,[Property])->Void){
-        if(ret.code == IotLink.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.tip,[])
+        if(ret.code == IotLink.tokenInvalidCode){
+            rsp(ErrCode.XERR_TOKEN_INVALID,ret.tip,[])
             return
         }
         if(ret.code != 0){
@@ -573,8 +566,8 @@ extension IotLink{
         rsp(ErrCode.XOK,ret.tip,prop)
     }
     func handleRspOtaInfo(_ ret:OtaInfo.Rsp,_ rsp:@escaping (Int,String,FirmwareInfo?)->Void){
-        if(ret.code == IotLink.tokenExpiredCode){
-            rsp(ErrCode.XERR_TOKEN_EXPIRED,ret.tip,nil)
+        if(ret.code == IotLink.tokenInvalidCode){
+            rsp(ErrCode.XERR_TOKEN_INVALID,ret.tip,nil)
             return
         }
         if(ret.code != 0){

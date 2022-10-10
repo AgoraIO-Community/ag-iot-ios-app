@@ -13,6 +13,7 @@ class PushNotifier : NSObject, UIApplicationDelegate{
     var registered:Bool = false
     
     private var state:Int = PushNotifier.NULLED
+    private var _completion:(TaskResult,String)->Void = {ret,msg in }
 
     static private let NULLED = 0
     static private let CREATED = 1
@@ -22,10 +23,11 @@ class PushNotifier : NSObject, UIApplicationDelegate{
         self.cfg = cfg
         self.state = PushNotifier.NULLED
     }
-    func create(completion:@escaping(Bool,String)->Void){
+    func create(completion:@escaping(TaskResult,String)->Void){
+        _completion = completion
         if(state != PushNotifier.NULLED){
             log.e("ntf state : \(state) error for create()")
-            completion(false,"推送模块状态不正确")
+            _completion(.Fail,"推送模块状态不正确")
             return
         }
         log.i("ntf try to create EMClient Ver\(EMPushVersionNumber)...")
@@ -51,18 +53,21 @@ class PushNotifier : NSObject, UIApplicationDelegate{
         EMPushClient.initializeSDK(with: options, delegate: self, completion: { eid, err in
             if(err != nil){
                 log.e("ntf initialize failed:\(String(describing: err!.errorDescription))")
-                completion(false,"")
+                self._completion(.Fail,"")
+                self._completion = {succ,msg in}
             }
             else{
                 self.state = PushNotifier.CREATED
                 if let eid = eid {
                     let ret = self.registerNotification()
                     log.i("ntf inititalize succ: eid:'\(eid)'")
-                    completion(ret,eid)
+                    self._completion(ret,eid)
+                    self._completion = {succ,msg in}
                 }
                 else{
                     log.e("EMPushClient eid is nil")
-                    completion(false,"")
+                    self._completion(.Fail,"")
+                    self._completion = {succ,msg in}
                 }
             }
         })
@@ -74,6 +79,10 @@ class PushNotifier : NSObject, UIApplicationDelegate{
         if(state != PushNotifier.CREATED){
             log.e("ntf state:\(state) error for destroy()")
         }
+        
+        _completion(.Abort,"ntf destroy() called");
+        _completion = {s,m in}
+        
         //var dele:EMClientDelegate! = self
         //EMClient.shared().removeDelegate(dele)
         //EMClient.shared().chatManager.remove(self)
@@ -82,7 +91,7 @@ class PushNotifier : NSObject, UIApplicationDelegate{
         state = PushNotifier.NULLED
     }
     
-    func registerNotification()->Bool{
+    func registerNotification()->TaskResult{
         NotificationCenter.default.addObserver(self,selector: #selector(enterForeGround),name:UIApplication.willEnterForegroundNotification,object: nil)
         NotificationCenter.default.addObserver(self,selector: #selector(enterBackGround),name:UIApplication.didEnterBackgroundNotification,object: nil)
         
@@ -125,7 +134,7 @@ class PushNotifier : NSObject, UIApplicationDelegate{
             app.registerUserNotificationSettings(settings)
             registered = true
         }
-        return true
+        return .Succ
     }
     
     func unregisterNotification(){
@@ -171,7 +180,7 @@ class PushNotifier : NSObject, UIApplicationDelegate{
         log.e("ntf bindDeviceToken Fail : \(String(describing: e.errorDescription))")
     }
     
-    func createAndLogin(appKey:String,cb:@escaping (Bool,String)->Void){
+    func createAndLogin(appKey:String,cb:@escaping (TaskResult,String)->Void){
         create(completion: cb)
     }
     

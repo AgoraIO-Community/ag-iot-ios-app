@@ -122,8 +122,12 @@ public protocol IAlarmMgr {
     func addAlarm(device:IotDevice,desc:String,result:@escaping(Int,String)->Void)
     
     func queryAlarmImage(alertImageId:String,result:@escaping(Int,String,String?)->Void)
-    
-    func queryAlarmVideoUrl(deviceId:String,beginTime:UInt64,result:@escaping(Int,String,String?)->Void)
+    /*
+     * @brief 查询告警信息的云录视频
+     * @deviceId         : 告警设备id
+     * @param result     : 调用该接口的返回值
+     */
+    func queryAlarmVideoUrl(deviceId:String,tenantId:String, beginTime:UInt64,result:@escaping(Int,String,String?)->Void)
     /*
      * @brief 根据id查询告警
      * @alarmMessageId   : 告警id

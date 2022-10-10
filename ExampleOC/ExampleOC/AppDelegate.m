@@ -26,7 +26,7 @@
 }
 
 -(void)filterResult:(int)errCode errMessage:(NSString*)errMessage{
-    if(errCode == ErrCode.XERR_TOKEN_EXPIRED){
+    if(errCode == ErrCode.XERR_INVALID_PARAM){
         NSLog(@"💙💜token过期,退出登录:%@",errMessage);
         [[IotSdk.shared getAccountMgr] logoutWithResult:^(NSInteger, NSString * _Nonnull) {
             
@@ -89,17 +89,17 @@
     // Override point for customization after application launch.
     
     InitParam* initParam = [[InitParam alloc] init];
-    initParam.rtcAppId = @"67*****************************50e";
+    initParam.rtcAppId = @"67f4672937984023bf378863a6c1450e";
     initParam.publishAudio = true;
     initParam.publishVideo = true;
     initParam.subscribeAudio = true;
     initParam.subscribeVideo = true;
-    initParam.ntfAppKey = @"81**********71";
+    initParam.ntfAppKey = @"81718082#964971";
     initParam.ntfApnsCertName = @"io.agora.iot.prod";
     initParam.masterServerUrl = @"https://app.agoralink-iot-cn.sd-rtn.com";
     initParam.slaveServerUrl = @"https://api.agora.io/agoralink/cn/api" ;//  for release
     //initParam.slaveServerUrl = @"https://iot-api-gateway.sh.agoralab.co/api"; //for debug
-    initParam.projectId =@"4O******tCF";
+    initParam.projectId =@"4OJG85tCF";
     
     [IotSdk.shared initializeWithInitParam:initParam sdkStatus:^(enum SdkStatus status, NSString * _Nonnull hint) {
         NSLog(@"💙💜当前状态:%@,%ld",hint,status);
@@ -127,7 +127,7 @@
     [[IotSdk.shared getAccountMgr] registerWithAccount:@"youraccount" password:@"88888888" result:^(NSInteger ec, NSString * _Nonnull msg) {
         if(ec != 0){
             NSLog(@"💙💜注册失败:%@,尝试直接用该账号登录",msg);
-            [[IotSdk.shared getAccountMgr] loginWithAccount:@"youraccount" password:@"88888888" result:^(NSInteger ec, NSString * _Nonnull msg) {
+            [[IotSdk.shared getAccountMgr] loginWithAccount:@"13438383880" password:@"gzh8888" result:^(NSInteger ec, NSString * _Nonnull msg) {
                 if(ec == ErrCode.XOK){
                     [self didLogin];
                 }

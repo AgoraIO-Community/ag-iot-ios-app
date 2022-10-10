@@ -241,36 +241,48 @@ class DoorbellControlVC: UIViewController {
             }
         }
     }
-    
+    func startToPlay(btn:UIButton){
+        let file = "saf"
+        AGToolHUD.showNetWorkWait()
+        AgoraIotLink.iotsdk.deviceMgr.startPlayback(channelName: file) { [weak self](ec, msg) in
+            if(ec == ErrCode.XOK){
+                AGToolHUD.disMiss()
+            }
+            else{
+                AGToolHUD.showfaild(info: msg, dismissBlock: {})
+            }
+        } stateChanged: { [weak self](s, info) in
+            switch(s){
+            case .LocalError:
+                AGToolHUD.showfaild(info: info, dismissBlock: {})
+            case .RemoteJoin:
+                log.i("demo ctrl state:\(info)(RemoteJoin)")
+            case .RemoteLeft:
+                btn.setTitle("播放sd卡", for: .normal)
+                log.i("demo ctrl state:\(info)(RemoteLeft)")
+            case .LocalReady:
+                btn.setTitle("停止播放", for: .normal)
+                log.i("demo ctrl state:\(info)(LocalReady)")
+            case .VideoReady:
+                AgoraIotLink.iotsdk.deviceMgr.setPlaybackView(peerView: self?.videoView)
+            }
+        }
+    }
     @objc func playBtnEvent(btn:UIButton){
         let text:String = playBtn.titleLabel?.text ?? "";
-        let file = "saf"
-        let uid:UInt = 1234
         
         if(text ==  "播放sd卡"){
-            AGToolHUD.showNetWorkWait()
-            AgoraIotLink.iotsdk.deviceMgr.startPlayback(file: file, uid: uid) { [weak self](ec, msg) in
-                if(ec == ErrCode.XOK){
-                    AGToolHUD.disMiss()
+            if(AgoraIotLink.iotsdk.callkitMgr.getNetworkStatus().isBusy){
+                AGAlertViewController.showTitle("提示", message: "正在通过中，需要停止通话才能播放sd卡，是否停止通话", cancelTitle: "取消", commitTitle: "确定") {[weak self] in
+                    AgoraIotLink.iotsdk.callkitMgr.callHangup { ec, msg in
+                        self?.startToPlay(btn: btn)
+                    }
                 }
-                else{
-                    AGToolHUD.showfaild(info: msg, dismissBlock: {})
+            cancelAction: {[weak self] in
                 }
-            } stateChanged: { [weak self](s, info) in
-                switch(s){
-                case .LocalError:
-                    AGToolHUD.showfaild(info: info, dismissBlock: {})
-                case .RemoteJoin:
-                    log.i("demo ctrl state:\(info)(RemoteJoin)")
-                case .RemoteLeft:
-                    btn.setTitle("播放sd卡", for: .normal)
-                    log.i("demo ctrl state:\(info)(RemoteLeft)")
-                case .LocalReady:
-                    btn.setTitle("停止播放", for: .normal)
-                    log.i("demo ctrl state:\(info)(LocalReady)")
-                case .VideoReady:
-                    AgoraIotLink.iotsdk.deviceMgr.setPlaybackView(peerView: self?.videoView)
-                }
+            }
+            else{
+                startToPlay(btn:btn)
             }
         }
         else{

@@ -128,11 +128,11 @@ class AlarmManager : IAlarmMgr{
         }
     }
     
-    func queryAlarmVideoUrl(deviceId:String, beginTime:UInt64,result:@escaping(Int,String,String?)->Void){
+    func queryAlarmVideoUrl(deviceId:String,tenantId:String, beginTime:UInt64,result:@escaping(Int,String,String?)->Void){
         DispatchQueue.main.async {
             let tenant = self.app.context.gyiot.session.cert.thingName
             let agToken = self.app.context.aglab.session.accessToken
-            let userId = self.app.context.virtualNumber
+            let userId = tenantId
             if(agToken == ""){
                 self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil,result)
                 return
@@ -147,12 +147,12 @@ class AlarmManager : IAlarmMgr{
         var ids:[String] = [String]()
         if(queryParam.deviceIds.count == 0){
             //note:try to walkaround by restoring deviceIds,because sever can't acquire device id information
-            if(app.context.devices == nil || self.app.context.devices?.count == 0){
+            if(self.app.context.devices.count == 0){
                 log.w("current device is nil")
                 self.asyncResultData(ErrCode.XOK,"没有查询到对应设备的告警",[] as [IotAlarm],result)
                 return
             }
-            for item in app.context.devices!{
+            for item in app.context.devices{
                 ids.append(item.deviceId)
             }
             queryParam.deviceIds = ids
@@ -172,7 +172,7 @@ class AlarmManager : IAlarmMgr{
     func querySysById(alertMessageId:UInt64, result:@escaping (Int,String,IotAlarm?) -> Void){
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.accessToken
-            if(self.app.context.devices == nil || self.app.context.devices?.count == 0){
+            if(self.app.context.devices.count == 0){
                 self.asyncResultData(ErrCode.XERR_UNSUPPORTED,"没有查询到对应设备的告警",nil as IotAlarm?,result)
                 return
             }
@@ -202,12 +202,12 @@ class AlarmManager : IAlarmMgr{
         var ids:[String] = deviceIds
         if(deviceIds.count == 0){
             //note:try to walkaround by restoring deviceIds,because sever can't acquire device id information
-            if(app.context.devices == nil || self.app.context.devices?.count == 0){
-                log.w("current device is nil")
+            if(app.context.devices.count == 0){
+                log.i("current devices count is 0")
                 self.asyncResultValue(ErrCode.XOK,"没有查询到对应设备的告警",0 as UInt,result)
                 return
             }
-            for item in app.context.devices!{
+            for item in app.context.devices{
                 ids.append(item.deviceId)
             }
         }

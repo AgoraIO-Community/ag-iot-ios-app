@@ -1,4 +1,4 @@
-//FsmPush created by guzhihe@agora.io on 2022/09/19 16:27
+//FsmPush created by guzhihe@agora.io on 2022/09/27 15:52
 import Foundation
 protocol IFsmPushListener{
     //srcState:initSucc
@@ -16,11 +16,11 @@ class FsmPush : Fsm {
         case initialize     
         case initSucc       
         case initFail       
+        case destroy        
         case logining       
+        case push_finalizing
         case ntfReady       
         case loginFail      
-        case destroy        
-        case push_finalizing
         case SCount         
     };
 
@@ -32,13 +32,13 @@ class FsmPush : Fsm {
         case INITPUSH       
         case INITSUCC       
         case INITFAIL       
-        case LOGINSUCC      
-        case LOGINFAIL      
         case FINIPUSH       
         case DESTROYED      
+        case LOGINSUCC      
+        case LOGINFAIL      
+        case PUSHIDLE       
         case PUSH_READY     
         case PUSH_ERROR     
-        case PUSHIDLE       
         case ECount         
     };
 
@@ -48,11 +48,11 @@ class FsmPush : Fsm {
         "initialize",
         "initSucc",
         "initFail",
+        "destroy",
         "logining",
+        "push_finalizing",
         "ntfReady",
         "loginFail",
-        "destroy",
-        "push_finalizing",
         "*"
     ];
 
@@ -64,13 +64,13 @@ class FsmPush : Fsm {
         "INITPUSH",
         "INITSUCC",
         "INITFAIL",
-        "LOGINSUCC",
-        "LOGINFAIL",
         "FINIPUSH",
         "DESTROYED",
+        "LOGINSUCC",
+        "LOGINFAIL",
+        "PUSHIDLE",
         "PUSH_READY",
         "PUSH_ERROR",
-        "PUSHIDLE",
         "*"
     ];
 
@@ -79,11 +79,11 @@ class FsmPush : Fsm {
     var FsmPush_P2_initialize:[Node] = Fsm.None
     var FsmPush_P3_initSucc:[Node] = Fsm.None
     var FsmPush_P4_initFail:[Node] = Fsm.None
-    var FsmPush_P5_logining:[Node] = Fsm.None
-    var FsmPush_P6_ntfReady:[Node] = Fsm.None
-    var FsmPush_P7_loginFail:[Node] = Fsm.None
-    var FsmPush_P8_destroy:[Node] = Fsm.None
-    var FsmPush_P9_push_finalizing:[Node] = Fsm.None
+    var FsmPush_P5_destroy:[Node] = Fsm.None
+    var FsmPush_P6_logining:[Node] = Fsm.None
+    var FsmPush_P7_push_finalizing:[Node] = Fsm.None
+    var FsmPush_P8_ntfReady:[Node] = Fsm.None
+    var FsmPush_P9_loginFail:[Node] = Fsm.None
 
 
     var _listener : IFsmPushListener? = nil
@@ -100,26 +100,26 @@ class FsmPush : Fsm {
         FsmPush_P1_idle = [
             Node(Fsm.FLAG_NONE,Event.INITPUSH.rawValue,State.initialize.rawValue,nil,{(e:Int)->Void in self._listener?.on_initialize(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmPush_P2_initialize = [
-            Node(Fsm.FLAG_NONE,Event.INITSUCC.rawValue,State.initSucc.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.INITFAIL.rawValue,State.initFail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
+            Node(Fsm.FLAG_NONE,Event.INITSUCC.rawValue,State.initSucc.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.INITFAIL.rawValue,State.initFail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.FINIPUSH.rawValue,State.destroy.rawValue,nil,{(e:Int)->Void in self._listener?.on_destroy(Event(rawValue:e)!)}),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmPush_P3_initSucc = [
             Node(Fsm.FLAG_RUN,Event.LOGIN.rawValue,State.logining.rawValue,{(s:Int)->Void in self._listener?.do_LOGIN(State(rawValue:s)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmPush_P4_initFail = [
             Node(Fsm.FLAG_RUN,Event.INITPUSHFAIL.rawValue,State.initSucc.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmPush_P5_logining = [
-            Node(Fsm.FLAG_NONE,Event.LOGINSUCC.rawValue,State.ntfReady.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOGINFAIL.rawValue,State.loginFail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmPush_P6_ntfReady = [
-            Node(Fsm.FLAG_NONE,Event.FINIPUSH.rawValue,State.destroy.rawValue,nil,{(e:Int)->Void in self._listener?.on_destroy(Event(rawValue:e)!)}),            Node(Fsm.FLAG_POST|Fsm.FLAG_FSM,Event.PUSH_READY.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmApp_PUSH_READY(Event(rawValue:e)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmPush_P7_loginFail = [
-            Node(Fsm.FLAG_POST|Fsm.FLAG_FSM,Event.PUSH_ERROR.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmApp_PUSH_ERROR(Event(rawValue:e)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmPush_P8_destroy = [
+        FsmPush_P5_destroy = [
             Node(Fsm.FLAG_NONE,Event.DESTROYED.rawValue,State.push_finalizing.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmPush_P9_push_finalizing = [
+        FsmPush_P6_logining = [
+            Node(Fsm.FLAG_NONE,Event.LOGINSUCC.rawValue,State.ntfReady.rawValue,nil,nil),            Node(Fsm.FLAG_NONE,Event.LOGINFAIL.rawValue,State.loginFail.rawValue,nil,nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
+        FsmPush_P7_push_finalizing = [
             Node(Fsm.FLAG_RUN,Event.FINIPUSH_SUCC.rawValue,State.idle.rawValue,nil,nil),            Node(Fsm.FLAG_POST|Fsm.FLAG_FSM,Event.PUSHIDLE.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmApp_PUSHIDLE(Event(rawValue:e)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
+        FsmPush_P8_ntfReady = [
+            Node(Fsm.FLAG_NONE,Event.FINIPUSH.rawValue,State.destroy.rawValue,nil,{(e:Int)->Void in self._listener?.on_destroy(Event(rawValue:e)!)}),            Node(Fsm.FLAG_POST|Fsm.FLAG_FSM,Event.PUSH_READY.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmApp_PUSH_READY(Event(rawValue:e)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
+        FsmPush_P9_loginFail = [
+            Node(Fsm.FLAG_POST|Fsm.FLAG_FSM,Event.PUSH_ERROR.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmApp_PUSH_ERROR(Event(rawValue:e)!)},nil),            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
 
         _diagram = [
             FsmPush_P0_FsmPush, FsmPush_P1_idle, FsmPush_P2_initialize, FsmPush_P3_initSucc,
-            FsmPush_P4_initFail, FsmPush_P5_logining, FsmPush_P6_ntfReady, FsmPush_P7_loginFail,
-            FsmPush_P8_destroy, FsmPush_P9_push_finalizing]
+            FsmPush_P4_initFail, FsmPush_P5_destroy, FsmPush_P6_logining, FsmPush_P7_push_finalizing,
+            FsmPush_P8_ntfReady, FsmPush_P9_loginFail]
 
     }
     //override
@@ -132,9 +132,9 @@ class FsmPush : Fsm {
         return super.trans(event.rawValue,act)
     }
     //trans
+    private func do_FsmApp_PUSHIDLE(_ e:Event)->Void{_FsmApp?.trans(FsmApp.Event.PUSHIDLE.rawValue)}
     private func do_FsmApp_PUSH_READY(_ e:Event)->Void{_FsmApp?.trans(FsmApp.Event.PUSH_READY.rawValue)}
     private func do_FsmApp_PUSH_ERROR(_ e:Event)->Void{_FsmApp?.trans(FsmApp.Event.PUSH_ERROR.rawValue)}
-    private func do_FsmApp_PUSHIDLE(_ e:Event)->Void{_FsmApp?.trans(FsmApp.Event.PUSHIDLE.rawValue)}
     //fsm
     private var _FsmApp:Fsm? = nil
 };

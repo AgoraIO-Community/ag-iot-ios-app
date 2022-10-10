@@ -21,13 +21,13 @@ extension AppDelegate{
         param.subscribeVideo = true
         param.subscribeAudio = true
         param.publishAudio = true
+        param.publishVideo = true
         
         param.ntfApnsCertName = AgoraIotConfig.ntfApnsCertName
         param.ntfAppKey = AgoraIotConfig.ntfAppKey
         param.masterServerUrl = AgoraIotConfig.masterServerUrl
         param.slaveServerUrl = AgoraIotConfig.slaveServerUrl
         param.projectId = AgoraIotConfig.projectId
-        
         
         if(ErrCode.XOK != iotsdk.initialize(initParam: param,sdkStatus: { sdkStatus, msg in
             if(sdkStatus == .AllReady){
@@ -37,7 +37,9 @@ extension AppDelegate{
             
             debugPrint("------\(msg)")
         }, callbackFilter:{ [weak self] ec, msg in
-            log.i("demo app recv api result \(msg)(\(ec))")
+            if(ec != ErrCode.XOK){
+                log.w("demo app recv api result \(msg)(\(ec))")
+            }
             self?.handelCommonErrorCode(ec)
             return (ec,msg)
         })){
@@ -134,7 +136,7 @@ extension AppDelegate {//处理通用错误码，如token失效
     //处理通用错误码
     func handelCommonErrorCode(_ errorCode : Int) {
         
-        if errorCode == ErrCode.XERR_TOKEN_EXPIRED {
+        if errorCode == ErrCode.XERR_TOKEN_INVALID {
             
             debugPrint("token失效，重新登陆")
             //如果不是处于登陆状态，直接返回

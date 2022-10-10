@@ -134,7 +134,8 @@ class CallkitManager : ICallkitMgr{
     }
     
     private func doCallAnswer(result:@escaping(Int,String)->Void,
-                              actionAck:@escaping(ActionAck)->Void){
+                              actionAck:@escaping(ActionAck)->Void,
+                              memberState:((MemberState,[UInt])->Void)?){
         let sessionId = app.context.call.session.sessionId
         if(sessionId == ""){
             log.e("call callAnswer session is empty")
@@ -145,6 +146,7 @@ class CallkitManager : ICallkitMgr{
         let caller = app.context.call.session.caller
         let callee = app.context.call.session.callee
         let localId = app.context.gyiot.session.cert.thingName
+        app.rule.trigger.member_state_watcher = memberState
         app.rule.trigger.remote_state_watcher = { s in
             actionAck(s)
         }
@@ -180,7 +182,7 @@ class CallkitManager : ICallkitMgr{
                     memberState:((MemberState,[UInt])->Void)?){
         log.i("call callAnswer")
         app.rule.trans(FsmCall.Event.LOCAL_ACCEPT,
-                       {self.doCallAnswer(result: {ec,msg in self.asyncResult(ec, msg, result)},actionAck: actionAck)},
+                       {self.doCallAnswer(result: {ec,msg in self.asyncResult(ec, msg, result)},actionAck: actionAck,memberState: memberState)},
                                           {self.asyncResult(ErrCode.XERR_BAD_STATE,"当前状态不正确",result)})
     }
     
@@ -275,7 +277,7 @@ class CallkitManager : ICallkitMgr{
         }
     }
 
-    private func doCallDial(deviceId:String,attachMsg:String,result:@escaping(Int,String)->Void,actionAck:@escaping(ActionAck)->Void){
+    private func doCallDial(deviceId:String,attachMsg:String,result:@escaping(Int,String)->Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?){
         let appId = app.config.appId
         app.context.call.session.caller = app.context.gyiot.session.cert.thingName//app.context.gran.session.pool_identityId
         app.context.call.session.callee = deviceId
@@ -285,6 +287,7 @@ class CallkitManager : ICallkitMgr{
         let req = AgoraLab.Call.Payload(callerId:caller,calleeIds: [callee],attachMsg: attachMsg,appId: appId)
         let traceId:String = app.context.call.session.traceId
         
+        app.rule.trigger.member_state_watcher = memberState
         app.rule.trigger.remote_state_watcher = { s in
             actionAck(s)
         }
@@ -446,7 +449,7 @@ class CallkitManager : ICallkitMgr{
     func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?) {
         let filter = self.app.context.callbackFilter
         app.rule.trans(FsmCall.Event.CALL,
-                       {self.doCallDial(deviceId: device.deviceId, attachMsg: attachMsg, result: {ec,msg in self.asyncResult(ec, msg, result)}, actionAck: actionAck)},
+                       {self.doCallDial(deviceId: device.deviceId, attachMsg: attachMsg, result: {ec,msg in self.asyncResult(ec, msg, result)}, actionAck: actionAck,memberState:memberState)},
                        {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
     }
     

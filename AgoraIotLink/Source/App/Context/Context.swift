@@ -31,7 +31,7 @@ class PlayerSetting{
     var audioType = "G722" //G722，G711
     var audioSampleRate = "16000"; //16000,8000
     
-    var logFilePath : String? = nil
+    var logFilePath = ""
     var publishAudio = false ///< 通话时是否推流本地音频
     var publishVideo = false ///< 通话时是否推流本地视频
     var subscribeAudio = true ///< 通话时是否订阅对端音频
@@ -51,6 +51,12 @@ class RtmSession{
         //self.loginId = ""
         self.peerVirtualNumber = ""
     }
+}
+
+class PlayerSession{
+    var token:String = ""
+    var channelName:String = ""
+    var uid:UInt = 0
 }
 
 class PushNtfSetting{
@@ -109,11 +115,11 @@ struct CallKitSetting{
     var frameRate = AgoraVideoFrameRate.fps15
     var bitRate = AgoraVideoBitrateStandard
     var orientationMode:AgoraVideoOutputOrientationMode = .adaptative
-    var renderMode:AgoraVideoRenderMode = .fit
+    var renderMode:AgoraVideoRenderMode = .adaptive
     var audioType = "G722" //G722，G711
     var audioSampleRate = "16000"; //16000,8000
     
-    var logFilePath : String? = nil
+    var logFilePath = ""
     var publishAudio = true ///< 通话时是否推流本地音频
     var publishVideo = false ///< 通话时是否推流本地视频
     var subscribeAudio = true ///< 通话时是否订阅对端音频
@@ -317,7 +323,7 @@ class Context{
     private var _rtm:RtmKitContext = RtmKitContext();
     private var _gran:IotLinkContext = IotLinkContext()
     private var _aglab:AgoraLabContext = AgoraLabContext()
-    private var _devices:[IotDevice]? = nil
+    private var _devices:[IotDevice] = []
     private var _products:[ProductInfo]? = nil
     
     private var _callBackFilter:(Int,String)->(Int,String) = {ec,msg in return (ec,msg)}
@@ -328,7 +334,7 @@ class Context{
     var call:CallKitContext{get{return _call}set{_call = newValue}}
     var player:PlayerContext{get{return _player}}
     var rtm:RtmKitContext{get{return _rtm}set{_rtm = newValue}}
-    var devices:[IotDevice]?{get{return _devices}set{_devices = newValue}}
+    var devices:[IotDevice]{get{return _devices}set{_devices = newValue}}
     var products:[ProductInfo]?{get{return _products}set{_products = newValue}}
     //var account:String{get{return _account}set{_account = newValue}}
     var virtualNumber:String{get{return _virtualNumber}set{_virtualNumber = newValue}}

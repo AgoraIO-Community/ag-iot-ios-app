@@ -25,8 +25,8 @@ extension IotLink{
                         else{
                             log.i("gw shareToUser: \(value.tip)(\(value.code))")
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                         }
                         else{
                             if(value.code != 0){
@@ -67,8 +67,8 @@ extension IotLink{
                         else{
                             log.i("gw shareAccept: \(value.tip)(\(value.code))")
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                         }
                         else{
                             if(value.code != 0){
@@ -130,8 +130,8 @@ extension IotLink{
                                 devs?.append(dev)
                             }
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip,nil)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil)
                         }
                         else{
                             if(value.code != 0){
@@ -191,8 +191,8 @@ extension IotLink{
                                 devs?.append(dev)
                             }
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip,nil)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil)
                         }
                         else{
                             if(value.code != 0){
@@ -275,8 +275,8 @@ extension IotLink{
                                 devsCancel?.append(devs)
                             }
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip,nil)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil)
                         }
                         else{
                             if(value.code != 0){
@@ -325,8 +325,8 @@ extension IotLink{
                         else{
                             log.i("gw shareRemove: \(value.tip)(\(value.code))")
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                         }
                         else{
                             if(value.code != 0){
@@ -363,8 +363,8 @@ extension IotLink{
                         else{
                             log.i("gw sharePushAdd: \(value.tip)(\(value.code))")
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                         }
                         else{
                             if(value.code != 0){
@@ -405,8 +405,8 @@ extension IotLink{
                         else{
                             log.i("gw sharePushDel: \(value.tip)(\(value.code))")
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                         }
                         else{
                             if(value.code != 0){
@@ -472,8 +472,8 @@ extension IotLink{
                         else{
                             log.i("gw sharePushDetail: \(value.tip)(\(value.code))")
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip,nil)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil)
                         }
                         else{
                             if(value.code != 0){
@@ -577,8 +577,8 @@ extension IotLink{
                         else{
                             log.i("gw sharePushList: \(value.tip)(\(value.code))")
                         }
-                        if(value.code == IotLink.tokenExpiredCode){
-                            rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip,nil,nil)
+                        if(value.code == IotLink.tokenInvalidCode){
+                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil,nil)
                         }
                         else{
                             if(value.code != 0){

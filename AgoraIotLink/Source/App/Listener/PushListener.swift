@@ -26,9 +26,10 @@ class PushListener : FsmPush.IListener{
     func on_initialize(_ srcEvent: FsmPush.Event) {
         log.i("listener push.on_initialize")
         app.proxy.ntf.create(completion: {succ,eid in
-            self.app.context.push.session.eid = succ ? eid : ""
-            self.app.rule.trans(succ ? FsmPush.Event.INITSUCC : FsmPush.Event.INITFAIL)
-            //self.app.proxy.mqtt.publishPushId(id: succ ? eid : "")
+            if(succ != .Abort){
+                self.app.context.push.session.eid = succ == .Succ ? eid : ""
+                self.app.rule.trans(succ == .Succ ? FsmPush.Event.INITSUCC : FsmPush.Event.INITFAIL)
+            }
         })
         
     }

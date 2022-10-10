@@ -45,15 +45,15 @@ class IotLink{
     public func reqVerifyCodeByPhone(_ phone:String,_ type:String,_ lang:String,_ rsp:@escaping (Int,String)->Void){
         let params:Dictionary = ["phone":phone,"type":type,"lang":lang,"merchantId":IotLink.arg.merchantId]
         let url = http + api.GetSms
-        log.i("iotlink reqVerifyCodeByPhone:\(phone) type:\(type)")
+        log.v("iotlink reqVerifyCodeByPhone:\(phone) type:\(type)")
         AF.request(url,method: .post,parameters: params)
             .validate()
             .responseDecodable(of:Rsp.self){(dataRsp:AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
                     var ec = ErrCode.XOK
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){
@@ -77,15 +77,15 @@ class IotLink{
     public func reqVerifyCodeByEmail(_ email:String,_ type:String,_ rsp:@escaping (Int,String)->Void){
         let params:Dictionary = ["email":email,"type":type,"merchantId":IotLink.arg.merchantId]
         let url = http + api.GetCode
-        log.i("iotlink reqVerifyCodeByEmail:\(email) type:\(type)")
+        log.v("iotlink reqVerifyCodeByEmail:\(email) type:\(type)")
         AF.request(url,method: .post,parameters: params)
             .validate()
             .responseDecodable(of:Rsp.self){(dataRsp:AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
                     var ec = ErrCode.XOK
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){
@@ -129,8 +129,8 @@ class IotLink{
             .responseDecodable(of:Rsp.self) { (dataRsp : AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){
@@ -154,8 +154,8 @@ class IotLink{
             .responseDecodable(of:Rsp.self) { (dataRsp : AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){
@@ -178,8 +178,8 @@ class IotLink{
             .responseDecodable(of:Rsp.self) { (dataRsp : AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){
@@ -203,8 +203,8 @@ class IotLink{
             .responseDecodable(of:Rsp.self) { (dataRsp : AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){
@@ -243,8 +243,8 @@ class IotLink{
             .responseDecodable(of:Rsp.self) { (dataRsp : AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){
@@ -274,7 +274,7 @@ class IotLink{
             params["productTypeId"] =  String(query.productTypeId)
         }
         let url = http + api.ProductList
-        log.i("iotlink reqProductList \(params)")
+        log.v("iotlink reqProductList \(params)")
         AF.request(url,method: .post, parameters: params,encoder: JSONParameterEncoder.default, headers: header)
             .validate()
             .responseDecodable(of:ProductList.Rsp.self) { (dataRsp : AFDataResponse<ProductList.Rsp>) in
@@ -291,14 +291,14 @@ class IotLink{
         let header:HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
         let params:Dictionary<String,String> = ["mac":deviceId,"deviceNickName":deviceNickName]
         let url = http + api.RenameDevice
-        log.i("iotlink renameDevice \(deviceId) with name:\(deviceNickName)")
+        log.v("iotlink renameDevice \(deviceId) with name:\(deviceNickName)")
         AF.request(url,method: .post, parameters: params,encoder: JSONParameterEncoder.default,headers: header)
             .validate()
             .responseDecodable(of:Rsp.self) { (dataRsp : AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){
@@ -317,14 +317,14 @@ class IotLink{
         let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
         let params:Dictionary<String,String> = ["mac":deviceId]
         let url = http + api.UnbindDevice
-        log.i("iotlink unbind \(deviceId)")
+        log.v("iotlink unbind \(deviceId)")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of:Rsp.self) { (dataRsp : AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){
@@ -343,7 +343,7 @@ class IotLink{
         let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
         let params:Dictionary<String,String> = deviceId == "" ? ["productId":productNumber] : ["mac":deviceId]
         let url = http + api.PointList
-        log.i("iotlink reqProperty \(productNumber)")
+        log.v("iotlink reqProperty \(productNumber)")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of:PointList.Rsp.self) { (dataRsp : AFDataResponse<PointList.Rsp>) in
@@ -379,8 +379,8 @@ class IotLink{
             .responseDecodable(of:DevList.Rsp.self) { (dataRsp : AFDataResponse<DevList.Rsp>) in
             switch dataRsp.result{
             case .success(let value):
-                if(value.code == IotLink.tokenExpiredCode){
-                    rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                if(value.code == IotLink.tokenInvalidCode){
+                    rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                 }
                 else{
                     if(value.code != 0){
@@ -419,7 +419,7 @@ class IotLink{
         let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
         let params:Dictionary<String,String> = ["mac":deviceId]
         let url = http + api.OtaGetInfo
-        log.i("iotlink reqOtaInfo \(deviceId)")
+        log.v("iotlink reqOtaInfo \(deviceId)")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of:OtaInfo.Rsp.self) { (dataRsp : AFDataResponse<OtaInfo.Rsp>) in
@@ -438,7 +438,7 @@ class IotLink{
         let params:Dictionary<String,String> = ["upgradeId":upgradeId]
         let url = http + api.OtaStatus
         
-        log.i("iotlink reqOtaStatus")
+        log.v("iotlink reqOtaStatus")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of:OtaStatus.Rsp.self) { (dataRsp : AFDataResponse<OtaStatus.Rsp>) in
@@ -456,14 +456,14 @@ class IotLink{
         let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
         let params:Dictionary<String,String> = ["upgradeId":upgradeId,"decide":String(decide)]
         let url = http + api.OtaUpdate
-        log.i("iotlink reqOtaUpdate")
+        log.v("iotlink reqOtaUpdate")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of:Rsp.self) { (dataRsp : AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
-                    if(value.code == IotLink.tokenExpiredCode){
-                        rsp(ErrCode.XERR_TOKEN_EXPIRED,value.tip)
+                    if(value.code == IotLink.tokenInvalidCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,value.tip)
                     }
                     else{
                         if(value.code != 0){

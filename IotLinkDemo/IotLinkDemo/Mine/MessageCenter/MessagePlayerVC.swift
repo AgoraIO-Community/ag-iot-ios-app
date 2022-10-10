@@ -134,7 +134,7 @@ class MessagePlayerVC: UIViewController {
                 SVProgressHUD.dismiss()
                 return
             }
-            Utils.loadAlertVideoUrl(alert.deviceId, alert.beginTime) { ec, msg, url in
+            Utils.loadAlertVideoUrl(alert.deviceId,alert.tenantId, alert.beginTime) { ec, msg, url in
                 guard let url = url else{
                     log.e("loadAlertVideoUrl failed")
                     SVProgressHUD.showError(withStatus: "查询视频失败\(msg)")

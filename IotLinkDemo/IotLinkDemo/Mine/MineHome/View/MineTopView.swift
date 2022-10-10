@@ -47,6 +47,13 @@ class MineTopView: UIView {
         return label
     }()
     
+    private lazy var userId:UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.textColor = UIColor(hexRGB: 0x000000, alpha: 0.85)
+        return label
+    }()
+    
     private lazy var arrowButton:UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "arrow-right"), for: .normal)
@@ -59,6 +66,7 @@ class MineTopView: UIView {
         addSubview(imageView)
         addSubview(nameLabel)
         addSubview(countLabel)
+        addSubview(userId)
         addSubview(arrowButton)
         
         imageView.snp.makeConstraints { make in
@@ -77,6 +85,11 @@ class MineTopView: UIView {
             make.left.equalTo(nameLabel.snp.left)
         }
         
+        userId.snp.makeConstraints{make in
+            make.top.equalTo(countLabel.snp.bottom)
+            make.left.equalTo(countLabel.snp.left)
+        }
+        
         arrowButton.snp.makeConstraints { make in
             make.centerY.equalTo(imageView)
             make.right.equalTo(-30)
@@ -88,9 +101,10 @@ class MineTopView: UIView {
         clickArrowButtonAction?()
     }
     
-    func setHeadImg(_ img:String?, name:String?, count:Int = 0) {
+    func setHeadImg(_ img:String?, name:String?, count:Int = 0,uid:String = "") {
         imageView.kf.setImage(with: URL(string: img ?? ""), placeholder: UIImage(named: "userimage"))
         nameLabel.text = name
         countLabel.text = "\(count)台设备"
+        userId.text = uid
     }
 }

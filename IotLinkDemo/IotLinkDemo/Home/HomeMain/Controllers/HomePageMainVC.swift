@@ -90,7 +90,9 @@ class HomePageMainVC: AGBaseVC {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        getDevicesArray()
+        if(TDUserInforManager.shared.isLogin){
+            getDevicesArray()
+        }
         //checkNewShareDevice()
     }
     

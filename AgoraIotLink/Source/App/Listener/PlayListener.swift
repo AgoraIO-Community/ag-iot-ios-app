@@ -104,11 +104,11 @@ class PlayListener : FsmPlay.IListener{
         app.proxy.rtc.setupRemoteView(peerView: peerView, uid: sess.peerUid)
     }
     
-    func start(file: String, uid: UInt, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
+    func start(channelName: String, uid: UInt, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
         sess.appId = "aab8b8f5a8cd4469a63042fcfafe7063"
         sess.token = ""
         sess.peerUid = uid
-        sess.channel = file
+        sess.channel = channelName
         sess.stateChanged = stateChanged
         app.proxy.rtc.muteLocalAudio(true, cb: {ec,msg in})
         app.proxy.rtc.muteLocalVideo(true, cb: {ec,msg in})

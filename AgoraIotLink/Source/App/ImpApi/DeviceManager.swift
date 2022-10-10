@@ -217,10 +217,7 @@ class DeviceManager : IDeviceMgr{
                 return
             }
             
-            guard let dev = self.app.context.devices else{
-                log.i("devMgr devices info list has not recved,continue waiting ...")
-                return
-            }
+            let dev = self.app.context.devices
             self.app.context.products = prd
             self.associateDeviceAndProduct(devs: dev, prds: prd)
             result(ec,msg,dev)
@@ -248,7 +245,7 @@ class DeviceManager : IDeviceMgr{
             self.app.context.products = nil
         }
         
-        self.app.context.devices = nil
+        self.app.context.devices = []
         self.app.proxy.gw.reqAllDevice(token, cbDev)
     }
     
@@ -391,10 +388,29 @@ class DeviceManager : IDeviceMgr{
         }
     }
     
-    func startPlayback(file: String, uid: UInt, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
-        self.app.rule.trans(FsmPlay.Event.STARTPLAY,
-                            {self.app.rule.playback.start(file: file, uid: uid,result:{ec,msg in self.asyncResult(ec,msg,result)},stateChanged:stateChanged)},
-                            {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
+    private func doStartPlayback(channelName: String, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
+        let appId = self.app.config.appId
+        let agToken = self.app.context.aglab.session.accessToken
+        app.proxy.al.reqPlayerToekn(agToken, appId, channelName) { ec, msg, sess in
+            if(ec != ErrCode.XOK){
+                result(ec,msg)
+                return
+            }
+            guard let sess = sess else{
+                result(ErrCode.XERR_INVALID_PARAM,"参数不正确")
+                return
+            }
+            self.app.rule.trans(FsmPlay.Event.STARTPLAY,
+                                {self.app.rule.playback.start(channelName: sess.channelName, uid: sess.uid, result: result, stateChanged: stateChanged)},
+                                {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
+            
+        }
+    }
+    
+    func startPlayback(channelName: String, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
+        DispatchQueue.main.async {
+            self.doStartPlayback(channelName: channelName, result: result, stateChanged: stateChanged)
+        }
     }
     
     func setPlaybackView(peerView: UIView?) -> Int {
