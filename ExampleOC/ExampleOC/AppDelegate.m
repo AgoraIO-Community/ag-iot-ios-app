@@ -89,17 +89,17 @@
     // Override point for customization after application launch.
     
     InitParam* initParam = [[InitParam alloc] init];
-    initParam.rtcAppId = @"67f4672937984023bf378863a6c1450e";
+    initParam.rtcAppId = @"67f**********************450e";
     initParam.publishAudio = true;
     initParam.publishVideo = true;
     initParam.subscribeAudio = true;
     initParam.subscribeVideo = true;
-    initParam.ntfAppKey = @"81718082#964971";
+    initParam.ntfAppKey = @"81******71";
     initParam.ntfApnsCertName = @"io.agora.iot.prod";
     initParam.masterServerUrl = @"https://app.agoralink-iot-cn.sd-rtn.com";
     initParam.slaveServerUrl = @"https://api.agora.io/agoralink/cn/api" ;//  for release
     //initParam.slaveServerUrl = @"https://iot-api-gateway.sh.agoralab.co/api"; //for debug
-    initParam.projectId =@"4OJG85tCF";
+    initParam.projectId =@"4O****tCF";
     
     [IotSdk.shared initializeWithInitParam:initParam sdkStatus:^(enum SdkStatus status, NSString * _Nonnull hint) {
         NSLog(@"💙💜当前状态:%@,%ld",hint,status);
