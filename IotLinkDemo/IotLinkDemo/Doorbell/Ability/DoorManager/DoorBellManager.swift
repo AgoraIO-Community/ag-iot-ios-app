@@ -16,6 +16,8 @@ class DoorBellManager: NSObject {
 
     var volumeValue : Int = 10
     
+    var members : Int = 1
+    
     fileprivate override init() {
         super.init()
     }
@@ -155,6 +157,10 @@ class DoorBellManager: NSObject {
         },
         memberState:{s,a in
              log.i("demo app member:\(a) \(s.rawValue)")
+             if(s == .Enter){self.members = self.members + a.count}
+             if(s == .Leave){self.members = self.members - a.count}
+             if(s == .Exist){self.members = self.members + a.count}
+             NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
          })
         
     }

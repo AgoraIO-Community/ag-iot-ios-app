@@ -11,6 +11,7 @@ import AgoraIotLink
 //首帧可显示成功的通知（被动呼叫）
 let cReceiveChangeSoundSuccessNotify = "cReceiveChangeSoundSuccessNotify"
 let cReceiveCallSuccessNotify = "cReceiveCallSuccessNotify"
+let cMemberStateUpdated = "cMemberStateUpdated"
 
 //视频上层逻辑操作View
 class DoorbellAbilityLogicView: UIView {
@@ -46,6 +47,13 @@ class DoorbellAbilityLogicView: UIView {
     private func addObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(receiveChangeSoundSuccess(notification:)), name: Notification.Name(cReceiveChangeSoundSuccessNotify), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(receiveCallSuccess(notification:)), name: Notification.Name(cReceiveCallSuccessNotify), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(receiveMemberStateChanged(notification:)), name: Notification.Name(cMemberStateUpdated), object: nil)
+    }
+    
+    @objc private func receiveMemberStateChanged(notification: NSNotification){
+        //变声通话通知
+        guard let members = notification.userInfo?["members"] as? Int else { return }
+        topControlView.memberLabel.text = "通话人数:\(members)"
     }
     
     @objc private func receiveChangeSoundSuccess(notification: NSNotification){
@@ -323,7 +331,7 @@ extension DoorbellAbilityLogicView{
        
         if isChanged == true {
             debugPrint("变声语音通话中")
-            topControlView.tipsLabel.text = "变声通话中（\(effectName)）..."
+            topControlView.tipsLabel.text = "变声通话中（\(effectName)）"
         }else{
             debugPrint("恢复正常语音通话")
             topControlView.tipsLabel.text = "正在通话中..."

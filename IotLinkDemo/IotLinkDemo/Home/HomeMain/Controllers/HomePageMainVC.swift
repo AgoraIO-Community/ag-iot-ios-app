@@ -272,7 +272,7 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 1 && shareDevieces.count > 0 {
-            return "我的共享设备"
+            return "我接收的共享"
         }
         return nil
     }

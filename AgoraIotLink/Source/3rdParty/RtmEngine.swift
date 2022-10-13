@@ -35,37 +35,37 @@ class RtmEngine : NSObject{
         return true
     }
     private func sendLoginCallback(_ e:AgoraRtmLoginErrorCode,_ statusUpdated:@escaping(MessageChannelStatus,String,Data?)->Void,_ cb:@escaping(TaskResult,String)->Void){
-        var msg = "未知错误"
+        var msg = "unknown error"
         var ec:Int = ErrCode.XERR_API_RET_FAIL
         switch(e){
         case .ok:
             ec = ErrCode.XOK
-            msg = "登录成功,开始连接..."
+            msg = "login succ,connecting ..."
         case .unknown:
             ec = ErrCode.XERR_UNKNOWN
         case .rejected:
-            msg = "登录rtm被拒绝"
+            msg = "rtm login rejected"
         case .invalidArgument:
-            msg = "无效的rtm参数"
+            msg = "rtm argument invalid"
         case .invalidAppId:
-            msg = "无效的AppId"
+            msg = "rtm appid invalid"
         case .invalidToken:
-            msg = "无效的Token"
+            msg = "rtm token invalid"
         case .tokenExpired:
-            msg = "Token过期"
+            msg = "rtm token expired"
         case .notAuthorized:
-            msg = "未通过认证"
+            msg = "rtm not authorized"
         case .alreadyLogin:
             ec = ErrCode.XOK
-            msg = "已经登录"
+            msg = "rtm alread login"
         case .timeout:
-            msg = "登录超时"
+            msg = "rtm timeout"
         case .loginTooOften:
-            msg = "登录过于频繁"
+            msg = "rtm login too offten"
         case .loginNotInitialized:
-            msg = "登录未初始化"
+            msg = "rtm not initialized"
         @unknown default:
-            msg = "未知错误"
+            msg = "unknown error"
         }
         
         if(ec != ErrCode.XOK){
@@ -114,7 +114,7 @@ class RtmEngine : NSObject{
         log.i("rtm try leaveChannel ...")
         self._statusUpdated = nil
         if(self._enterCallback != nil){
-            self._enterCallback?(.Abort,"取消登录")
+            self._enterCallback?(.Abort,"abort login")
             self._enterCallback = nil
         }
         if(state != RtmEngine.ENTERED){
@@ -135,35 +135,35 @@ class RtmEngine : NSObject{
         }
     }
     private func sendCallback(_ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,String)->Void){
-        var msg = "未知错误"
+        var msg = "unknown error"
         var ec:Int = ErrCode.XERR_API_RET_FAIL
         switch(e){
         case .ok:
             ec = ErrCode.XOK
-            msg = "发送成功"
+            msg = "rtm send succ"
         case .failure:
-            msg = "发送失败"
+            msg = "rtm snd fail"
         case .timeout:
             ec = ErrCode.XERR_TIMEOUT
-            msg = "发送超时"
+            msg = "rtm send timeout"
         case .peerUnreachable:
-            msg = "无法连接对端"
+            msg = "rtm unreachable"
         case .cachedByServer:
-            msg = "消息被服务器缓存"
+            msg = "rtm msg cached"
         case .tooOften:
-            msg = "发送太频繁"
+            msg = "rtm send too often"
         case .invalidUserId:
-            msg = "无效用户Id"
+            msg = "rtm userid invalid"
         case .invalidMessage:
-            msg = "无效消息"
+            msg = "rtm msg invalid"
         case .imcompatibleMessage:
-            msg = "消息不兼容"
+            msg = "rtm msg imcompatible"
         case .notInitialized:
-            msg = "未初始化rtm"
+            msg = "rtm not initialized"
         case .notLoggedIn:
-            msg = "未登录rtm"
+            msg = "rtm not loggedin"
         @unknown default:
-            msg = "未知错误"
+            msg = "unknown error"
             ec = ErrCode.XERR_UNKNOWN
         }
         if(ec != ErrCode.XOK){
@@ -174,12 +174,12 @@ class RtmEngine : NSObject{
     func sendStringMessage(toPeer:String,message:String,cb:@escaping(Int,String)->Void){
         guard let kit = kit else{
             log.e("rtm engine is nil")
-            cb(ErrCode.XERR_BAD_STATE,"rtm未初始化")
+            cb(ErrCode.XERR_BAD_STATE,"rtm not initialized")
             return
         }
         if(message.count >= config.maxRtmPackage){
             log.e("rtm package size(\(message.count) exceeds limit(\(config.maxRtmPackage)")
-            cb(ErrCode.XERR_BUFFER_OVERFLOW,"rtm消息长度超过限制")
+            cb(ErrCode.XERR_BUFFER_OVERFLOW,"rtm msg length overflow")
             return
         }
         let package = AgoraRtmMessage(text: message)
@@ -195,12 +195,12 @@ class RtmEngine : NSObject{
     func sendRawMessage(toPeer:String,data:Data,description:String,cb:@escaping(Int,String)->Void){
         guard let kit = kit else{
             log.e("rtm engine is nil")
-            cb(ErrCode.XERR_BAD_STATE,"rtm未初始化")
+            cb(ErrCode.XERR_BAD_STATE,"rtm not initialized")
             return
         }
         if(data.count >= config.maxRtmPackage){
             log.e("rtm package size(\(data.count) exceeds limit(\(config.maxRtmPackage)")
-            cb(ErrCode.XERR_BUFFER_OVERFLOW,"rtm消息长度超过限制")
+            cb(ErrCode.XERR_BUFFER_OVERFLOW,"rtm msg length overfloat")
             return
         }
         let package = AgoraRtmRawMessage(rawData: data, description: description)
@@ -283,7 +283,7 @@ extension RtmEngine : AgoraRtmDelegate{
             self._statusUpdated?(.Connecting,"connecting",nil)
         case .connected:
             if(self._enterCallback != nil){
-                self._enterCallback?(.Succ,"连接完成,可以发送消息")
+                self._enterCallback?(.Succ,"rtm redady to send msg")
                 self._enterCallback = nil
             }
             else{

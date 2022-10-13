@@ -38,7 +38,7 @@ class AlarmManager : IAlarmMgr{
             let tenantId = self.app.context.gyiot.session.cert.thingName
             let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
-                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [IotAlarm]?, result)
+                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil as [IotAlarm]?, result)
                 return
             }
             self.app.proxy.al.reqAlert(agToken, tenantId, queryParam, {ec,msg,al in self.asyncResultData(ec, msg, al, result)})
@@ -49,7 +49,7 @@ class AlarmManager : IAlarmMgr{
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
-                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as IotAlarm?, result)
+                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil as IotAlarm?, result)
                 return
             }
             self.app.proxy.al.reqAlertById(agToken,alertMessageId,{ec,msg,al in self.asyncResultData(ec, msg, al, result)})
@@ -61,7 +61,7 @@ class AlarmManager : IAlarmMgr{
             let tenantId = self.app.context.gyiot.session.cert.thingName
             let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
-                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [IotAlarm]?, result)
+                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil as [IotAlarm]?, result)
                 return
             }
             self.app.proxy.al.reqAlert(agToken,tenantId, queryParam, {ec,msg,al in self.asyncResultData(ec, msg, al, result)})
@@ -72,7 +72,7 @@ class AlarmManager : IAlarmMgr{
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
-                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
                 return
             }
             self.app.proxy.al.reqAlertBatchRead(agToken, alarmIdList, {ec,msg in self.asyncResult(ec, msg, result)})
@@ -84,7 +84,7 @@ class AlarmManager : IAlarmMgr{
             let agToken = self.app.context.aglab.session.accessToken
             let tenantId = self.app.context.gyiot.session.cert.thingName
             if(agToken == ""){
-                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
                 return
             }
             self.app.proxy.al.reqAddAlert(agToken, tenantId, device.productId, device.deviceId, device.deviceName, desc, result)
@@ -95,7 +95,7 @@ class AlarmManager : IAlarmMgr{
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
-                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
                 return
             }
             self.app.proxy.al.reqAlertBatchDelete(agToken,alarmIdList,{ec,msg in self.asyncResult(ec, msg,result)})
@@ -107,7 +107,7 @@ class AlarmManager : IAlarmMgr{
             let tenant = self.app.context.gyiot.session.cert.thingName
             let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
-                self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",0 as UInt,result)
+                self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token invalid",0 as UInt,result)
                 return
             }
             self.app.proxy.al.reqAlertCount(agToken, tenant, productId, deviceId, messageType: messageType, status, createDateBegin, createDateEnd, {ec,msg,al in self.asyncResultValue(ec, msg, al, result)})
@@ -119,7 +119,7 @@ class AlarmManager : IAlarmMgr{
             let tenant = self.app.context.gyiot.session.cert.thingName
             let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
-                self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil,result)
+                self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil,result)
                 return
             }
             self.app.proxy.al.reqAlertImageUrl(agToken, tenant, alertImageId) { ec, msg, url in
@@ -134,7 +134,7 @@ class AlarmManager : IAlarmMgr{
             let agToken = self.app.context.aglab.session.accessToken
             let userId = tenantId
             if(agToken == ""){
-                self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil,result)
+                self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil,result)
                 return
             }
             self.app.proxy.al.reqAlertVideoUrl(agToken, userId, deviceId, beginTime) { ec, msg, url in
@@ -149,7 +149,7 @@ class AlarmManager : IAlarmMgr{
             //note:try to walkaround by restoring deviceIds,because sever can't acquire device id information
             if(self.app.context.devices.count == 0){
                 log.w("current device is nil")
-                self.asyncResultData(ErrCode.XOK,"没有查询到对应设备的告警",[] as [IotAlarm],result)
+                self.asyncResultData(ErrCode.XOK,"no corespond device alert",[] as [IotAlarm],result)
                 return
             }
             for item in app.context.devices{
@@ -162,7 +162,7 @@ class AlarmManager : IAlarmMgr{
             let agToken = self.app.context.aglab.session.accessToken
             
             if(agToken == ""){
-                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [IotAlarm]?,result)
+                self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil as [IotAlarm]?,result)
                 return
             }
             self.app.proxy.al.reqSysAlert(agToken, tenantId, queryParam, {ec,msg,al in self.asyncResultData(ec,msg,al,result)})
@@ -173,11 +173,11 @@ class AlarmManager : IAlarmMgr{
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.accessToken
             if(self.app.context.devices.count == 0){
-                self.asyncResultData(ErrCode.XERR_UNSUPPORTED,"没有查询到对应设备的告警",nil as IotAlarm?,result)
+                self.asyncResultData(ErrCode.XERR_UNSUPPORTED,"no corespond device alert",nil as IotAlarm?,result)
                 return
             }
             if(agToken == ""){
-                self.asyncResultData(ErrCode.XERR_UNSUPPORTED,"没有查询到对应设备的告警",nil as IotAlarm?,result)
+                self.asyncResultData(ErrCode.XERR_UNSUPPORTED,"no corespond device alert",nil as IotAlarm?,result)
                 return
             }
             self.app.proxy.al.reqSysAlertById(agToken,alertMessageId,{ec,msg,al in self.asyncResultData(ec, msg, al, result)})
@@ -188,7 +188,7 @@ class AlarmManager : IAlarmMgr{
         DispatchQueue.main.async {
             let agToken = self.app.context.aglab.session.accessToken
             if(agToken == ""){
-                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+                self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
                 return
             }
             self.app.proxy.al.reqSysAlertBatchRead(agToken, alarmIdList, {ec,msg in self.asyncResult(ec, msg, result)})
@@ -204,7 +204,7 @@ class AlarmManager : IAlarmMgr{
             //note:try to walkaround by restoring deviceIds,because sever can't acquire device id information
             if(app.context.devices.count == 0){
                 log.i("current devices count is 0")
-                self.asyncResultValue(ErrCode.XOK,"没有查询到对应设备的告警",0 as UInt,result)
+                self.asyncResultValue(ErrCode.XOK,"no corespond device alert",0 as UInt,result)
                 return
             }
             for item in app.context.devices{
@@ -212,7 +212,7 @@ class AlarmManager : IAlarmMgr{
             }
         }
         if(agToken == ""){
-            self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token 无效",0 as UInt,result)
+            self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token invalid",0 as UInt,result)
             return
         }
         DispatchQueue.main.async {

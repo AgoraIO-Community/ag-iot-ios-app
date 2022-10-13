@@ -8,6 +8,7 @@
 import UIKit
 import AgoraIotLink
 
+
 //视频控制操作View
 class TopControTooBarView: UIView {
     
@@ -38,8 +39,18 @@ class TopControTooBarView: UIView {
         
         setUpViews()
         setUpConstraints()
-
+        //addObserver()
     }
+    
+//    private func addObserver() {
+//        NotificationCenter.default.addObserver(self, selector: #selector(receiveMemberStateChanged(notification:)), name: Notification.Name(cMemberStateUpdated), object: nil)
+//    }
+    
+//    @objc private func receiveMemberStateChanged(notification: NSNotification){
+//        //变声通话通知
+//        guard let members = notification.userInfo?["members"] as? Int else { return }
+//        tipsLabel.text = "通话人数:\(members)"
+//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -53,12 +64,10 @@ class TopControTooBarView: UIView {
         bgView.addSubview(volumeBtn)
         bgView.addSubview(pictureQualityBtn)
         bgView.addSubview(tipsLabel)
-        
+        bgView.addSubview(memberLabel)
     }
     
     fileprivate func setUpConstraints() {
-        
-
         bgView.snp.makeConstraints { make in
             make.top.left.bottom.right.equalToSuperview()
         }
@@ -92,7 +101,13 @@ class TopControTooBarView: UIView {
         tipsLabel.snp.makeConstraints { (make) in
             make.left.equalTo(elQuantityImageV.snp.right).offset(20.S)
             make.centerY.equalToSuperview()
-            make.size.equalTo(CGSize.init(width: 150.S, height: 17.S))
+            make.size.equalTo(CGSize.init(width: 75.S, height: 17.S))
+        }
+        
+        memberLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(tipsLabel.snp.right).offset(20.S)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(CGSize.init(width: 75.S, height: 17.S))
         }
     }
     
@@ -119,6 +134,18 @@ class TopControTooBarView: UIView {
     }()
     
     lazy var tipsLabel: UILabel = {
+        let label = UILabel()
+//        label.frame = CGRect.init(x: 0, y: 0, width: 100.S, height: 17.S)
+        label.textColor = UIColor(hexString: "#25DEDE")
+        label.font = FontPFMediumSize(12)
+        label.textAlignment = .left
+        label.adjustsFontSizeToFitWidth = true
+        label.backgroundColor = UIColor.clear
+        label.text = "正在通话中..."
+        return label
+    }()
+    
+    lazy var memberLabel: UILabel = {
         let label = UILabel()
 //        label.frame = CGRect.init(x: 0, y: 0, width: 100.S, height: 17.S)
         label.textColor = UIColor(hexString: "#25DEDE")

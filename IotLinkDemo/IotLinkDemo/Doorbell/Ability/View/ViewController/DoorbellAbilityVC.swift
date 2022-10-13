@@ -214,6 +214,7 @@ extension DoorbellAbilityVC {
             debugPrint("设备挂断")
             topAbilityV.handelVideoTopView(tipsType: .deviceSleep)
             AGToolHUD.disMiss()
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil)
         }
         else if(act == .RemoteAnswer){
             debugPrint("设备接听")
@@ -233,6 +234,7 @@ extension DoorbellAbilityVC {
             debugPrint("接听超时")
             //AGToolHUD.disMiss()
             AGToolHUD.showInfo(info: "对端接听超时,请检查设备状态")
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil)
         }
         else if(act == .LocalTimeout || act == .UnknownAction){
             topAbilityV.handelVideoTopView(tipsType: .loadFail)

@@ -12,7 +12,7 @@ import Kingfisher
 
 class ThirdAccountManager{
     class api{
-    #if true //dev 国内环境
+    #if false //dev 国内环境
         static let http_3rdParty = "https://third-user.sh.agoralab.co/third-party"
     #elseif true //prd 国内环境
         static let http_3rdParty = "https://third-user.sh3.agoralab.co/third-party"
@@ -85,27 +85,27 @@ class ThirdAccountManager{
         
         public class func handleLoginRsp(_ ret:Login.Rsp,_ rsp:@escaping (Int,String,LoginParam?)->Void){
             if(ret.code != 0){
-                log.e("第三方 handleLoginRsp fail \(ret.msg)(\(ret.code))")
+                log.e("3rd handleLoginRsp fail \(ret.msg)(\(ret.code))")
                 return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
             }
             guard let data = ret.data else{
-                log.e("第三方 handleLoginRsp data is nil \(ret.msg)(\(ret.code))")
+                log.e("3rd handleLoginRsp data is nil \(ret.msg)(\(ret.code))")
                 return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
             }
             guard let lsToken = data.lsToken else {
-                log.e("第三方 handleLoginRsp lsToken is nil \(ret.msg)(\(ret.code))")
+                log.e("3rd handleLoginRsp lsToken is nil \(ret.msg)(\(ret.code))")
                 return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
             }
             guard let gyToken = data.gyToken else {
-                log.e("第三方 handleLoginRsp gyToken is nil \(ret.msg)(\(ret.code))")
+                log.e("3rd handleLoginRsp gyToken is nil \(ret.msg)(\(ret.code))")
                 return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
             }
             guard let pool = gyToken.pool else {
-                log.e("第三方 handleLoginRsp pool is nil \(ret.msg)(\(ret.code))")
+                log.e("3rd handleLoginRsp pool is nil \(ret.msg)(\(ret.code))")
                 return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
             }
             guard let proof = gyToken.proof else {
-                log.e("第三方 handleLoginRsp proof is nil \(ret.msg)(\(ret.code))")
+                log.e("3rd handleLoginRsp proof is nil \(ret.msg)(\(ret.code))")
                 return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
             }
             
@@ -153,7 +153,7 @@ class ThirdAccountManager{
                 rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
             case .failure(let error):
                 log.e("第三方 reqRegister \(url) fail for \(userName), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
             }
         }
     }
@@ -171,7 +171,7 @@ class ThirdAccountManager{
                     api.handleLoginRsp(ret,rsp)
                 case .failure(let error):
                     log.e("第三方 reqLogin \(url) fail for \(username), detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                 }
             }
     }
@@ -188,8 +188,8 @@ class ThirdAccountManager{
             case .success(let ret):
                 rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
             case .failure(let error):
-                log.e("第三方 reqUnRegister \(url) fail for \(account), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                log.e("3rd reqUnRegister \(url) fail for \(account), detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
             }
         }
     }
@@ -206,8 +206,8 @@ class ThirdAccountManager{
             case .success(let ret):
                 rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret.data)
             case .failure(let error):
-                log.e("第三方 reqUidByAccount \(url) fail for \(account), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                log.e("3rd reqUidByAccount \(url) fail for \(account), detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
             }
         }
     }
@@ -222,7 +222,7 @@ class Utils{
             }
             let fullurl = URL(string: url!)
             guard let fullurl = fullurl else{
-                log.e("第三方 loadImage url:\(url!) error:\(msg) for \(alertImageId)")
+                log.e("3rd loadImage url:\(url!) error:\(msg) for \(alertImageId)")
                 rsp(ec,msg,nil)
                 return
             }
@@ -231,10 +231,10 @@ class Utils{
                 switch(result){
                 case .success(let data):
                     ImageCache.default.store(data.image, forKey: String(alertImageId))
-                    rsp(ErrCode.XOK,"下载并缓存图片:\(alertImageId)",data.image)
+                    rsp(ErrCode.XOK,"cache image:\(alertImageId)",data.image)
                 case .failure(let err):
-                    log.e("第三方 ImageDownloader failed(\(err)):\(msg) for \(alertImageId) url:\(url!)")
-                    rsp(ErrCode.XERR_API_RET_FAIL,"下载\(alertImageId)失败",nil)
+                    log.e("3rd ImageDownloader failed(\(err)):\(msg) for \(alertImageId) url:\(url!)")
+                    rsp(ErrCode.XERR_API_RET_FAIL,"download image fail: \(alertImageId)",nil)
                 }
             }
         }
@@ -245,14 +245,14 @@ class Utils{
             switch(result){
             case .success(let data):
                 if(data.image != nil){
-                    rsp(ErrCode.XOK,"从cache加载图片",data.image)
+                    rsp(ErrCode.XOK,"load image from cache",data.image)
                 }
                 else{
-                    log.v("第三方 retrieveImage is nil,al 从网络下载图片:\(alertImageId)")
+                    log.v("3rd retrieveImage is nil,try download image:\(alertImageId)")
                     self.loadAlertById(alertImageId, rsp)
                 }
             case .failure(let err):
-                log.e("第三方 retrieveImage fail,al 从网络下载图片:\(err)")
+                log.e("3rd retrieveImage fail,try load image:\(err)")
                 //log.e("al loadImage failed(\(err)):\(msg) for \(alertMessageId) url:\(String(describing: url))")
                 self.loadAlertById(alertImageId, rsp)
             }

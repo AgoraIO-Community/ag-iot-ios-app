@@ -45,7 +45,7 @@ class DeviceManager : IDeviceMgr{
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
             let detail:ShareDetail? = nil
-            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",detail,result)
+            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token invalid",detail,result)
             return
         }
         DispatchQueue.main.async {
@@ -58,7 +58,7 @@ class DeviceManager : IDeviceMgr{
         if(token == ""){
             let si:[ShareItem]? = nil
             let pt:PageTurn? = nil
-            self.asyncResultData2(ErrCode.XERR_TOKEN_INVALID,"token 无效",si,pt,result)
+            self.asyncResultData2(ErrCode.XERR_TOKEN_INVALID,"token invalid",si,pt,result)
             return
         }
         DispatchQueue.main.async {
@@ -69,7 +69,7 @@ class DeviceManager : IDeviceMgr{
     func shareDeviceTo(deviceId: String, userId: String, type: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
             return
         }
         DispatchQueue.main.async {
@@ -80,7 +80,7 @@ class DeviceManager : IDeviceMgr{
     func shareDeviceAccept(deviceNickName: String, order: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
             return
         }
         DispatchQueue.main.async {
@@ -91,7 +91,7 @@ class DeviceManager : IDeviceMgr{
     func shareGetOwnDevices(result: @escaping (Int, String, [DeviceShare]?) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [DeviceShare]?,result)
+            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil as [DeviceShare]?,result)
             return
         }
         DispatchQueue.main.async {
@@ -102,7 +102,7 @@ class DeviceManager : IDeviceMgr{
     func shareWithMe(result: @escaping (Int, String, [DeviceShare]?) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [DeviceShare]?,result)
+            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil as [DeviceShare]?,result)
             return
         }
         DispatchQueue.main.async {
@@ -113,7 +113,7 @@ class DeviceManager : IDeviceMgr{
     func shareCancelable(deviceId: String, result: @escaping (Int, String, [DeviceCancelable]?) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",nil as [DeviceCancelable]?,result)
+            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil as [DeviceCancelable]?,result)
             return
         }
         DispatchQueue.main.async {
@@ -124,7 +124,7 @@ class DeviceManager : IDeviceMgr{
     func shareRemoveMember(deviceId: String, userId: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
             return
         }
         DispatchQueue.main.async {
@@ -135,7 +135,7 @@ class DeviceManager : IDeviceMgr{
     func sharePushAdd(deviceNumber: String, email: String, type: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
             return
         }
         DispatchQueue.main.async {
@@ -146,7 +146,7 @@ class DeviceManager : IDeviceMgr{
     func sharePushDel(id: String, result: @escaping (Int, String) -> Void) {
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
             return
         }
         DispatchQueue.main.async {
@@ -166,7 +166,7 @@ class DeviceManager : IDeviceMgr{
         let venderId = self.app.config.projectId
         if(token == ""){
             let pi:[ProductInfo] = []
-            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token 无效",pi,result)
+            self.asyncResultData(ErrCode.XERR_TOKEN_INVALID,"token invalid",pi,result)
             return
         }
         DispatchQueue.main.async {
@@ -179,7 +179,7 @@ class DeviceManager : IDeviceMgr{
         let token = self.app.context.gyiot.session.iotlink_token
         let filter = self.app.context.callbackFilter
         if(token == ""){
-            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
             return
         }
         DispatchQueue.main.async {
@@ -204,7 +204,7 @@ class DeviceManager : IDeviceMgr{
     private func doQueryAllDevice(result:@escaping(Int,String,[IotDevice])->Void){
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            result(ErrCode.XERR_DEVMGR_QUEYR,"token 无效",[])
+            result(ErrCode.XERR_DEVMGR_QUEYR,"token invalid",[])
             return
         }
         let cbPrd = {
@@ -258,19 +258,19 @@ class DeviceManager : IDeviceMgr{
     func addDevice(productId: String, deviceId: String,result:@escaping(Int,String)->Void){
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
             return
         }
         DispatchQueue.main.async {
             //self.app.proxy.gw.reqBindDevice(token,productId,deviceId, {ec,msg in let ret = filter(ec,msg);result(ret.0,ret.1)})
-            self.asyncResult(ErrCode.XERR_UNSUPPORTED,"暂未实现",result)
+            self.asyncResult(ErrCode.XERR_UNSUPPORTED,"unimplemented",result)
         }
     }
 
     func removeDevice(deviceId:String,result:@escaping(Int,String)->Void){
         let token = self.app.context.gyiot.session.iotlink_token
         if(token == ""){
-            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token 无效",result)
+            self.asyncResult(ErrCode.XERR_TOKEN_INVALID,"token invalid",result)
             return
         }
         DispatchQueue.main.async {
@@ -287,7 +287,7 @@ class DeviceManager : IDeviceMgr{
     func getPropertyDescription(deviceId:String,productNumber:String,result: @escaping (Int, String, [Property]) -> Void) {
         if(deviceId != "" && productNumber != ""){
             log.e("deviceId and productNumber can't be both empty")
-            self.asyncResultData(ErrCode.XERR_INVALID_PARAM, "参数错误", [], result)
+            self.asyncResultData(ErrCode.XERR_INVALID_PARAM, "param error", [], result)
             return
         }
         DispatchQueue.main.async {
@@ -397,12 +397,12 @@ class DeviceManager : IDeviceMgr{
                 return
             }
             guard let sess = sess else{
-                result(ErrCode.XERR_INVALID_PARAM,"参数不正确")
+                result(ErrCode.XERR_INVALID_PARAM,"param error")
                 return
             }
             self.app.rule.trans(FsmPlay.Event.STARTPLAY,
-                                {self.app.rule.playback.start(channelName: sess.channelName, uid: sess.uid, result: result, stateChanged: stateChanged)},
-                                {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
+                                {self.app.rule.playback.start(channelName: sess.channelName,token: sess.token, uid: sess.uid, result: result, stateChanged: stateChanged)},
+                                {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
             
         }
     }

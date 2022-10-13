@@ -45,13 +45,13 @@ class AccountManager : IAccountMgr{
 //    func login(account: String, password: String, result: @escaping (Int, String) -> Void) {
 //        app.rule.trans(FsmApp.Event.LOGIN,
 //                       {self.doLogin(account, password,{ec,msg in self.asyncResult(ec,msg,result)})},
-//                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
+//                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
 //    }
     
     func login(param: LoginParam, result: @escaping (Int, String) -> Void) {
         app.rule.trans(FsmApp.Event.LOGIN,
                        {self.doLogin(param,{ec,msg in self.asyncResult(ec,msg,result)})},
-                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
+                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
     
     func getUserId() -> String {
@@ -111,7 +111,7 @@ class AccountManager : IAccountMgr{
                             self.app.context.gyiot.session.cert = cert
                             self.rule.trans(succ ? .LOGIN_SUCC : .LOGIN_FAIL,
                                             {result(succ ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,msg)},
-                                            {result(ErrCode.XERR_BAD_STATE,"状态不正确")})
+                                            {result(ErrCode.XERR_BAD_STATE,"state error")})
                         }
                         else{
                             log.e("iotlink reqSessCert cert is nil:\(msg)(\(ec))")
@@ -213,7 +213,7 @@ class AccountManager : IAccountMgr{
 //            self.app.context.gyiot.session.cert.thingName = thingName
 //            self.rule.trans(ec == ErrCode.XOK ? .LOGIN_SUCC : .LOGIN_FAIL,
 //                            {result(ec == ErrCode.XOK ? ErrCode.XOK : ec,msg)},
-//                            {result(ErrCode.XERR_BAD_STATE,"状态不正确")})
+//                            {result(ErrCode.XERR_BAD_STATE,"state error")})
 //        }
 //    }
     
@@ -255,8 +255,8 @@ class AccountManager : IAccountMgr{
         self.app.context.virtualNumber = thingName
         self.app.context.gyiot.session.cert.thingName = thingName
         self.rule.trans(.LOGIN_SUCC,
-                        {result(ErrCode.XOK,"登录成功")},
-                        {result(ErrCode.XERR_BAD_STATE,"状态不正确")})
+                        {result(ErrCode.XOK,"succ")},
+                        {result(ErrCode.XERR_BAD_STATE,"state error")})
         
     }
     
@@ -344,7 +344,7 @@ class AccountManager : IAccountMgr{
             }
             else{
                 log.e("unknown type \(type) for getCode")
-                self.asyncResult(ErrCode.XERR_INVALID_PARAM,"参数错误",result)
+                self.asyncResult(ErrCode.XERR_INVALID_PARAM,"param error",result)
             }
         }
     }
@@ -359,7 +359,7 @@ class AccountManager : IAccountMgr{
             }
             else{
                 log.e("unknown type \(type) for getCode")
-                self.asyncResult(ErrCode.XERR_INVALID_PARAM,"参数错误",result)
+                self.asyncResult(ErrCode.XERR_INVALID_PARAM,"param error",result)
             }
         }
     }
@@ -375,13 +375,13 @@ class AccountManager : IAccountMgr{
     func login(account: String, password: String,result:@escaping (Int,String)->Void){
         app.rule.trans(FsmApp.Event.LOGIN,
                        {self.doLogin(account, password,{ec,msg in self.asyncResult(ec,msg,result)})},
-                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
+                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
 #endif
     func logout(result:@escaping (Int,String)->Void){
         app.rule.trans(FsmApp.Event.LOGOUT,
                        {self.doLogout({ec,msg in self.asyncResult(ec,msg,result)})},
-                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
+                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
     
     private func doChangePassword(account:String,oldPwd:String,newPwd:String,result:@escaping(Int,String)->Void){

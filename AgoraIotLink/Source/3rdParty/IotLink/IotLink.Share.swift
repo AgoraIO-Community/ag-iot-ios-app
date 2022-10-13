@@ -44,7 +44,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw shareToUser \(url) fail for \(userId), detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                     }
                 }
         }
@@ -81,7 +81,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw shareAccept \(url) fail for \(deviceName), detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                     }
                 }
         }
@@ -144,7 +144,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw shareOwnDevice \(url) fail, detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                     }
                 }
         }
@@ -205,7 +205,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw shareWithMe \(url) fail, detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                     }
                 }
         }
@@ -289,7 +289,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw shareCancelable \(url) fail for \(deviceId) detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                     }
                 }
         }
@@ -339,7 +339,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw shareRemove \(url) fail for \(deviceId), detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                     }
                 }
         }
@@ -382,7 +382,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw sharePushAdd \(url) fail for \(deviceNumber), detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                     }
                 }
         }
@@ -419,7 +419,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw sharePushDel \(url) fail for \(id), detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                     }
                 }
         }
@@ -508,7 +508,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw sharePushDetail \(url) fail for \(id), detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                     }
                 }
         }
@@ -635,7 +635,7 @@ extension IotLink{
                 case .failure(let error):
                     DispatchQueue.main.async {
                         log.e("gw sharePushList \(url) fail  detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil,nil)
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil,nil)
                     }
                 }
         }

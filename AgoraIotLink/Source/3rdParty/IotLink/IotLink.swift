@@ -23,7 +23,7 @@ class IotLink{
                     self.handleRspLogin(value, rsp)
                 case .failure(let error):
                     log.e("iotlink login \(url) fail for \(account), detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                 }
         }
     }
@@ -38,7 +38,7 @@ class IotLink{
                     self.handleRspCert(value, rsp)
                 case .failure(let error):
                     log.e("iotlink reqSessInventCert \(url) fail detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                 }
         }
     }
@@ -116,7 +116,7 @@ class IotLink{
                     self.handleRspDevList(value, rsp)
                 case .failure(let error):
                     log.e("iotlink reqAllDevice \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",[])
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",[])
                 }
             }
         }
@@ -140,7 +140,7 @@ class IotLink{
                     }
                 case .failure(let error):
                     log.e("iotlink reqChangePwd \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                 }
             }
     }
@@ -165,7 +165,7 @@ class IotLink{
                     }
                 case .failure(let error):
                     log.e("iotlink reqResetPwd \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                 }
             }
     }
@@ -189,7 +189,7 @@ class IotLink{
                     }
                 case .failure(let error):
                     log.e("iotlink reqUnRegister \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                 }
             }
     }
@@ -214,7 +214,7 @@ class IotLink{
                     }
                 case .failure(let error):
                     log.e("iotlink reqUpdateAccountInfo \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                 }
             }
     }
@@ -230,7 +230,7 @@ class IotLink{
                     self.handleRspAccountInfo(value,rsp)
                 case .failure(let error):
                     log.e("iotlink reqAccountInfo \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                 }
             }
     }
@@ -254,7 +254,7 @@ class IotLink{
                     }
                 case .failure(let error):
                     log.e("iotlink reqBindDevice \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                 }
             }
     }
@@ -283,7 +283,7 @@ class IotLink{
                     self.handleRspProductList(value, rsp)
                 case .failure(let error):
                     log.e("iotlink reqProductList \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",[])
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",[])
                 }
             }
     }
@@ -308,7 +308,7 @@ class IotLink{
                     }
                 case .failure(let error):
                     log.e("iotlink reqRenameDevice \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                 }
             }
     }
@@ -334,7 +334,7 @@ class IotLink{
                     }
                 case .failure(let error):
                     log.e("iotlink reqUnbindDevice \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                 }
             }
     }
@@ -352,7 +352,7 @@ class IotLink{
                     self.handleRspPointList(value, rsp)
                 case .failure(let error):
                     log.e("iotlink reqProperty \(url) fail for \(deviceId),\(productNumber), detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",[])
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",[])
                 }
             }
     }
@@ -390,7 +390,7 @@ class IotLink{
                 }
             case .failure(let error):
                 log.e("iotlink reqRegister \(url) fail for \(account), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
             }
         }
     }
@@ -428,7 +428,7 @@ class IotLink{
                     self.handleRspOtaInfo(value, rsp)
                 case .failure(let error):
                     log.e("iotlink reqOtaInfo \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                 }
             }
     }
@@ -447,7 +447,7 @@ class IotLink{
                     self.handleRspOtaStatus(value, rsp)
                 case .failure(let error):
                     log.e("iotlink reqOtaStatus \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                 }
             }
     }
@@ -473,7 +473,7 @@ class IotLink{
                     }
                 case .failure(let error):
                     log.e("iotlink reqOtaUpdate \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                 }
             }
     }

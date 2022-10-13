@@ -50,19 +50,19 @@ class NotificationManager : INotificationMgr{
     }
 
     func queryAll(result:@escaping(Int,String)->Void){
-        self.asyncResult(ErrCode.XERR_UNSUPPORTED,"暂未实现",result)
+        self.asyncResult(ErrCode.XERR_UNSUPPORTED,"unimplemented",result)
     }
 
     func queryByDevice(productKey: String, deviceId: String,result:@escaping(Int,String)->Void){
-        self.asyncResult(ErrCode.XERR_UNSUPPORTED,"暂未实现",result)
+        self.asyncResult(ErrCode.XERR_UNSUPPORTED,"unimplemented",result)
     }
 
     func delete(notificationIdList: [String],result:@escaping(Int,String)->Void){
-        self.asyncResult(ErrCode.XERR_UNSUPPORTED,"暂未实现",result)
+        self.asyncResult(ErrCode.XERR_UNSUPPORTED,"unimplemented",result)
     }
 
     func mark(markFlag: Int, notificationIdList: [String],result:@escaping(Int,String)->Void){
-        self.asyncResult(ErrCode.XERR_UNSUPPORTED,"暂未实现",result)
+        self.asyncResult(ErrCode.XERR_UNSUPPORTED,"unimplemented",result)
     }
 
     private var app:Application

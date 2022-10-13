@@ -23,14 +23,15 @@ class AgoraLab {
 
     func reqUploadIcon(_ token:String,_ image:UIImage,_ traceId:String, _ rsp:@escaping(Int,String,String?)->Void){
         let url = http + api.uploadHeadIcon
-        let httpHeaders = HTTPHeaders([:])
+        //let httpHeaders = HTTPHeaders([:])
+        let headers : HTTPHeaders = ["Authorization":token]
         let imageData : Data = image.jpegData(compressionQuality: 0.5)!
         AF.upload(multipartFormData: { multiPart in
             multiPart.append(imageData, withName: "file", fileName: "icon.jpg", mimeType: "image/jpg")
             //multiPart.append("true".data(using: String.Encoding.utf8)!, withName: "noRenameFile")
             multiPart.append("icon".data(using: String.Encoding.utf8)!, withName: "fileDir")
             multiPart.append("icon.jpg".data(using: String.Encoding.utf8)!, withName: "fileName")
-        }, to: url, method: .post, headers: httpHeaders).uploadProgress(queue: .main) { progress in
+        }, to: url, method: .post, headers: headers).uploadProgress(queue: .main) { progress in
             
         }.responseDecodable(of:UploadImage.Rsp.self){(dataRsp:AFDataResponse<UploadImage.Rsp>) in
             switch dataRsp.result{
@@ -45,7 +46,7 @@ class AgoraLab {
                 rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_INVALID_PARAM,"上传图片:\(ret.msg)(\(ret.code))",ret.data)
             case .failure(let error):
                 log.e("al reqUploadIcon \(url) failed,detail:\(error) ")
-                rsp(ErrCode.XERR_NETWORK,"网络错误",nil)
+                rsp(ErrCode.XERR_NETWORK,"network error",nil)
             }
         }
     }
@@ -73,10 +74,10 @@ class AgoraLab {
                     if(ret.code == 100001){
                         ec = ErrCode.XERR_CALLKIT_PEER_BUSY
                     }
-                    rsp(ret.code == 0 ? ErrCode.XOK : ec,"拨打电话收到响应:\(ret.msg)(\(ret.code))",ret)
+                    rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
                 case .failure(let error):
                     log.e("al reqCall \(url) failed,detail:\(error) ")
-                    rsp(ErrCode.XERR_NETWORK,"拨打电话操作失败",nil)
+                    rsp(ErrCode.XERR_NETWORK,"dial number fail",nil)
                 }
             }
     }
@@ -101,13 +102,13 @@ class AgoraLab {
                         rsp(ErrCode.XERR_TOKEN_INVALID,value.msg,nil)
                         return
                     }
-                    let op = reqPayload.answer == 0 ? "接听电话操作:" : "挂断电话操作:"
-                    let ret = value.success ? "成功" : "失败("+String(value.code)+")"
+                    let op = reqPayload.answer == 0 ? "answer :" : "hangup:"
+                    let ret = value.success ? "succ" : "fail("+String(value.code)+")"
                     
                     rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,  op + ret, value.data)
                 case .failure(let error):
                     log.e("al reqAnswer '\(act)' \(url) failed,detail:\(error) ")
-                    rsp(ErrCode.XERR_NETWORK,reqPayload.answer == 0 ? "接听电话操作失败" : "挂断电话失败",nil)
+                    rsp(ErrCode.XERR_NETWORK,reqPayload.answer == 0 ? "answer fail" : "hangup fail",nil)
                 }
             }
     }
@@ -125,7 +126,7 @@ class AgoraLab {
 //                    self.handleRspLogin(ret,rsp)
 //                case .failure(let error):
 //                    log.e("al reqLogin \(url) fail for \(username), detail: \(error) ")
-//                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+//                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
 //                }
 //            }
 //    }
@@ -146,7 +147,7 @@ class AgoraLab {
                     rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,ret.msg)
                 case .failure(let error):
                     log.e("al reqRegister \(url) fail for \(userName), detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                 }
             }
     }
@@ -178,7 +179,7 @@ class AgoraLab {
 //                    rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,token)
 //                case .failure(let error):
 //                    log.e("al reqGetToken \(url) fail for \(userName), detail: \(error) ")
-//                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+//                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
 //                }
 //            }
 //    }
@@ -208,7 +209,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertDelete \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
                     }
     }
@@ -234,7 +235,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertBatchDelete \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
                     }
     }
@@ -259,7 +260,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertRead \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
                     }
     }
@@ -285,7 +286,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertBatchRead \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
               }
     }
@@ -336,7 +337,7 @@ class AgoraLab {
                         rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,alerts)
                     case .failure(let error):
                         log.e("al reqAlertById \(url) fail for \(req), detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                     }
                   }
     }
@@ -372,7 +373,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,value.data)
                         case .failure(let error):
                             log.e("al reqAlertCount \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",0)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",0)
                         }
                     }
     }
@@ -448,7 +449,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,alerts)
                         case .failure(let error):
                             log.e("al reqAlert \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                         }
                     }
     }
@@ -475,7 +476,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAddAlert \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
                     }
     }
@@ -500,7 +501,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertRead \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
                     }
     }
@@ -526,7 +527,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertBatchRead \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
               }
     }
@@ -562,7 +563,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,value.data)
                         case .failure(let error):
                             log.e("al reqAlertCount \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",0)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",0)
                         }
                     }
     }
@@ -581,7 +582,7 @@ class AgoraLab {
                         self.handleRspGetAlarmByIdV2(value, rsp)
                     case .failure(let error):
                         log.e("al reqAlertById \(url) fail for \(req), detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                     }
                   }
     }
@@ -610,7 +611,7 @@ class AgoraLab {
                             self.handleRspGetAlarmPageV2(value,rsp)
                         case .failure(let error):
                             log.e("al reqAlert \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                         }
                     }
     }
@@ -636,7 +637,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertDelete \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
                     }
     }
@@ -662,7 +663,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqAlertBatchDelete \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
                     }
     }
@@ -681,7 +682,7 @@ class AgoraLab {
                             self.handleRspGetImageUrl(value,rsp)
                         case .failure(let error):
                             log.e("al reqAlertImageUrl \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                         }
                     }
     }
@@ -701,7 +702,7 @@ class AgoraLab {
                             self.handleRspGetVideoUrl(value,rsp)
                         case .failure(let error):
                             log.e("al reqAlertVideoUrl \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                         }
                     }
     }
@@ -728,7 +729,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqSysAlertRead \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
                     }
     }
@@ -754,7 +755,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg)
                         case .failure(let error):
                             log.e("al reqSysAlertBatchRead \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败")
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
                         }
                     }
     }
@@ -817,7 +818,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,alerts)
                         case .failure(let error):
                             log.e("al reqSysAlert \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                         }
                     }
     }
@@ -867,7 +868,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,alerts)
                         case .failure(let error):
                             log.e("al reqSysAlertById \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                         }
                     }
     }
@@ -904,7 +905,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,value.data)
                         case .failure(let error):
                             log.e("al reqSysAlertCount \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",0)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",0)
                         }
                     }
     }
@@ -938,7 +939,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,sess)
                         case .failure(let error):
                             log.e("al reqControlInfo \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                         }
                     }
     }
@@ -973,7 +974,7 @@ class AgoraLab {
                             rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,value.msg,sess)
                         case .failure(let error):
                             log.e("al reqRtcToekn \(url) fail for \(req), detail: \(error) ")
-                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "网络请求失败",nil)
+                            rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
                         }
                     }
     }

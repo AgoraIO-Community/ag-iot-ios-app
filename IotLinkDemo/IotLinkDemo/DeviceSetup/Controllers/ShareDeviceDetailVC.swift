@@ -108,7 +108,7 @@ class ShareDeviceDetailVC: UIViewController {
         AGToolHUD.showNetWorkWait()
         guard let cancelUser = cancelUser else { return }
 
-        deviceShareVM.removeMember(deviceId: cancelUser.deviceNumber, userId:cancelUser.appuserId) {[weak self] success, msg in
+        deviceShareVM.removeMember(deviceId: cancelUser.deviceId, userId:cancelUser.appuserId) {[weak self] success, msg in
             AGToolHUD.disMiss()
             if success == true {
                 AGToolHUD.showInfo(info: "已取消共享")

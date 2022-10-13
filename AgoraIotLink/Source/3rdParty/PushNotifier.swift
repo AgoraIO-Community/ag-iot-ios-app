@@ -27,7 +27,7 @@ class PushNotifier : NSObject, UIApplicationDelegate{
         _completion = completion
         if(state != PushNotifier.NULLED){
             log.e("ntf state : \(state) error for create()")
-            _completion(.Fail,"推送模块状态不正确")
+            _completion(.Fail,"state error")
             return
         }
         log.i("ntf try to create EMClient Ver\(EMPushVersionNumber)...")
@@ -188,7 +188,7 @@ class PushNotifier : NSObject, UIApplicationDelegate{
         if(state == PushNotifier.ENTERED){
             let cbLeave = {(b:Bool) in
                 if(!b){
-                    log.w("rtc leave channel error when leaveAndDestroy")
+                    log.w("ntf leave channel error when leaveAndDestroy")
                 }
                 self.destroy()
                 cb(b)
@@ -272,7 +272,7 @@ extension PushNotifier : EMLocalNotificationDelegate{
             }
             else{
                 let ext = userInfo["ext"]
-                log.i("local usernifo:\(userInfo) ext:\(String(describing: ext))")
+                log.i("ntf local usernifo:\(userInfo) ext:\(String(describing: ext))")
             }
         }
         

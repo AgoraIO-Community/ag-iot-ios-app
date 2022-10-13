@@ -86,6 +86,13 @@ extension AppDelegate: IDeviceStateListener {//添加设备回调等
                 currentViewController().navigationController?.pushViewController(vc, animated: false)
             }
         }
+        if actionType == "delete" {
+            let vc = DeviceDelSuccessVC()
+            vc.deviceId = deviceId
+            if currentViewController().navigationController != nil {
+                currentViewController().navigationController?.pushViewController(vc, animated: false)
+            }
+        }
     }
     
     func onDevicePropertyUpdated(deviceId: String, deviceNumber: String, props: [String : Any]?) {

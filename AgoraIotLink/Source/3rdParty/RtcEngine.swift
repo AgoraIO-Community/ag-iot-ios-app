@@ -159,12 +159,12 @@ class RtcEngine : NSObject{
         let ret = rtc.joinChannel(byToken: token, channelId: name, uid: uid, mediaOptions: option)
         if(ret != 0){
             log.e("rtc enterChannel:\(String(describing: ret))")
-            cb(.Fail,"加入频道失败")
+            cb(.Fail,"join channel fail")
         }
         _onEnterChannel = TimeCallback<(TaskResult,String)>(cb: cb)
         _onEnterChannel?.schedule(time: 10, timeout: {
             log.e("rtc join channel timeout")
-            cb(.Fail,"加入频道超时")
+            cb(.Fail,"join channel timeout")
         })
         peerEntered = false
     }
@@ -209,16 +209,16 @@ class RtcEngine : NSObject{
     
     private var _localVideoMute:Bool? = nil
     func muteLocalVideo(_ mute:Bool,cb:@escaping (Int,String)->Void){
-        let op = mute ? "关闭" : "打开"
+        let op = mute ? "mute local video" : "unmute local video"
         if(state == RtcEngine.IDLED){
             _localVideoMute = mute
             log.i("rtc state : \(state),lazy set:\(mute) for muteLocalVideo()")
-            cb(ErrCode.XOK,op + "本地视频成功")
+            cb(ErrCode.XOK,op + " succ")
             return
         }
         guard let engine = engine else {
             log.e("rtc engine is nil")
-            cb(ErrCode.XOK,op + "本地视频失败")
+            cb(ErrCode.XOK,op + " fail")
             return
         }
         var ret = engine.enableLocalVideo(!mute)
@@ -231,21 +231,21 @@ class RtcEngine : NSObject{
             log.w("rtc muteLocalVideo(\(mute)) faile:\(String(ret))")
         }
         _localVideoMute = nil
-        ret == 0 ? cb(ErrCode.XOK,op + "本地视频成功") : cb(ErrCode.XERR_UNKNOWN,op + "本地视频失败:" + String(ret))
+        ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     
     private var _localAudioMute:Bool? = nil
     func muteLocalAudio(_ mute:Bool,cb:@escaping (Int,String)->Void){
-        let op = mute ? "关闭本地音频" : "打开本地音频"
+        let op = mute ? "mute local audio" : "unmute local audio"
         if(state == RtcEngine.IDLED){
             _localAudioMute = mute
             log.i("rtc state : \(state),lazy set:\(mute) for muteLocalAudio()")
-            cb(ErrCode.XOK,op + "成功")
+            cb(ErrCode.XOK,op + " succ")
             return
         }
         guard let engine = engine else {
             log.e("rtc engine is nil")
-            cb(ErrCode.XERR_BAD_STATE,op + "失败")
+            cb(ErrCode.XERR_BAD_STATE,op + " fail")
             return
         }
 //        below api will trigger codec error,so comment out this code
@@ -260,21 +260,21 @@ class RtcEngine : NSObject{
         }
         
         _localAudioMute = nil
-        ret == 0 ? cb(ErrCode.XOK,op + "成功") : cb(ErrCode.XERR_UNKNOWN,op + "失败:" + String(ret))
+        ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     
     private var _peerVideoMute:Bool? = nil
     func mutePeerVideo(_ mute:Bool,cb:@escaping (Int,String)->Void){
-        let op = mute ? "关闭远端视频" : "打开远端视频"
+        let op = mute ? "mute peer video" : "unmute peer video"
         if(state == RtcEngine.IDLED){
             _peerVideoMute = mute
             log.i("rtc state : \(state),lazy set:\(mute) for mutePeerVideo()")
-            cb(ErrCode.XOK,op + "成功")
+            cb(ErrCode.XOK,op + " succ")
             return
         }
         guard let engine = engine else {
             log.e("rtc engine is nil")
-            cb(ErrCode.XERR_BAD_STATE,op + "失败")
+            cb(ErrCode.XERR_BAD_STATE,op + " fail")
             return
         }
         
@@ -283,21 +283,21 @@ class RtcEngine : NSObject{
             log.w("rtc mutePeerVideo(\(mute)) faile:\(ret)")
         }
         _peerVideoMute = nil
-        ret == 0 ? cb(ErrCode.XOK,op + "成功") : cb(ErrCode.XERR_UNKNOWN,op + "失败:" + String(ret))
+        ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     
     private var _peerAudioMute:Bool? = nil
     func mutePeerAudio(_ mute:Bool,cb:@escaping (Int,String)->Void){
-        let op = mute ? "关闭远端音频" : "打开远端音频"
+        let op = mute ? "mute peer audio" : "unmuete peer audio"
         if(state == RtcEngine.IDLED){
             _peerAudioMute = mute
             log.i("rtc state : \(state),lazy set:\(mute) for mutePeerAudio()")
-            cb(ErrCode.XOK,op + "成功")
+            cb(ErrCode.XOK,op + " succ")
             return
         }
         guard let engine = engine else {
             log.e("rtc engine is nil")
-            cb(ErrCode.XERR_BAD_STATE,op + "失败")
+            cb(ErrCode.XERR_BAD_STATE,op + " fail")
             return
         }
 
@@ -306,7 +306,7 @@ class RtcEngine : NSObject{
             log.w("rtc mutePeerAudio(\(mute)) faile:\(ret)")
         }
         _peerAudioMute = nil
-        ret == 0 ? cb(ErrCode.XOK,op + "成功") : cb(ErrCode.XERR_UNKNOWN,op + "失败:" + String(ret))
+        ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     
     private var _audioEffect:AudioEffectId? = nil
@@ -314,12 +314,12 @@ class RtcEngine : NSObject{
         if(state == RtcEngine.IDLED){
             _audioEffect = effectId
             log.i("rtc state : \(state),lazy set:\(effectId) for setAudioEffect()")
-            cb(ErrCode.XOK,"音效切换成功")
+            cb(ErrCode.XOK,"switch audio effect succ")
             return
         }
         guard let engine = engine else {
             log.e("rtc engine is nil")
-            cb(ErrCode.XERR_BAD_STATE,"音效切换失败")
+            cb(ErrCode.XERR_BAD_STATE,"switch audio effect fali")
             return
         }
         
@@ -342,7 +342,7 @@ class RtcEngine : NSObject{
         }
         let ret = engine.setAudioEffectPreset(preset)
         _audioEffect = nil
-        ret == 0 ? cb(ErrCode.XOK,"音效切换成功") : cb(ErrCode.XERR_UNKNOWN,"音效切换失败:" + String(ret))
+        ret == 0 ? cb(ErrCode.XOK,"switch audio effect succ") : cb(ErrCode.XERR_UNKNOWN,"switch audio effect fail:" + String(ret))
     }
     
     func startRecord(result: @escaping (Int, String) -> Void){
@@ -359,7 +359,7 @@ class RtcEngine : NSObject{
     
     func setVolume(_ vol: Int,cb:@escaping (Int,String)->Void){
         let ret = -1 //engine?.(vol)
-        return ret == 0 ? cb(ErrCode.XOK,"暂未实现") : cb(ErrCode.XERR_UNSUPPORTED,"暂未实现")
+        return ret == 0 ? cb(ErrCode.XOK,"unimplemented") : cb(ErrCode.XERR_UNSUPPORTED,"unimplemented")
     }
     
     private func resetNetStatus(){
@@ -418,7 +418,7 @@ class RtcEngine : NSObject{
             leaveChannel(cb:cbLeave)
         }
         else if(state == RtcEngine.CREATED){
-            _onEnterChannel?.invoke(args:(.Abort,"取消加入频道"))
+            _onEnterChannel?.invoke(args:(.Abort,"abort joining channel"))
             destroy()
             cb(true)
         }
@@ -502,7 +502,7 @@ extension RtcEngine: AgoraRtcEngineDelegate{
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
         log.i("rtc didJoinChannel \(uid)")
         state = RtcEngine.ENTERED
-        _onEnterChannel?.invoke(args:(.Succ,"加入频道成功"))
+        _onEnterChannel?.invoke(args:(.Succ,"join channel succ"))
     }
     func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith status:AgoraChannelStats){
         log.i("rtc didLeaveChannelWith")
@@ -576,7 +576,7 @@ extension RtcEngine : AgoraVideoFrameDelegate{
                 log.i("rtc capture frame:\(videoFrame.type) width:\(videoFrame.width),height:\(videoFrame.height)")
                 let image = Utils.i420(toImage: videoFrame.yBuffer, srcU: videoFrame.uBuffer, srcV: videoFrame.vBuffer,yStride: Int32(videoFrame.yStride), uStride:Int32(videoFrame.uStride), vStride:Int32(videoFrame.vStride), width: Int32(videoFrame.width), height: Int32(videoFrame.height))
                 DispatchQueue.main.async {
-                    self._onImageCaptured(image != nil ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,"截屏数据",image)
+                    self._onImageCaptured(image != nil ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,"capture screen",image)
                     self._onImageCaptured = {ec,msg,img in}
                 }
             }
@@ -590,7 +590,7 @@ extension RtcEngine : AgoraVideoFrameDelegate{
                     log.e("rtc capture pixelBuffer is nil")
                 }
                 DispatchQueue.main.async {
-                    self._onImageCaptured(img != nil ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,"截屏数据",img)
+                    self._onImageCaptured(img != nil ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,"capture screen",img)
                     self._onImageCaptured = {ec,msg,img in}
                 }
             }

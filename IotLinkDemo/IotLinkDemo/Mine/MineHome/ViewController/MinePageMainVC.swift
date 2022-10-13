@@ -107,6 +107,12 @@ class MinePageMainVC: AGBaseVC {
             let uid:String = DeviceManager.shared.sdk?.accountMgr.getUserId() ?? ""
             self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: userInfo?.name ?? account,count:DeviceManager.shared.devices?.count ?? 0,uid: uid)
             self?.userInfo = userInfo
+            if(self?.userInfo?.sex == 0){
+                self?.userInfo?.sex = 1
+            }
+            if(self?.userInfo?.age == 0){
+                self?.userInfo?.age = 10
+            }
         })
         // 更新是否有告警消息
         AgoraIotManager.shared.sdk?.alarmMgr.queryCount(productId: nil, deviceId: nil, messageType: nil, status: 0, createDateBegin: nil, createDateEnd: nil, result: {[weak self] _, _, count in

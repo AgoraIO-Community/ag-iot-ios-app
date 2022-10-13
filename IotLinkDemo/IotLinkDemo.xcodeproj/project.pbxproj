@@ -29,6 +29,7 @@
 		84F7453D289BC14A00702944 /* DeviceFirmwareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */; };
 		84F7453F289BEE0500702944 /* AGFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453E289BEE0500702944 /* AGFirmwareVC.swift */; };
 		84F74541289CBDCC00702944 /* AGConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F74540289CBDCC00702944 /* AGConfirmView.swift */; };
+		84FFD15628F58FAF0076AD29 /* DeviceDelSuccessVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FFD15528F58FAF0076AD29 /* DeviceDelSuccessVC.swift */; };
 		9601C2FC280D5C6400D3CA49 /* MinePageMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C2FB280D5C6400D3CA49 /* MinePageMainVC.swift */; };
 		9601C2FF280D5EBF00D3CA49 /* NetWorkTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C2FE280D5EBF00D3CA49 /* NetWorkTool.swift */; };
 		9601C301280D638800D3CA49 /* TDTURLConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C300280D638800D3CA49 /* TDTURLConstant.swift */; };
@@ -231,6 +232,7 @@
 		84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareView.swift; sourceTree = "<group>"; };
 		84F7453E289BEE0500702944 /* AGFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGFirmwareVC.swift; sourceTree = "<group>"; };
 		84F74540289CBDCC00702944 /* AGConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGConfirmView.swift; sourceTree = "<group>"; };
+		84FFD15528F58FAF0076AD29 /* DeviceDelSuccessVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDelSuccessVC.swift; sourceTree = "<group>"; };
 		8C6A65CBF4F4809C66FEC83C /* Pods-AgoraIotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraIotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-AgoraIotLinkDemo/Pods-AgoraIotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		8DA61631220187EAFBFB57B5 /* Pods-IotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		9601C2FB280D5C6400D3CA49 /* MinePageMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinePageMainVC.swift; sourceTree = "<group>"; };
@@ -1401,6 +1403,7 @@
 				A805ADBA2816876600E6C6DF /* DeviceConnectTimeoutVC.swift */,
 				A805ADBE281696AD00E6C6DF /* DeviceAddFailedVC.swift */,
 				A805ADC0281696F100E6C6DF /* DeviceAddSuccessVC.swift */,
+				84FFD15528F58FAF0076AD29 /* DeviceDelSuccessVC.swift */,
 				963956F528DDBBD70049B9C8 /* BluefiResultVC.swift */,
 			);
 			path = DeviceConnect;
@@ -1661,6 +1664,7 @@
 				9601C301280D638800D3CA49 /* TDTURLConstant.swift in Sources */,
 				9601C306280D67FE00D3CA49 /* TDUserInforManager.swift in Sources */,
 				9697BE722812891E00447DF9 /* PhoneInputView.swift in Sources */,
+				84FFD15628F58FAF0076AD29 /* DeviceDelSuccessVC.swift in Sources */,
 				96827D7B2867301E0012AC84 /* LoggerViewController.swift in Sources */,
 				965B1FA2282E6F2C0045D002 /* AGToolHUD.swift in Sources */,
 				9601C310280D6A0B00D3CA49 /* UserAccountModel.swift in Sources */,

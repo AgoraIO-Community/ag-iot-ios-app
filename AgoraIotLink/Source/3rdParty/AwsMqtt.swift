@@ -466,7 +466,7 @@ class AWSMqtt{
         let ret = iotDataManager?.connectUsingWebSocket(withClientId: self.identityId, cleanSession: true, statusCallback: mqttConnEventCallback)
         if(ret != true){
             log.e("mqtt connect fail")
-            completion(false,"连接服务失败")
+            completion(false,"mqtt connect fail")
         }
     }
     
@@ -494,7 +494,7 @@ class AWSMqtt{
                 log.i("mqtt .connected")
                 
                 if(self.onConnect != nil){
-                    self.onConnect!(true,"mqtt 连接成功")
+                    self.onConnect!(true,"mqtt connect succ")
                     self.onConnect = nil
                 }
                 else{
@@ -507,7 +507,7 @@ class AWSMqtt{
             case .disconnected:
                 log.i("mqtt .disconnected")
                 if(self.onDisconnect != nil){
-                    self.onDisconnect!(true,"mqtt 断开成功")
+                    self.onDisconnect!(true,"mqtt disconn succ")
                     self.onDisconnect = nil
                 }
                 else {
@@ -517,7 +517,7 @@ class AWSMqtt{
             case .connectionRefused:
                 log.i("mqtt .connectionRefused")
                 if(self.onConnect != nil){
-                    self.onConnect!(false,"mqtt 连接被拒绝")
+                    self.onConnect!(false,"mqtt connect reject")
                     self.onConnect = nil
                 }
                 else{
@@ -527,7 +527,7 @@ class AWSMqtt{
             case .connectionError:
                 log.i("mqtt .connectionError")
                 if(self.onConnect != nil){
-                    self.onConnect!(false,"mqtt 无法连接")
+                    self.onConnect!(false,"mqtt connect error")
                     self.onConnect = {succ,msg in}
                 }
                 else {
@@ -537,7 +537,7 @@ class AWSMqtt{
             case .protocolError:
                 log.i("mqtt .protocolError")
                 if(self.onConnect != nil){
-                    self.onConnect!(false,"mqtt 协议错误")
+                    self.onConnect!(false,"mqtt proto error")
                     self.onConnect = nil
                 }
                 else{
@@ -546,11 +546,11 @@ class AWSMqtt{
             default:
                 log.e("mqtt unknown state")
                 if(self.onConnect != nil){
-                    self.onConnect!(false,"mqtt 未知错误")
+                    self.onConnect!(false,"mqtt unknown error")
                     self.onConnect = nil
                 }
                 else if(self.onDisconnect != nil){
-                    self.onDisconnect!(false,"mqtt 协议错误")
+                    self.onDisconnect!(false,"mqtt proto error")
                     self.onDisconnect = nil
                 }
                 self._onStatusChanged(.Unknown)
@@ -846,7 +846,7 @@ class AWSMqtt{
     
     public func publishEnableNotify(eid:String,enable:Bool,result:@escaping(Int,String)->Void){
         let ret = updateRemoteRtcStatus(eid:eid,enablePush:enable)
-        result(ret ? ErrCode.XOK : ErrCode.XERR_BAD_STATE,ret ? "" : "设置参数失败")
+        result(ret ? ErrCode.XOK : ErrCode.XERR_BAD_STATE,ret ? "" : "para invalid")
     }
     
     public func publish(data:Data,topic:String,qos:AWSIoTMQTTQoS){
@@ -902,7 +902,7 @@ class AWSMqtt{
         let jsonStr = str.rawString([.castNilToNSNull:true])
         if(jsonStr == nil){
             log.e("mqtt setDeviceStatus jsonStr is nil:\(str)")
-            result(ErrCode.XERR_INVALID_PARAM,"输入的参数错误")
+            result(ErrCode.XERR_INVALID_PARAM,"param invalid")
             return
         }
         //let topicGetAccepted = "$aws/things/" + things_name + "/shadow/get/accepted"
@@ -911,7 +911,7 @@ class AWSMqtt{
         iotDataManager?.publishString(jsonStr!, onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce,ackCallback: {
             log.i("mqtt topic ack for \(topic)")
             DispatchQueue.main.async {
-                result(ErrCode.XOK,"发送属性成功")
+                result(ErrCode.XOK,"succ")
             }
         })
     }
@@ -941,7 +941,7 @@ class AWSMqtt{
             lreject.setCallback(cb:{
                 [weak self](topic,dict) in
                 self?.resetListener(accept: topicAccept, la: laccept, reject: topicReject, lr: lreject)
-                result(ErrCode.XERR_INVALID_PARAM,"无属性表",nil,nil)
+                result(ErrCode.XERR_INVALID_PARAM,"no property",nil,nil)
             })
             
             laccept.setCallback(cb:{
@@ -951,12 +951,12 @@ class AWSMqtt{
                 
                 guard let state = dict?["state"] as? [String:Any] else{
                     log.e("mqtt no 'state' found for \(topic)")
-                    result(ErrCode.XERR_INVALID_PARAM,"返回无效参数",nil,nil)
+                    result(ErrCode.XERR_INVALID_PARAM,"param invalid",nil,nil)
                     return
                 }
                 let reported = state["reported"] as? [String:Any]
                 let desired = state["desired"] as? [String:Any]
-                result(ErrCode.XOK,"收到返回状态",desired,reported)
+                result(ErrCode.XOK,"state recved",desired,reported)
             })
             
             if(self.listeners[topicAccept]?.isEmpty() != false){
@@ -973,7 +973,7 @@ class AWSMqtt{
             
             let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false){
                 [weak self]tm in
-                result(ErrCode.XERR_TIMEOUT,"等待处理超时",nil,nil)
+                result(ErrCode.XERR_TIMEOUT,"wait timeout",nil,nil)
                 log.w("mqtt listen timeout for \(topicAccept)")
                 self?.resetListener(accept: topicAccept, la: laccept, reject: topicReject, lr: lreject)
             }

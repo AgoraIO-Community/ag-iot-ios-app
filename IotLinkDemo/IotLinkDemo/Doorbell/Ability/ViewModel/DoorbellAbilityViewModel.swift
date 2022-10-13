@@ -18,7 +18,6 @@ class DoorbellAbilityViewModel: NSObject {
             cb(false,"sdk 呼叫服务 未初始化")
             return
         }
-        members = 0
         callMgr.callDial(device:dev,attachMsg: "",result:{
             (ec,msg) in
             cb(ec == ErrCode.XOK ? true : false , msg)
@@ -46,12 +45,19 @@ class DoorbellAbilityViewModel: NSObject {
             log.i("呼叫事件:\(msg)")
             if(s == .RemoteHangup){
 //                self._status.trans(FsmView.Event.BACK)
+                self.members = 0
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+            }
+            if(s == .RemoteAnswer){
+                self.members = self.members + 1
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
             }
             action(s)
         },memberState:{s,a in
             log.i("demo app member:\(a) \(s.rawValue)")
-            if(s == .Enter){self.members = self.members - 1}
-            if(s == .Leave){self.members = self.members + 1}
+            if(s == .Enter){self.members = self.members + 1}
+            if(s == .Leave){self.members = self.members - 1}
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
         })
         
         //sdk?.callkitMgr.mutePeerVideo(mute: false, result: { state, msg in
@@ -85,15 +91,23 @@ class DoorbellAbilityViewModel: NSObject {
         actionAck: {ack in
             
             log.i("demo app callAnser ack:\(ack)")
-            if(ack == .RemoteHangup){
-            }
+             if(ack == .RemoteHangup){
+ //                self._status.trans(FsmView.Event.BACK)
+                 self.members = 0
+                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+             }
+             if(ack == .RemoteAnswer){
+                 self.members = self.members + 1
+                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+             }
             actionAck(ack)
             
         },
         memberState:{s,a in
              log.i("demo app member:\(a) \(s.rawValue)")
-             if(s == .Enter){self.members = self.members - 1}
-             if(s == .Leave){self.members = self.members + 1}
+             if(s == .Enter){self.members = self.members + a.count}
+             if(s == .Leave){self.members = self.members - a.count}
+             NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
          })
         
     }

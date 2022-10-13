@@ -123,7 +123,7 @@ class CallkitManager : ICallkitMgr{
         log.i("call callHangup")
         app.rule.trans(FsmCall.Event.LOCAL_HANGUP,
                        {self.doCallHangup(result: {ec,msg in self.asyncResult(ec, msg, result)})},
-                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"当前状态不正确",result)})
+                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
     
     private func finiCall(result:@escaping(Int,String)->Void){
@@ -139,7 +139,7 @@ class CallkitManager : ICallkitMgr{
         let sessionId = app.context.call.session.sessionId
         if(sessionId == ""){
             log.e("call callAnswer session is empty")
-            result(ErrCode.XERR_BAD_STATE,"呼叫状态不正确")
+            result(ErrCode.XERR_BAD_STATE,"state error")
             return
         }
         
@@ -183,7 +183,7 @@ class CallkitManager : ICallkitMgr{
         log.i("call callAnswer")
         app.rule.trans(FsmCall.Event.LOCAL_ACCEPT,
                        {self.doCallAnswer(result: {ec,msg in self.asyncResult(ec, msg, result)},actionAck: actionAck,memberState: memberState)},
-                                          {self.asyncResult(ErrCode.XERR_BAD_STATE,"当前状态不正确",result)})
+                                          {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
     
     class AsyncCallback{
@@ -236,7 +236,7 @@ class CallkitManager : ICallkitMgr{
             self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
         }
         else if(action == .CallOutgoing){
-            self._onPeerRinging(ErrCode.XOK,"进入呼叫中...", sess)
+            self._onPeerRinging(ErrCode.XOK,"calling ...", sess)
             self.onCallSessionUpdated(sess: sess!)
             self._onPeerRinging = {e,m,s in }
         }
@@ -297,14 +297,14 @@ class CallkitManager : ICallkitMgr{
         let local_join_watcher : (FsmCall.Event)->Void = {event in
             log.i("call local_join_watcher triggered")
             if(event == FsmCall.Event.LOCAL_JOIN_FAIL){
-                rcb.invoke(args:(ErrCode.XERR_CALLKIT_DIAL,"加入频道失败"))
+                rcb.invoke(args:(ErrCode.XERR_CALLKIT_DIAL,"join channel fail"))
             }
             else if(event == FsmCall.Event.REMOTE_ANSWER){
-                rcb.invoke(args: (ErrCode.XOK,"设备开始响铃"))
+                rcb.invoke(args: (ErrCode.XOK,"device answer"))
                 actionAck(.RemoteAnswer)
             }
             else if(event == FsmCall.Event.LOCAL_JOIN_SUCC){
-                rcb.invoke(args: (ErrCode.XOK,"设备开始响铃"))
+                rcb.invoke(args: (ErrCode.XOK,"device is ringing"))
                 let pacb = TimeCallback<ActionAck>(cb:actionAck)
                 pacb.schedule(time:self.app.config.calloutTimeOut,timeout: {
                     log.i("call reqCall peerAction waitForAction timeout")
@@ -331,7 +331,7 @@ class CallkitManager : ICallkitMgr{
                 guard let sess = sess else{
                     log.e("call unknown error: nil session with \(ec),\(msg)")
                     self.app.rule.trans(FsmCall.Event.MQTT_ACK_ERROR)
-                    rcb.invoke(args: (ErrCode.XERR_UNKNOWN,"未知的呼叫返回错误"))
+                    rcb.invoke(args: (ErrCode.XERR_UNKNOWN,"unknown error"))
                     return
                 }
                 
@@ -354,50 +354,50 @@ class CallkitManager : ICallkitMgr{
             if(ec == ErrCode.XOK){
                 guard let rsp = rsp else{
                     log.e("call callDial ret XOK, but rsp is nil")
-                    result(ErrCode.XERR_CALLKIT_DIAL,"返回参数为空")
+                    result(ErrCode.XERR_CALLKIT_DIAL,"param error")
                     return
                 }
                 
                 var ec = ErrCode.XERR_UNKNOWN
-                var msg = "未知的错误返回码:\(rsp.code)"
+                var msg = "unknown rsp:\(rsp.code)"
                 switch(rsp.code){
                 case AgoraLab.RspCode.IN_TALKING:
-                    msg = "对端通话中,无法接听"
+                    msg = "peer is in talking"
                     ec = ErrCode.XERR_CALLKIT_PEER_BUSY
                 case AgoraLab.RspCode.ANSWER:
-                    msg = "未通话,无法接听"
+                    msg = "answer fail"
                     ec = ErrCode.XERR_CALLKIT_ANSWER
                 case AgoraLab.RspCode.HANGUP:
                     ec = ErrCode.XERR_CALLKIT_HANGUP
-                    msg = "未通话,无法挂断"
+                    msg = "hangup fail"
                 case AgoraLab.RspCode.ANSWER_TIMEOUT:
                     ec = ErrCode.XERR_CALLKIT_TIMEOUT
-                    msg = "接听等待超时"
+                    msg = "timeout for answering"
                 case AgoraLab.RspCode.CALL:
                     ec = ErrCode.XERR_CALLKIT_LOCAL_BUSY
-                    msg = "呼叫中,无法再次呼叫"
+                    msg = "can't call again during calling"
                 case AgoraLab.RspCode.INVALID_ANSWER:
                     ec = ErrCode.XERR_CALLKIT_ERR_OPT
-                    msg = "无效Answer操作"
+                    msg = "invalid answer"
                 case AgoraLab.RspCode.SYS_ERROR:
                     ec = ErrCode.XERR_UNKNOWN
-                    msg = "系统异常,具体原因查看错误提示信息"
+                    msg = "system error"
                 case AgoraLab.RspCode.APPID_NOT_SAME:
                     ec = ErrCode.XERR_CALLKIT_APPID_DIFF
-                    msg = "主控和被控方app id不一致"
+                    msg = "appid not same"
                 case AgoraLab.RspCode.SAME_ID:
                     ec = ErrCode.XERR_CALLKIT_SAME_ID
-                    msg = "主叫和被叫不能是同一个id"
+                    msg = "caller and callee id are same"
                 case AgoraLab.RspCode.APPID_NOT_REPORT:
                     ec = ErrCode.XERR_CALLKIT_NO_APPID
-                    msg = "未上报appid"
+                    msg = "appid not report"
                 case AgoraLab.RspCode.OK:
                     ec = ErrCode.XOK
-                    msg = "呼叫成功"
+                    msg = "succ"
                 
                 default:
                     ec = ErrCode.XERR_INVALID_PARAM
-                    msg = "未知的呼叫返回参数:\(rsp.code)"
+                    msg = "unknown rsp:\(rsp.code)"
                 }
                 if(ec != ErrCode.XOK){
                     log.e("call callDial ret \(msg)(\(ec))")
@@ -410,7 +410,7 @@ class CallkitManager : ICallkitMgr{
                 guard let data = rsp.data else{
                     log.e("call reqCall ret data is nil for \(rsp.msg) (\(rsp.code))")
                     self.app.rule.trans(FsmCall.Event.ACK_INVALID)
-                    result(ErrCode.XERR_INVALID_PARAM,"返回参数异常")
+                    result(ErrCode.XERR_INVALID_PARAM,"param error")
                     return
                 }
                 
@@ -429,7 +429,7 @@ class CallkitManager : ICallkitMgr{
                         self._onPeerRinging = {e,m,s in }
                         log.i("call reqCall ring remote timeout")
                         self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT,{
-                            result(ErrCode.XERR_TIMEOUT,"呼叫设备超时无法接通")
+                            result(ErrCode.XERR_TIMEOUT,"dial number timeout")
                         })
                     })
                 })
@@ -450,7 +450,7 @@ class CallkitManager : ICallkitMgr{
         let filter = self.app.context.callbackFilter
         app.rule.trans(FsmCall.Event.CALL,
                        {self.doCallDial(deviceId: device.deviceId, attachMsg: attachMsg, result: {ec,msg in self.asyncResult(ec, msg, result)}, actionAck: actionAck,memberState:memberState)},
-                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"状态错误",result)})
+                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
     
     func setLocalVideoView(localView: UIView?) -> Int {

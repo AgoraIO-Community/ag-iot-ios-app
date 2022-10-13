@@ -16,7 +16,7 @@ class CallListener : FsmCall.IListener{
     func on_incoming_state_watcher(_ srcEvent: FsmCall.Event) {
         log.i("listener call.on_incoming_state_watcher \(srcEvent)")
         var act:ActionAck = .UnknownAction
-        if(srcEvent == FsmCall.Event.VIDEOREADY){
+        if(srcEvent == .VIDEOREADY){
             act = .RemoteVideoReady
         }
         else if(srcEvent == .INCOMING_HANGUP){
@@ -34,7 +34,7 @@ class CallListener : FsmCall.IListener{
     func on_remote_state_watcher(_ srcEvent: FsmCall.Event) {
         log.i("listener call.on_remote_state_watcher \(srcEvent)")
         var act:ActionAck = .UnknownAction
-        if(srcEvent == FsmCall.Event.VIDEOREADY){
+        if(srcEvent == .VIDEOREADY){
             act = .RemoteVideoReady
         }
         else if(srcEvent == .NTF_REMOTE_HANGUP){
