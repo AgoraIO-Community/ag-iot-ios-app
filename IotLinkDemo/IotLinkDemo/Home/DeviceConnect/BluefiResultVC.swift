@@ -36,7 +36,9 @@ class BluefiResultVC: UIViewController {
     //blufiClient
     var bClient : BlufiClient?
     
-    let filterContent = "BLUFI"
+    let filterContent = "BL"//"BLUFI"
+    
+    let device808Key = "BL808"//"BLUFI"
     
     var dataArray = [ESPPeripheral]()
 
@@ -44,7 +46,7 @@ class BluefiResultVC: UIViewController {
     
     
     //蓝牙搜索倒计时
-    fileprivate let countDownNum:Int = 10
+    fileprivate let countDownNum:Int = 30
     fileprivate var startCount:Int = 0
     
     fileprivate var timer: Timer!
@@ -368,7 +370,7 @@ extension BluefiResultVC{
     func scanBlufi(){
         
         blueFi.startScan { [weak self] device in
-            debugPrint("---Blufi---:\(device.name)-------:---:\(device)")
+//            debugPrint("---Blufi---:\(device.name)-------:---:\(device)")
             self?.configBlueResult(device)
         }
     }
@@ -391,6 +393,10 @@ extension BluefiResultVC{
     }
     
     func connect(){
+        
+        if currentModel.uuid.uuidString == "" {
+            return
+        }
         
         if bClient != nil {
             bClient?.close()
@@ -419,10 +425,6 @@ extension BluefiResultVC{
         params.staSsid = wifiName
         params.staPassword = password
         
-//        let userId = AgoraIotManager.shared.sdk?.accountMgr.getUserId() ?? ""
-//        params.uid = userId
-//        params.key = productKey
-        
         debugPrint("--------：\(params)")
                    
         didSetParams(params)
@@ -431,7 +433,11 @@ extension BluefiResultVC{
     
     func didSetParams(_ params : BlufiConfigureParams){
         if bClient != nil {
-            bClient?.configure(params)
+            if isBL808Device() == true {
+                bClient?.configureBle808(params)
+            }else{
+                bClient?.configure(params)
+            }
         }
     }
     
@@ -442,22 +448,43 @@ extension BluefiResultVC{
         let userId = AgoraIotManager.shared.sdk?.accountMgr.getUserId() ?? ""
         let qrString = String(format: "{\"s\":\"%@\",\"p\":\"%@\",\"u\":\"%@\",\"k\":\"%@\"}",arguments:[wifiName,password,userId,productKey])
         
+        debugPrint("qrString == \(qrString)")
+        
         guard let data = qrString.data(using: .utf8) else { return }
         if bClient != nil {
-            bClient?.postCustomData(data)
+            if isBL808Device() == true {
+                let params = BlufiConfigureParams()
+                params.opMode = OpModeSta
+                params.customData = qrString
+                bClient?.postCustomDataBle808(params)
+            }else{
+                bClient?.postCustomData(data)
+            }
         }
         
     }
     
+    //是否BL808设备
+    func isBL808Device()->Bool{
+        
+        if currentModel.name != "", currentModel.name.hasPrefix(device808Key) == false{
+            return false
+        }else if currentModel.name == "" {
+            return false
+        }
+        
+        return true
+    }
+    
     func shouldAddToSource(_ device : ESPPeripheral)->Bool{
         
-//        if filterContent != "" {
-//            if device.name != "", device.name.hasPrefix(filterContent) == false{
-//                return false
-//            }else if device.name == "" {
-//                return false
-//            }
-//        }
+        if filterContent != "" {
+            if device.name != "", device.name.hasPrefix(filterContent) == false{
+                return false
+            }else if device.name == "" {
+                return false
+            }
+        }
         
         for item in dataArray {
             if item.uuid == device.uuid {
@@ -566,11 +593,6 @@ extension BluefiResultVC : CBCentralManagerDelegate,CBPeripheralDelegate,BlufiDe
     //连接外设
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         debugPrint("开始连接设备了")
-//        configConnectState(.deviceConnected)
-//        //连接成功发送配网信息
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-//            self?.sendWifiConfigInfor()
-//        }
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
@@ -585,11 +607,18 @@ extension BluefiResultVC : CBCentralManagerDelegate,CBPeripheralDelegate,BlufiDe
     func blufi(_ client: BlufiClient, gattPrepared status: BlufiStatusCode, service: CBService?, writeChar: CBCharacteristic?, notifyChar: CBCharacteristic?) {
         debugPrint("Blufi gattPrepared status:\(status)")
         if status == StatusSuccess {
-            debugPrint("连接设备成功 has prepared")
+            debugPrint("连接设备成功 has prepared") 
             configConnectState(.deviceConnected)
-            //连接成功发送配网信息
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-                self?.sendWifiConfigInfor()
+            if isBL808Device() == true {
+                //连接成功发送自定义消息
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.sendCustomConfigInfor()
+                }
+            }else{
+                //连接成功发送配网信息
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.sendWifiConfigInfor()
+                }
             }
         }else{
             debugPrint("连接设备失败")
@@ -620,10 +649,13 @@ extension BluefiResultVC : CBCentralManagerDelegate,CBPeripheralDelegate,BlufiDe
         if status == StatusSuccess {
             debugPrint("Post configure params complete")
             configConnectState(.wifiConnected)
-            //连接成功发送自定义消息
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                self?.sendCustomConfigInfor()
+            if isBL808Device() == false {
+                //配网成功发送自定义消息
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.sendCustomConfigInfor()
+                }
             }
+            
         }else{
             debugPrint("Post configure params failed:\(status)")
             configConnectState(.faliConnected)
@@ -662,6 +694,13 @@ extension BluefiResultVC : CBCentralManagerDelegate,CBPeripheralDelegate,BlufiDe
         if status == StatusSuccess {
             configConnectState(.cloudConnected)
             debugPrint("Post custom data complete")
+            if isBL808Device() == true {
+                //自定义发送成功发送配网信息
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.sendWifiConfigInfor()
+                }
+            }
+           
         }else{
             debugPrint("Post custom data failed:\(status)")
             configConnectState(.faliConnected)

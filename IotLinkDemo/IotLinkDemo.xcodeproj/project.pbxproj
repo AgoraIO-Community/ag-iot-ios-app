@@ -24,6 +24,9 @@
 		84B3ECB728B470B60047EE1A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB628B470B60047EE1A /* libz.tbd */; };
 		84B3ECB928B470BD0047EE1A /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB828B470BD0047EE1A /* libbz2.tbd */; };
 		84B3ECBB28B4715B0047EE1A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECBA28B4715B0047EE1A /* UIKit.framework */; };
+		84CE395828FECA8C007A749C /* RegisterMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395728FECA8C007A749C /* RegisterMainVC.swift */; };
+		84CE395A28FECB48007A749C /* VerifyInputCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */; };
+		84CE395C28FECBAF007A749C /* SetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395B28FECBAF007A749C /* SetPasswordVC.swift */; };
 		84D69E5628D0612A004A120C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D69E5528D0612A004A120C /* NetworkExtension.framework */; };
 		84F7453B289BBDEA00702944 /* DeviceFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */; };
 		84F7453D289BC14A00702944 /* DeviceFirmwareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */; };
@@ -37,6 +40,7 @@
 		9601C310280D6A0B00D3CA49 /* UserAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C30F280D6A0B00D3CA49 /* UserAccountModel.swift */; };
 		9601C315280E4B9D00D3CA49 /* LoginMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C314280E4B9D00D3CA49 /* LoginMainVC.swift */; };
 		9601C317280E4BE900D3CA49 /* LoginMainVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C316280E4BE900D3CA49 /* LoginMainVM.swift */; };
+		9602957528FCF4DE00BE26FF /* Bluetooth_LE_Hex.c in Sources */ = {isa = PBXBuildFile; fileRef = 9602957328FCF4DE00BE26FF /* Bluetooth_LE_Hex.c */; };
 		960ECFFB283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960ECFFA283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift */; };
 		960ECFFD283E1660005A00D0 /* DoorbellChangeSoundModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960ECFFC283E1660005A00D0 /* DoorbellChangeSoundModel.swift */; };
 		961825392817D4D400053691 /* SetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961825382817D4D400053691 /* SetPasswordView.swift */; };
@@ -127,6 +131,7 @@
 		96D97BAD2828FEA400575335 /* DoorbellAbilityLogicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BAC2828FEA400575335 /* DoorbellAbilityLogicView.swift */; };
 		96D97BB12828FF8600575335 /* ChanceSoundAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BB02828FF8600575335 /* ChanceSoundAlertVC.swift */; };
 		96D97BB32829001E00575335 /* DoorbellAnswerLogicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BB22829001E00575335 /* DoorbellAnswerLogicView.swift */; };
+		96DB2E6C292606520016F481 /* SelectMatchNetTypeAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DB2E6B292606520016F481 /* SelectMatchNetTypeAlertVC.swift */; };
 		96E4C1042807CA5500A53A49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4C1032807CA5500A53A49 /* AppDelegate.swift */; };
 		96E4C10B2807CA5500A53A49 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96E4C1092807CA5500A53A49 /* Main.storyboard */; };
 		96E4C10D2807CA5800A53A49 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96E4C10C2807CA5800A53A49 /* Assets.xcassets */; };
@@ -227,6 +232,9 @@
 		84B3ECB628B470B60047EE1A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		84B3ECB828B470BD0047EE1A /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		84B3ECBA28B4715B0047EE1A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		84CE395728FECA8C007A749C /* RegisterMainVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterMainVC.swift; sourceTree = "<group>"; };
+		84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyInputCodeVC.swift; sourceTree = "<group>"; };
+		84CE395B28FECBAF007A749C /* SetPasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetPasswordVC.swift; sourceTree = "<group>"; };
 		84D69E5528D0612A004A120C /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareVC.swift; sourceTree = "<group>"; };
 		84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareView.swift; sourceTree = "<group>"; };
@@ -242,6 +250,8 @@
 		9601C30F280D6A0B00D3CA49 /* UserAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountModel.swift; sourceTree = "<group>"; };
 		9601C314280E4B9D00D3CA49 /* LoginMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginMainVC.swift; sourceTree = "<group>"; };
 		9601C316280E4BE900D3CA49 /* LoginMainVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginMainVM.swift; sourceTree = "<group>"; };
+		9602957328FCF4DE00BE26FF /* Bluetooth_LE_Hex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Bluetooth_LE_Hex.c; sourceTree = "<group>"; };
+		9602957428FCF4DE00BE26FF /* Bluetooth_LE_Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bluetooth_LE_Hex.h; sourceTree = "<group>"; };
 		960ECFFA283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityVC_Full.swift; sourceTree = "<group>"; };
 		960ECFFC283E1660005A00D0 /* DoorbellChangeSoundModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellChangeSoundModel.swift; sourceTree = "<group>"; };
 		961825382817D4D400053691 /* SetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPasswordView.swift; sourceTree = "<group>"; };
@@ -460,6 +470,7 @@
 		96D97BAC2828FEA400575335 /* DoorbellAbilityLogicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityLogicView.swift; sourceTree = "<group>"; };
 		96D97BB02828FF8600575335 /* ChanceSoundAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChanceSoundAlertVC.swift; sourceTree = "<group>"; };
 		96D97BB22829001E00575335 /* DoorbellAnswerLogicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAnswerLogicView.swift; sourceTree = "<group>"; };
+		96DB2E6B292606520016F481 /* SelectMatchNetTypeAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectMatchNetTypeAlertVC.swift; sourceTree = "<group>"; };
 		96E4C1002807CA5500A53A49 /* IotLinkDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IotLinkDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96E4C1032807CA5500A53A49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		96E4C10A2807CA5500A53A49 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -685,6 +696,8 @@
 		9601C311280E4B3300D3CA49 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				84CE395B28FECBAF007A749C /* SetPasswordVC.swift */,
+				84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */,
 				9601C314280E4B9D00D3CA49 /* LoginMainVC.swift */,
 				9697BE7928128ADE00447DF9 /* CountrySelectVC.swift */,
 				96182542281937A300053691 /* LoginProtocolAlertVC.swift */,
@@ -792,6 +805,8 @@
 		9639564628DDBA2B0049B9C8 /* Response */ = {
 			isa = PBXGroup;
 			children = (
+				9602957328FCF4DE00BE26FF /* Bluetooth_LE_Hex.c */,
+				9602957428FCF4DE00BE26FF /* Bluetooth_LE_Hex.h */,
 				9639564728DDBA2B0049B9C8 /* BlufiConstants.m */,
 				9639564828DDBA2B0049B9C8 /* BlufiClient.m */,
 				9639564928DDBA2B0049B9C8 /* BlufiVersionResponse.m */,
@@ -1040,6 +1055,7 @@
 		9697BE682812867700447DF9 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				84CE395728FECA8C007A749C /* RegisterMainVC.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -1405,6 +1421,7 @@
 				A805ADC0281696F100E6C6DF /* DeviceAddSuccessVC.swift */,
 				84FFD15528F58FAF0076AD29 /* DeviceDelSuccessVC.swift */,
 				963956F528DDBBD70049B9C8 /* BluefiResultVC.swift */,
+				96DB2E6B292606520016F481 /* SelectMatchNetTypeAlertVC.swift */,
 			);
 			path = DeviceConnect;
 			sourceTree = "<group>";
@@ -1653,6 +1670,7 @@
 				A80D5EC2282CEDEA0096BBDE /* NotifyMessageVC.swift in Sources */,
 				9697BE74281289DB00447DF9 /* LoginInputView.swift in Sources */,
 				96C1B5C9283B9EC4005BCCB9 /* DoorbellSaveImgAlertView.swift in Sources */,
+				84CE395828FECA8C007A749C /* RegisterMainVC.swift in Sources */,
 				A89E3DFF282A1C5E002FFED9 /* AGDatePickerVC.swift in Sources */,
 				A805ADB928167C9000E6C6DF /* DeviceConnectingVC.swift in Sources */,
 				96E4C11A2807FD1F00A53A49 /* AGTabBarVC.swift in Sources */,
@@ -1708,12 +1726,14 @@
 				A805ADC32816A17500E6C6DF /* ConnectResultView.swift in Sources */,
 				A89E3DE52823E1AA002FFED9 /* DoorbellMessageVC.swift in Sources */,
 				963956E528DDBA2B0049B9C8 /* ESPPeripheral.m in Sources */,
+				84CE395C28FECBAF007A749C /* SetPasswordVC.swift in Sources */,
 				963956DB28DDBA2B0049B9C8 /* BlufiVersionResponse.m in Sources */,
 				A805ADBF281696AD00E6C6DF /* DeviceAddFailedVC.swift in Sources */,
 				9697BEA32812B25F00447DF9 /* EXT-ToModel.swift in Sources */,
 				A819964B2834798D00870CDA /* DeviceInfoCell.swift in Sources */,
 				84F7453B289BBDEA00702944 /* DeviceFirmwareVC.swift in Sources */,
 				96827D7C2867301E0012AC84 /* Extension+UIDevice.swift in Sources */,
+				96DB2E6C292606520016F481 /* SelectMatchNetTypeAlertVC.swift in Sources */,
 				961825392817D4D400053691 /* SetPasswordView.swift in Sources */,
 				A80D5EDA282E08F60096BBDE /* MessagePlayerVC.swift in Sources */,
 				9618254D281AA6C000053691 /* VerifyManager.swift in Sources */,
@@ -1748,6 +1768,7 @@
 				963956E728DDBA2B0049B9C8 /* BlufiNotifyData.m in Sources */,
 				A81996602835193700870CDA /* ReceiveDeviceShareView.swift in Sources */,
 				A81996492834724900870CDA /* DeviceInfoView.swift in Sources */,
+				9602957528FCF4DE00BE26FF /* Bluetooth_LE_Hex.c in Sources */,
 				A81996472834719C00870CDA /* DeviceInfoVC.swift in Sources */,
 				A89E3DF42827AC29002FFED9 /* UIViewController+RotationControl.m in Sources */,
 				9699941A28154EEF00910792 /* CountrySelectViewCell.swift in Sources */,
@@ -1759,6 +1780,7 @@
 				84B3255128A5ED190054B369 /* TextInputView.swift in Sources */,
 				9697BEA02812B25F00447DF9 /* EXT-ViewFrame.swift in Sources */,
 				84B3254F28A50AA60054B369 /* DoorbellControlVC.swift in Sources */,
+				84CE395A28FECB48007A749C /* VerifyInputCodeVC.swift in Sources */,
 				9697BEA12812B25F00447DF9 /* EXT-UIImage.swift in Sources */,
 				A80D5ED4282DE4E20096BBDE /* NotifyMsgCell.swift in Sources */,
 				961825602825195200053691 /* DoorbellAbilityTooBarView.swift in Sources */,
@@ -1951,7 +1973,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1037;
-				DEVELOPMENT_TEAM = LTVVML2TCH;
+				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -1991,6 +2013,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问相机";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要您的同意,才能保存图片到相册";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相册";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -2006,7 +2029,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/IotLinkDemo/SwiftTools/BlufiLibrary/Security/openssl",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2099,7 +2122,7 @@
 					"-weak_framework",
 					"\"SwiftUI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.agora.iotsdk.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = io.agora.Iot.AgoraIoT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
@@ -2121,9 +2144,11 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1037;
-				DEVELOPMENT_TEAM = LTVVML2TCH;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -2163,6 +2188,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问相机";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要您的同意,才能保存图片到相册";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相册";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -2178,7 +2204,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/IotLinkDemo/SwiftTools/BlufiLibrary/Security/openssl",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2271,9 +2297,10 @@
 					"-weak_framework",
 					"\"SwiftUI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.agora.iotsdk.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = disIot2022;
 				SKIP_INSTALL = NO;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;

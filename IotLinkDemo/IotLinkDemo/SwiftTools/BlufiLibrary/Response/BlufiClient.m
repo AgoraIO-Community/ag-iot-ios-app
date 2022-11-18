@@ -11,12 +11,105 @@
 #import "BlufiFrameCtrlData.h"
 #import "BlufiSecurity.h"
 #import "BlufiConfigureParams.h"
+#import "Bluetooth_LE_Hex.h"
 
 #define PACKAGE_LENGTH_DEFAULT   128
 #define PACKAGE_LENGTH_MIN       20
 #define PACKAGE_HEADER_LENGTH    4
 
 #define DBUG false
+
+//-----------BL808---------
+
+typedef enum {
+    CMD_ACK = 0x00,
+    CMD_SET_SEC_MODE,
+    CMD_SET_OP_MODE,
+    CMD_CONNECT_WIFI,
+    CMD_DISCONNECT_WIFI,
+    CMD_GET_WIFI_STATUS,
+    CMD_DEAUTHENTICATE,
+    CMD_GET_VERSION,
+    CMD_CLOSE_CONNECTION,
+    CMD_WIFI_SCAN,
+    CMD_DATA_GET_PREPARE,
+    CMD_WIFI_DATA_GET,
+    CMD_PROV_STOP,
+    CMD_WIFI_STATE_GET,
+    CMD_CUSTOM_DATA_GET,
+
+#if defined(CONFIG_ZIGBEE_PROV)
+    CMD_ZB_SCAN=0x20,
+    CMD_ZB_JOIN,
+    CMD_ZB_GET_INSTALLCODE,
+    CMD_ZB_RESET,
+#endif
+
+} cmd_id_t;
+
+typedef enum {
+    DATA_ACK = 0x00,
+    DATA_STA_WIFI_BSSID,
+    DATA_STA_WIFI_SSID,
+    DATA_STA_WIFI_PASSWORD,
+    DATA_SOFTAP_WIFI_SSID,
+    DATA_SOFTAP_WIFI_PASSWORD,
+    DATA_SOFTAP_MAX_CONNECTION_COUNT,
+    DATA_SOFTAP_AUTH_MODE,
+    DATA_SOFTAP_CHANNEL,
+    DATA_USERNAME,
+    DATA_CA_CERTIFICATION,
+    DATA_CLIENT_CERTIFICATION,
+    DATA_SERVER_CERTIFICATION,
+    DATA_CLIENT_PRIVATE_KEY,
+    DATA_SERVER_PRIVATE_KEY,
+    DATA_WIFI_CONNECTION_STATE,
+    DATA_VERSION,
+    DATA_WIFI_LIST,
+    DATA_ERROR,
+    DATA_CUSTOM_DATA,
+
+    DATA_ARK_APP_INFO_TOKEN,
+    DATA_ARK_APP_INFO_USER,
+
+#if defined(CONFIG_ZIGBEE_PROV)
+    DATA_ZB_LINKKEY = 0x20,
+    DATA_ZB_PANID,
+    DATA_ZB_INSTALLCODE,
+    DATA_ZB_SCAN_INFO,
+#endif
+
+} data_id_t;
+
+// 命令指令用
+typedef struct _bl_bt_proto_cmd{
+    unsigned char ctrl; // 通訊的控制
+    unsigned char seq; // seq no. 由 0 開始，每次+1
+    unsigned char frag_ctrl[2]; // short (2 bytes) 目前僅有 第 15 個 bit 有用，用於表示資料結束
+    unsigned char total_len[2]; // 實際要傳遞資料的長度，此長度若大於 mtu 長度，則會要求分割，拆成多個 packet 傳送
+    unsigned char len; // 由下一個 bytes 起算，要傳遞指令的長度，在 cmd 裡固定為 14: 5 (enc) + 4 (mac) + 1 (type) + 4 (cmd data)
+    unsigned char enc[5]; // encrypt 資料，目前無作用
+    unsigned char mac[4]; // 目前無作用
+    unsigned char type; // 命令指令的參數，參考 cmd_id_t
+    //接於此之後，為 4 bytes 的指令參數
+} bl_bt_proto_cmd_t;
+
+// 資料指令用
+typedef struct _bl_bt_proto_data{
+    unsigned char ctrl; // 通訊的控制
+    unsigned char seq; // seq no. 由 0 開始，每次+1
+    unsigned char frag_ctrl[2]; // short (2 bytes) 目前僅有 第 15 個 bit 有用，用於表示資料結束
+    unsigned char total_len[2]; // 實際要傳遞資料的長度，此長度若大於 mtu 長度，則會要求分割，拆成多個 packet 傳送
+    unsigned char len; // 由下一個 bytes 起算，要傳遞資料的長度，為 data_len + 5 (enc) + 4 (mac) + 1 (data_len) + 1 (type)
+    unsigned char enc[5]; // encrypt 資料，目前無作用
+    unsigned char mac[4]; // 目前無作用
+    unsigned char data_len; // 此次傳遞的資料長度，若 total_len 大於 mtu，資料會要求切割成多塊傳送，此表示被切割後的長度
+    unsigned char type; // 資料指令的參數，參考 data_id_t
+    // 接於此之後，則為 data_len 長度 (bytes) 的資料 (payload)
+} bl_bt_proto_data_t;
+
+//-----------BL808---------
+
 
 typedef enum {
     StateConnected = 0,
@@ -94,7 +187,7 @@ enum {
     self = [super init];
     if (self) {
         _centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
-        _writeUUID = [CBUUID UUIDWithString:UUID_WRITE_CHAR];
+        _writeUUID = [CBUUID UUIDWithString:UUID_WRITE_CHAR];//"FF01"
         _writeCondition = [[NSCondition alloc] init];
         _notifyUUID = [CBUUID UUIDWithString:UUID_NOTIFY_CHAR];
         _callbackQueue = [NSOperationQueue mainQueue];
@@ -117,6 +210,7 @@ enum {
         _deviceKey = [[EspBlockingQueue alloc] init];
         
         _closed = NO;
+        
     }
     return self;
 }
@@ -180,6 +274,7 @@ enum {
 - (void)scanBLE {
     NSLog(@"Blufi Scan device: %@", _identifier);
     [_centralManager scanForPeripheralsWithServices:nil options:nil];
+
 }
 
 - (void)connect:(NSString *)identifier {
@@ -246,7 +341,16 @@ enum {
     if (DBUG) {
         NSLog(@"Blufi GattWrite Length: %lu,  %@", (unsigned long)data.length, data);
     }
+    
+    //todo:wang
+    if ([_peripheral canSendWriteWithoutResponse] == YES) {
+        NSLog(@"当前设备支持写服务");
+    }
+    
     [_peripheral writeValue:data forCharacteristic:_writeChar type:CBCharacteristicWriteWithResponse];
+    //todo:wang(加上可让设备快速响应)
+    [_peripheral readValueForCharacteristic:_notifyChar];
+    
     [_writeCondition wait];
     [_writeCondition unlock];
     return;
@@ -263,6 +367,177 @@ enum {
     NSLog(@"receiveAck: %d", ack);
     return ack == expectAck;
 }
+
+//--------------------------BLE808-------------------------------
+
+- (BOOL)postBle808:(BlufiConfigureParams *)params data:(NSData *)data encrypt:(BOOL)encrypt checksum:(BOOL)checksum requireAck:(BOOL)ack type:(Byte)type {
+    if (data && data.length > 0) {
+        return [self postContainDataBle808:params data:data encrypt:encrypt checksum:checksum requireAck:ack type:type];
+    } else {
+        return [self postEmptyDataWithEncryptBle808:encrypt checksum:checksum requireAck:ack type:type];
+    }
+    
+    return NO;
+}
+
+- (BOOL)postEmptyDataWithEncryptBle808:(BOOL)encrypt checksum:(BOOL)checksum requireAck:(BOOL)ack type:(Byte)type {
+    Byte sequence = [self generateSendSequence];
+    NSData *postPacket = [self getPostCommandBLE808Type:type sequence:sequence];
+    [self gattWrite:postPacket];
+    
+    return !ack || [self receiveAck:sequence];
+}
+
+- (BOOL)postContainDataBle808:(BlufiConfigureParams *)params data:(NSData *)data encrypt:(BOOL)encrypt checksum:(BOOL)checksum requireAck:(BOOL)ack type:(Byte)type {
+    
+    Byte sequence = [self generateSendSequence];
+    NSData *postPacket = [self getPostContainDataBLE808:params type:type sequence:sequence];
+    [self gattWrite:postPacket];
+    
+    return !ack || [self receiveAck:sequence];
+    
+//    NSInputStream *dataIS = [NSInputStream inputStreamWithData:data];
+//    NSInteger dataLengthLimit = _postPackageLengthLimit - PACKAGE_HEADER_LENGTH;
+//    dataLengthLimit -= 2; // If frag, two bytes total length in data
+//    if (checksum) {
+//        dataLengthLimit -= 2;
+//    }
+//
+//    Byte dataBuf[dataLengthLimit];
+//    NSInteger available = data.length;
+//    [dataIS open];
+//    while (dataIS.hasBytesAvailable) {
+//        NSInteger read = [dataIS read:dataBuf maxLength:dataLengthLimit];
+//        if (read == 0) {
+//            break;
+//        }
+//
+//        NSMutableData *dataContent = [[NSMutableData alloc] init];
+//        available -= read;
+//        [dataContent appendBytes:dataBuf length:read];
+//        if (available > 0 && available <= 2) {
+//            Byte last[available];
+//            read = [dataIS read:last maxLength:available];
+//            if (read != available) {
+//                // Impossiable come here
+//                NSLog(@"postContainData: read last bytes error: read=%ld, expect=%ld", (long)read, (long)available);
+//            }
+//            [dataContent appendBytes:last length:available];
+//            available -= read;
+//        }
+//
+//        Byte sequence = [self generateSendSequence];
+//        NSData *postPacket = [self getPostContainDataBLE808:params type:type sequence:sequence];
+//        [self gattWrite:postPacket];
+//
+//        [dataIS close];
+//        return !ack || [self receiveAck:sequence];
+//    }
+//    [dataIS close];
+//    return YES;
+}
+
+- (NSData *)getPostCommandBLE808Type:(Byte)type sequence:(Byte)sequence{
+    
+    NSMutableData *myData = [NSMutableData dataWithLength:0];
+
+    bl_bt_proto_data_t bt_data;
+    unsigned short data_len = 0;
+    bl_bt_proto_cmd_t bt_cmd;
+    char *send_cmd = (char *)&bt_cmd;
+    unsigned short frag_ctrl = 0;
+    char *my_cmd = "1234";
+    
+    
+    // 準備傳遞 連線 wifi 的命令指令
+    memset(&bt_cmd, 0, sizeof(bt_cmd));
+    bt_cmd.seq = sequence;
+    data_len = 4;
+    frag_ctrl = 1<<15; // 第 15 個 bit 要設為 1
+    bt_cmd.frag_ctrl[0] = frag_ctrl&0xFF;
+    bt_cmd.frag_ctrl[1] = (frag_ctrl>>8)&0xFF;
+    bt_cmd.total_len[0] = data_len&0xFF;
+    bt_cmd.total_len[1] = (data_len>>8)&0xFF;
+    bt_cmd.len = 14;
+    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ )
+        bt_cmd.enc[i] = 1;
+    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ )
+        bt_cmd.mac[i] = 2;
+    
+    bt_cmd.type = type; // CMD_CONNECT_WIFI:0x02  CMD_CUSTOM_DATA_GET:0x04
+    for ( int i = 0 ; i < sizeof(bt_cmd) ; i++ )
+        printf("%02X", send_cmd[i] & 0xFF);
+    for ( int i = 0 ; i < strlen(my_cmd) ; i++ )
+        printf("%02X", my_cmd[i] & 0xFF);
+    printf("\r\n");
+    
+    myData.length = 0;
+    [myData appendBytes:send_cmd length:sizeof(bt_cmd)];
+    [myData appendBytes:my_cmd length:strlen(my_cmd)];
+    
+    return myData;
+    
+}
+
+- (NSData *)getPostContainDataBLE808:(BlufiConfigureParams *)params type:(Byte)type sequence:(Byte)sequence{
+    
+    printf("---seq:%02X", sequence);
+    
+    printf("\r\n");
+    
+    NSMutableData *myData = [NSMutableData dataWithLength:0];
+
+    bl_bt_proto_data_t bt_data;
+    char *send_data = (char *)&bt_data;
+    unsigned short data_len = 0;
+    
+    char *postChar = NULL; //要发送的内容
+    if (type == DATA_STA_WIFI_SSID) {
+        postChar = (char*)[params.staSsid UTF8String];
+    }else if (type == DATA_STA_WIFI_PASSWORD) {
+        postChar = (char*)[params.staPassword UTF8String];
+    }else if (type == DATA_CUSTOM_DATA){
+        postChar = (char*)[params.customData UTF8String] ;
+    }
+
+    // 準備傳遞 ssid 的資料指令
+    memset(&bt_data, 0, sizeof(bt_data));
+    data_len = strlen(postChar);
+    bt_data.ctrl = (1<<2) | (1<<4) | (1<<7); // 用於 資料指令
+    bt_data.seq = sequence;
+    bt_data.frag_ctrl[0] = 0;
+    bt_data.frag_ctrl[1] = 0;
+    bt_data.total_len[0] = data_len&0xFF;
+    bt_data.total_len[1] = (data_len>>8)&0xFF;
+    bt_data.len = data_len + 5 + 4 + 1 + 1;
+    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ ) { // 預設
+        bt_data.enc[i] = 1;
+    }
+    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ ) { // 預設
+        bt_data.mac[i] = 2;
+    }
+    bt_data.data_len = data_len;
+    bt_data.type = type;  // 数据类型
+    
+    for (int i = 0 ; i < sizeof(bt_data) ; i++ ) {
+        printf("%02X", send_data[i] & 0xFF);
+    }
+    for ( int i = 0 ; i < strlen(postChar) ; i++ ) {
+        printf("%02X", postChar[i] & 0xFF);
+    }
+    printf("\r\n");
+
+    myData.length = 0;
+    [myData appendBytes:send_data length:sizeof(bt_data)];
+    [myData appendBytes:postChar length:strlen(postChar)];
+    
+    return myData;
+    
+}
+
+
+//--------------------------BLE808-------------------------------
+
 
 - (BOOL)post:(NSData *)data encrypt:(BOOL)encrypt checksum:(BOOL)checksum requireAck:(BOOL)ack type:(Byte)type {
     if (data && data.length > 0) {
@@ -371,6 +646,136 @@ enum {
     }
     if (checksumData) {
         [result appendData:checksumData];
+    }
+    
+    return result;
+}
+
+//TODO:暂时不用
+- (NSData *)getPostCommandPacketBLE808:(NSData *)data type:(Byte)type encrypt:(BOOL)encrypt checksum:(BOOL)checksum requireAck:(BOOL)ack hasFrag:(BOOL)hasFrag sequence:(Byte)sequence {
+    
+    NSMutableData *result = [[NSMutableData alloc] init];
+    
+    Byte ctrl = 0;
+//    [result appendBytes:ctrl length:1];
+    Byte header[] = {ctrl, sequence};
+    [result appendBytes:header length:2];
+    
+    short tempCtr = 1 << 15;
+    Byte frameCtr[] = {tempCtr && 0xFF, tempCtr >> 8};
+    [result appendBytes:frameCtr length:2];
+
+
+    Byte dataLen[] = {4,0};
+    [result appendBytes:dataLen length:2];
+//    [result appendBytes:dataLen length:2];
+    
+    Byte dataToLen[] = {14};
+    [result appendBytes:dataToLen length:1];
+//    [result appendBytes:dataToLen length:1];
+    
+    Byte encry[] = {1,1,1,1,1};
+    [result appendBytes:encry length:5];
+    
+    Byte check[] = {2, 2, 2, 2};
+    [result appendBytes:check length:4];
+    
+    Byte header1[] = {type};
+    [result appendBytes:header1 length:1];
+
+    Byte dataCmd[] = {1,2,3,4};
+    [result appendBytes:dataCmd length:4];
+    
+    return result;
+
+}
+
+//TODO:暂时不用
+- (NSData *)getPostPacketBLE808:(NSData *)data type:(Byte)type encrypt:(BOOL)encrypt checksum:(BOOL)checksum requireAck:(BOOL)ack hasFrag:(BOOL)hasFrag sequence:(Byte)sequence {
+    
+    NSMutableData *result = [[NSMutableData alloc] init];
+    
+    Byte dataLength = data ? data.length : 0;
+  //  Byte frameCtrl = [BlufiFrameCtrlData getFrameCtrlValueWithEncrypted:encrypt checksum:checksum direction:DataOutput requireAck:ack hasFrag:hasFrag];
+
+    Byte ctrl = (1<<2) | (1<<4) | (1<<7);
+//    [result appendBytes:ctrl length:1];
+    
+    Byte header[] = {ctrl,sequence};
+    [result appendBytes:header length:2];
+    
+    Byte frameCtr[] = {0, 0};
+    [result appendBytes:frameCtr length:2];
+    
+    Byte dataLen[] = {dataLength,dataLength >> 8};
+    [result appendBytes:dataLen length:2];
+//    [result appendBytes:dataLen length:2];
+    
+    Byte dataToLen = dataLength + 9 + 2;
+//    [result appendBytes:dataToLen length:1];
+    
+    Byte header1[] = {dataToLen};
+    [result appendBytes:header1 length:1];
+    
+    
+    Byte encry[] = {1,1,1,1,1};
+    [result appendBytes:encry length:5];
+    
+    Byte check[] = {2, 2, 2, 2};
+    [result appendBytes:check length:4];
+    
+  
+    Byte header3[] = {dataLength,type};
+    [result appendBytes:header3 length:2];
+    
+//    Byte midData[] = {dataLength, type};
+//    [result appendBytes:midData length:2];
+    
+    if (data && data.length > 0) {
+        [result appendData:data];
+    }
+    
+    return result;
+    
+//    NSData *checksumData = nil;
+//    if (checksum) {
+//        Byte buf[] = {sequence, dataLength};
+//        NSInteger crc = [BlufiSecurity crc:0 buf:buf length:2];
+//        if (dataLength > 0) {
+//            crc = [BlufiSecurity crc:crc data:data];
+//        }
+//
+//        buf[0] = crc & 0xff;
+//        buf[1] = crc >> 8 & 0xff;
+//        checksumData = [NSData dataWithBytes:buf length:2];
+//    }
+//
+//    if (encrypt && data && data.length > 0) {
+//        NSData *iv = [self generateAESIV:sequence];
+//        data = [BlufiSecurity aesEncrypt:data key:_aesKey iv:iv];
+//    }
+//    if (data && data.length > 0) {
+//        [result appendData:data];
+//    }
+//    if (checksumData) {
+//        [result appendData:checksumData];
+//    }
+    
+//    return result;
+}
+
+//todo:
+- (NSData *)getPostPacket1:(NSData *)data type:(Byte)type encrypt:(BOOL)encrypt checksum:(BOOL)checksum requireAck:(BOOL)ack hasFrag:(BOOL)hasFrag sequence:(Byte)sequence {
+    NSMutableData *result = [[NSMutableData alloc] init];
+    
+    Byte dataLength = data ? data.length : 0;
+    Byte frameCtrl = [BlufiFrameCtrlData getFrameCtrlValueWithEncrypted:encrypt checksum:checksum direction:DataOutput requireAck:ack hasFrag:hasFrag];
+    
+    Byte header[] = {type, frameCtrl, sequence, dataLength};
+    [result appendBytes:header length:4];
+    
+    if (data && data.length > 0) {
+        [result appendData:data];
     }
     
     return result;
@@ -775,6 +1180,29 @@ enum {
     }];
 }
 
+- (void)postCustomDataBle808:(BlufiConfigureParams *)params {
+    BOOL encrypted = _encrypted;
+    BOOL checksum = _checksum;
+    BOOL ack = _requireAck;
+    NSData *data = [params.customData dataUsingEncoding:NSUTF8StringEncoding];
+    [_requestQueue addOperationWithBlock:^{
+        
+        BOOL posted = [self postBle808:params data:data encrypt:encrypted checksum:checksum requireAck:ack type:DATA_CUSTOM_DATA];
+        BlufiStatusCode code = posted ? StatusSuccess : StatusWriteFailed;
+        
+        [NSThread sleepForTimeInterval:0.01];
+
+        if (![self postBle808:nil data:nil encrypt:encrypted checksum:checksum requireAck:ack type:CMD_CUSTOM_DATA_GET]) {
+            return ;
+        }
+//        if (![self postBle808:nil data:nil encrypt:encrypted checksum:checksum requireAck:ack type:CMD_PROV_STOP]) {
+//            return ;
+//        }
+        [self onPostCustomData:data status:code];
+        
+    }];
+}
+
 - (void)onPostConfigureParams:(BlufiStatusCode)code {
     id delegate = _blufiDelegate;
     BlufiClient *client = self;
@@ -806,30 +1234,144 @@ enum {
         return NO;
     }
     [NSThread sleepForTimeInterval:0.01];
-    
-    
-    
-    
-//    type = [self getTypeValueWithPackageType:PackageData subType:DataSubTypeCustomData];
-//    NSData *uid = [params.uid dataUsingEncoding:NSUTF8StringEncoding];
-//    if (![self post:uid encrypt:_encrypted checksum:_checksum requireAck:_requireAck type:type]) {
-//        return NO;
-//    }
-//    [NSThread sleepForTimeInterval:0.01];
-//
-//    type = [self getTypeValueWithPackageType:PackageData subType:DataSubTypeCustomData];
-//    NSData *key = [params.key dataUsingEncoding:NSUTF8StringEncoding];
-//    if (![self post:key encrypt:_encrypted checksum:_checksum requireAck:_requireAck type:type]) {
-//        return NO;
-//    }
-//    [NSThread sleepForTimeInterval:0.01];
-    
-    
-    
-    
+
     type = [self getTypeValueWithPackageType:PackageCtrl subType:CtrlSubTypeConnectWiFi];
     return [self post:nil encrypt:_encrypted checksum:_checksum requireAck:_requireAck type:type];
 }
+
+- (BOOL)postStaInfoBL808:(BlufiConfigureParams *)params{
+
+    NSData *ssid = [params.staSsid dataUsingEncoding:NSUTF8StringEncoding];
+    if (![self postBle808:params data:ssid encrypt:_encrypted checksum:_checksum requireAck:_requireAck type:DATA_STA_WIFI_SSID]) {
+        return NO;
+    }
+//    [NSThread sleepForTimeInterval:0.01];
+    
+    NSData *password = [params.staPassword dataUsingEncoding:NSUTF8StringEncoding];
+    if (![self postBle808:params data:password encrypt:_encrypted checksum:_checksum requireAck:_requireAck type:DATA_STA_WIFI_PASSWORD]) {
+        return NO;
+    }
+//    [NSThread sleepForTimeInterval:0.01];
+
+    return [self postBle808:params data:nil encrypt:_encrypted checksum:_checksum requireAck:_requireAck type:CMD_CONNECT_WIFI];
+    
+}
+
+//- (BOOL)postStaInfoBL808:(BlufiConfigureParams *)params{
+//
+//    NSMutableData *myData = [NSMutableData dataWithLength:0];
+//    char *ssid = (char*)[params.staSsid UTF8String];
+//    char *spsk = (char*)[params.staPassword UTF8String];
+//
+////    char *ssid = "MERCURY_BD1E";
+////    char *spsk = "88888888";
+//
+//    bl_bt_proto_data_t bt_data;
+//    char *send_data = (char *)&bt_data;
+//    unsigned short data_len = 0;
+//    bl_bt_proto_cmd_t bt_cmd;
+//    char *send_cmd = (char *)&bt_cmd;
+//    unsigned short frag_ctrl = 0;
+//    char *my_cmd = "1234";
+//
+//    // 準備傳遞 ssid 的資料指令
+//    memset(&bt_data, 0, sizeof(bt_data));
+//    data_len = strlen(ssid);
+//    bt_data.ctrl = (1<<2) | (1<<4) | (1<<7); // 用於 資料指令
+//    bt_data.seq = 0;
+//    bt_data.frag_ctrl[0] = 0;
+//    bt_data.frag_ctrl[1] = 0;
+//    bt_data.total_len[0] = data_len&0xFF;
+//    bt_data.total_len[1] = (data_len>>8)&0xFF;
+//    bt_data.len = data_len + 5 + 4 + 1 + 1;
+//    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ ) { // 預設
+//        bt_data.enc[i] = 1;
+//    }
+//    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ ) { // 預設
+//        bt_data.mac[i] = 2;
+//    }
+//    bt_data.data_len = data_len;
+//    bt_data.type = DATA_STA_WIFI_SSID; // 0x02
+//
+//    for (int i = 0 ; i < sizeof(bt_data) ; i++ ) {
+//        printf("%02X", send_data[i] & 0xFF);
+//    }
+//    for ( int i = 0 ; i < strlen(ssid) ; i++ ) {
+//        printf("%02X", ssid[i] & 0xFF);
+//    }
+//    printf("\r\n");
+//
+//    myData.length = 0;
+//    [myData appendBytes:send_data length:sizeof(bt_data)];
+//    [myData appendBytes:ssid length:strlen(ssid)];
+//    [_peripheral writeValue:myData forCharacteristic:_writeChar type:CBCharacteristicWriteWithResponse];
+//    [_peripheral readValueForCharacteristic:_notifyChar];
+//
+//    // 準備傳遞 password 的資料指令
+//    memset(&bt_data, 0, sizeof(bt_data));
+//    data_len = strlen(spsk);
+//    bt_data.ctrl = (1<<2) | (1<<4) | (1<<7);
+//    bt_data.seq = 1;
+//    bt_data.frag_ctrl[0] = 0;
+//    bt_data.frag_ctrl[1] = 0;
+//    bt_data.total_len[0] = data_len&0xFF;
+//    bt_data.total_len[1] = (data_len>>8)&0xFF;
+//    bt_data.len = data_len + 5 + 4 + 1 + 1;
+//    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ ) {
+//        bt_data.enc[i] = 1;
+//    }
+//    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ ) {
+//        bt_data.mac[i] = 2;
+//    }
+//    bt_data.data_len = data_len;
+//    bt_data.type = DATA_SOFTAP_WIFI_PASSWORD; // 0x03
+//
+//    for (int i = 0 ; i < sizeof(bt_data) ; i++ ) {
+//        printf("%02X", send_data[i] & 0xFF);
+//    }
+//    for ( int i = 0 ; i < strlen(spsk) ; i++ ) {
+//        printf("%02X", spsk[i] & 0xFF);
+//    }
+//
+//    printf("\r\n");
+//
+//    myData.length = 0;
+//    [myData appendBytes:send_data length:sizeof(bt_data)];
+//    [myData appendBytes:spsk length:strlen(spsk)];
+//    [_peripheral writeValue:myData forCharacteristic:_writeChar type:CBCharacteristicWriteWithResponse];
+//    [_peripheral readValueForCharacteristic:_notifyChar];
+//
+//    // 準備傳遞 連線 wifi 的命令指令
+//    memset(&bt_cmd, 0, sizeof(bt_cmd));
+//    bt_cmd.seq = 2;
+//    data_len = 4;
+//    frag_ctrl = 1<<15; // 第 15 個 bit 要設為 1
+//    bt_cmd.frag_ctrl[0] = frag_ctrl&0xFF;
+//    bt_cmd.frag_ctrl[1] = (frag_ctrl>>8)&0xFF;
+//    bt_cmd.total_len[0] = data_len&0xFF;
+//    bt_cmd.total_len[1] = (data_len>>8)&0xFF;
+//    bt_cmd.len = 14;
+//    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ )
+//        bt_cmd.enc[i] = 1;
+//    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ )
+//        bt_cmd.mac[i] = 2;
+//
+//    bt_cmd.type = CMD_CONNECT_WIFI; // 0x03
+//    for ( int i = 0 ; i < sizeof(bt_cmd) ; i++ )
+//        printf("%02X", send_cmd[i] & 0xFF);
+//    for ( int i = 0 ; i < strlen(my_cmd) ; i++ )
+//        printf("%02X", my_cmd[i] & 0xFF);
+//    printf("\r\n");
+//
+//    myData.length = 0;
+//    [myData appendBytes:send_cmd length:sizeof(bt_cmd)];
+//    [myData appendBytes:my_cmd length:strlen(my_cmd)];
+//    [_peripheral writeValue:myData forCharacteristic:_writeChar type:CBCharacteristicWriteWithResponse];
+//    [_peripheral readValueForCharacteristic:_notifyChar];
+//
+//    return  true;
+//
+//}
 
 - (BOOL)postSoftAPInfo:(BlufiConfigureParams *)params {
     NSData *ssid = params.softApSsid ? [params.softApSsid dataUsingEncoding:NSUTF8StringEncoding] : nil;
@@ -876,6 +1418,32 @@ enum {
     Byte buf[] = {(Byte)params.softApSecurity};
     NSData *data = [NSData dataWithBytes:buf length:1];
     return [self post:data encrypt:_encrypted checksum:_checksum requireAck:_requireAck type:type];
+}
+
+- (void)configureBle808:(BlufiConfigureParams *)params {
+    [_requestQueue addOperationWithBlock:^{
+        OpMode opMode  = params.opMode;
+        switch (opMode) {
+            case OpModeNull:
+                if (![self postDeviceMode:opMode]) {
+                    [self onPostConfigureParams:StatusWriteFailed];
+                    return;
+                }
+                [self onPostConfigureParams:StatusSuccess];
+                break;
+            case OpModeSta:
+                if (![self postStaInfoBL808:params]) {
+                    [self onPostConfigureParams:StatusWriteFailed];
+                    return;
+                }
+                [self onPostConfigureParams:StatusSuccess];
+                break;
+            default:
+                NSLog(@"configure invalid OpMode: %d", opMode);
+                [self onPostConfigureParams:StatusInvalidRequest];
+                break;
+        }
+    }];
 }
 
 - (void)configure:(BlufiConfigureParams *)params {
@@ -1055,6 +1623,7 @@ enum {
     }];
 }
 
+//检测设备状态wang
 - (void)centralManagerDidUpdateState:(nonnull CBCentralManager *)central {
     _blePowerOn = central.state == CBManagerStatePoweredOn;
     if (_blePowerOn) {
@@ -1072,6 +1641,7 @@ enum {
     }
 }
 
+//扫描到外设的回调wang
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
 //    NSLog(@"Per UUID: %@, %@", peripheral.name, peripheral.identifier.UUIDString)
     if ([peripheral.identifier isEqual:_identifier]) {
@@ -1092,6 +1662,19 @@ enum {
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
+    
+    
+    //todo:打印出mtu
+    NSString *peripheralDescription = [peripheral description];
+        NSRange range = [peripheralDescription rangeOfString:@",[ ]+mtu[ ]+=[ 0-9]+," options:NSRegularExpressionSearch range:NSMakeRange(0, peripheralDescription.length)];
+        if (range.location!= NSNotFound) {
+            NSString *str = [peripheralDescription substringWithRange:NSMakeRange(range.location + 1, range.length-2)];
+            NSArray *array = [str componentsSeparatedByString:@"="];
+            NSInteger mtu = [array[1] intValue] - 3;
+            NSLog(@"remoteDevice mtu = %ld",mtu);
+        }
+    
+    
     // Connect BLE successfully
     CBUUID *uuid = [CBUUID UUIDWithString:UUID_SERVICE];
     NSArray<CBUUID *> *filters = @[uuid];
@@ -1147,6 +1730,7 @@ enum {
     }
 }
 
+//找到外设服务的回调wang
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
     // Discover services
     if (error) {
@@ -1179,6 +1763,7 @@ enum {
     }
 }
 
+//--------------查找到服务特征的回调wang
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
     // Discover Characteristics
     if (error) {
@@ -1200,6 +1785,11 @@ enum {
         }
         _writeChar = writeChar;
         _notifyChar = notifyChar;
+        
+//        if (writeChar && notifyChar) {
+//            [self sendConfigWifi];
+//            return;
+//        }
         if (!writeChar || !notifyChar) {
             NSLog(@"didDiscoverCharacteristicsForService failed");
             [self gattDiscoverCallback];
@@ -1216,6 +1806,182 @@ enum {
             [deletgate peripheral:peripheral didDiscoverCharacteristicsForService:service error:error];
         }];
     }
+}
+
+- (void)sendConfigWifi{
+    
+    NSMutableData *myData = [NSMutableData dataWithLength:0];
+    char *ssid = "NXIOT";
+    char *spsk = "88888888";
+    bl_bt_proto_data_t bt_data;
+    char *send_data = (char *)&bt_data;
+    unsigned short data_len = 0;
+    bl_bt_proto_cmd_t bt_cmd;
+    char *send_cmd = (char *)&bt_cmd;
+    unsigned short frag_ctrl = 0;
+    char *my_cmd = "1234";
+    
+    // 準備傳遞 ssid 的資料指令
+    memset(&bt_data, 0, sizeof(bt_data));
+    data_len = strlen(ssid);
+    bt_data.ctrl = (1<<2) | (1<<4) | (1<<7); // 用於 資料指令
+    bt_data.seq = 0;
+    bt_data.frag_ctrl[0] = 0;
+    bt_data.frag_ctrl[1] = 0;
+    bt_data.total_len[0] = data_len&0xFF;
+    bt_data.total_len[1] = (data_len>>8)&0xFF;
+    bt_data.len = data_len + 5 + 4 + 1 + 1;
+    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ ) { // 預設
+        bt_data.enc[i] = 1;
+    }
+    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ ) { // 預設
+        bt_data.mac[i] = 2;
+    }
+    bt_data.data_len = data_len;
+    bt_data.type = DATA_STA_WIFI_SSID; // 0x02
+    
+    for (int i = 0 ; i < sizeof(bt_data) ; i++ ) {
+        printf("%02X", send_data[i] & 0xFF);
+    }
+    for ( int i = 0 ; i < strlen(ssid) ; i++ ) {
+        printf("%02X", ssid[i] & 0xFF);
+    }
+    printf("\r\n");
+
+    myData.length = 0;
+    [myData appendBytes:send_data length:sizeof(bt_data)];
+    [myData appendBytes:ssid length:strlen(ssid)];
+    [_peripheral writeValue:myData forCharacteristic:_writeChar type:CBCharacteristicWriteWithResponse];
+    [_peripheral readValueForCharacteristic:_notifyChar];
+    
+    // 準備傳遞 password 的資料指令
+    memset(&bt_data, 0, sizeof(bt_data));
+    data_len = strlen(spsk);
+    bt_data.ctrl = (1<<2) | (1<<4) | (1<<7);
+    bt_data.seq = 1;
+    bt_data.frag_ctrl[0] = 0;
+    bt_data.frag_ctrl[1] = 0;
+    bt_data.total_len[0] = data_len&0xFF;
+    bt_data.total_len[1] = (data_len>>8)&0xFF;
+    bt_data.len = data_len + 5 + 4 + 1 + 1;
+    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ ) {
+        bt_data.enc[i] = 1;
+    }
+    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ ) {
+        bt_data.mac[i] = 2;
+    }
+    bt_data.data_len = data_len;
+    bt_data.type = DATA_STA_WIFI_PASSWORD; // 0x03
+    
+    for (int i = 0 ; i < sizeof(bt_data) ; i++ ) {
+        printf("%02X", send_data[i] & 0xFF);
+    }
+    for ( int i = 0 ; i < strlen(spsk) ; i++ ) {
+        printf("%02X", spsk[i] & 0xFF);
+    }
+    
+    printf("\r\n");
+    
+    myData.length = 0;
+    [myData appendBytes:send_data length:sizeof(bt_data)];
+    [myData appendBytes:spsk length:strlen(spsk)];
+    [_peripheral writeValue:myData forCharacteristic:_writeChar type:CBCharacteristicWriteWithResponse];
+    [_peripheral readValueForCharacteristic:_notifyChar];
+    
+    // 準備傳遞 連線 wifi 的命令指令
+    memset(&bt_cmd, 0, sizeof(bt_cmd));
+    bt_cmd.seq = 2;
+    data_len = 4;
+    frag_ctrl = 1<<15; // 第 15 個 bit 要設為 1
+    bt_cmd.frag_ctrl[0] = frag_ctrl&0xFF;
+    bt_cmd.frag_ctrl[1] = (frag_ctrl>>8)&0xFF;
+    bt_cmd.total_len[0] = data_len&0xFF;
+    bt_cmd.total_len[1] = (data_len>>8)&0xFF;
+    bt_cmd.len = 14;
+    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ )
+        bt_cmd.enc[i] = 1;
+    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ )
+        bt_cmd.mac[i] = 2;
+    
+    bt_cmd.type = CMD_CONNECT_WIFI; // 0x03
+    for ( int i = 0 ; i < sizeof(bt_cmd) ; i++ )
+        printf("%02X", send_cmd[i] & 0xFF);
+    for ( int i = 0 ; i < strlen(my_cmd) ; i++ )
+        printf("%02X", my_cmd[i] & 0xFF);
+    printf("\r\n");
+    
+    myData.length = 0;
+    [myData appendBytes:send_cmd length:sizeof(bt_cmd)];
+    [myData appendBytes:my_cmd length:strlen(my_cmd)];
+    [_peripheral writeValue:myData forCharacteristic:_writeChar type:CBCharacteristicWriteWithResponse];
+    [_peripheral readValueForCharacteristic:_notifyChar];
+    
+    
+    char *custom = "abcdefghijkopqmn";
+    // 準備傳遞 custom 的資料指令
+    memset(&bt_data, 0, sizeof(bt_data));
+    data_len = strlen(custom);
+    bt_data.ctrl = (1<<2) | (1<<4) | (1<<7);
+    bt_data.seq = 3;
+    bt_data.frag_ctrl[0] = 0;
+    bt_data.frag_ctrl[1] = 0;
+    bt_data.total_len[0] = data_len&0xFF;
+    bt_data.total_len[1] = (data_len>>8)&0xFF;
+    bt_data.len = data_len + 5 + 4 + 1 + 1;
+    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ ) {
+        bt_data.enc[i] = 1;
+    }
+    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ ) {
+        bt_data.mac[i] = 2;
+    }
+    bt_data.data_len = data_len;
+    bt_data.type = DATA_CUSTOM_DATA; // 0x03
+
+    for (int i = 0 ; i < sizeof(bt_data) ; i++ ) {
+        printf("%02X", send_data[i] & 0xFF);
+    }
+    for ( int i = 0 ; i < strlen(custom) ; i++ ) {
+        printf("%02X", spsk[i] & 0xFF);
+    }
+
+    printf("\r\n");
+
+    myData.length = 0;
+    [myData appendBytes:send_data length:sizeof(bt_data)];
+    [myData appendBytes:custom length:strlen(custom)];
+    [_peripheral writeValue:myData forCharacteristic:_writeChar type:CBCharacteristicWriteWithResponse];
+    [_peripheral readValueForCharacteristic:_notifyChar];
+    
+    // 準備傳遞 連線 自定义消息 的命令指令
+    memset(&bt_cmd, 0, sizeof(bt_cmd));
+    bt_cmd.seq = 4;
+    data_len = 4;
+    frag_ctrl = 1<<15; // 第 15 個 bit 要設為 1
+    bt_cmd.frag_ctrl[0] = frag_ctrl&0xFF;
+    bt_cmd.frag_ctrl[1] = (frag_ctrl>>8)&0xFF;
+    bt_cmd.total_len[0] = data_len&0xFF;
+    bt_cmd.total_len[1] = (data_len>>8)&0xFF;
+    bt_cmd.len = 14;
+    for ( int i = 0 ; i < sizeof(bt_data.enc) ; i++ )
+        bt_cmd.enc[i] = 1;
+    for ( int i = 0 ; i < sizeof(bt_data.mac) ; i++ )
+        bt_cmd.mac[i] = 2;
+    
+    bt_cmd.type = CMD_CUSTOM_DATA_GET; // 0x03
+    for ( int i = 0 ; i < sizeof(bt_cmd) ; i++ )
+        printf("%02X", send_cmd[i] & 0xFF);
+    for ( int i = 0 ; i < strlen(my_cmd) ; i++ )
+        printf("%02X", my_cmd[i] & 0xFF);
+    printf("\r\n");
+    
+    myData.length = 0;
+    [myData appendBytes:send_cmd length:sizeof(bt_cmd)];
+    [myData appendBytes:my_cmd length:strlen(my_cmd)];
+    [_peripheral writeValue:myData forCharacteristic:_writeChar type:CBCharacteristicWriteWithResponse];
+    [_peripheral readValueForCharacteristic:_notifyChar];
+    
+    
+    
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
@@ -1273,6 +2039,7 @@ enum {
     }
 }
 
+//写数据回调 wang
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     [_writeCondition lock];
     [_writeCondition signal];

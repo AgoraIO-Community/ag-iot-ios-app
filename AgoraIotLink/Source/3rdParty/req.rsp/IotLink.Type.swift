@@ -407,7 +407,7 @@ extension IotLink{
                 log.i("        productKey: \(item.productKey)")
                 log.i("            sharer: \(item.sharer)")
                 log.i("          userType: \(item.uType)")
-                log.i("         connected: \(item.connect)")
+                log.i("           connect: \(item.connect)")
                 
                 let userType:Int = Int(item.uType) ?? 0
                 if(userType <= 0 || userType > 3){

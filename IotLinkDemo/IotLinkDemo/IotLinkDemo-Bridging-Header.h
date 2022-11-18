@@ -18,6 +18,8 @@
 
 #import "BlufiClient.h"
 
+#import "SSKeychain.h"
+
 
 
 //#import <openssl/dh.h>

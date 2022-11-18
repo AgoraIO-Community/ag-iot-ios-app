@@ -14,6 +14,10 @@ import NetworkExtension
 class SelectWIFIVC: UIViewController {
     
     var productKey:String!
+    
+    var wifiName : String!
+    
+    var password : String!
 
     private lazy var locationManager:CLLocationManager = {
         let manager = CLLocationManager()
@@ -61,14 +65,19 @@ class SelectWIFIVC: UIViewController {
 //                }
 //            })
             
-            //跳转蓝牙配网
-            let vc = BluefiResultVC()
-            vc.wifiName = wifiName
-            vc.password = password
-            vc.productKey = self?.productKey
-            self?.navigationController?.pushViewController(vc, animated: true)
+            self?.wifiName = wifiName
+            self?.password = password
+            self?.showSelectNetTypeAlert()
             
-            //跳转二维码扫描配网
+            
+//            //跳转蓝牙配网
+//            let vc = BluefiResultVC()
+//            vc.wifiName = wifiName
+//            vc.password = password
+//            vc.productKey = self?.productKey
+//            self?.navigationController?.pushViewController(vc, animated: true)
+//
+//            //跳转二维码扫描配网
 //            let vc = CreateQRCodeVC()
 //            vc.wifiName = wifiName
 //            vc.password = password
@@ -101,6 +110,7 @@ class SelectWIFIVC: UIViewController {
         selectView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        
     }
     
     @objc private func didClickCancelBarBtnItem(){
@@ -182,4 +192,48 @@ extension SelectWIFIVC: CLLocationManagerDelegate {
         manager.stopUpdatingLocation()
         selectView.setWiFiName(getWiFiName())
     }
+}
+
+extension SelectWIFIVC {
+    
+    //配网方式选择
+    func showSelectNetTypeAlert(){
+        
+        let proAlertVC = SelectMatchNetTypeAlertVC()
+        proAlertVC.selectMatchNetTypeVCBlock = { [weak self] (type) in
+            debugPrint("关闭弹框")
+            if type == 1001{
+                self?.gotoQRCodeVC()
+            }else{
+                self?.gotoBlufiVC()
+            }
+        }
+        
+        proAlertVC.view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        proAlertVC.modalPresentationStyle = .overFullScreen
+        currentViewController().present(proAlertVC, animated: false, completion: nil)
+        
+    }
+    
+    func gotoBlufiVC(){
+        
+        //跳转蓝牙配网
+        let vc = BluefiResultVC()
+        vc.wifiName = wifiName
+        vc.password = password
+        vc.productKey = productKey
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func gotoQRCodeVC(){
+        
+        //跳转二维码扫描配网
+        let vc = CreateQRCodeVC()
+        vc.wifiName = wifiName
+        vc.password = password
+        vc.productKey = productKey
+        self.navigationController?.pushViewController(vc, animated: true)
+        
+    }
+    
 }

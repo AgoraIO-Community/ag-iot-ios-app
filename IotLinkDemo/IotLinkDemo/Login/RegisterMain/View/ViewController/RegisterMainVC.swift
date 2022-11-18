@@ -205,13 +205,13 @@ extension RegisterMainVC{
         
         AGToolHUD.showNetWorkWait()
         
-        let phone = "+" + TDUserInforManager.shared.currentCountryCode + accountText
+        let phone = accountText //"+" + TDUserInforManager.shared.currentCountryCode + accountText
         loginVM.doGetPhoneCode(phone, type:"REGISTER_SMS","ZH_CN") { [weak self] success, msg in
            
             AGToolHUD.disMiss()
             if success == true {
                 debugPrint("验证码发送成功")
-                AGToolHUD.showInfo(info: "验证码发送成功")
+                AGToolHUD.showInfo(info: msg)
                 //跳转
                 DispatchCenter.DispatchType(type: .verifyCode(account: accountText, type: type), vc: self, style: .push)
 //                //开始计时

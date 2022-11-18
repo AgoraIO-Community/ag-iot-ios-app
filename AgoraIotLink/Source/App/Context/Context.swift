@@ -115,8 +115,8 @@ struct CallKitSetting{
     var frameRate = AgoraVideoFrameRate.fps15
     var bitRate = AgoraVideoBitrateStandard
     var orientationMode:AgoraVideoOutputOrientationMode = .adaptative
-    var renderMode:AgoraVideoRenderMode = .adaptive
-    var audioType = "G722" //G722，G711
+    var renderMode:AgoraVideoRenderMode = .fit
+    var audioType = "G722" //G722，G711A,G711U
     var audioSampleRate = "16000"; //16000,8000
     
     var logFilePath = ""

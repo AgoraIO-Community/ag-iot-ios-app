@@ -9,7 +9,7 @@ import UIKit
 
 public enum VideoAlertTipType: Int{
     ///默认
-    case none = 0
+    //case none = 0
     ///加载中
     case loading = 1
     ///加载失败
@@ -18,6 +18,9 @@ public enum VideoAlertTipType: Int{
     case deviceOffLine = 3
     ///设备休眠
     case deviceSleep = 4
+    ///
+    case playing = 5
+    
 }
 
 protocol VideoAlertTipViewDelegate : NSObjectProtocol{
@@ -62,9 +65,13 @@ class VideoAlertTipView: UIView {
                 break
             case .deviceSleep:
                 alertIconImageV.image = UIImage.init(named: "sleep_info")
-                handelBtn.setTitle("点击重启", for: .normal)
-                tipsLabel.text = "设备休眠"
+                handelBtn.setTitle("点击呼叫", for: .normal)
+                tipsLabel.text = "已挂断"
                 break
+            case .playing:
+                handelBtn.isHidden = true
+                alertIconImageV.isHidden = true
+                tipsLabel.text = "播放中..."
             default:
                 break
             }

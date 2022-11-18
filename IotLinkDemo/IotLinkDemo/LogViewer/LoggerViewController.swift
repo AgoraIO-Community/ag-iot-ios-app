@@ -136,9 +136,11 @@ class LoggerViewController: UIViewController {
             let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
             body += "Host App Version: \(version).\(buildNumber)\n"
         }
-        if let venderId = UIDevice.current.identifierForVendor {
-            body += "identifierForVendor: \(venderId)\n"
-        }
+        
+        //安全合规：目前也不会发邮件 注释掉（whp)
+//        if let venderId = UIDevice.current.identifierForVendor {
+//            body += "identifierForVendor: \(venderId)\n"
+//        }
 
         mailComposer.setSubject("Log of \(Bundle.main.bundleIdentifier ?? "")")
         mailComposer.setMessageBody(body, isHTML: false)

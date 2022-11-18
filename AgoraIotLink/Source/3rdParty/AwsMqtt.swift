@@ -342,7 +342,7 @@ class AWSMqtt{
     private func onUpdateCommStatus(dict:[String:Any]){
         
     }
-    private func onUpdateRtcStatus(desired:[String:Any],reported:[String:Any]?){
+    private func onUpdateRtcStatus(version:UInt?,desired:[String:Any],reported:[String:Any]?){
         let r = desired["reason"] as? Int
         if(r == nil){
             log.w("mqtt reason is nil,set to default 0")
@@ -688,13 +688,14 @@ class AWSMqtt{
     }
     //topic4 = "$aws/things/" + clientId + "/shadow/name/rtc/update/accepted"
     func onTopic4Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
+        let version = jsonDict["version"] as? UInt
         guard let state = jsonDict["state"] as? [String:Any] else{
             log.e("mqtt no 'state' found for \(topicRcv)")
             return false
         }
         let reported = state["reported"] as? [String:Any]
         if let desired = state["desired"] as? [String:Any]{
-            self.onUpdateRtcStatus(desired:desired,reported: reported)
+            self.onUpdateRtcStatus(version:version,desired:desired,reported: reported)
             return true
         }
         else{
@@ -704,6 +705,7 @@ class AWSMqtt{
     }
     //topic5 = "$aws/things/" + clientId + "/shadow/name/rtc/get/accepted"
     func onTopic5Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
+        let version = jsonDict["version"] as? UInt
         guard let state = jsonDict["state"] as? [String:Any] else{
             log.e("mqtt no 'state' found for \(topicRcv)")
             return false
@@ -712,7 +714,7 @@ class AWSMqtt{
         let reported = state["reported"] as? [String:Any]
         
         if let desired = state["desired"] as? [String:Any]{
-            self.onUpdateRtcStatus(desired:desired,reported:reported)
+            self.onUpdateRtcStatus(version:version, desired:desired, reported:reported)
             return true
         }
         else if let reported = reported{

@@ -15,6 +15,8 @@ let cRemoteHangupNotify = "cRemoteHangupNotify"
 let cRemoteSysHangupNotify = "cRemoteSysHangupNotify"
 //被动呼叫中的通知（用户当前页收到被动呼叫）
 let cReceiveCallNotify = "cReceiveCallNotify"
+//回到前台
+let cApplicationWillEnterForegroundNotify = "applicationWillEnterForeground"
 
 class DeviceInfo{
     var info : FirmwareInfo? = nil
@@ -165,7 +167,6 @@ class DoorbellContainerVC: UIViewController {
             make.top.left.right.bottom.equalToSuperview()
         }
         logicAnswerView.deviceName = device?.deviceName
-        
     }
     
     lazy var logicAnswerView: DoorbellAnswerLogicView = {

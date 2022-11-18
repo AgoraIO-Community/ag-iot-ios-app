@@ -15,8 +15,8 @@ class DoorBellManager: NSObject {
     var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
 
     var volumeValue : Int = 10
-    
-    var members : Int = 1
+    var members:Int = 0
+    var isPlaying:Bool = false
     
     fileprivate override init() {
         super.init()
@@ -152,14 +152,17 @@ class DoorBellManager: NSObject {
         actionAck: {ack in
             log.i("demo app callAnser ack:\(ack)")
             if(ack == .RemoteHangup){
+                self.members = 0
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
             }
             actionAck(ack)
         },
         memberState:{s,a in
-             log.i("demo app member:\(a) \(s.rawValue)")
              if(s == .Enter){self.members = self.members + a.count}
              if(s == .Leave){self.members = self.members - a.count}
-             if(s == .Exist){self.members = self.members + a.count}
+             if(s == .Exist){self.members = a.count + 1}
+             log.i("demo app member count \(DoorBellManager.shared.members):\(s.rawValue) \(a)")
+             
              NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
          })
         
@@ -170,6 +173,7 @@ class DoorBellManager: NSObject {
         if(sdk?.callkitMgr.getNetworkStatus().isBusy == true){
             sdk?.callkitMgr.callHangup(result: {ec,msg in
                 log.i("demo app callHangup ret:\(msg)(\(ec))")
+                DoorBellManager.shared.members = 0
                 cb(ec == ErrCode.XOK ? true : false , msg)
             })
         }

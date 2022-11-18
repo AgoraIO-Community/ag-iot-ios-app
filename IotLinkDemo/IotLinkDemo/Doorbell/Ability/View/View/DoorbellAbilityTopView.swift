@@ -99,6 +99,7 @@ class DoorbellAbilityTopView: UIView {
     lazy var logicView: DoorbellAbilityLogicView = {
 
         let logicView = DoorbellAbilityLogicView()
+        logicView.tipType = .loading
         logicView.logicfullHorBtnBlock = { [weak self] in
             self?.fullHBtnClickBlock?()
         }
@@ -140,7 +141,9 @@ extension DoorbellAbilityTopView{
     
     //设置播放器异常页
     func handelVideoTopView(tipsType:VideoAlertTipType){
-        if tipsType == .none {
+        logicView.tipType = tipsType
+        
+        if tipsType == .playing {
             videoTipView.isHidden = true
         }else{
             videoTipView.isHidden = false

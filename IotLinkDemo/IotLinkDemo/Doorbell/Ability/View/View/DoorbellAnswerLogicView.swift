@@ -234,6 +234,11 @@ class DoorbellAnswerLogicView: UIView {
                 }
                 self?.callAnswerBtnBlock?()
             } actionAck: { [weak self] ack in
+                if(ack == .RemoteVideoReady){
+                    log.i("demo app RemoteVideoReady")
+                    //首帧成功可显示发通知
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteVideoReadyNotify), object: nil)
+                }
                 self?.handelAnswerCallAct(ack)
             }
         }

@@ -407,14 +407,14 @@ public protocol IDeviceMgr {
      */
     func otaQuery(upgradeId:String,result:@escaping(Int,String,FirmwareStatus?)->Void)
     /*
-     * @brief 开始发送消息给设备
+     * @brief 开始发送消息给设备（向服务器请求RTM通道账号）
      * @param deviceId           : 对端设备Id
      * @param result             : 调用sendMessageBegin()是否成功
      * @param statusUpdated      : 在sendMessageBegin()和sendMessageEnd()之间，状态变化回调
      */
     func sendMessageBegin(deviceId:String,result:@escaping(Int,String)->Void,statusUpdated:@escaping(_ status:MessageChannelStatus,_ msg:String,_ data:Data?)->Void)
     /*
-     * @brief 结束发送消息给设备
+     * @brief 结束发送消息给设备（退出RTM系统）
      */
     func sendMessageEnd()
     /*

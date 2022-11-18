@@ -128,7 +128,7 @@ class AlarmManager : IAlarmMgr{
         }
     }
     
-    func queryAlarmVideoUrl(deviceId:String,tenantId:String, beginTime:UInt64,result:@escaping(Int,String,String?)->Void){
+    func queryAlarmVideoUrl(deviceId:String,tenantId:String, beginTime:UInt64,result:@escaping(Int,String,AlarmVideoInfo?)->Void){
         DispatchQueue.main.async {
             let tenant = self.app.context.gyiot.session.cert.thingName
             let agToken = self.app.context.aglab.session.accessToken
@@ -137,8 +137,8 @@ class AlarmManager : IAlarmMgr{
                 self.asyncResultValue(ErrCode.XERR_TOKEN_INVALID,"token invalid",nil,result)
                 return
             }
-            self.app.proxy.al.reqAlertVideoUrl(agToken, userId, deviceId, beginTime) { ec, msg, url in
-                self.asyncResultValue(ec, msg, url, result)
+            self.app.proxy.al.reqAlertVideoUrl(agToken, userId, deviceId, beginTime) { ec, msg, info in
+                self.asyncResultValue(ec, msg, info, result)
             }
         }
     }

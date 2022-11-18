@@ -18,12 +18,14 @@ class TriggerListener{
     var incoming_state_watcher:(ActionAck)->Void{set{_incoming_state_watcher = newValue}get{return _incoming_state_watcher}}
     var member_state_watcher:((MemberState,[UInt])->Void)?{
         set{
+            log.i("listener set member_state_watcher")
             _member_state_watcher = newValue
             _member_state_watcher?(.Exist,uids)
             uids.removeAll()
         }
         get{return _member_state_watcher}}
     func reset(){
+        log.i("listener reset")
         uids.removeAll()
         incoming_state_watcher = {a in}
         local_join_watcher = {a in}

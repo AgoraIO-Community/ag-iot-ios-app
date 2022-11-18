@@ -327,9 +327,17 @@ class DoorbellPlayerView: UIView {
             
             bottomView.clickClipsButtonAction = {[weak self] in
                 if self == nil {return }
-                self!.player.defaultClipsControlLayer.config = self!.player.defaultEdgeControlLayer.clipsConfig
-                self!.player.switcher.switchControlLayer(forIdentifier: SJControlLayer_Clips)
-                self!.player.defaultClipsControlLayer.perform(NSSelectorFromString("exportVideoItemWasTapped"), with: nil, afterDelay: 0)
+                let image = self!.player.screenshot()
+                guard let image = image else {
+                    AGToolHUD.showInfo(info: "截图失败！")
+                    return
+                }
+                self?.saveImgToAlbum(image)
+                
+                //todo:至和以前写的，暂时注释
+//                self!.player.defaultClipsControlLayer.config = self!.player.defaultEdgeControlLayer.clipsConfig
+//                self!.player.switcher.switchControlLayer(forIdentifier: SJControlLayer_Clips)
+//                self!.player.defaultClipsControlLayer.perform(NSSelectorFromString("exportVideoItemWasTapped"), with: nil, afterDelay: 0)
             }
             bottomView.clickDeleteButtonAction = {[weak self] in
                 self?.clickDeleteButtonAction?()
@@ -365,5 +373,20 @@ class DoorbellPlayerView: UIView {
     
     func play() {
         player.play()
+    }
+    
+    //保存截图到相册
+    func saveImgToAlbum(_ image : UIImage){
+        
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(image:didFinishSavingWithError:contextInfo:)), nil)
+    }
+    
+    @objc func image(image: UIImage,didFinishSavingWithError: NSError?,contextInfo: AnyObject) {
+     
+        if didFinishSavingWithError != nil {
+            AGToolHUD.showInfo(info: "截图保存失败！")
+            return
+        }
+            AGToolHUD.showInfo(info: "截图保存成功！")
     }
 }

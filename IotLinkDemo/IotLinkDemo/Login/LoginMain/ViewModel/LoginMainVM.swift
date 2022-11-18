@@ -17,25 +17,24 @@ class LoginMainVM: NSObject {
 
     var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
     var password:String = ""
-//note:removed
-//    func register(_ acc: String, _ pwd:String,_ code:String,email:String?,phone:String?,_ cb:@escaping (Bool,String)->Void){
-//        log.i("demo app register(\(acc),********,\(code)")
-//        if(sdk == nil){
-//            cb(false,"sdk 未初始化")
-//        }
-//        let result = {
-//            (ec:Int,msg:String)->Void in
-//            var hint = ErrCode.XOK == ec ? "注册成功" : "注册失败"
-//            if(AgoraIotConfig.DEBUG){
-//                hint = hint + ":" + msg
-//            }
-//            cb(ErrCode.XOK == ec ? true : false , hint)
-//        }
-//        sdk?.accountMgr.register(account: acc, password: pwd,code:code,email:email,phone: phone, result: result)
-//    }
+
+    func register(_ acc: String, _ pwd:String,_ code:String,email:String?,phone:String?,_ cb:@escaping (Bool,String)->Void){
+        log.i("demo app register(\(acc.replacePhone()),********,\(code)")
+        if(sdk == nil){
+            cb(false,"sdk 未初始化")
+        }
+        let result = {
+            (ec:Int,msg:String)->Void in
+            var hint = ErrCode.XOK == ec ? "注册成功" : "注册失败"
+            hint = hint + ":" + msg
+            cb(ErrCode.XOK == ec ? true : false , hint)
+        }
+        //sdk?.accountMgr.register(account: acc, password: pwd,code:code,email:email,phone: phone, result: result)
+        ThirdAccountManager.reqRegisterByPhone(acc, pwd, code,result)
+    }
     
     func register2(_ acc: String, _ pwd:String,_ cb:@escaping (Bool,String)->Void){
-        log.i("demo app register(\(acc),********,\(pwd)")
+        log.i("demo app register(\(acc.replacePhone()),********,\(pwd)")
         let result = {
             (ec:Int,msg:String)->Void in
             var hint = ErrCode.XOK == ec ? "注册成功" : "注册失败"
@@ -45,22 +44,20 @@ class LoginMainVM: NSObject {
         }
         ThirdAccountManager.reqRegister(acc, pwd, result)
     }
-//note:removed
-//    func resetPassword(_ acc: String, _ pwd:String, _ code:String, _ cb:@escaping (Bool,String)->Void){
-//        log.i("demo app resetPassword(\(acc),********,\(code)")
-//        if(sdk == nil){
-//            cb(false,"sdk 未初始化")
-//        }
-//        let result = {
-//            (ec:Int,msg:String)->Void in
-//            var hint = ErrCode.XOK == ec ? "重置密码成功" : "重置密码失败"
-//            if(AgoraIotConfig.DEBUG){
-//                hint = hint + ":" + msg
-//            }
-//            cb(ErrCode.XOK == ec ? true : false , hint)
-//        }
-//        sdk?.accountMgr.resetPassword(account: acc, password: pwd,code:code,result: result)
-//    }
+
+    func resetPassword(_ acc: String, _ pwd:String, _ code:String, _ cb:@escaping (Bool,String)->Void){
+        log.i("demo app resetPassword(\(acc.replacePhone()),********,\(code)")
+        if(sdk == nil){
+            cb(false,"sdk 未初始化")
+        }
+        let result = {
+            (ec:Int,msg:String)->Void in
+            var hint = ErrCode.XOK == ec ? "重置密码成功" : "重置密码失败"
+            hint = hint + ":" + msg
+            cb(ErrCode.XOK == ec ? true : false , hint)
+        }
+        //sdk?.accountMgr.resetPassword(account: acc, password: pwd,code:code,result: result)
+    }
 //note:removed
 //    func changePassword(_ oldPwd:String,_ newPwd:String,_ cb:@escaping(Bool,String)->Void){
 //        log.i("demo app change password")
@@ -87,7 +84,7 @@ class LoginMainVM: NSObject {
 //    }
     
     func login2(_ acc:String,_ pwd:String,_ cb:@escaping (Bool,String)->Void){
-        log.i("demo app login(\(acc))")
+        log.i("demo app login(\(acc.replacePhone()))")
         if(sdk == nil){
             cb(false,"sdk 未初始化")
         }
@@ -110,26 +107,29 @@ class LoginMainVM: NSObject {
             self.sdk?.accountMgr.login(param:param,result: result)
         }
     }
-//note:removed
-//    func doGetCode(_ acc: String, type: String, _ cb:@escaping (Int,String)->Void){
+
+    func doGetCode(_ acc: String, type: String, _ cb:@escaping (Int,String)->Void){
 //        sdk?.accountMgr.getCode(email: acc, type: type, result: { code, msg in
 //            print("\(msg)")
 //            cb(code,msg)
 //        })
-//    }
-//note:removed
-//    func doGetPhoneCode(_ phone:String, type: String, _ lang:String,_ cb:@escaping (Bool,String)->Void){
-//        log.i("demo app bindPhone(\(phone))")
-//        if(sdk == nil){
-//            cb(false,"sdk 未初始化")
-//        }
-//        let result = {
-//            (ec:Int,msg:String)->Void in
-//            let msg = ErrCode.XOK == ec ? "请求成功" : msg
-//            cb(ErrCode.XOK == ec ? true : false , msg)
-//        }
-//        sdk?.accountMgr.getSms(phone: phone, type: type,lang:"ZH_CN", result: result)
-//    }
+    }
+
+    func doGetPhoneCode(_ phone:String, type: String, _ lang:String,_ cb:@escaping (Bool,String)->Void){
+        log.i("demo app bindPhone(\(phone.replacePhone()))")
+        if(sdk == nil){
+            cb(false,"sdk 未初始化")
+        }
+        let result = {
+            (ec:Int,msg:String)->Void in
+            let msg = ErrCode.XOK == ec ? "请求成功" : msg
+            cb(ErrCode.XOK == ec ? true : false , msg)
+        }
+        //sdk?.accountMgr.getSms(phone: phone, type: type,lang:"ZH_CN", result: result)
+        ThirdAccountManager.reqGetVerifyCode(phone) { ec, msg in
+            cb(ErrCode.XOK == ec ? true : false , msg)
+        }
+    }
     
 //note:removed
 //    func doUnregister(_ acc: String ,_ cb:@escaping(Bool,String)->Void){

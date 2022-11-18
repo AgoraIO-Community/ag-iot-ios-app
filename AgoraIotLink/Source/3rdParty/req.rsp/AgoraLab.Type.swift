@@ -614,6 +614,7 @@ extension AgoraLab{
             let deleted:Bool
             let createdBy:UInt64
             let createdTime:UInt64
+            let videoSecretKey:String?
         }
         struct Rsp : Decodable{
             let code:Int
@@ -1011,7 +1012,7 @@ extension AgoraLab{
         rsp(ErrCode.XOK,ret.msg,data.vodUrl)
     }
     
-    func handleRspGetVideoUrl(_ ret:AlertVideoUrl.Rsp,_ rsp:@escaping (Int,String,String?)->Void){
+    func handleRspGetVideoUrl(_ ret:AlertVideoUrl.Rsp,_ rsp:@escaping (Int,String,AlarmVideoInfo?)->Void){
         if(ret.code == AgoraLab.tokenExpiredCode){
             log.w("al handleRspGetVideoUrl fail \(ret.msg)(\(ret.code))")
             rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
@@ -1027,8 +1028,10 @@ extension AgoraLab{
             log.w("al handleRspGetVideoUrl rsp no data found,the premission may be expired")
             return rsp(ErrCode.XERR_UNKNOWN,"no data found",nil)
         }
-        
-        rsp(ErrCode.XOK,ret.msg,data.vodUrl)
+        let info = AlarmVideoInfo()
+        info.url = data.vodUrl
+        info.videoSecretKey = data.videoSecretKey ?? ""
+        rsp(ErrCode.XOK,ret.msg,info)
     }
     
     func handleRspGetAlarmPageV2(_ ret:AlertMessageGetPageV2.Rsp,_ rsp:@escaping (Int,String,[IotAlarm]?)->Void){

@@ -13,7 +13,7 @@ class SelectHeardImgVC: UIViewController {
     
     fileprivate let selectImgAlertViewCellID = "selectImgAlertViewCellID"
     
-    fileprivate lazy var  doorbellVM = DoorbellAbilityViewModel()
+    fileprivate var  doorbellVM = DoorBellManager.shared
     fileprivate var dataArr = [UserHeardImgModel]()
     
     typealias SelectHeardImgAlertVCBlock = (_ image:UIImage?) -> ()

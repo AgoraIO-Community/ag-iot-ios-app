@@ -25,6 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic)NSInteger softApChannel;
 @property(assign, nonatomic)NSInteger softApMaxConnection;
 
+//自定义数据
+@property(strong, nonatomic)NSString *customData;
+
 //自定义新增
 //uid
 @property(strong, nonatomic)NSString *uid;

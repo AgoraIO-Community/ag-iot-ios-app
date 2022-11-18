@@ -49,8 +49,14 @@ class DoorbellMessageVC: UIViewController {
             self?.tryDeleteCurrentPlayingMsg()
         }
         playerView.clickDownloadButtonAction = {[weak self] in
-            self?.downloadCurrentPlayingVideo()
-            DownloadProgressVC.show()
+            
+            AGToolHUD.showInfo(info: "此功能暂不支持，敬请期待！")
+            return
+            
+            //todo:下载功能暂不支持
+//            self?.downloadCurrentPlayingVideo()
+//            DownloadProgressVC.show()
+            
         }
         playerView.clickDefinationButtonAction = {[weak self] in
             if let defination = self?.playerView.defination {
@@ -198,6 +204,7 @@ class DoorbellMessageVC: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        player.pause()
         //player.vc_viewDidDisappear()
     }
     
@@ -448,13 +455,13 @@ class DoorbellMessageVC: UIViewController {
             self?.sectionHeaderView.editButton.isEnabled = self?.dataSource.count ?? 0 > 0
             if self?.playerStyle == .normal {
                 // 默认播放第一条
-                if let firstMsg = self?.dataSource.first {
-                    self?.currentPlayingMsg = firstMsg
-                    self?.loadMsgDetailForId(firstMsg.alarm.alertMessageId)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        self?.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-                    }
-                }
+//                if let firstMsg = self?.dataSource.first {
+//                    self?.currentPlayingMsg = firstMsg
+//                    self?.loadMsgDetailForId(firstMsg.alarm.alertMessageId)
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                        self?.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+//                    }
+//                }
             }
             self?.tableView.reloadData()
         }
@@ -494,14 +501,14 @@ class DoorbellMessageVC: UIViewController {
                 return
             }
             
-            Utils.loadAlertVideoUrl(alert.deviceId,alert.tenantId, alert.beginTime) { ec, msg, url in
-                if(ec == ErrCode.XOK && url != nil){
+            Utils.loadAlertVideoUrl(alert.deviceId,alert.tenantId, alert.beginTime) { ec, msg, info in
+                if(ec == ErrCode.XOK && info != nil){
                     let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
                     let options = IJKFFOptions.byDefault()
                     ijkVC.options = options
                     self?.player.playbackController = ijkVC
                     
-                    guard let url = URL(string: url!) else {
+                    guard let url = URL(string: info!.url) else {
                                     SVProgressHUD.showError(withStatus: "获取播放地址失败")
                                     SVProgressHUD.dismiss(withDelay: 2)
                                     return

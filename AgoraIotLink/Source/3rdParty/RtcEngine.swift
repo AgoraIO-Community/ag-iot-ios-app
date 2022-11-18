@@ -23,7 +23,7 @@ struct RtcSetting{
     var bitRate = AgoraVideoBitrateStandard
     var orientationMode:AgoraVideoOutputOrientationMode = .adaptative
     var renderMode:AgoraVideoRenderMode = .adaptive
-    var audioType = "" //G722，G711
+    var audioType = "" //G722，G711A，G711U
     var audioSampleRate = ""; //16000,8000
     
     var logFilePath = ""
@@ -64,8 +64,15 @@ class RtcEngine : NSObject{
             log.e("rtc create engine failed");
             return false
         }
+        
+//        rtc.setParameters("{\"che.hardware_encoding\": 0}");
+//        rtc.setParameters("{\"che.hardware_decoding\": 0}");
+        
         if(setting.logFilePath != ""){
-            rtc.setLogFilter(AgoraLogFilter.info.rawValue)
+            //todo:日志等级暂设debug，原为info
+//            rtc.setLogFilter(AgoraLogFilter.debug.rawValue)
+            rtc.setParameters("{\"rtc.enable_debug_log\":true}");
+//            rtc.setLogFilter(AgoraLogFilter.info.rawValue)
             rtc.setLogFile(setting.logFilePath)
         }
         else{
@@ -102,14 +109,18 @@ class RtcEngine : NSObject{
             return
         }
         let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
+        //todo:4.0.0版本调用
         option.autoSubscribeAudio = AgoraRtcBoolOptional.of(_setting.subscribeAudio)
         option.autoSubscribeVideo = AgoraRtcBoolOptional.of(_setting.subscribeVideo)
+//        option.autoSubscribeAudio = _setting.subscribeAudio
+//        option.autoSubscribeVideo = _setting.subscribeVideo
         //option.audiotr = AgoraRtcBoolOptional.of(true)
         //option.publishCameraTrack = AgoraRtcBoolOptional.of(false)
-
+        
         rtc.enableAudio()
         rtc.enableVideo()
         rtc.setEnableSpeakerphone(true)
+//        rtc.setAudioSessionOperationRestriction(.setCategory)//SDK 对AudioSession的操作权限，解决门铃控制中心播放告警消息没有声音的问题
         rtc.setClientRole(.broadcaster)
         rtc.setChannelProfile(.liveBroadcasting)
         
@@ -135,8 +146,11 @@ class RtcEngine : NSObject{
         if(_setting.audioType == "G722"){
             type = "9"
         }
-        else if(_setting.audioType == "G711"){
+        else if(_setting.audioType == "G711U"){
             type = "0"
+        }
+        else if(_setting.audioType == "G711A"){
+            type = "8"
         }
 
         if(type != ""){
@@ -253,7 +267,7 @@ class RtcEngine : NSObject{
 //        if(ret != 0){
 //            log.w("rtc enableLocalAudio(\(!mute)) failed:\(String(ret))")
 //        }
-        
+        engine.enableLocalAudio(!mute) //关闭本地音频采集，解决rtc通话中，其他播放器播放视频没有声音问题
         let ret = engine.muteLocalAudioStream(mute)
         if(ret != 0){
             log.w("rtc muteLocalAudio(\(mute)) faile:\(String(ret))")

@@ -158,7 +158,7 @@ extension AccountSafeVC: UITableViewDelegate,UITableViewDataSource {
     //注销账号
     private func destoryAccount(){
         AGToolHUD.showNetWorkWait()
-        let account = TDUserInforManager.shared.readAccountNumber()
+        let account = TDUserInforManager.shared.getKeyChainAccount()
         DoorBellManager.shared.unregister(account: account) {[weak self] success, msg in
             AGToolHUD.disMiss()
             if success == true{

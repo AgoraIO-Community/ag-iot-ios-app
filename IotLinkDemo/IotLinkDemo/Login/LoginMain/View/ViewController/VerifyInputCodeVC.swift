@@ -168,20 +168,21 @@ extension VerifyInputCodeVC{
         
         AGToolHUD.showNetWorkWait()
         
-        let phone = "+" + TDUserInforManager.shared.currentCountryCode + accountText
+//        let phone = "+" + TDUserInforManager.shared.currentCountryCode + accountText
+        let phone = accountText //"+" + TDUserInforManager.shared.currentCountryCode + accountText
         loginVM.doGetPhoneCode(phone, type:type,"ZH_CN") { [weak self] success, msg in
            
             AGToolHUD.disMiss()
             if success == true {
                 debugPrint("验证码发送成功")
-                AGToolHUD.showInfo(info: "验证码发送成功")
+                AGToolHUD.showInfo(info: msg)
                 //开始计时
                 self?.startTimer()
                 //重新发送按钮置为不可用
                 self?.verifyCodeView.configTimeOutLabelAction()
             }else{
                 AGToolHUD.showInfo(info: msg)
-                self?.verifyCodeView.configTimeOutLabel(msg)
+//                self?.verifyCodeView.configTimeOutLabel(msg)
             }
         }
         

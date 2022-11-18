@@ -90,8 +90,9 @@ extension LoginMainVC : LoginViewDelegate{
             return
         }
         
-        guard verficationPassword(pwd) == true else {
-            debugPrint("密码为8至20位大小写字母及数字")
+        //guard verficationPassword(pwd) == true else {
+        guard !pwd.isEmpty else{
+            debugPrint("密码为空")
             loginV.showTipsMessage("密码为空")
             return
         }
@@ -122,22 +123,33 @@ extension LoginMainVC : LoginViewDelegate{
     //注册点击
     func registerBtnClick(acc: String, pwd: String) {
         //note: registers
-        //DispatchCenter.DispatchType(type: .register, vc: self, style: .push)
-        
-        let verficationAccount = verficationAccount(acc)
-        guard verficationAccount.isEmpty == false else {
-            //debugPrint("账号为空")
-            loginV.showTipsMessage("账号为空")
-            return
+        //gzh:手机注册
+        let easyRegister = false
+        if(!easyRegister){
+            DispatchCenter.DispatchType(type: .register, vc: self, style: .push)
+        }
+        else{
+            let verficationAccount = verficationAccount(acc)
+            guard verficationAccount.isEmpty == false else {
+                //debugPrint("账号为空")
+                loginV.showTipsMessage("账号为空")
+                return
+            }
+            
+            guard verficationPassword(pwd) == true else {
+                //debugPrint("密码为8至20位大小写字母及数字")
+                loginV.showTipsMessage("密码为空")
+                return
+            }
+            
+//            guard verficationAccount.isPhone == true else {
+//                //debugPrint("账号为空")
+//                loginV.showTipsMessage("无效手机号")
+//                return
+//            }
+            registerAction(acc:acc,pwd:pwd)
         }
         
-        guard verficationPassword(pwd) == true else {
-            //debugPrint("密码为8至20位大小写字母及数字")
-            loginV.showTipsMessage("密码为空")
-            return
-        }
-        
-        registerAction(acc:acc,pwd:pwd)
         
 //        if verficationAccount.isEmail == true {
 //            TDUserInforManager.shared.userType = .email
@@ -215,8 +227,7 @@ extension LoginMainVC{
             AGToolHUD.disMiss()
             if (success) {
                 debugPrint("登录成功")
-                TDUserInforManager.shared.saveAccountNumberAndLoginType(account: acc, type: false)
-                TDUserInforManager.shared.saveAccountPassWord(pwd: pwd)
+                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
                 TDUserInforManager.shared.isLogin = true
                 //登录成功发通知
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
@@ -237,8 +248,7 @@ extension LoginMainVC{
             AGToolHUD.disMiss()
             if (succ) {
                 debugPrint("注册成功")
-                TDUserInforManager.shared.saveAccountNumberAndLoginType(account: acc, type: false)
-                TDUserInforManager.shared.saveAccountPassWord(pwd: pwd)
+                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
                 TDUserInforManager.shared.isLogin = false
                 //登录成功发通知
                 //NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)

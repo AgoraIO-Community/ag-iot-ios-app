@@ -21,10 +21,10 @@ class LoggerHelper: NSObject {
             let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
             data.append( "Host App Version: \(version).\(buildNumber)" )
         }
-        
-        if let venderId = UIDevice.current.identifierForVendor {
-            data.append( "Identifier For Vendor: \(venderId)" )
-        }
+        //安全合规：注释掉(whp)
+//        if let venderId = UIDevice.current.identifierForVendor {
+//            data.append( "Identifier For Vendor: \(venderId)" )
+//        }
         
         data.append("System Version: \(getSystemVersion())")
         data.append("Model: \(platformModelString())")

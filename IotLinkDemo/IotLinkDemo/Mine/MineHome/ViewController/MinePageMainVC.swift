@@ -97,7 +97,7 @@ class MinePageMainVC: AGBaseVC {
     }
     
     private func updateUIWithUserModel(){
-        var account = TDUserInforManager.shared.readAccountNumber()
+        var account = TDUserInforManager.shared.getKeyChainAccount() 
         // 如果是电话号码，隐藏中间4位
         if account.checkPhone() {
             let startIndex = account.startIndex
@@ -105,7 +105,7 @@ class MinePageMainVC: AGBaseVC {
         }
         AgoraIotManager.shared.sdk?.accountMgr.getAccountInfo(result: { [weak self] _, _, userInfo in
             let uid:String = DeviceManager.shared.sdk?.accountMgr.getUserId() ?? ""
-            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: userInfo?.name ?? account,count:DeviceManager.shared.devices?.count ?? 0,uid: uid)
+            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: account,count:DeviceManager.shared.devices?.count ?? 0,uid: uid)
             self?.userInfo = userInfo
             if(self?.userInfo?.sex == 0){
                 self?.userInfo?.sex = 1

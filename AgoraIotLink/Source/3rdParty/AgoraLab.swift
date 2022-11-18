@@ -687,7 +687,7 @@ class AgoraLab {
                     }
     }
     
-    func reqAlertVideoUrl(_ token:String,_ userId:String,_ deviceId:String,_ beginTime:UInt64,_ rsp:@escaping(Int,String,String?)->Void){
+    func reqAlertVideoUrl(_ token:String,_ userId:String,_ deviceId:String,_ beginTime:UInt64,_ rsp:@escaping(Int,String,AlarmVideoInfo?)->Void){
         let header = Header()
         let payload = AlertVideoUrl.Payload(userId: userId, deviceId: deviceId, beginTime: beginTime)
         let req = AlertVideoUrl.Req(header, payload)

@@ -8,10 +8,13 @@
 import UIKit
 import AgoraIotLink
 
-class DoorbellAbilityViewModel: NSObject {
-
-    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
-    var members:Int = 0
+//class DoorbellAbilityViewModel: NSObject {
+extension DoorBellManager{
+//    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
+//    var members:Int = 0
+//    var isPlaying:Bool = false
+    
+//    public static let shared = DoorbellAbilityViewModel()
     //呼叫设备
     func wakeupDevice(_ dev:IotDevice,_ cb:@escaping(Bool,String)->Void,_ action:@escaping(ActionAck)->Void){
         guard let callMgr = sdk?.callkitMgr else{
@@ -54,9 +57,10 @@ class DoorbellAbilityViewModel: NSObject {
             }
             action(s)
         },memberState:{s,a in
-            log.i("demo app member:\(a) \(s.rawValue)")
+            if(s == .Exist){self.members = self.members + a.count}
             if(s == .Enter){self.members = self.members + 1}
             if(s == .Leave){self.members = self.members - 1}
+            log.i("demo app member count \(self.members):\(s.rawValue) \(a)")
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
         })
         
@@ -65,6 +69,18 @@ class DoorbellAbilityViewModel: NSObject {
 //        })
     }
  
+    func startPlayback(channelName:String,result:@escaping(Int,String)->Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
+        isPlaying = true
+        return iotsdk.deviceMgr.startPlayback(channelName: channelName, result: result, stateChanged: stateChanged)
+    }
+    func setPlaybackView(peerView: UIView?) -> Int{
+        return iotsdk.deviceMgr.setPlaybackView(peerView: peerView)
+    }
+    func isSdCardPlaying()->Bool{return isPlaying}
+    func stopPlayback(){
+        isPlaying = false
+        return iotsdk.deviceMgr.stopPlayback()
+    }
     //挂断设备
     func hangupDevice(_ cb:@escaping(Bool,String)->Void){
         log.i("demo app local req Hangup")
@@ -76,11 +92,13 @@ class DoorbellAbilityViewModel: NSObject {
         iotsdk.callkitMgr.callHangup(result: { ec, msg in
             log.i("demo app call Hangup result:\(msg)(\(ec))")
             cb(ec == ErrCode.XOK ? true : false,msg)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cLocalHangupNotify), object: nil, userInfo: nil)
         })
     }
     
     //接听来电
-    func callAnswer(cb:@escaping(Bool,String)->Void,
+    func callAnswer2(cb:@escaping(Bool,String)->Void,
                     actionAck:@escaping(ActionAck)->Void){
          sdk?.callkitMgr.callAnswer(result: {ec,msg in
             log.i("demo app callAnswer ret:\(msg)(\(ec))")
@@ -89,24 +107,23 @@ class DoorbellAbilityViewModel: NSObject {
             }
         },
         actionAck: {ack in
-            
             log.i("demo app callAnser ack:\(ack)")
              if(ack == .RemoteHangup){
- //                self._status.trans(FsmView.Event.BACK)
                  self.members = 0
                  NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
              }
-             if(ack == .RemoteAnswer){
-                 self.members = self.members + 1
-                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
-             }
+//             if(ack == .RemoteAnswer){
+//                 self.members = self.members + 1
+//                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+//             }
             actionAck(ack)
             
         },
         memberState:{s,a in
-             log.i("demo app member:\(a) \(s.rawValue)")
+             if(s == .Exist){self.members = self.members + a.count}
              if(s == .Enter){self.members = self.members + a.count}
              if(s == .Leave){self.members = self.members - a.count}
+             log.i("demo app member count \(self.members):\(s.rawValue) \(a)")
              NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
          })
         

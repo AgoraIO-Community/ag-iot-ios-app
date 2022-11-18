@@ -15,6 +15,11 @@ let cUserLoginSuccessNotify = "cUserLoginSuccessNotify"
 //退出登录的通知
 let cUserLoginOutNotify = "cUserLoginOutNotify"
 
+
+let kSSToolkitServiceName = "io.agora.Iot"
+
+let kSSToolkitAccountKeyName = "agora_Iot"
+
 public enum UserAccountType: Int{
     
     ///默认
@@ -77,6 +82,8 @@ class TDUserInforManager: NSObject {
         
         isLogin = false
         
+        deleteKeyChainInfor()
+        
         //退出登录发通知
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginOutNotify), object: nil)
 
@@ -88,6 +95,7 @@ class TDUserInforManager: NSObject {
     ///   - account: 上次登陆的账号
     ///   - type: 上次登录账号的属性 true:手机号验证码登录 false：账号密码登录
     func saveAccountNumberAndLoginType(account:String, type:Bool) {
+
         let uDefault = getUserDefault()
         uDefault.setValue(account, forKey: "accountNumber")
         uDefault.setValue(type, forKey: "LoginType")
@@ -98,10 +106,54 @@ class TDUserInforManager: NSObject {
     ///
     /// - Parameters:
     ///   - pwd: 上次登陆的账号对应的密码
-    func saveAccountPassWord(pwd:String) {
+    func saveAccountPassWord(acc:String, pwd:String) {
+
         let uDefault = getUserDefault()
         uDefault.setValue(pwd, forKey: "accountPwd")
         uDefault.synchronize()
+    }
+
+    /// 保存上次登录的账号对应的密码
+    ///
+    /// - Parameters:
+    ///   - pwd: 上次登陆的账号对应的密码
+    func saveKeyChainAccountInfor(acc:String, pwd:String) {
+        
+        SSKeychain.setPassword(pwd, forService: kSSToolkitServiceName, account: kSSToolkitAccountKeyName+acc)
+        
+    }
+    
+    
+    func getKeyChainAccount()->String{
+        
+        guard let  accountArr = SSKeychain.accounts(forService: kSSToolkitServiceName) else {
+            return ""
+        }
+        var tempAccount = ""
+        for item in accountArr {
+            if let dict = item as? Dictionary<String, Any>, let acct = dict["acct"] as? String , acct.hasPrefix(kSSToolkitAccountKeyName) == true{
+                tempAccount = acct.replacingOccurrences(of: kSSToolkitAccountKeyName, with: "")
+            }
+        }
+        return tempAccount
+        
+    }
+    
+    func readKeyChainAccountAndPwd()->(acc:String,pwd:String){
+        
+        let acc = getKeyChainAccount()
+        guard let passWord = SSKeychain.password(forService: kSSToolkitServiceName, account: kSSToolkitAccountKeyName+acc)  else {
+            return("","")
+        }
+
+        return (acc,passWord)
+    }
+    
+    func deleteKeyChainInfor(){
+        
+        let acc = getKeyChainAccount()
+        SSKeychain.deletePassword(forService: kSSToolkitServiceName, account: kSSToolkitAccountKeyName+acc)
+        
     }
     
     /// 保存上次登录账号协议是否阅读状态
@@ -158,10 +210,12 @@ class TDUserInforManager: NSObject {
         //检查隐私协议状态
         guard checkloginProtocolState() == true else { return }
         
-        let account = readAccountNumber()
-        let password = readPasswordNumber()
-        if account.isEmpty == false {
-            loginAction(account,password)
+//        let account = readAccountNumber()
+//        let password = readPasswordNumber()
+        let accountInfor = readKeyChainAccountAndPwd()
+        
+        if accountInfor.acc.isEmpty == false {
+            loginAction(accountInfor.acc,accountInfor.pwd)
         }else{
             
             DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)

@@ -42,7 +42,7 @@ public class IotDevice : NSObject {
     @objc public var alias : String                         //别名
     @objc public var props: Dictionary<String,Any>? = nil   //<设备属性>
     
-    init(userId:String ,
+    public init(userId:String ,
          userType:Int ,
          deviceId:String,
          deviceName:String,

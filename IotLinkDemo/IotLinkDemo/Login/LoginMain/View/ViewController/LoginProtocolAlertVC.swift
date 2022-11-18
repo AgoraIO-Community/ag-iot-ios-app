@@ -48,6 +48,18 @@ class LoginProtocolAlertVC: UIViewController {
     typealias LoginProtocolAlertVCBlock = (_ type:Int) -> ()
     var loginProAlertVCBlock:LoginProtocolAlertVCBlock?
     
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        
+        debugPrint("回到前台111")
+        bgV.isHidden = false
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        bgV.isHidden = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -68,6 +80,11 @@ class LoginProtocolAlertVC: UIViewController {
             agreeBtn.setTitle("确定", for: .normal)
         }
         
+        NotificationCenter.default.addObserver(self, selector: #selector(backforeground), name: Notification.Name(cApplicationWillEnterForegroundNotify), object: nil)
+    }
+    
+    @objc private func backforeground(){
+        bgV.isHidden = false
     }
     
     func setupUI(){
@@ -76,6 +93,24 @@ class LoginProtocolAlertVC: UIViewController {
         bgImgV.snp.makeConstraints { (make) in
             make.top.bottom.left.right.equalToSuperview()
         }
+        
+        
+        bgImgV.addSubview(iconImgV)
+        iconImgV.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-80.S)
+            make.width.equalTo(140.S)
+            make.height.equalTo(63.S)
+        }
+        
+        bgImgV.addSubview(iconTitleLab)
+        iconTitleLab.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(iconImgV.snp.bottom).offset(20.S)
+            make.width.equalTo(90.S)
+            make.height.equalTo(50.S)
+        }
+        
         
         bgImgV.addSubview(bgV)
         bgV.snp.makeConstraints { (make) in
@@ -173,8 +208,24 @@ class LoginProtocolAlertVC: UIViewController {
         let bgV = UIImageView.init()
         bgV.backgroundColor = UIColor.clear
         bgV.isUserInteractionEnabled = true
-        bgV.image = UIImage.init(named: "propol_bg")
+        bgV.image = UIImage.init(named: "black_bg")
         return bgV
+    }()
+    
+    fileprivate lazy var iconImgV : UIImageView = {
+        let bgV = UIImageView.init()
+        bgV.backgroundColor = UIColor.clear
+        bgV.image = UIImage.init(named: "app_logo")
+        return bgV
+    }()
+    
+    fileprivate lazy var iconTitleLab : UILabel = {
+        let label = UILabel.init()
+        label.text = "灵隼"
+        label.textAlignment = .center
+        label.textColor = UIColor.init(hexString: "#1A1A1A")
+        label.font = FontPFRegularSize(36)
+        return label
     }()
     
     fileprivate lazy var bgV : UIView = {
@@ -320,7 +371,9 @@ class LoginProtocolAlertVC: UIViewController {
             
             //退出应用
     //      UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
-            exitApplication()
+            //退出应用安全过审修改为停留在背景页
+//            exitApplication()
+            bgV.isHidden = true
             
         }else if pageSource == .aboutPage{
             

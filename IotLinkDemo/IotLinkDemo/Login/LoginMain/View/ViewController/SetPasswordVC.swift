@@ -86,9 +86,10 @@ extension SetPasswordVC : SetPasswordViewDelegate{
     
     func confrimBtnClick(pwd: String) {
         
-        guard verficationPassword(pwd) == true else {
-            print("密码为8至20位大小写字母及数字")
-            setPasswordView.showTipsMessage("密码为8至20位大小写字母及数字")
+        //guard verficationPassword(pwd) == true else {
+        guard !pwd.isEmpty else {
+            print("密码不能为空")
+            setPasswordView.showTipsMessage("密码不能为空")
             return
         }
         setPasswordAction(pwd: pwd)

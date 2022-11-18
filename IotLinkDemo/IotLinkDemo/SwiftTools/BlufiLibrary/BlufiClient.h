@@ -113,6 +113,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)configure:(BlufiConfigureParams *)params;
 
+
+/*!
+ * @method configureBle808:
+ *
+ * @discussion Configure the device to a station or soft AP.
+ *             The posted result will be notified in <link>blufi:didPostConfigureParams:</link>
+ */
+- (void)configureBle808:(BlufiConfigureParams *)params;
+
 /*!
  * @method postCustomData:
  *
@@ -120,6 +129,15 @@ NS_ASSUME_NONNULL_BEGIN
  *             The posted result will be notified in <link>blufi:didPostCustomData:status:</link>
  */
 - (void)postCustomData:(NSData *)data;
+
+/*!
+ * @method postCustomDataBle808:
+ *
+ * @discussion Request to post custom data to device.
+ *             The posted result will be notified in <link>blufi:didPostCustomData:status:</link>
+ */
+- (void)postCustomDataBle808:(BlufiConfigureParams *)params;
+
 
 @end
 

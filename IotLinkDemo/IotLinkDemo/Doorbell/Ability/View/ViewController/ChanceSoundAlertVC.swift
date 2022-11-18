@@ -21,7 +21,7 @@ class ChanceSoundAlertVC: UIViewController {
     
     fileprivate let ChanceSoundAlertViewCellID = "ChanceSoundAlertViewCellID"
     
-    fileprivate lazy var  doorbellVM = DoorbellAbilityViewModel()
+    fileprivate var  doorbellVM = DoorBellManager.shared
     fileprivate var dataArr = [DoorbellChangeSoundModel]()
     
     typealias ChanceSoundAlertVCBlock = (_ effectId:AudioEffectId,_ effectName:String) -> ()

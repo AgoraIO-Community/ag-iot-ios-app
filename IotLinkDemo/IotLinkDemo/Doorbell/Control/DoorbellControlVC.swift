@@ -244,7 +244,7 @@ class DoorbellControlVC: UIViewController {
     func startToPlay(btn:UIButton){
         let file = "saf"
         AGToolHUD.showNetWorkWait()
-        AgoraIotLink.iotsdk.deviceMgr.startPlayback(channelName: file) { [weak self](ec, msg) in
+        DoorBellManager.shared.startPlayback(channelName: file) { [weak self](ec, msg) in
             if(ec == ErrCode.XOK){
                 AGToolHUD.disMiss()
             }
@@ -264,7 +264,7 @@ class DoorbellControlVC: UIViewController {
                 btn.setTitle("停止播放", for: .normal)
                 log.i("demo ctrl state:\(info)(LocalReady)")
             case .VideoReady:
-                AgoraIotLink.iotsdk.deviceMgr.setPlaybackView(peerView: self?.videoView)
+                DoorBellManager.shared.setPlaybackView(peerView: self?.videoView)
             }
         }
     }
@@ -274,7 +274,7 @@ class DoorbellControlVC: UIViewController {
         if(text ==  "播放sd卡"){
             if(AgoraIotLink.iotsdk.callkitMgr.getNetworkStatus().isBusy){
                 AGAlertViewController.showTitle("提示", message: "正在通过中，需要停止通话才能播放sd卡，是否停止通话", cancelTitle: "取消", commitTitle: "确定") {[weak self] in
-                    AgoraIotLink.iotsdk.callkitMgr.callHangup { ec, msg in
+                    DoorBellManager.shared.hangupDevice { succ, msg in
                         self?.startToPlay(btn: btn)
                     }
                 }
@@ -286,7 +286,7 @@ class DoorbellControlVC: UIViewController {
             }
         }
         else{
-            AgoraIotLink.iotsdk.deviceMgr.stopPlayback()
+            DoorBellManager.shared.stopPlayback()
             btn.setTitle("播放sd卡", for: .normal)
         }
     }
@@ -337,8 +337,12 @@ class DoorbellControlVC: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        if(DoorBellManager.shared.isSdCardPlaying()){
+            DoorBellManager.shared.stopPlayback()
+        }
         AgoraIotLink.iotsdk.deviceMgr.sendMessageEnd()
+        super.viewWillDisappear(animated)
+        
     }
 }
 

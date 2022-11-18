@@ -26,6 +26,29 @@ class DoorbellAbilityLogicView: UIView {
     var logicfullHorBtnBlock:(() -> (Void))?
     
         
+    var tipType : VideoAlertTipType{
+        didSet{
+            switch tipType{
+            case .loading:
+                self.isOnCalling = false
+                topControlView.tipsLabel.text = "呼叫中..."
+                topControlView.memberLabel.text = "通话人数:0"
+//            case .none:
+//                topControlView.tipsLabel.text = ""
+            case .loadFail:
+                topControlView.tipsLabel.text = "呼叫失败"
+            case .deviceOffLine:
+                self.isOnCalling = false
+                topControlView.tipsLabel.text = "设备离线"
+            case .deviceSleep:
+                self.isOnCalling = false
+                topControlView.tipsLabel.text = "设备休眠中..."
+            case .playing:
+                self.isOnCalling = true
+                topControlView.tipsLabel.text = "正在通话中..."
+            }
+        }
+    }
     var device: IotDevice?{
         didSet{
             topControlView.device = device
@@ -33,6 +56,7 @@ class DoorbellAbilityLogicView: UIView {
     }
     
     override init(frame: CGRect) {
+        self.tipType = .deviceSleep
         super.init(frame: frame)
         self.backgroundColor = UIColor.clear
         addObserver()
@@ -323,7 +347,7 @@ extension DoorbellAbilityLogicView{
             topControlView.tipsLabel.text = "正在通话中..."
         }else{
             debugPrint("结束语音通话")
-            topControlView.tipsLabel.text = ""
+            //topControlView.tipsLabel.text = ""
         }
     }
     

@@ -14,7 +14,13 @@ class TopControTooBarView: UIView {
     
     // 当前选中的类型
     private var selectedType = 0
-    var device: IotDevice?
+    var device: IotDevice? {
+        didSet{
+            if(device?.connected == false){
+                tipsLabel.text = "设备离线"
+            }
+        }
+    }
     
     var quantityValue : Int?{
         
@@ -331,7 +337,6 @@ class VipProgressView: UIView {
             make.bottom.equalTo(-2)
             make.width.equalTo(self.bounds.size.width-6.5)
         }
-        
     }
     
     required init?(coder aDecoder: NSCoder) {

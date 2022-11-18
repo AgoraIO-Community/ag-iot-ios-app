@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -25,6 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //初始化AgoraIotsdk
         initAgoraIot()
         
+        configOther()
+        
         return true
     }
     
@@ -36,6 +39,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initializeUI() {
         //初始化遮罩
         AGToolHUD.initializeHUD()
+        
+    }
+    
+    func configOther(){
+        
+        AF.session.configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -57,6 +67,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             //被动呼叫按下电源键挂断发通知
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteSysHangupNotify), object: nil)
         }
+        
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        debugPrint("回到前台111")
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: cApplicationWillEnterForegroundNotify), object: nil)
         
     }
 }

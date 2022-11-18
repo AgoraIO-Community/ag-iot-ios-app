@@ -76,6 +76,10 @@ public class SysAlarmQueryParam : NSObject{
     }
 }
 
+public class AlarmVideoInfo : NSObject{
+    public var url : String = ""                        //告警视频的地址
+    public var videoSecretKey : String = ""             //播放视频时需要传入的密钥
+}
 /*
  * @brief 告警信息管理接口
  */
@@ -119,15 +123,26 @@ public protocol IAlarmMgr {
      */
     func queryCount(productId:String?,deviceId:String?,messageType:Int?,status:Int?,createDateBegin:Date?,createDateEnd:Date? , result:@escaping(Int,String,UInt)->Void)
     
+    /*
+    * @brief 新增告警信息
+    * @param device : 当前设备
+    * @param desc : 告警描述
+    * @return 0：成功，<0：失败
+    */
     func addAlarm(device:IotDevice,desc:String,result:@escaping(Int,String)->Void)
     
+    /*
+    * @brief 根据图片 ID 查询告警图片信息
+    * @param alertImageId : 图片 ID
+    * @return 0：成功，<0：失败
+    */
     func queryAlarmImage(alertImageId:String,result:@escaping(Int,String,String?)->Void)
     /*
      * @brief 查询告警信息的云录视频
      * @deviceId         : 告警设备id
      * @param result     : 调用该接口的返回值
      */
-    func queryAlarmVideoUrl(deviceId:String,tenantId:String, beginTime:UInt64,result:@escaping(Int,String,String?)->Void)
+    func queryAlarmVideoUrl(deviceId:String,tenantId:String, beginTime:UInt64,result:@escaping(Int,String,AlarmVideoInfo?)->Void)
     /*
      * @brief 根据id查询告警
      * @alarmMessageId   : 告警id

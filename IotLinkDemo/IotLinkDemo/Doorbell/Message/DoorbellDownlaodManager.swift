@@ -36,7 +36,7 @@ class DoorbellDownlaodManager: NSObject {
         let info = DownloadInfo()
         info.url = url
         
-        var fileName = url.absoluteString;
+        var fileName = "http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/conn-1.m3u8"//"url.absoluteString;
         guard let rearMark = fileName.lastIndex(of: "."),
               let startMark = fileName.lastIndex(of: "/") else {
               log.e("demo url error for download:\(fileName)")
@@ -45,7 +45,7 @@ class DoorbellDownlaodManager: NSObject {
         }
         
         let name = String(fileName[fileName.index(after: startMark)...fileName.index(before: rearMark)])
-        let mediaName = name + ".mp4"
+        let mediaName = "output.mp4"
         
         var dir = URL.init(string:NSHomeDirectory())
         var path = dir?.appendingPathComponent("Documents").appendingPathComponent(mediaName)
@@ -56,7 +56,8 @@ class DoorbellDownlaodManager: NSObject {
             return
         }
         
-        let commandStr:String = "ffmpeg -loglevel repeat+level+warning -i \(fileName) -y \(path.absoluteString)"
+        //let commandStr:String = "ffmpeg \(fileName) \(path.absoluteString)"
+        let commandStr:String = "ffmpeg -d -loglevel repeat+level+warning -i \(fileName) -y \(path.absoluteString)"
         
         //log.i("demo \(commandStr)")
         player.ffmpegMain(commandStr, completionBlock: {ec,msg in
@@ -70,6 +71,7 @@ class DoorbellDownlaodManager: NSObject {
             }
             else{
                 log.i("progressing \(msg)(\(ec))")
+                completion(false,msg)
             }
         })
 //        let request = AF.download(url).downloadProgress{ progress in
@@ -99,9 +101,10 @@ class DoorbellDownlaodManager: NSObject {
     @objc func didFinishSavingVideo(videoPath: String, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
         DispatchQueue.main.async {
             if error != nil{
-                SVProgressHUD.showError(withStatus: "保存失败")
+                log.e("save video faile:\(error?.domain)")
+                AGToolHUD.showFaild(info: "保存失败:" + ((error?.domain) ?? "unknown error"))
             }else{
-                SVProgressHUD.showSuccess(withStatus: "保存成功，请到相册中查看")
+                AGToolHUD.showSuccess(info: "保存成功，请到相册中查看")
             }
         }
     }

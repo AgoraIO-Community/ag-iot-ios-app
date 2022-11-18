@@ -105,13 +105,13 @@ extension AppDelegate: IDeviceStateListener {//添加设备回调等
 extension AppDelegate {//监听收到被动呼叫回调等
     
     private func receiveCall(_ deviceId : String){
-        
+        //self?.goToDoorBellContainerVC(device)
         DeviceManager.shared.queryDeviceWithId(deviceId) { [weak self] _, _, dev in
             guard let device = dev else {
-               log.e("demo can't find deivce with deivceId:\(deviceId),ignore this imcoming call")
-                self?.sdk?.callkitMgr.callHangup(result: { ec, msg in
-                    log.w("demo hangup this unwanted call")
-                })
+                log.i("demo stranger is calling in:\(deviceId)")
+                let stranger = IotDevice(userId: "", userType: 0, deviceId: deviceId, deviceName: "unknown", deviceNumber: "", tenantId: "", productId: "", productNumber: "", sharer: "", createTime: 0, updateTime: 0, alias: "unknown", connected: false, props: nil)
+
+               self?.goToDoorBellContainerVC(stranger)
                return
             }
             self?.goToDoorBellContainerVC(device)

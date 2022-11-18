@@ -195,6 +195,8 @@
 		84848D5F28D1C2A8007C5A9C /* cmdutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 84848D5328D1C2A7007C5A9C /* cmdutils.c */; };
 		84848D6128D1C2A8007C5A9C /* ffmpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 84848D5528D1C2A7007C5A9C /* ffmpeg.c */; };
 		84848D6228D1C2A8007C5A9C /* ffmpeg_videotoolbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 84848D5628D1C2A7007C5A9C /* ffmpeg_videotoolbox.c */; };
+		84CE394728FE9F67007A749C /* remuxing.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CE394528FE9F67007A749C /* remuxing.h */; };
+		84CE394828FE9F67007A749C /* remuxing.c in Sources */ = {isa = PBXBuildFile; fileRef = 84CE394628FE9F67007A749C /* remuxing.c */; };
 		B417F8DE24F7C3B500D159BB /* cJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = B417F8DB24F7C3B400D159BB /* cJSON.h */; };
 		B417F8E224F7C56C00D159BB /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = B417F8E124F7C56C00D159BB /* cJSON.c */; };
 		B4449BD6250095700074CEDC /* ijklas.h in Headers */ = {isa = PBXBuildFile; fileRef = B4449BD4250095700074CEDC /* ijklas.h */; };
@@ -368,6 +370,8 @@
 		84848D5328D1C2A7007C5A9C /* cmdutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cmdutils.c; sourceTree = "<group>"; };
 		84848D5528D1C2A7007C5A9C /* ffmpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg.c; sourceTree = "<group>"; };
 		84848D5628D1C2A7007C5A9C /* ffmpeg_videotoolbox.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_videotoolbox.c; sourceTree = "<group>"; };
+		84CE394528FE9F67007A749C /* remuxing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = remuxing.h; sourceTree = "<group>"; };
+		84CE394628FE9F67007A749C /* remuxing.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = remuxing.c; sourceTree = "<group>"; };
 		B417F8DB24F7C3B400D159BB /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cJSON.h; sourceTree = "<group>"; };
 		B417F8E124F7C56C00D159BB /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cJSON.c; sourceTree = "<group>"; };
 		B4449BD4250095700074CEDC /* ijklas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijklas.h; sourceTree = "<group>"; };
@@ -601,6 +605,8 @@
 				84848D5328D1C2A7007C5A9C /* cmdutils.c */,
 				84848D5528D1C2A7007C5A9C /* ffmpeg.c */,
 				84848D5628D1C2A7007C5A9C /* ffmpeg_videotoolbox.c */,
+				84CE394528FE9F67007A749C /* remuxing.h */,
+				84CE394628FE9F67007A749C /* remuxing.c */,
 			);
 			path = fftools;
 			sourceTree = "<group>";
@@ -1091,6 +1097,7 @@
 				E6C459BD1C7089AB004831EC /* ff_ffplay_options.h in Headers */,
 				E654EA8F1B6B27E600B0F2D0 /* IJKMediaFramework.h in Headers */,
 				E6C2E7BE1C92BD3600E59229 /* IJKKVOController.h in Headers */,
+				84CE394728FE9F67007A749C /* remuxing.h in Headers */,
 				E69808A01C7EB2040048A46C /* IJKNotificationManager.h in Headers */,
 				B417F8DE24F7C3B500D159BB /* cJSON.h in Headers */,
 				54CF8A501E15287D00309DD5 /* ijkthreadpool.h in Headers */,
@@ -1206,7 +1213,7 @@
 				en,
 			);
 			mainGroup = E6903EB017EAF6C500CFD954;
-			productRefGroup = E6903EBA17EAF6C500CFD954 /* Products */;
+			productRefGroup = E6903EB017EAF6C500CFD954;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -1427,6 +1434,7 @@
 				5407EC2E1DF81D2600457BFE /* IJKVideoToolBoxSync.m in Sources */,
 				E654EAA51B6B283700B0F2D0 /* IJKMediaPlayback.m in Sources */,
 				54CF8A491E15287D00309DD5 /* ijkdict.c in Sources */,
+				84CE394828FE9F67007A749C /* remuxing.c in Sources */,
 				E654EAB01B6B285900B0F2D0 /* ff_ffpipeline.c in Sources */,
 				4DA7F6891F2B1E270032A499 /* ijkiourlhook.c in Sources */,
 				84848D5E28D1C2A8007C5A9C /* ffprobe.c in Sources */,
@@ -1619,6 +1627,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = LTVVML2TCH;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1628,6 +1637,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = LTVVML2TCH;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1644,6 +1654,7 @@
 				CURRENT_PROJECT_VERSION = 0.8.8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEPLOYMENT_POSTPROCESSING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1676,6 +1687,7 @@
 				MACH_O_TYPE = staticlib;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "tv.danmaku.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1697,6 +1709,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 0.8.8;
 				DEFINES_MODULE = YES;
+				DEPLOYMENT_POSTPROCESSING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1726,6 +1739,7 @@
 				MACH_O_TYPE = staticlib;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "tv.danmaku.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1849,8 +1863,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
@@ -1897,8 +1912,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
 				VALIDATE_PRODUCT = YES;

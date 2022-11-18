@@ -11,6 +11,7 @@ import AgoraIotLink
 
 //首帧可显示成功的通知（被动呼叫）
 let cRemoteVideoReadyNotify = "cRemoteVideoReadyNotify"
+let cLocalHangupNotify = "cLocalHangupNotify"
 
 class DoorbellAbilityVC: UIViewController {
     
@@ -20,7 +21,7 @@ class DoorbellAbilityVC: UIViewController {
     //是否来自被动呼叫
     var isReceiveCall : Bool = false
     
-    fileprivate lazy var  doorbellVM = DoorbellAbilityViewModel()
+    fileprivate var  doorbellVM = DoorBellManager.shared
     fileprivate var dataArr = [DoorbellAbilityModel]()
     
     var doorVCBackVBlock:(() -> (Void))? //转回竖屏
@@ -46,12 +47,19 @@ class DoorbellAbilityVC: UIViewController {
     // 注册通知
     private func addObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(receiveRemoteVideoReady), name: Notification.Name(cRemoteVideoReadyNotify), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(receiveLocalHangupNotify), name: Notification.Name(cLocalHangupNotify), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(netWorkChange(notification:)), name: Notification.Name(cNetChangeNotify), object: nil)
     }
     
     @objc private func receiveRemoteVideoReady(){
         // 设置视频view
         self.handelAnswerVideoView()
+    }
+    
+    @objc private func receiveLocalHangupNotify(){
+        // 设置视频view
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":0])
+        self.handelCallAct(.LocalHangup)
     }
 
     @objc private func netWorkChange(notification: NSNotification){
@@ -65,6 +73,15 @@ class DoorbellAbilityVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if(AgoraIotLink.iotsdk.callkitMgr.getNetworkStatus().isBusy){
+            AgoraIotLink.iotsdk.callkitMgr.muteLocalAudio(mute: false, result: {ec,msg in
+                print("\(ec)---\(msg)")
+
+            })
+            AgoraIotLink.iotsdk.callkitMgr.mutePeerAudio(mute: false, result: {ec,msg in})
+            
+        }
 //        if isReceiveCall == false {
 //            shutDownAudio(false)
 //        }
@@ -72,6 +89,20 @@ class DoorbellAbilityVC: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        
+        if(AgoraIotLink.iotsdk.callkitMgr.getNetworkStatus().isBusy){
+            
+            AgoraIotLink.iotsdk.callkitMgr.muteLocalAudio(mute: true, result: {ec,msg in
+                print("\(ec)---\(msg)")
+
+            })
+            AgoraIotLink.iotsdk.callkitMgr.mutePeerAudio(mute: true, result: {ec,msg in
+                print("\(ec)---\(msg)")
+
+            })
+
+        }
+        
         jumpBackOrNext()
     }
     
@@ -180,6 +211,9 @@ extension DoorbellAbilityVC {
             //videoTipView.tipType = .deviceOffLine
             return;
         }
+        
+        topAbilityV.handelVideoTopView(tipsType: .loading)
+        
         AGToolHUD.showNetWorkWait(Double.infinity)
         doorbellVM.wakeupDevice(device) {[weak self] success, msg in
             if(!success){
@@ -214,7 +248,13 @@ extension DoorbellAbilityVC {
             debugPrint("设备挂断")
             topAbilityV.handelVideoTopView(tipsType: .deviceSleep)
             AGToolHUD.disMiss()
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil)
+            //NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil)
+        }
+        else if(act == .LocalHangup){
+            //设备休眠时会走此回调
+            debugPrint("本地挂断")
+            topAbilityV.handelVideoTopView(tipsType: .deviceSleep)
+            AGToolHUD.disMiss()
         }
         else if(act == .RemoteAnswer){
             debugPrint("设备接听")
@@ -226,7 +266,7 @@ extension DoorbellAbilityVC {
         else if(act == .RemoteVideoReady){
             debugPrint("获取到首帧")
             topAbilityV.configPeerView()
-            topAbilityV.handelVideoTopView(tipsType: .none)
+            topAbilityV.handelVideoTopView(tipsType: .playing)
             AGToolHUD.disMiss()
         }
         else if(act == .RemoteTimeout){
@@ -285,7 +325,8 @@ extension DoorbellAbilityVC {
     //设置功耗模式为正常，即唤醒设备
     func setEnergyConProperty(){
        
-        setDevicecProperty(pointId: 1000, value: 2)
+        //setDevicecProperty(pointId: 1000, value: 2)
+        callDevice()
         
     }
         
@@ -323,7 +364,7 @@ extension DoorbellAbilityVC {
     func handelAnswerVideoView(){
         
         topAbilityV.configPeerView()
-        topAbilityV.handelVideoTopView(tipsType: .none)
+        topAbilityV.handelVideoTopView(tipsType: .playing)
         
     }
 }

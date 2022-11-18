@@ -113,9 +113,9 @@ public class MediaPlayer: UIView {
     }
     
     public func play(alarm:IotAlarm) {
-        Utils.loadAlertVideoUrl(alarm.deviceId,alarm.tenantId, alarm.beginTime) { ec, msg, url in
-            if(url != nil){
-                self.url = URL.init(string: url!)
+        Utils.loadAlertVideoUrl(alarm.deviceId,alarm.tenantId, alarm.beginTime) { ec, msg, info in
+            if(info != nil){
+                self.url = URL.init(string: info!.url)
                 self.toPlay()
             }
             else{

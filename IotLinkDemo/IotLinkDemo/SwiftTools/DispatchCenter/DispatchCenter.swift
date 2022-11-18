@@ -12,15 +12,15 @@ public enum JumpType {
     ///登录
     case login
     ///注册
-    //case register
+    case register
     ///选择国家
     case selectCountry
     ///设置密码
-    //case setPassword(account:String, captchaCode:String, type:SetPasswordType)
+    case setPassword(account:String, captchaCode:String, type:SetPasswordType)
     ///重置密码
     //case resetPassword
     //验证码
-    //case verifyCode(account:String, type:VerifyInputType)
+    case verifyCode(account:String, type:VerifyInputType)
     
 }
 public enum JumpStyle {
@@ -54,9 +54,9 @@ public class DispatchCenter {
             controller =  LoginMainVC()
             break
         //注册
-//        case .register:
-//            controller = RegisterMainVC()
-//            break
+        case .register:
+            controller = RegisterMainVC()
+            break
         //选择国家
         case .selectCountry:
             let  tempVC = CountrySelectVC()
@@ -64,23 +64,23 @@ public class DispatchCenter {
             controller = tempVC
             break
         //设置密码
-//        case .setPassword(let account, let code, let type):
-//            let tempVC = SetPasswordVC()
-//            tempVC.accountText = account
-//            tempVC.captchaText = code
-//            tempVC.style = type
-//            controller = tempVC
-//            break
+        case .setPassword(let account, let code, let type):
+            let tempVC = SetPasswordVC()
+            tempVC.accountText = account
+            tempVC.captchaText = code
+            tempVC.style = type
+            controller = tempVC
+            break
         //重置密码
 //        case .resetPassword:
 //            controller = ResetPasswordVC()
 //            break
         //验证码
-//        case .verifyCode(let account, let type):
-//            let  tempVC = VerifyInputCodeVC()
-//            tempVC.accountText = account
-//            tempVC.style = type
-//            controller = tempVC
+        case .verifyCode(let account, let type):
+            let  tempVC = VerifyInputCodeVC()
+            tempVC.accountText = account
+            tempVC.style = type
+            controller = tempVC
         }
         
         

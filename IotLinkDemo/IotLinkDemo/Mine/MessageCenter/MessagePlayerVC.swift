@@ -36,6 +36,10 @@ class MessagePlayerVC: UIViewController {
             self?.tryDeleteCurrentPlayingMsg()
         }
         playerView.clickDownloadButtonAction = {[weak self] in
+            
+            AGToolHUD.showInfo(info: "此功能暂不支持，敬请期待！")
+            return
+            
             if self == nil {
                 return
             }
@@ -44,6 +48,7 @@ class MessagePlayerVC: UIViewController {
             }
             if let url =  self?.player.assetURL {
                 self!.isDownloading = true
+                DownloadProgressVC.show()
                 self!.downloadCurrentPlayingVideo(url,completion: {[weak self](ec,msg) in
                     self?.isDownloading = false
                     log.i("demo download \(msg)(\(ec))")
@@ -134,14 +139,27 @@ class MessagePlayerVC: UIViewController {
                 SVProgressHUD.dismiss()
                 return
             }
-            Utils.loadAlertVideoUrl(alert.deviceId,alert.tenantId, alert.beginTime) { ec, msg, url in
-                guard let url = url else{
+            
+//            guard let url = URL(string: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8") else {
+//                SVProgressHUD.showError(withStatus: "获取播放地址失败")
+//                SVProgressHUD.dismiss(withDelay: 2)
+//                return
+//            }
+//            let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
+//            let options = IJKFFOptions.byDefault()
+//            ijkVC.options = options
+//            self?.player.playbackController = ijkVC
+//            self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
+//            return
+            
+            Utils.loadAlertVideoUrl(alert.deviceId,alert.tenantId, alert.beginTime) { ec, msg, info in
+                guard let info = info else{
                     log.e("loadAlertVideoUrl failed")
                     SVProgressHUD.showError(withStatus: "查询视频失败\(msg)")
                     SVProgressHUD.dismiss(withDelay: 2)
                     return
                 }
-                guard let url = URL(string: url) else {
+                guard let url = URL(string: info.url) else {
                     SVProgressHUD.showError(withStatus: "获取播放地址失败")
                     SVProgressHUD.dismiss(withDelay: 2)
                     return
@@ -169,6 +187,6 @@ class MessagePlayerVC: UIViewController {
     // 下载
     func downloadCurrentPlayingVideo(_ url:URL,completion:@escaping(Bool,String)->Void){
         DoorbellDownlaodManager.shared.download(player:self.player,url: url,completion:completion)
-        DownloadProgressVC.show()
+        
     }
 }
