@@ -52,6 +52,7 @@ class AGSubTitleCell: UITableViewCell {
     
     func createSubviews(){
        
+        contentView.backgroundColor = .white
         contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(35)

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraIotLink
 
 enum connectState : Int{//设备连接成功状态
     
@@ -46,13 +47,17 @@ class BluefiResultVC: UIViewController {
     
     
     //蓝牙搜索倒计时
-    fileprivate let countDownNum:Int = 30
+    fileprivate let countDownNum:Int = 120
     fileprivate var startCount:Int = 0
     
     fileprivate var timer: Timer!
     
+    fileprivate var currentDelayCount:Int = 0
+    fileprivate var currentDelayMaxCount:Int = 10 //获取配网结果，最多调用10次
+    
+    
     deinit {
-        NotificationCenter.default.removeObserver(self)
+//        NotificationCenter.default.removeObserver(self)
         debugPrint("蓝牙结果页面释放了")
     }
     
@@ -63,6 +68,10 @@ class BluefiResultVC: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        //在页面消失的时候发送首页刷新回调，避免本此请求还没回来，此页面就销毁了
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: cAddDeviceSuccessNotify), object: nil, userInfo: nil)
+        
         //停止扫描
         blueFi.stopScan()
         //断开设备
@@ -86,23 +95,23 @@ class BluefiResultVC: UIViewController {
         startTimer()
         scanBlufi()
         
-        addObserver()
+//        addObserver()
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self] in
 //            self?.connectView.selectBtn(0)
 //        }
 
     }
     
-    private func addObserver() {//设备添加成功
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(receiveAddDeviceSuccess(_:)), name: NSNotification.Name(AddDeviceSuccess), object: nil)
-    }
-    
-    @objc private func receiveAddDeviceSuccess(_ noti: Notification) {
-        let vc = DeviceAddSuccessVC()
-        vc.deviceId = noti.userInfo?["deviceId"] as? String
-        navigationController?.pushViewController(vc, animated: false)
-    }
+//    private func addObserver() {//设备添加成功
+//
+//        NotificationCenter.default.addObserver(self, selector: #selector(receiveAddDeviceSuccess(_:)), name: NSNotification.Name(AddDeviceSuccess), object: nil)
+//    }
+//
+//    @objc private func receiveAddDeviceSuccess(_ noti: Notification) {
+//        let vc = DeviceAddSuccessVC()
+//        vc.deviceId = noti.userInfo?["deviceId"] as? String
+//        navigationController?.pushViewController(vc, animated: false)
+//    }
     
     private func setupSearchUI() {
         
@@ -167,8 +176,8 @@ class BluefiResultVC: UIViewController {
         button.setTitle("下一步", for: .normal)
         button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18.S)
-        button.backgroundColor = UIColor(red: 63/255.0, green: 117/255.0, blue: 238/255.0, alpha: 0.8)
-        button.isEnabled = true
+        button.backgroundColor = UIColor(red: 63/255.0, green: 117/255.0, blue: 238/255.0, alpha: 0.3)
+        button.isEnabled = false
         button.layer.cornerRadius = 28.VS
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(didClickNextButton), for: .touchUpInside)
@@ -304,11 +313,19 @@ class BluefiResultVC: UIViewController {
         case .wifiConnected:
             connectView.selectBtn(1)
             connectView.selectBtn(2)
+            if isBL808Device() == true {
+                AGToolHUD.showNetWorkWait(Double.infinity)
+                startGetBindDevices(3)
+            }
             break
         case .cloudConnected:
             connectView.selectBtn(3)
             connectView.selectBtn(4)
-            //todo:如果步骤都已经成功，却没收到设备添加成功的通知，跳去哪里？？？
+            AGToolHUD.showNetWorkWait()
+            if isBL808Device() == false {
+                AGToolHUD.showNetWorkWait(Double.infinity)
+                startGetBindDevices(3)
+            }
             break
         case .faliConnected:
             cancelConnectBtnAction()
@@ -380,7 +397,8 @@ extension BluefiResultVC{
         if shouldAddToSource(device) == true {
             
             if dataArray.count == 0 {
-                searchView.configNextBtn()
+//                searchView.configNextBtn()
+                searchNextBtnAction()
             }
             
             device.isSelect = false
@@ -499,9 +517,6 @@ extension BluefiResultVC{
 }
 
 
-
-
-
 extension BluefiResultVC: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -576,6 +591,8 @@ extension BluefiResultVC: UITableViewDelegate, UITableViewDataSource {
         dataArray.forEach ({ item in
             item.isSelect = (item.uuid == currentModel.uuid)
         })
+        nextButton.backgroundColor = UIColor(red: 63/255.0, green: 117/255.0, blue: 238/255.0, alpha: 0.8)
+        nextButton.isEnabled = true
 
         tableView.reloadData()
 
@@ -715,3 +732,79 @@ extension BluefiResultVC : CBCentralManagerDelegate,CBPeripheralDelegate,BlufiDe
 }
 
 
+extension BluefiResultVC{//新增配网成功获取设备
+    
+    func startGetBindDevices(_ delayTime : Double){
+        
+        self.perform(#selector(getBindDevicesRequst), afterDelay: delayTime)
+        
+    }
+    
+    @objc func getBindDevicesRequst() {
+        
+        //如果已获取配网成功消息，则返回
+        guard TDUserInforManager.shared.curBluefiSuc == false else {
+            return
+        }
+        AGToolHUD.showNetWorkWait(Double.infinity)
+        DeviceManager.shared.updateDevicesList{[weak self] _, _, devs in
+            
+            var normalDevices = [IotDevice]()
+            guard let devices = devs else {
+                self?.configDevicesRequst(normalDevices)
+                return
+            }
+            
+            for dev in devices {
+                if dev.sharer == "0" {
+                    normalDevices.append(dev)
+                }
+            }
+            
+            self?.configDevicesRequst(normalDevices)
+        }
+        
+    }
+    
+    func configDevicesRequst(_ devicesArray : [IotDevice]){
+        
+        currentDelayCount += 1
+        print("currentDelayCount:\(currentDelayCount)")
+        if devicesArray.count > TDUserInforManager.shared.currentDeviceCount {
+            
+            AGToolHUD.disMiss()
+            //如果已获取配网成功消息，则返回
+            guard TDUserInforManager.shared.curBluefiSuc == false else {
+                return
+            }
+            TDUserInforManager.shared.curBluefiSuc = true
+            TDUserInforManager.shared.currentMatchNetType = 0
+            
+            if currentViewController().isKind(of:DeviceAddSuccessVC.self ){ return }
+//            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cAddDeviceSuccessNotify), object: nil, userInfo: nil)
+            let device = devicesArray.last
+            let vc = DeviceAddSuccessVC()
+            vc.deviceId = device?.deviceId
+            log.i("请求获取新增设备 update:\(String(describing: device?.deviceId))")
+            navigationController?.pushViewController(vc, animated: false)
+     
+        }else{
+            log.i("请求获取新增设备 count:\(currentDelayCount)")
+            if currentDelayCount <  currentDelayMaxCount{
+                //如果已获取配网成功消息，则返回
+                guard TDUserInforManager.shared.curBluefiSuc == false else {
+                    AGToolHUD.disMiss()
+                    return
+                }
+                startGetBindDevices(10)
+                
+            }else{
+                log.i("请求获取新增设备失败 count:\(currentDelayCount)")
+                AGToolHUD.disMiss()
+                AGToolHUD.showInfo(info: "配网失败，请重试！")
+            }
+            
+        }
+    }
+    
+}

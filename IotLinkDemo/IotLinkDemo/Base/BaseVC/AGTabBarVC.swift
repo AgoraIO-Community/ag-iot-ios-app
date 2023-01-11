@@ -26,7 +26,7 @@ class AGTabBarVC: UITabBarController {
         
         tabBar.backgroundImage=UIImage()
         
-//        tabBar.barTintColor=RGBColor(0,33,104)
+        tabBar.barTintColor=BGColor
 
      }
     

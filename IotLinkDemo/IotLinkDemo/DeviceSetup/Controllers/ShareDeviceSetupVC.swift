@@ -37,7 +37,7 @@ class ShareDeviceSetupVC: UIViewController {
     private lazy var headerView:DeviceInfoView = {
         let topView = DeviceInfoView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 197))
         topView.clickEditButtonAction = {[weak self] in
-            AGEditAlertVC.showTitle("修改设备名称", editText: "可视门铃") { value in
+            AGEditAlertVC.showTitle("修改设备名称", editText: "可视门铃",alertType: .modifyDeviceName ) { value in
                 topView.name = value
             }
         }

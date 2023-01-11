@@ -34,7 +34,7 @@ class DeviceInfoVC: UIViewController {
         let topView = DeviceInfoView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 197))
         topView.name = device?.deviceName
         topView.clickEditButtonAction = {[weak self] in
-            AGEditAlertVC.showTitle("修改设备名称", editText: self?.device?.deviceName ?? "") {[weak self] value in
+            AGEditAlertVC.showTitle("修改设备名称", editText: self?.device?.deviceName ?? "",alertType:.modifyDeviceName ) {[weak self] value in
                 self?.updateDeviceName(name: value)
             }
         }

@@ -57,7 +57,10 @@ class DeviceDelSuccessVC: UIViewController {
             make.top.equalTo(25)
             make.height.equalTo(130)
         }
-        self.resultView.text = deviceId
+        guard let deviceIdStr = deviceId else {
+            return
+        }
+        self.resultView.text = "设备ID: \(deviceIdStr)"
     }
     
 //    private func loadData(){

@@ -18,6 +18,8 @@ class DoorbellAbilityTooBarView: UIView, UIImagePickerControllerDelegate & UINav
     var changeSoundBtnBlock:(() -> (Void))?
     //保存裁剪图片
     var shotScreenBtnBlock:(() -> (Void))?
+    //录屏
+    var recordScreenBtnBlock:((_ btn : UIButton) -> (Void))?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -120,6 +122,7 @@ class DoorbellAbilityTooBarView: UIView, UIImagePickerControllerDelegate & UINav
     lazy var recordSceeenBtn: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage.init(named: "record"), for: .normal)
+        btn.setImage(UIImage.init(named: "recordon"), for: .selected)
         btn.tag = 1004
         btn.addTarget(self, action: #selector(btnEvent(btn:)), for: .touchUpInside)
         return btn
@@ -149,9 +152,8 @@ class DoorbellAbilityTooBarView: UIView, UIImagePickerControllerDelegate & UINav
             callBtnBlock?(btn)
             break
         case 1004:
-            debugPrint("录屏")
-            AGToolHUD.showInfo(info:"该功能暂未开放，敬请期待！")
-//            recordScreen(btn)
+            debugPrint("点击录屏按钮")
+            recordScreenBtnBlock?(btn)
             break
         case 1005:
             debugPrint("截屏")
@@ -166,33 +168,6 @@ class DoorbellAbilityTooBarView: UIView, UIImagePickerControllerDelegate & UINav
 }
 
 extension DoorbellAbilityTooBarView{
-
-    func recordScreen(_ btn : UIButton){
-        //btn.isSelected = !btn.isSelected
-        if btn.isSelected == true {
-            debugPrint("正在录制,调用停止")
-            DoorBellManager.shared.talkingRecordStart { success, msg in
-                if success{
-                    btn.isSelected = !btn.isSelected
-                    debugPrint("开始录制调用成功")
-                    //todo:
-                }
-            }
-            
-        }else{
-            debugPrint("未录制,调用开始")
-            DoorBellManager.shared.talkingRecordStop { success, msg in
-                if success{
-                    btn.isSelected = !btn.isSelected
-                    debugPrint("停止录制调用成功")
-                    //todo:
-                }
-            }
-        }
-    } 
-}
-
-extension DoorbellAbilityTooBarView{
     
     func handelCallSuccess(_ isSuccess : Bool){
         callBtn.isSelected = isSuccess
@@ -200,6 +175,10 @@ extension DoorbellAbilityTooBarView{
     
     func handleChangeSoundSuccess(_ isChange : Bool){
         changeSoundBtn.isSelected = isChange
+    }
+    
+    func handleRecordScreenBtnSuccess(_ isChange : Bool){
+        recordSceeenBtn.isSelected = isChange
     }
 }
 

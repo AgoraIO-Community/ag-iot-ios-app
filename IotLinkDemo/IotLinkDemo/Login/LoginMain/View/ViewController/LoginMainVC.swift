@@ -114,11 +114,11 @@ extension LoginMainVC : LoginViewDelegate{
     }
         
     //忘记密码点击
-//    func forgetPwdBtnClick() {
-//        
-//        DispatchCenter.DispatchType(type: .resetPassword, vc: self, style: .push)
-//        
-//    }
+    func forgetPwdBtnClick() {
+        
+        DispatchCenter.DispatchType(type: .resetPassword, vc: self, style: .push)
+        
+    }
     
     //注册点击
     func registerBtnClick(acc: String, pwd: String) {

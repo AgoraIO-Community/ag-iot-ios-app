@@ -29,6 +29,7 @@ class DeviceAddSuccessVC: UIViewController {
         super.viewDidLoad()
         setupUI()
         loadData()
+        AGToolHUD.disMiss()//避免已跳转loading却还在
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -56,6 +57,7 @@ class DeviceAddSuccessVC: UIViewController {
             make.top.equalTo(25)
             make.height.equalTo(130)
         }
+        
     }
     
     private func loadData(){
@@ -82,7 +84,7 @@ class DeviceAddSuccessVC: UIViewController {
 
     private func showEditAlertVC(){
         
-        AGEditAlertVC.showTitle("修改设备名称",editText: device?.deviceName ?? "") { [weak self] text in
+        AGEditAlertVC.showTitle("修改设备名称",editText: device?.deviceName ?? "",alertType:.modifyDeviceName) { [weak self] text in
             print("修改后的名字：----\(text)")
             self?.updateDeviceName(name: text)
         }

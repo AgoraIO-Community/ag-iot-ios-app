@@ -20,6 +20,9 @@
 
 #import "SSKeychain.h"
 
+#import "NSString+Extension.h"
+
+
 
 
 //#import <openssl/dh.h>

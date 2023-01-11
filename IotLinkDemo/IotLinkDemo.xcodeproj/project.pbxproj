@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		241E9514AF5C21D05B21E03E /* Pods_IotLinkDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB6EBD13EF6155EB7EC65C6A /* Pods_IotLinkDemo.framework */; };
+		8429E9412949FC700064B604 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429E9402949FC700064B604 /* NSString+Extension.m */; };
+		8429E943295003180064B604 /* ResetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8429E942295003170064B604 /* ResetPasswordVC.swift */; };
 		84B3254928A394CA0054B369 /* ThirdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254828A394CA0054B369 /* ThirdManager.swift */; };
 		84B3254F28A50AA60054B369 /* DoorbellControlVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254E28A50AA60054B369 /* DoorbellControlVC.swift */; };
 		84B3255128A5ED190054B369 /* TextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3255028A5ED190054B369 /* TextInputView.swift */; };
@@ -216,6 +218,9 @@
 
 /* Begin PBXFileReference section */
 		3A7F2106BF524F4575B562E1 /* Pods-IotLinkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.release.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.release.xcconfig"; sourceTree = "<group>"; };
+		8429E93F2949FC700064B604 /* NSString+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
+		8429E9402949FC700064B604 /* NSString+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
+		8429E942295003170064B604 /* ResetPasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetPasswordVC.swift; sourceTree = "<group>"; };
 		84B3254828A394CA0054B369 /* ThirdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdManager.swift; sourceTree = "<group>"; };
 		84B3254E28A50AA60054B369 /* DoorbellControlVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellControlVC.swift; sourceTree = "<group>"; };
 		84B3255028A5ED190054B369 /* TextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
@@ -696,6 +701,7 @@
 		9601C311280E4B3300D3CA49 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				8429E942295003170064B604 /* ResetPasswordVC.swift */,
 				84CE395B28FECBAF007A749C /* SetPasswordVC.swift */,
 				84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */,
 				9601C314280E4B9D00D3CA49 /* LoginMainVC.swift */,
@@ -1106,6 +1112,8 @@
 				969994152814EBAD00910792 /* EXT-UITextField.swift */,
 				A89E3DF22827AC29002FFED9 /* UIViewController+RotationControl.h */,
 				A89E3DF32827AC29002FFED9 /* UIViewController+RotationControl.m */,
+				8429E93F2949FC700064B604 /* NSString+Extension.h */,
+				8429E9402949FC700064B604 /* NSString+Extension.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1629,6 +1637,7 @@
 				96E4C12A280D453000A53A49 /* AGBaseVC.swift in Sources */,
 				960ECFFB283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift in Sources */,
 				A80D5ECE282D386E0096BBDE /* AccountSafeVC.swift in Sources */,
+				8429E943295003180064B604 /* ResetPasswordVC.swift in Sources */,
 				963956DE28DDBA2B0049B9C8 /* BlufiConfigureParams.m in Sources */,
 				A80D5ED6282DEA890096BBDE /* SystemSettingVC.swift in Sources */,
 				963956DF28DDBA2B0049B9C8 /* BlufiSecurity.m in Sources */,
@@ -1768,6 +1777,7 @@
 				963956E728DDBA2B0049B9C8 /* BlufiNotifyData.m in Sources */,
 				A81996602835193700870CDA /* ReceiveDeviceShareView.swift in Sources */,
 				A81996492834724900870CDA /* DeviceInfoView.swift in Sources */,
+				8429E9412949FC700064B604 /* NSString+Extension.m in Sources */,
 				9602957528FCF4DE00BE26FF /* Bluetooth_LE_Hex.c in Sources */,
 				A81996472834719C00870CDA /* DeviceInfoVC.swift in Sources */,
 				A89E3DF42827AC29002FFED9 /* UIViewController+RotationControl.m in Sources */,

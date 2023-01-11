@@ -10,14 +10,6 @@ import UIKit
 class ConnectFailBluefiView: UIView {
     
     var connectFailNextActionBlock:(() -> (Void))?
-
-    
-    func configNextBtn( _ isResult:Bool = false) {
-       
-        nextButton.backgroundColor = UIColor.blue
-        nextButton.isEnabled = true
-        
-    }
     
     
     override init(frame: CGRect) {

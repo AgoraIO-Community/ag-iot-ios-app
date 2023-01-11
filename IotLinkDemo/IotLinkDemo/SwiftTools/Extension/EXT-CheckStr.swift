@@ -303,6 +303,20 @@ import UIKit
         print(dest)
         return predicate.evaluate(with: dest)
     }
+     
+     public func replaceSpace() -> String {
+         
+         let array = self.components(separatedBy: " ")
+         var beginSpace = ""
+         for item in array {
+             if item != ""{
+                 beginSpace += item
+             }
+         }
+         return beginSpace
+
+//         return self.replacingOccurrences(of: " ", with: "", options: .literal, range: nil)
+     }
     
     //将原始的url编码为合法的url
     public func urlEncoded() -> String {
@@ -662,6 +676,24 @@ import UIKit
             return "^*$"
         }
     }
+     
+     //获取字符串字节数，每个汉字3个字节
+     func getStringByteLength() ->Int{
+
+        var bytes: [UInt8] = []
+
+        for char in self.utf8{
+
+            bytes.append(char.advanced(by:0))
+
+        }
+
+        print("\(self):\(bytes.count)")
+
+        return bytes.count
+
+    }
+
 }
 
 extension NSMutableAttributedString {

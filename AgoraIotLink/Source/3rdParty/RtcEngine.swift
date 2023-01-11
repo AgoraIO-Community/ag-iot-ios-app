@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import AgoraRtcKit
+import CoreMedia
 
 
 enum RtcPeerAction{
@@ -39,6 +40,7 @@ class RtcEngine : NSObject{
     private var engine:AgoraRtcEngineKit? = nil
     private var peerEntered:Bool = false
     private var isSnapShoting : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
+    private var isRecording : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
     private var _onImageCaptured:(Int,String,UIImage?)->Void = {ec,msg,img in}
     private var _networkStatus : RtcNetworkStatus = RtcNetworkStatus()
     
@@ -70,9 +72,8 @@ class RtcEngine : NSObject{
         
         if(setting.logFilePath != ""){
             //todo:日志等级暂设debug，原为info
-//            rtc.setLogFilter(AgoraLogFilter.debug.rawValue)
-            rtc.setParameters("{\"rtc.enable_debug_log\":true}");
-//            rtc.setLogFilter(AgoraLogFilter.info.rawValue)
+//            rtc.setParameters("{\"rtc.enable_debug_log\":true}");
+            rtc.setLogFilter(AgoraLogFilter.info.rawValue)
             rtc.setLogFile(setting.logFilePath)
         }
         else{
@@ -87,8 +88,10 @@ class RtcEngine : NSObject{
             bitrate: setting.bitRate,
             orientationMode: setting.orientationMode, mirrorMode: .auto
         ))
-        //rtc.setVideoDataFrame(self)
-        rtc.setVideoFrameDelegate(self)
+        
+       rtc.setVideoFrameDelegate(self)
+       rtc.setAudioFrameDelegate(self)
+        
         state = RtcEngine.CREATED
         peerEntered = false
         log.i("rtc created engine")
@@ -97,6 +100,14 @@ class RtcEngine : NSObject{
     private var  _onEnterChannel : TimeCallback<(TaskResult,String)>? = nil
     private var  _onPeerAction : (RtcPeerAction,UInt)->Void = {b,u in}
     private var  _memberState : (MemberState,[UInt])->Void = {s,a in }
+    
+    lazy var videoRecordM : VideoRecordManager = {
+        
+        let videoRecord = VideoRecordManager.init()
+        return videoRecord
+        
+    }()
+    
     func enterChannel(uid:UInt,token:String, name:String,info:String?,cb:@escaping(TaskResult,String)->Void){
         if(state != RtcEngine.CREATED){
             log.e("rtc state : \(state) error for enterChannel()")
@@ -112,20 +123,26 @@ class RtcEngine : NSObject{
         //todo:4.0.0版本调用
         option.autoSubscribeAudio = AgoraRtcBoolOptional.of(_setting.subscribeAudio)
         option.autoSubscribeVideo = AgoraRtcBoolOptional.of(_setting.subscribeVideo)
+        option.publishCameraTrack = AgoraRtcBoolOptional.of(_setting.publishVideo)
+        option.publishMicrophoneTrack = AgoraRtcBoolOptional.of(_setting.publishVideo)
+        
 //        option.autoSubscribeAudio = _setting.subscribeAudio
 //        option.autoSubscribeVideo = _setting.subscribeVideo
-        //option.audiotr = AgoraRtcBoolOptional.of(true)
-        //option.publishCameraTrack = AgoraRtcBoolOptional.of(false)
-        
+//        option.audiotr = AgoraRtcBoolOptional.of(true)
+//        option.publishCameraTrack = AgoraRtcBoolOptional.of(false)
+//        rtc.setAudioSessionOperationRestriction(.setCategory)//SDK 对AudioSession的操作权限，解决门铃控制中心播放告警消息没有声音的问题
         rtc.enableAudio()
         rtc.enableVideo()
         rtc.setEnableSpeakerphone(true)
-//        rtc.setAudioSessionOperationRestriction(.setCategory)//SDK 对AudioSession的操作权限，解决门铃控制中心播放告警消息没有声音的问题
         rtc.setClientRole(.broadcaster)
         rtc.setChannelProfile(.liveBroadcasting)
         
-        muteLocalVideo(_localVideoMute != nil ? _localVideoMute! : !_setting.publishVideo, cb: {ec,msg in})
-        muteLocalAudio(_localAudioMute != nil ? _localAudioMute! : !_setting.publishAudio, cb: {ec,msg in})
+
+        _localVideoMute = !_setting.publishVideo
+        _localAudioMute = !_setting.publishAudio
+        
+        muteLocalVideo(_localVideoMute, cb: {ec,msg in})
+        muteLocalAudio(_localAudioMute, cb: {ec,msg in})
         
         if(_peerVideoMute != nil){
             mutePeerVideo(_peerVideoMute!, cb: {ec,msg in})
@@ -157,15 +174,14 @@ class RtcEngine : NSObject{
             cfg = "{\"che.audio.custom_payload_type\":" + type + "}"
             rtc.setParameters(cfg)
         }
+        rtc.setAudioFrameDelegate(self)
 
-        //rtc.record
-        //rtc.setAudioProfile(AgoraAudioProfile.default, scenario: .iot)
         log.i("""
                  rtc try enterChannel: '\(name)' for: uid(\(uid))
                             audioType: \(_setting.audioType)
                            sampleRate: \(_setting.audioSampleRate)
-                           localAudio: \(String(describing: _localAudioMute == nil ? _setting.publishAudio : _localAudioMute))
-                           localVideo: \(String(describing: _localVideoMute == nil ? _setting.publishVideo : _localVideoMute))
+                           localAudio: \(String(describing: _localAudioMute))
+                           localVideo: \(String(describing: _localVideoMute))
                           remoteAudio: \(String(describing: _peerAudioMute))
                           remoteVideo: \(String(describing: _peerVideoMute))
                  """)
@@ -221,7 +237,7 @@ class RtcEngine : NSObject{
         return ret == 0 ? ErrCode.XOK  : ErrCode.XERR_API_RET_FAIL
     }
     
-    private var _localVideoMute:Bool? = nil
+    private var _localVideoMute:Bool = true
     func muteLocalVideo(_ mute:Bool,cb:@escaping (Int,String)->Void){
         let op = mute ? "mute local video" : "unmute local video"
         if(state == RtcEngine.IDLED){
@@ -235,20 +251,29 @@ class RtcEngine : NSObject{
             cb(ErrCode.XOK,op + " fail")
             return
         }
-        var ret = engine.enableLocalVideo(!mute)
-        if(ret != 0){
-            log.w("rtc enableLocalVideo(\(!mute)) failed:\(String(ret))")
-        }
+//        var ret = engine.enableLocalVideo(!mute)
+//        if(ret != 0){
+//            log.w("rtc enableLocalVideo(\(!mute)) failed:\(String(ret))")
+//        }
         
-        ret = engine.muteLocalVideoStream(mute)
+        _localVideoMute = mute
+        
+        let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
+        option.autoSubscribeAudio = AgoraRtcBoolOptional.of(_setting.subscribeAudio)
+        option.autoSubscribeVideo = AgoraRtcBoolOptional.of(_setting.subscribeVideo)
+        option.publishCameraTrack = AgoraRtcBoolOptional.of(!_localVideoMute)
+        option.publishMicrophoneTrack = AgoraRtcBoolOptional.of(!_localAudioMute)
+        let ret1 = engine.updateChannel(with: option)
+        
+        let ret = engine.muteLocalVideoStream(mute)
         if(ret != 0){
             log.w("rtc muteLocalVideo(\(mute)) faile:\(String(ret))")
         }
-        _localVideoMute = nil
+        
         ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     
-    private var _localAudioMute:Bool? = nil
+    private var _localAudioMute:Bool = true
     func muteLocalAudio(_ mute:Bool,cb:@escaping (Int,String)->Void){
         let op = mute ? "mute local audio" : "unmute local audio"
         if(state == RtcEngine.IDLED){
@@ -262,18 +287,22 @@ class RtcEngine : NSObject{
             cb(ErrCode.XERR_BAD_STATE,op + " fail")
             return
         }
-//        below api will trigger codec error,so comment out this code
-//        var ret = 0;//engine.enableLocalAudio(!mute)
-//        if(ret != 0){
-//            log.w("rtc enableLocalAudio(\(!mute)) failed:\(String(ret))")
-//        }
-        engine.enableLocalAudio(!mute) //关闭本地音频采集，解决rtc通话中，其他播放器播放视频没有声音问题
+        
+        _localAudioMute = mute
+        
+        let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
+        option.autoSubscribeAudio = AgoraRtcBoolOptional.of(_setting.subscribeAudio)
+        option.autoSubscribeVideo = AgoraRtcBoolOptional.of(_setting.subscribeVideo)
+        option.publishCameraTrack = AgoraRtcBoolOptional.of(!_localVideoMute)
+        option.publishMicrophoneTrack = AgoraRtcBoolOptional.of(!_localAudioMute)
+        let ret1 = engine.updateChannel(with: option)
+        
+//        engine.enableLocalAudio(!mute) //关闭本地音频采集，解决rtc通话中，其他播放器播放视频没有声音问题
         let ret = engine.muteLocalAudioStream(mute)
         if(ret != 0){
             log.w("rtc muteLocalAudio(\(mute)) faile:\(String(ret))")
         }
         
-        _localAudioMute = nil
         ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     
@@ -357,18 +386,6 @@ class RtcEngine : NSObject{
         let ret = engine.setAudioEffectPreset(preset)
         _audioEffect = nil
         ret == 0 ? cb(ErrCode.XOK,"switch audio effect succ") : cb(ErrCode.XERR_UNKNOWN,"switch audio effect fail:" + String(ret))
-    }
-    
-    func startRecord(result: @escaping (Int, String) -> Void){
-//        _onAudioFrame = onAudioFame
-//        _onVideoFrame = onVideoFrame
-        result(ErrCode.XOK,"")
-    }
-
-    func stopRecord(result: @escaping (Int, String) -> Void){
-//        _onAudioFrame = nil
-//        _onVideoFrame = nil
-        result(ErrCode.XOK,"")
     }
     
     func setVolume(_ vol: Int,cb:@escaping (Int,String)->Void){
@@ -501,6 +518,32 @@ class RtcEngine : NSObject{
         isSnapShoting.setValue(true)
     }
     
+    func startRecord(result: @escaping (Int, String) -> Void){
+        
+        log.i("rtc try capturePeerVideoFrame ...")
+        if(state != RtcEngine.ENTERED){
+            log.e("rtc state : \(state) error for capturePeerVideoFrame()")
+            result(ErrCode.XERR_BAD_STATE,"rtc state error")
+            return
+        }
+        if(!peerEntered){
+            log.w("rtc peer not entered for capture")
+            result(ErrCode.XERR_BAD_STATE,"rtc peer not joined")
+            return
+        }
+    
+        videoRecoredHanle(true)
+        isRecording.setValue(true)
+        result(ErrCode.XOK,"已开始")
+    }
+
+    func stopRecord(result: @escaping (Int, String) -> Void){
+        
+        videoRecoredHanle(false)
+        isRecording.setValue(false)
+        result(ErrCode.XOK,"已停止")
+    }
+    
     func getNetworkStatus()->RtcNetworkStatus{
         return _networkStatus
     }
@@ -549,7 +592,7 @@ extension RtcEngine: AgoraRtcEngineDelegate{
         log.i("rtc firstRemoteAudioFrameDecodedOfUid first audio frame decoded \(uid)")
         _onPeerAction(.AudioReady,uid)
     }
-    
+        
     func rtcEngine(_ engine: AgoraRtcEngineKit, reportRtcStats stats: AgoraChannelStats) {
         _networkStatus.totalDuration = stats.duration;
         _networkStatus.txBytes = stats.txBytes
@@ -583,8 +626,46 @@ extension RtcEngine : AgoraVideoFrameDelegate{
         return false
     }
 
+    func getVideoFormatPreference() -> AgoraVideoFormat {
+        
+        return .cvPixelNV12 //.cvPixelNV12  .I420
+    }
+    
     func onRenderVideoFrame(_ videoFrame: AgoraOutputVideoFrame, uid: UInt, channelId: String) -> Bool {
+        
+        if  videoRecordM.videoW == 0{
+            videoRecordM.videoW = videoFrame.width
+            videoRecordM.videoH = videoFrame.height
+        }
+        if (isRecording.getValue()){
+            
+            if(videoFrame.type == 12){//CVPixelBufferRef
+                
+                log.i("rtc capture frame is CVPixelBufferRef")
+                
+                if let buffer = videoFrame.pixelBuffer{
+                    videoRecordM.videoWithSampleBuffer(buffer)
+                }
+                else{
+                    log.e("rtc capture pixelBuffer is nil")
+                }
+                
+            }else if(videoFrame.type == 1){
+                
+                log.i("rtc capture frame is I420")
+                
+                let  buffer : Unmanaged<CVPixelBuffer> = Utils.i420(toPixelBuffer:videoFrame.yBuffer!, srcU: videoFrame.uBuffer!, srcV: videoFrame.vBuffer!,yStride: Int32(videoFrame.yStride), uStride:Int32(videoFrame.uStride), vStride:Int32(videoFrame.vStride), width: Int32(videoFrame.width), height: Int32(videoFrame.height))
+                _ = buffer.takeUnretainedValue()
+                let anOpaque = buffer.toOpaque()
+                let pixelBuffer : CVPixelBuffer = Unmanaged<CVPixelBuffer>.fromOpaque(anOpaque).takeUnretainedValue()
+                videoRecordM.videoWithSampleBuffer(pixelBuffer)
+                Utils.realseCvbuffer(pixelBuffer)
+                
+            }
+        }
+        
         if (isSnapShoting.getValue()) {
+            
             isSnapShoting.setValue(false)
             if(videoFrame.type == 1){//1 for zhuban  12 for dcg
                 log.i("rtc capture frame:\(videoFrame.type) width:\(videoFrame.width),height:\(videoFrame.height)")
@@ -606,6 +687,7 @@ extension RtcEngine : AgoraVideoFrameDelegate{
                 DispatchQueue.main.async {
                     self._onImageCaptured(img != nil ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,"capture screen",img)
                     self._onImageCaptured = {ec,msg,img in}
+                    
                 }
             }
             else{
@@ -613,4 +695,85 @@ extension RtcEngine : AgoraVideoFrameDelegate{
             }
         }
         return true
-    }}
+ }
+    
+}
+
+extension RtcEngine : AgoraAudioFrameDelegate{
+    
+    func onRecordAudioFrame(_ frame: AgoraAudioFrame, channelId: String) -> Bool {
+        debugPrint("\(frame)")
+        return true
+    }
+
+    func onPlaybackAudioFrame(_ frame: AgoraAudioFrame, channelId: String) -> Bool {
+
+        if (isRecording.getValue()){
+            videoRecordM.audioWithBuffer(frame)
+        }
+        return true
+    }
+    
+    //获取采集和播放音频混音后的数据
+    func onMixedAudioFrame(_ frame: AgoraAudioFrame, channelId: String) -> Bool {
+        debugPrint("\(frame)")
+        return true
+    }
+    
+    //获得播放的原始音频数据
+    func onPlaybackAudioFrame(beforeMixing frame: AgoraAudioFrame, channelId: String, uid: UInt) -> Bool {
+        debugPrint("\(frame)")
+        return true
+    }
+    
+    func getObservedAudioFramePosition() -> AgoraAudioFramePosition {
+
+        return  AgoraAudioFramePosition.playback
+        
+    }
+
+    func getMixedAudioParams() -> AgoraAudioParams {
+
+        return getAudioParams()
+        
+    }
+
+    func getRecordAudioParams() -> AgoraAudioParams {
+        
+        return getAudioParams()
+        
+    }
+
+    func getPlaybackAudioParams() -> AgoraAudioParams {
+        
+        return getAudioParams()
+        
+    }
+    
+    func getAudioParams()->AgoraAudioParams{
+        
+        let params = AgoraAudioParams.init()
+        params.sampleRate = 44100 //44100
+        params.channel = 2
+        params.samplesPerCall = 1024 //1024
+        
+        return params
+    }
+  
+}
+
+extension RtcEngine{
+    
+    func videoRecoredHanle(_ isStart : Bool){
+        
+        if isStart == true{
+            debugPrint("开始录屏")
+            videoRecordM.startWriter()
+        }else{
+            debugPrint("停止录屏")
+            videoRecordM.stopWriter()
+        }
+        
+    }
+    
+}

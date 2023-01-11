@@ -35,6 +35,9 @@ class BluefiResultCell: UITableViewCell {
     var valueChangedAction:((_ curIdex: IndexPath)->(Void))?
     
     func createSubviews(){
+        
+        self.backgroundColor = MainColor
+        
         contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(47)

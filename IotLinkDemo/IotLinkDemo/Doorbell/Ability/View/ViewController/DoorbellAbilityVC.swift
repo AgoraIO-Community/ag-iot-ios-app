@@ -75,10 +75,10 @@ class DoorbellAbilityVC: UIViewController {
         super.viewWillAppear(animated)
         
         if(AgoraIotLink.iotsdk.callkitMgr.getNetworkStatus().isBusy){
-            AgoraIotLink.iotsdk.callkitMgr.muteLocalAudio(mute: false, result: {ec,msg in
-                print("\(ec)---\(msg)")
-
-            })
+//            AgoraIotLink.iotsdk.callkitMgr.muteLocalAudio(mute: false, result: {ec,msg in
+//                print("\(ec)---\(msg)")
+//
+//            })
             AgoraIotLink.iotsdk.callkitMgr.mutePeerAudio(mute: false, result: {ec,msg in})
             
         }
@@ -92,17 +92,18 @@ class DoorbellAbilityVC: UIViewController {
         
         if(AgoraIotLink.iotsdk.callkitMgr.getNetworkStatus().isBusy){
             
-            AgoraIotLink.iotsdk.callkitMgr.muteLocalAudio(mute: true, result: {ec,msg in
-                print("\(ec)---\(msg)")
-
-            })
+//            AgoraIotLink.iotsdk.callkitMgr.muteLocalAudio(mute: true, result: {ec,msg in
+//                print("\(ec)---\(msg)")
+//
+//            })
             AgoraIotLink.iotsdk.callkitMgr.mutePeerAudio(mute: true, result: {ec,msg in
                 print("\(ec)---\(msg)")
 
             })
 
         }
-        
+        //如果设备挂断，发送通知停止录屏
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRecordVideoStateUpdated), object: nil, userInfo: nil)
         jumpBackOrNext()
     }
     
@@ -214,7 +215,7 @@ extension DoorbellAbilityVC {
         
         topAbilityV.handelVideoTopView(tipsType: .loading)
         
-        AGToolHUD.showNetWorkWait(Double.infinity)
+        AGToolHUD.showNetWorkWait(20)
         doorbellVM.wakeupDevice(device) {[weak self] success, msg in
             if(!success){
                 debugPrint("呼叫失败")
@@ -248,6 +249,8 @@ extension DoorbellAbilityVC {
             debugPrint("设备挂断")
             topAbilityV.handelVideoTopView(tipsType: .deviceSleep)
             AGToolHUD.disMiss()
+            //如果设备挂断，发送通知停止录屏
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRecordVideoStateUpdated), object: nil, userInfo: nil)
             //NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil)
         }
         else if(act == .LocalHangup){

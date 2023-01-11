@@ -48,6 +48,15 @@ class TDUserInforManager: NSObject {
     
     ///用户是否登陆
     var isLogin : Bool = false
+    
+    ///当前设备数（不含分享的）
+    var currentDeviceCount : Int = 0
+    
+    ///当前配网类型（初始状态0  二维码 1 和 蓝牙 2 ）
+    var currentMatchNetType : Int = 0
+    //当前蓝牙配网成功
+    var curBluefiSuc : Bool = false
+    
  
     fileprivate lazy var loginVM = LoginMainVM()
 

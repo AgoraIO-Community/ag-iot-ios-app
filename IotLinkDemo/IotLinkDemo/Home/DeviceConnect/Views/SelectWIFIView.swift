@@ -24,6 +24,7 @@ class CustomTextField: UIView {
     lazy var textField:UITextField = {
         let TF = UITextField()
         TF.font = UIFont.systemFont(ofSize: 18.S)
+        TF.textColor = UIColor.black
         TF.delegate = self
         return TF
     }()
@@ -274,8 +275,25 @@ class SelectWIFIView: UIView {
 extension SelectWIFIView: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        if isFullScreen{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.titleLabel.isHidden = true
+                self?.subtitleLabel.isHidden = true
+            }
+        }
+        
+        
         if textField == nameTextField.textField {
             wifiTextFieldBeginEdit?()
+        }
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if isFullScreen{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.titleLabel.isHidden = false
+                self?.subtitleLabel.isHidden = false
+            }
         }
     }
 }

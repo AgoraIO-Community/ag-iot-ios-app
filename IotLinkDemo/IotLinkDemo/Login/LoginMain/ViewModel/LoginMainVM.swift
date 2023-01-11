@@ -56,6 +56,9 @@ class LoginMainVM: NSObject {
             hint = hint + ":" + msg
             cb(ErrCode.XOK == ec ? true : false , hint)
         }
+        
+        ThirdAccountManager.resetPassword(acc, pwd, code,result)
+        
         //sdk?.accountMgr.resetPassword(account: acc, password: pwd,code:code,result: result)
     }
 //note:removed
@@ -126,7 +129,23 @@ class LoginMainVM: NSObject {
             cb(ErrCode.XOK == ec ? true : false , msg)
         }
         //sdk?.accountMgr.getSms(phone: phone, type: type,lang:"ZH_CN", result: result)
-        ThirdAccountManager.reqGetVerifyCode(phone) { ec, msg in
+        ThirdAccountManager.reqGetVerifyCode(phoneNumber: phone) { ec, msg in
+            cb(ErrCode.XOK == ec ? true : false , msg)
+        }
+    }
+    
+    func doGetResetPwdPhoneCode(_ phone:String, type: String, _ lang:String,_ cb:@escaping (Bool,String)->Void){
+        log.i("demo app bindPhone(\(phone.replacePhone()))")
+        if(sdk == nil){
+            cb(false,"sdk 未初始化")
+        }
+        let result = {
+            (ec:Int,msg:String)->Void in
+            let msg = ErrCode.XOK == ec ? "请求成功" : msg
+            cb(ErrCode.XOK == ec ? true : false , msg)
+        }
+        //sdk?.accountMgr.getSms(phone: phone, type: type,lang:"ZH_CN", result: result)
+        ThirdAccountManager.reqGetResetPwdVerifyCode(phoneNumber: phone) { ec, msg in
             cb(ErrCode.XOK == ec ? true : false , msg)
         }
     }

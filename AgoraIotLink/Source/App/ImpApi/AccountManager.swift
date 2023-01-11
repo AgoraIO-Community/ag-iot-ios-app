@@ -50,8 +50,13 @@ class AccountManager : IAccountMgr{
     
     func login(param: LoginParam, result: @escaping (Int, String) -> Void) {
         app.rule.trans(FsmApp.Event.LOGIN,
-                       {self.doLogin(param,{ec,msg in self.asyncResult(ec,msg,result)})},
-                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
+                       {self.doLogin(param,{ec,msg in
+            
+                        self.asyncResult(ec,msg,result)
+            
+                        }//{self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
+                       )}
+                )
     }
     
     func getUserId() -> String {
@@ -255,8 +260,8 @@ class AccountManager : IAccountMgr{
         self.app.context.virtualNumber = thingName
         self.app.context.gyiot.session.cert.thingName = thingName
         self.rule.trans(.LOGIN_SUCC,
-                        {result(ErrCode.XOK,"succ")},
-                        {result(ErrCode.XERR_BAD_STATE,"state error")})
+                        {result(ErrCode.XOK,"succ")}
+                        )//{result(ErrCode.XERR_BAD_STATE,"state error")}
         
     }
     

@@ -122,8 +122,12 @@ class LoginProtocolAlertVC: UIViewController {
         }
         
         bgV.addSubview(titleLab)
+        var topSpace = 31.S
+        if isFullScreen{
+            topSpace = 50.VS
+        }
         titleLab.snp.makeConstraints { (make) in
-            make.top.equalToSuperview().offset(31.S)
+            make.top.equalToSuperview().offset(topSpace)
             make.centerX.equalToSuperview()
             make.width.equalTo(200.S)
             make.height.equalTo(25.S)

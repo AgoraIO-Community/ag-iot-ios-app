@@ -42,7 +42,7 @@ class SearchBluefiView: UIView {
         bgView.addSubview(subTitleLabel)
         bgView.addSubview(activity)
         bgView.addSubview(countTimeLabel)
-        bgView.addSubview(nextButton)
+//        bgView.addSubview(nextButton)
         
         activity.startAnimating()
         
@@ -86,12 +86,12 @@ class SearchBluefiView: UIView {
                                         
         }
 
-        nextButton.snp.makeConstraints { (make) in
-            make.bottom.equalTo(-80.VS)
-            make.left.equalTo(30.S)
-            make.right.equalTo(-30.S)
-            make.height.equalTo(60.VS)
-        }
+//        nextButton.snp.makeConstraints { (make) in
+//            make.bottom.equalTo(-80.VS)
+//            make.left.equalTo(30.S)
+//            make.right.equalTo(-30.S)
+//            make.height.equalTo(60.VS)
+//        }
 
     }
   

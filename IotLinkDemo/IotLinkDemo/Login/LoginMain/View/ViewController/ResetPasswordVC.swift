@@ -10,6 +10,8 @@ import IQKeyboardManagerSwift
 
 class ResetPasswordVC: LoginBaseVC {
     
+    fileprivate lazy var loginVM = LoginMainVM()
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         self.view.endEditing(true)
@@ -94,10 +96,12 @@ extension ResetPasswordVC : ResetPasswordViewDelegate{
         
         if verficationAccount.isEmail == true {
             TDUserInforManager.shared.userType = .email
-            resetPasswordAction(acc:acc,type: .forgotEmailCode)
+//            resetPasswordAction(acc:acc,type: .forgotEmailCode)
+            sendResetPwdCaptchaCode(accountText:acc,type: .forgotEmailCode)
         }else if verficationAccount.isPhone == true {
             TDUserInforManager.shared.userType = .phone
-            resetPasswordAction(acc:acc,type: .forgotPhoneCode)
+//            resetPasswordAction(acc:acc,type: .forgotPhoneCode)
+            sendResetPwdCaptchaCode(accountText:acc,type: .forgotPhoneCode)
         }else{
             resetPwdView.showTipsMessage("请输入正确的手机号")
 //            resetPwdView.showTipsMessage("请输入正确的邮箱或手机号")
@@ -127,11 +131,32 @@ extension ResetPasswordVC{
 
 extension ResetPasswordVC{
     
-    func resetPasswordAction(acc:String, type:VerifyInputType){
+//    func resetPasswordAction(acc:String, type:VerifyInputType){
+//
+//        //跳转发送验证码
+//        DispatchCenter.DispatchType(type: .verifyCode(account: acc, type: type), vc: self, style: .push)
+//
+//    }
+    
+    //重置密码发送手机号验证码
+    func sendResetPwdCaptchaCode(accountText:String, type:VerifyInputType){
         
-        //跳转发送验证码
-        DispatchCenter.DispatchType(type: .verifyCode(account: acc, type: type), vc: self, style: .push)
+        AGToolHUD.showNetWorkWait()
+        
+//        let phone = "+" + TDUserInforManager.shared.currentCountryCode + accountText
+        let phone = accountText //"+" + TDUserInforManager.shared.currentCountryCode + accountText
+        loginVM.doGetResetPwdPhoneCode(phone, type:"PWD_RESET_SMS","ZH_CN") { [weak self] success, msg in
+           
+            AGToolHUD.disMiss()
+            if success == true {
+                debugPrint("验证码发送成功")
+                AGToolHUD.showInfo(info: msg)
+                DispatchCenter.DispatchType(type: .verifyCode(account: accountText, type: type), vc: self, style: .push)
+                
+            }else{
+                AGToolHUD.showInfo(info: msg)
+            }
+        }
         
     }
-    
 }

@@ -10,6 +10,7 @@ import IQKeyboardManagerSwift
 import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import NetworkExtension
+import AgoraIotLink
 
 class SelectWIFIVC: UIViewController {
     
@@ -216,7 +217,9 @@ extension SelectWIFIVC {
     }
     
     func gotoBlufiVC(){
-        
+        log.i("选择配网类型 type:蓝牙")
+        TDUserInforManager.shared.currentMatchNetType = 2
+        TDUserInforManager.shared.curBluefiSuc = false
         //跳转蓝牙配网
         let vc = BluefiResultVC()
         vc.wifiName = wifiName
@@ -226,7 +229,8 @@ extension SelectWIFIVC {
     }
     
     func gotoQRCodeVC(){
-        
+        log.i("选择配网类型 type:二维码")
+        TDUserInforManager.shared.currentMatchNetType = 1
         //跳转二维码扫描配网
         let vc = CreateQRCodeVC()
         vc.wifiName = wifiName

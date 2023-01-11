@@ -36,7 +36,9 @@ class DoorbellDownlaodManager: NSObject {
         let info = DownloadInfo()
         info.url = url
         
-        var fileName = "http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/conn-1.m3u8"//"url.absoluteString;
+        //"http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/conn-1.m3u8"
+        //"http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/IVFES3LNGY2G2NRVIVBU63BVFVWWU4DFM52GK43U_1669280802359_1497503806.m3u8?agora-key=MDFlZDE1N2JkYjMzNjI1MA=="
+        var fileName =  "http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/conn-1.m3u8" // "http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/conn-1.m3u8"//"url.absoluteString;
         guard let rearMark = fileName.lastIndex(of: "."),
               let startMark = fileName.lastIndex(of: "/") else {
               log.e("demo url error for download:\(fileName)")

@@ -87,6 +87,8 @@ extern NSNotificationName const SJMediaPlayerViewReadyForDisplayNotification;
 @property (nonatomic, readonly) NSTimeInterval duration;    
 @property (nonatomic, readonly) NSTimeInterval playableDuration;
 
+@property (nonatomic) NSTimeInterval lastValueTime;
+
 - (void)play;
 - (void)pause;
 
@@ -94,6 +96,8 @@ extern NSNotificationName const SJMediaPlayerViewReadyForDisplayNotification;
 - (void)report;
 
 - (int)ffmpegMain:(NSString*)commandStr completionBlock:(void (^)(int ec,NSString* msg))completionBlock;
+
+- (void)playbackDidFinishCustom;
 
 - (nullable UIImage *)screenshot;
 - (instancetype)init NS_UNAVAILABLE;

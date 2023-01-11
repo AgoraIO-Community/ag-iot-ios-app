@@ -7,16 +7,30 @@
 
 import UIKit
 
-class AGEditAlertVC: UIViewController {
-
+public enum AGEditAlertType: Int{
+    ///默认
+    case none = 0
     
+    ///修改设备名字
+    case modifyDeviceName = 1
+    ///其他
+    case other = 2
+
+}
+
+class AGEditAlertVC: UIViewController,UITextFieldDelegate {
+
+    var alertType : AGEditAlertType = .none
+    var hisInputString = ""
     
     lazy var textField:UITextField = {
         let textField = UITextField()
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.clearButtonMode = .always
         textField.placeholder = "请输入分享账号"
+        textField.delegate = self
         textField.textColor = UIColor.black//修改颜色
+        textField.addTarget(self, action: #selector(textDidChangeNotification(textField:)), for: .editingChanged)
         return textField
     }()
     
@@ -76,9 +90,10 @@ class AGEditAlertVC: UIViewController {
     }
     
     
-    static func showTitle(_ title:String?,editText:String,cancelTitle:String = "取消",commitTitle:String = "确定",commitAction: ((String)->(Void))?)  {
+    static func showTitle(_ title:String?,editText:String,cancelTitle:String = "取消",commitTitle:String = "确定", alertType :AGEditAlertType = .none, commitAction: ((String)->(Void))?)  {
         let vc = AGEditAlertVC()
         vc.modalPresentationStyle = .overCurrentContext
+        vc.alertType = alertType
         vc.setTitle(title,editText:editText, cancelTitle: cancelTitle, commitTitle: commitTitle, commitAction: commitAction)
         currentViewController().present(vc, animated: false)
     }
@@ -86,5 +101,48 @@ class AGEditAlertVC: UIViewController {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         textField.resignFirstResponder()
     }
-
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if alertType == .modifyDeviceName{
+            if string == "" {
+                return true
+            }
+            
+            if string == "\n" {
+                textField.resignFirstResponder()
+            }
+//            let result = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? string
+//            debugPrint("---result----:\(result)")
+            
+//            let ret = (textField.text ?? "") + string
+//            let content : String = ret.replaceSpace()
+//            //限制长度
+//            if content.getToInt() > 20 {
+//                return false
+//            }
+            return true
+        }
+        return true
+    }
+    
+    @objc func textDidChangeNotification(textField:UITextField)  {
+        debugPrint("-------\(textField.text)")
+        if alertType == .modifyDeviceName{
+            
+            guard let ret = textField.text else{
+                return
+            }
+            let content : String = ret.replaceSpace()
+            //限制长度
+            if content.getToInt() > 20 {
+                textField.text = hisInputString
+                AGToolHUD.showInfo(info: "最大输入20个字符")
+            }else{
+                hisInputString = content
+            }
+            
+        }
+        
+    }
+    
 }

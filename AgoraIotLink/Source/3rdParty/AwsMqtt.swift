@@ -559,30 +559,31 @@ class AWSMqtt{
     }
     
     //let topic1 = "+/+/device/connect"
-    func onTopic1Callback(topicPub:String,topicRcv:String,jsonDict:[String:Any])->Bool{
-        let bs1 = topicRcv.findFirst("/")
-        let productKey = topicRcv.substring(to: bs1)
-        let remain = topicRcv.substring(from: bs1 + 1)
-        let bs2 = remain.findFirst("/")
-        let mac = remain.substring(to: bs2)
-        
-        guard let data = jsonDict["data"] as? [String:Any] else{
-            log.e("mqtt no 'data' found for \(topicRcv)")
-            return false
-        }
-        
-        guard let onoff = data["connect"] as? UInt else{
-            log.e("mqtt no 'connect' found for \(topicRcv)")
-            return false
-        }
-
-        if(onoff != 0 && onoff != 1){
-            log.e("mqtt connect value:'\(onoff)' error")
-            return false
-        }
-        devStateListener?.onDeviceOnOffline(online: onoff == 0 ? false : true, deviceId: mac, productId: productKey)
-        return true
-    }
+//    func onTopic1Callback(topicPub:String,topicRcv:String,jsonDict:[String:Any])->Bool{
+//        let bs1 = topicRcv.findFirst("/")
+//        let productKey = topicRcv.substring(to: bs1)
+//        let remain = topicRcv.substring(from: bs1 + 1)
+//        let bs2 = remain.findFirst("/")
+//        let mac = remain.substring(to: bs2)
+//
+//        guard let data = jsonDict["data"] as? [String:Any] else{
+//            log.e("mqtt no 'data' found for \(topicRcv)")
+//            return false
+//        }
+//
+//        guard let onoff = data["connect"] as? UInt else{
+//            log.e("mqtt no 'connect' found for \(topicRcv)")
+//            return false
+//        }
+//
+//        if(onoff != 0 && onoff != 1){
+//            log.e("mqtt connect value:'\(onoff)' error")
+//            return false
+//        }
+//        devStateListener?.onDeviceOnOffline(online: onoff == 0 ? false : true, deviceId: mac, productId: productKey)
+//        return true
+//    }
+    
     //topic2 = "$aws/things/+/shadow/get/+"
     func onTopic2Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
         guard let listener = self.listeners[topicRcv] else{
@@ -621,6 +622,7 @@ class AWSMqtt{
             log.e("mqtt connect value:'\(onoff)' error")
             return false
         }
+        devStateListener?.onDeviceOnOffline(online: onoff == 0 ? false : true, deviceId: "\(devId)", productId: mac)
         return true
     }
     private func onPropertyChanged(_ topic:String,_ jsonDict:[String:Any])->Bool{
@@ -801,7 +803,7 @@ class AWSMqtt{
             return true
         }
     }
-    static let topic1 = "+/+/device/connect"
+//    static let topic1 = "+/+/device/connect"
     static let topic2 = "$aws/things/+/shadow/get/+"
     func subScribeWithClient(completion:@escaping(Bool,String)->Void){
         let thingName = self.thingName
@@ -809,9 +811,9 @@ class AWSMqtt{
         let topic4 = "$aws/things/" + thingName + "/shadow/name/rtc/update/accepted"
         let topic5 = "$aws/things/" + thingName + "/shadow/name/rtc/get/accepted"
         
-        let topics:[String] = [AWSMqtt.topic1,AWSMqtt.topic2,topic3,topic4,topic5]
-        let qos:[AWSIoTMQTTQoS] = [.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce]
-        let callbacks:[(String,String,[String:Any])->Bool] = [onTopic1Callback,onTopic2Callback,onTopic3Callback,onTopic4Callback,onTopic5Callback]
+        let topics:[String] = [AWSMqtt.topic2,topic3,topic4,topic5]//AWSMqtt.topic1,
+        let qos:[AWSIoTMQTTQoS] = [.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce]//.messageDeliveryAttemptedAtLeastOnce,
+        let callbacks:[(String,String,[String:Any])->Bool] = [onTopic2Callback,onTopic3Callback,onTopic4Callback,onTopic5Callback]//onTopic1Callback,
         var loop:(Int)->Void = {i in}
         var e = 0
         loop = {i in

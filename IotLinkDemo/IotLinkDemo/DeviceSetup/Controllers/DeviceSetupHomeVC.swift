@@ -138,9 +138,12 @@ class DeviceSetupHomeVC: UIViewController {
         guard device != nil else { return }
         DeviceManager.shared.removeDevice(device!) {[weak self] ec, msg in
             if(ec == ErrCode.XOK) {
+                //移除设备后，挂断通话
+                DoorBellManager.shared.hungUpAnswer { success, msg in }
+                debugPrint("调用挂断")
                 self?.navigationController?.popToRootViewController(animated: true)
             }else{
-                SVProgressHUD.showError(withStatus: "删除失败:\(msg)")
+                AGToolHUD.showInfo(info: "删除失败:\(msg)")
             }
         }
     }

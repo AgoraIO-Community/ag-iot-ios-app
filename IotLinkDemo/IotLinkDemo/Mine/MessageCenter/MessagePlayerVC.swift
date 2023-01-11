@@ -140,7 +140,9 @@ class MessagePlayerVC: UIViewController {
                 return
             }
             
-//            guard let url = URL(string: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8") else {
+            //"https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8"
+            //"http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/IVFES3LNGY2G2NRVIVBU63BVFVWWU4DFM52GK43U_1669280802359_1497503806.m3u8?agora-key=MDFlZDE1N2JkYjMzNjI1MA=="
+//            guard let url = URL(string: "http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/IVFES3LNGY2G2NRVIVBU63BVFVWWU4DFM52GK43U_1669280802359_1497503806.m3u8?agora-key=MDFlZDE1N2JkYjMzNjI1MA==") else {
 //                SVProgressHUD.showError(withStatus: "获取播放地址失败")
 //                SVProgressHUD.dismiss(withDelay: 2)
 //                return
@@ -150,6 +152,7 @@ class MessagePlayerVC: UIViewController {
 //            ijkVC.options = options
 //            self?.player.playbackController = ijkVC
 //            self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
+//            SVProgressHUD.dismiss()
 //            return
             
             Utils.loadAlertVideoUrl(alert.deviceId,alert.tenantId, alert.beginTime) { ec, msg, info in
@@ -169,8 +172,8 @@ class MessagePlayerVC: UIViewController {
                 ijkVC.options = options
                 self?.player.playbackController = ijkVC
                 self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
-                
-                
+
+
     //            self?.player.play(alarm: alert!)
                 //self?.player.play(url: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8")
                 SVProgressHUD.dismiss()

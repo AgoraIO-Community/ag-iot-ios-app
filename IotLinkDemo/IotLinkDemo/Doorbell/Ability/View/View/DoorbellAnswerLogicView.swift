@@ -218,6 +218,7 @@ class DoorbellAnswerLogicView: UIView {
             DoorBellManager.shared.hungUpAnswer {[weak self] success, msg in
                 if success {
                     debugPrint("挂断成功")
+                    AGToolHUD.showInfo(info: msg)
                     self?.callAnswerHungUpBlock?()
                 }else{
                     AGToolHUD.showInfo(info: msg)

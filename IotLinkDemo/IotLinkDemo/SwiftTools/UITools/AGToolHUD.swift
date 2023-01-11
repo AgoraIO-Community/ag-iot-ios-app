@@ -91,7 +91,7 @@ class AGToolHUD: NSObject {
         let parResult = UIImage.parseGIFDataToImageArray(gifName:"loading.gif")
         let img = UIImage.animatedImage(with: parResult.imageArr, duration: parResult.totalDuration)
         
-        SVProgressHUD.setMinimumDismissTimeInterval(TimeInterval(300))
+        SVProgressHUD.setMinimumDismissTimeInterval(TimeInterval(60))
         SVProgressHUD.show(img!, status: "")
 //        SVProgressHUD.show(withStatus: TiensLocalString("处理中,请稍候..."))
         

@@ -7,11 +7,13 @@
 
 import UIKit
 import AgoraIotLink
+import Photos
 
 //首帧可显示成功的通知（被动呼叫）
 let cReceiveChangeSoundSuccessNotify = "cReceiveChangeSoundSuccessNotify"
 let cReceiveCallSuccessNotify = "cReceiveCallSuccessNotify"
 let cMemberStateUpdated = "cMemberStateUpdated"
+let cRecordVideoStateUpdated = "cRecordVideoStateUpdated"
 
 //视频上层逻辑操作View
 class DoorbellAbilityLogicView: UIView {
@@ -25,6 +27,7 @@ class DoorbellAbilityLogicView: UIView {
     var logicLeftBackHBlock:(() -> (Void))?
     var logicfullHorBtnBlock:(() -> (Void))?
     
+    var startRecord : Bool = false //开始录屏
         
     var tipType : VideoAlertTipType{
         didSet{
@@ -72,12 +75,33 @@ class DoorbellAbilityLogicView: UIView {
         NotificationCenter.default.addObserver(self, selector: #selector(receiveChangeSoundSuccess(notification:)), name: Notification.Name(cReceiveChangeSoundSuccessNotify), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(receiveCallSuccess(notification:)), name: Notification.Name(cReceiveCallSuccessNotify), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(receiveMemberStateChanged(notification:)), name: Notification.Name(cMemberStateUpdated), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(receiveRecordVideoStateChanged(notification:)), name: Notification.Name(cRecordVideoStateUpdated), object: nil)
+        
+        //添加监听
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.changeVolumSlider), name: NSNotification.Name(rawValue: "AVSystemController_SystemVolumeDidChangeNotification"), object: nil)
+//               UIApplication.shared.beginReceivingRemoteControlEvents()
     }
+    
+//    @objc private func changeVolumSlider(notifi:NSNotification) {
+//           if let volum:Float = notifi.userInfo?["AVSystemController_AudioVolumeNotificationParameter"] as! Float?{
+//               debugPrint("--------:\(volum)")
+//               topControlView.sysVoiceAudioOpen()
+//           }
+//    }
     
     @objc private func receiveMemberStateChanged(notification: NSNotification){
         //变声通话通知
         guard let members = notification.userInfo?["members"] as? Int else { return }
         topControlView.memberLabel.text = "通话人数:\(members)"
+    }
+    
+    @objc private func receiveRecordVideoStateChanged(notification: NSNotification){
+        //录制视频通知
+//        guard let members = notification.userInfo?["isStart"] as? Bool else { return }
+        if startRecord == true{
+            recordScreen()
+        }
+        
     }
     
     @objc private func receiveChangeSoundSuccess(notification: NSNotification){
@@ -96,8 +120,9 @@ class DoorbellAbilityLogicView: UIView {
         if isChangeSodSeting == false {
             handelCallStateText(isSuccess)
         }
-        toolBarView.handelCallSuccess(isSuccess)
-        toolBarHView.handelCallSuccess(isSuccess)
+        //接听来电，默认不推本地语音
+//        toolBarView.handelCallSuccess(isSuccess)
+//        toolBarHView.handelCallSuccess(isSuccess)
         isOnCalling = true
     }
     
@@ -171,6 +196,10 @@ class DoorbellAbilityLogicView: UIView {
         view.shotScreenBtnBlock = { [weak self] in
             self?.shotScreen()
         }
+        view.recordScreenBtnBlock = {[weak self] button in
+            //录屏
+            self?.recordScreenPre()
+        }
         
         return view
     }()
@@ -198,6 +227,10 @@ class DoorbellAbilityLogicView: UIView {
         }
         view.shotScreenBtnBlock = { [weak self]  in
             self?.shotScreen()
+        }
+        view.recordScreenBtnBlock = {[weak self] button in
+            //录屏
+            self?.recordScreenPre()
         }
         
         return view
@@ -361,13 +394,70 @@ extension DoorbellAbilityLogicView{
             topControlView.tipsLabel.text = "正在通话中..."
         }
     }
-    
 }
 
 
 extension DoorbellAbilityLogicView{//下层View传值
     
+    func recordScreenPre(){
+        
+        AGToolHUD.showInfo(info:"该功能暂未开放，敬请期待！")
+        return
+        
+        if fetchPHAuthorization() == true{
+            recordScreen()
+        }
+        
+    }
+    
+    func recordScreen(){
+        
+        if startRecord == false {
+            DoorBellManager.shared.talkingRecordStart {[weak self] success, msg in
+                if success{
+                    self?.toolBarView.recordSceeenBtn.isSelected = true
+                    self?.toolBarHView.recordSceeenBtn.isSelected = true
+                    self?.startRecord = true
+                    debugPrint("开始录制调用成功")
+                }
+            }
+            
+        }else{
+            DoorBellManager.shared.talkingRecordStop {[weak self] success, msg in
+                if success{
+                    self?.toolBarView.recordSceeenBtn.isSelected = false
+                    self?.toolBarHView.recordSceeenBtn.isSelected = false
+                    self?.startRecord = false
+                    debugPrint("停止录制调用成功")
+                }
+            }
+        }
+    }
+    
+    
+    func fetchPHAuthorization()->Bool{
+        
+        let status = PHPhotoLibrary.authorizationStatus()
+        if status == .restricted || status == .denied {
+            AGToolHUD.show(info: "请开启相册权限")
+            return false
+        } else if status == .notDetermined {
+            PHPhotoLibrary.requestAuthorization {[weak self] (status) in
+                if status == .denied {
+                    AGToolHUD.show(info: "请开启相册权限")
+                } else if status == .authorized {
+                    self?.recordScreen()
+                }
+            }
+            return false
+        } else {
+            return true
+        }
+        
+    }
+    
     func shotScreen(){
+        startRecord = !startRecord
         
         DoorBellManager.shared.capturePeerVideoFrame { [weak self] success, msg, shotImg in
             if success{
@@ -380,11 +470,14 @@ extension DoorbellAbilityLogicView{//下层View传值
                 self?.handelSaveImgAlert(shotImg)
             }
         }
+        
     }
     
     func saveImgToAlbum(_ image : UIImage){
         
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(image:didFinishSavingWithError:contextInfo:)), nil)
+        
+        UISaveVideoAtPathToSavedPhotosAlbum("", self, #selector(image(image:didFinishSavingWithError:contextInfo:)), nil)
     }
     
     @objc func image(image: UIImage,didFinishSavingWithError: NSError?,contextInfo: AnyObject) {
@@ -393,7 +486,7 @@ extension DoorbellAbilityLogicView{//下层View传值
             AGToolHUD.showInfo(info: "截图保存失败！")
             return
         }
-//            AGToolHUD.showInfo(info: "截图保存成功！")
+        
     }
     
     func handelSaveImgAlert(_ shotImage : UIImage){

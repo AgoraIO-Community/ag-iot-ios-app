@@ -606,11 +606,14 @@ int ijkmp_get_state(IjkMediaPlayer *mp)
     return mp->mp_state;
 }
 
+
+
 static long ijkmp_get_current_position_l(IjkMediaPlayer *mp)
 {
     if (mp->seek_req)
         return mp->seek_msec;
-    return ffp_get_current_position_l(mp->ffplayer);
+    long curr_pos = ffp_get_current_position_l(mp->ffplayer);
+    return curr_pos;
 }
 
 long ijkmp_get_current_position(IjkMediaPlayer *mp)
@@ -618,10 +621,11 @@ long ijkmp_get_current_position(IjkMediaPlayer *mp)
     assert(mp);
     pthread_mutex_lock(&mp->mutex);
     long retval;
-    if (mp->seek_req)
+    if (mp->seek_req) {
         retval = mp->seek_msec;
-    else
+    } else {
         retval = ijkmp_get_current_position_l(mp);
+    }
     pthread_mutex_unlock(&mp->mutex);
     return retval;
 }

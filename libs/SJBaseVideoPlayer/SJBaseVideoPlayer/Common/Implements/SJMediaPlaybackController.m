@@ -87,6 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
         [self invalidate];
     }
     else if ( _timer == nil ) {
+        _player.lastValueTime = 0;
         __weak typeof(self) _self = self;
         _timer = [NSTimer sj_timerWithTimeInterval:_interval repeats:YES usingBlock:^(NSTimer * _Nonnull timer) {
             __strong typeof(_self) self = _self;
@@ -107,6 +108,17 @@ NS_ASSUME_NONNULL_BEGIN
  
 - (void)_refresh {
     NSTimeInterval currentTime = _player.currentTime;
+    NSTimeInterval lastValue = _player.lastValueTime;
+    if (currentTime < lastValue){
+//        NSLog(@"_refresh时间出错了：currentTime:%f------_lastValue:%f------duration:%f",currentTime,lastValue,_player.duration);
+//        [_player pause];
+        [self invalidate];
+        [_player playbackDidFinishCustom];
+        return;
+    }else{
+        _player.lastValueTime = currentTime;
+    }
+    
     if ( _currentTime != currentTime ) {
         _currentTime = currentTime;
         if ( _currentTimeDidChangeExeBlock ) _currentTimeDidChangeExeBlock(currentTime);

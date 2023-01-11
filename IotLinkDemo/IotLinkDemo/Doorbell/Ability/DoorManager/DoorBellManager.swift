@@ -142,7 +142,7 @@ class DoorBellManager: NSObject {
     func callAnswer(cb:@escaping(Bool,String)->Void,
                     actionAck:@escaping(ActionAck)->Void){
          sdk?.callkitMgr.callAnswer(result: {ec,msg in
-             self.sdk?.callkitMgr.muteLocalAudio(mute: false, result: { ec, msg in})
+             self.sdk?.callkitMgr.muteLocalAudio(mute: true, result: { ec, msg in})
              self.sdk?.callkitMgr.muteLocalVideo(mute: false, result: { ec, msg in})
             log.i("demo app callAnswer ret:\(msg)(\(ec))")
             if(ec == ErrCode.XOK){
@@ -173,6 +173,7 @@ class DoorBellManager: NSObject {
         if(sdk?.callkitMgr.getNetworkStatus().isBusy == true){
             sdk?.callkitMgr.callHangup(result: {ec,msg in
                 log.i("demo app callHangup ret:\(msg)(\(ec))")
+                debugPrint("挂断 ret:\(msg)(\(ec))")
                 DoorBellManager.shared.members = 0
                 cb(ec == ErrCode.XOK ? true : false , msg)
             })

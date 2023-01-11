@@ -58,15 +58,11 @@ class VerifyInputCodeVC: LoginBaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if style == .registerEmailCode || style == .registerPhoneCode {//注册在上个页面发送初次验证码
-            //开始计时
-            startTimer()
-            //重新发送按钮置为不可用
-            verifyCodeView.configTimeOutLabelAction()
-        }else{
-            //发送验证码
-            sendVerfyRequest()
-        }
+        //开始计时
+        startTimer()
+        //重新发送按钮置为不可用
+        verifyCodeView.configTimeOutLabelAction()
+        
         setUpViews()
     }
     
@@ -131,7 +127,7 @@ extension VerifyInputCodeVC{
             sendEmailCaptchaCode("PWD_RESET")
             break
         case .forgotPhoneCode:
-            sendPhoneCaptchaCode("PWD_RESET_SMS")
+            sendResetPwdCaptchaCode("PWD_RESET_SMS")
             break
         default:
             break
@@ -183,6 +179,30 @@ extension VerifyInputCodeVC{
             }else{
                 AGToolHUD.showInfo(info: msg)
 //                self?.verifyCodeView.configTimeOutLabel(msg)
+            }
+        }
+        
+    }
+    
+    //重置密码发送手机号验证码
+    func sendResetPwdCaptchaCode(_ type:String){
+        
+        AGToolHUD.showNetWorkWait()
+        
+//        let phone = "+" + TDUserInforManager.shared.currentCountryCode + accountText
+        let phone = accountText //"+" + TDUserInforManager.shared.currentCountryCode + accountText
+        loginVM.doGetResetPwdPhoneCode(phone, type:type,"ZH_CN") { [weak self] success, msg in
+           
+            AGToolHUD.disMiss()
+            if success == true {
+                debugPrint("验证码发送成功")
+                AGToolHUD.showInfo(info: msg)
+                //开始计时
+                self?.startTimer()
+                //重新发送按钮置为不可用
+                self?.verifyCodeView.configTimeOutLabelAction()
+            }else{
+                AGToolHUD.showInfo(info: msg)
             }
         }
         

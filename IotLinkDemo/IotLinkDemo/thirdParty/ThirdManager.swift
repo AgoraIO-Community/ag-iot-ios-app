@@ -24,10 +24,12 @@ class ThirdAccountManager{
     #endif
         static let authRegister =    "/auth/register" //不需要短信验证码
         static let authRegister2 =    "/auth/register2" //需短信验证码
+        static let resetPassword =    "/auth/resetPwd" //重置密码，需短信验证码
         static let authLogin =       "/auth/login"
         static let authUnRegister =  "/auth/removeAccount"
         static let getUid =          "/auth/getUidByUsername"
-        static let getVerifyCode =   "/sys-verification-code/v1/sendRegisterCode"
+        static let getVerifyCode =   "/sys-verification-code/v1/sendRegisterCode" //注册 发送验证码
+        static let getResetPwdVerifyCode =   "/sys-verification-code/v1/sendResetPwdCode" //重置密码 发送验证码
         
         struct Rsp:Decodable{
             let code:Int
@@ -162,10 +164,37 @@ class ThirdAccountManager{
         }
     }
     
-    class func reqGetVerifyCode(_ phoneNumber:String,_ rsp:@escaping(Int,String)->Void){
+    class func reqGetVerifyCode( phoneNumber:String, _ rsp:@escaping(Int,String)->Void){
         let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
         let params = ["mobile":phoneNumber]
         let url = api.http_3rdParty + api.getVerifyCode
+
+        AF.request(url,method:.get,parameters:params,encoder: URLEncodedFormParameterEncoder.default,headers: header)
+            .validate()
+            .responseDecodable(of:api.Rsp.self){(dataRsp:AFDataResponse<api.Rsp>) in
+            URLCache.shared.removeAllCachedResponses()
+            switch dataRsp.result{
+            case .success(let ret):
+                if(ret.code != 0){
+                    log.e("3rd reqGetVerifyCode fail \(ret.msg)(\(ret.code))")
+                }
+                if ret.code == 9999{
+                    rsp(ErrCode.XERR_UNKNOWN,ret.msg)
+                }else{
+                    rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
+                }
+                
+            case .failure(let error):
+                log.e("3rd reqGetVerifyCode \(url) fail for \(phoneNumber), detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
+            }
+        }
+    }
+    
+    class func reqGetResetPwdVerifyCode( phoneNumber:String, _ rsp:@escaping(Int,String)->Void){
+        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
+        let params = ["mobile":phoneNumber]
+        let url = api.http_3rdParty + api.getResetPwdVerifyCode
 
         AF.request(url,method:.get,parameters:params,encoder: URLEncodedFormParameterEncoder.default,headers: header)
             .validate()
@@ -270,6 +299,28 @@ class ThirdAccountManager{
             case .failure(let error):
                 log.e("3rd reqUidByAccount \(url) fail for \(account), detail: \(error) ")
                 rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
+            }
+        }
+    }
+    
+    class func resetPassword(_ phoneNumber:String,_ password:String,_ verifyCode:String,_ rsp:@escaping(Int,String)->Void){
+        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
+        let params = ["username":phoneNumber,"password":password,"verificationCode":verifyCode]
+        let url = api.http_3rdParty + api.resetPassword
+
+        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
+            .validate()
+            .responseDecodable(of:api.Rsp.self){(dataRsp:AFDataResponse<api.Rsp>) in
+            URLCache.shared.removeAllCachedResponses()
+            switch dataRsp.result{
+            case .success(let ret):
+                if(ret.code != 0){
+                    log.e("3rd resetPassword fail \(ret.msg)(\(ret.code))")
+                }
+                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
+            case .failure(let error):
+                log.e("3rd resetPassword \(url) fail for \(phoneNumber), detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
             }
         }
     }

@@ -14,6 +14,8 @@ class DoorbellAbilityTooBarHView: UIView, UIImagePickerControllerDelegate & UINa
     var changeSoundBtnBlock:(() -> (Void))?
     //保存裁剪图片
     var shotScreenBtnBlock:(() -> (Void))?
+    //录屏
+    var recordScreenBtnBlock:((_ btn : UIButton) -> (Void))?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -127,8 +129,8 @@ class DoorbellAbilityTooBarHView: UIView, UIImagePickerControllerDelegate & UINa
             break
         case 1004:
             debugPrint("录屏")
-            AGToolHUD.showInfo(info:"该功能暂未开放，敬请期待！")
-//            recordScreen(btn)
+            recordScreenBtnBlock?(btn)
+//            AGToolHUD.showInfo(info:"该功能暂未开放，敬请期待！")
             break
         case 1005:
             debugPrint("截屏")
@@ -144,39 +146,15 @@ class DoorbellAbilityTooBarHView: UIView, UIImagePickerControllerDelegate & UINa
 
 extension DoorbellAbilityTooBarHView{
     
-    func recordScreen(_ btn : UIButton){
-        //btn.isSelected = !btn.isSelected
-        if btn.isSelected == true {
-            debugPrint("正在录制,调用停止")
-            DoorBellManager.shared.talkingRecordStart { success, msg in
-                if success{
-                    btn.isSelected = !btn.isSelected
-                    debugPrint("开始录制调用成功")
-                    //todo:
-                }
-            }
-            
-        }else{
-            debugPrint("未录制,调用开始")
-            DoorBellManager.shared.talkingRecordStop { success, msg in
-                if success{
-                    btn.isSelected = !btn.isSelected
-                    debugPrint("停止录制调用成功")
-                    //todo:
-                }
-            }
-            
-        }
-    }
-}
-
-extension DoorbellAbilityTooBarHView{
-    
     func handelCallSuccess(_ isSuccess : Bool){
         callBtn.isSelected = isSuccess
     }
     
     func handleChangeSoundSuccess(_ isChange : Bool){
         changeSoundBtn.isSelected = isChange
+    }
+    
+    func handleRecordScreenBtnSuccess(_ isChange : Bool){
+        recordSceeenBtn.isSelected = isChange
     }
 }

@@ -78,8 +78,21 @@ extension AppDelegate: IDeviceStateListener {//添加设备回调等
     }
     
     func onDeviceActionUpdated(deviceId: String, actionType: String) {
-        log.i("demo dev update:\(actionType):\(deviceId)")
         if actionType == "add" {
+            log.i("新增设备 update:\(actionType):\(deviceId)")
+            guard  TDUserInforManager.shared.currentMatchNetType != 0 else {
+                log.i("非操作配网流程消息 update:\(actionType):\(deviceId)")
+                return
+            }
+            //如果当前为蓝牙配网，且已获取配网成功消息，则返回
+            if TDUserInforManager.shared.currentMatchNetType == 2 && TDUserInforManager.shared.curBluefiSuc == true{
+//                AGToolHUD.showInfo(info: "不使用获取的订阅消息：\(deviceId)")
+                return
+            }
+            TDUserInforManager.shared.curBluefiSuc = true
+            TDUserInforManager.shared.currentMatchNetType = 0
+//            AGToolHUD.showInfo(info: "使用获取的订阅消息：\(deviceId)")
+            
             let vc = DeviceAddSuccessVC()
             vc.deviceId = deviceId
             if currentViewController().navigationController != nil {
@@ -89,10 +102,12 @@ extension AppDelegate: IDeviceStateListener {//添加设备回调等
         if actionType == "delete" {
             let vc = DeviceDelSuccessVC()
             vc.deviceId = deviceId
+            log.i("移除设备 update:\(actionType):\(deviceId)")
             if currentViewController().navigationController != nil {
                 currentViewController().navigationController?.pushViewController(vc, animated: false)
             }
         }
+            
     }
     
     func onDevicePropertyUpdated(deviceId: String, deviceNumber: String, props: [String : Any]?) {

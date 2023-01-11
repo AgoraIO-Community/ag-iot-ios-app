@@ -92,8 +92,9 @@ class HomeMainDeviceCell: UITableViewCell {
         nameLabel.text = device.deviceName
         let offlineColor = UIColor(hexRGB: 0xF7B500)
         let onLineColor = UIColor(hexRGB: 0x000000, alpha: 0.25)
-        let dateStr = formatter.string(from: Date(timeIntervalSince1970: TimeInterval(alarmDate / 1000)))
-        statusLabel.text = device.connected ? "移动侦测 \(dateStr)" : "离线"
+//        let dateStr = formatter.string(from: Date(timeIntervalSince1970: TimeInterval(alarmDate / 1000)))
+//        statusLabel.text = device.connected ? "移动侦测 \(dateStr)" : "离线"
+        statusLabel.text = device.connected ? "在线" : "离线"
         statusLabel.textColor = device.connected ? onLineColor: offlineColor
         iconImgView.kf.setImage(with: URL(string: device.productInfo?.imgSmall ?? ""), placeholder:  UIImage(named: "doorbell"))
     }

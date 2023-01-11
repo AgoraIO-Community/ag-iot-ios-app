@@ -28,8 +28,8 @@ class PlayerSetting{
     var bitRate = AgoraVideoBitrateStandard
     var orientationMode:AgoraVideoOutputOrientationMode = .adaptative
     var renderMode:AgoraVideoRenderMode = .fit
-    var audioType = "G722" //G722，G711
-    var audioSampleRate = "16000"; //16000,8000
+    var audioType = "G711U" //G722，G711
+    var audioSampleRate = "8000"; //16000,8000
     
     var logFilePath = ""
     var publishAudio = false ///< 通话时是否推流本地音频
@@ -116,8 +116,8 @@ struct CallKitSetting{
     var bitRate = AgoraVideoBitrateStandard
     var orientationMode:AgoraVideoOutputOrientationMode = .adaptative
     var renderMode:AgoraVideoRenderMode = .fit
-    var audioType = "G722" //G722，G711A,G711U
-    var audioSampleRate = "16000"; //16000,8000
+    var audioType = "G711U" //G722，G711A,G711U
+    var audioSampleRate = "8000"; //16000,8000
     
     var logFilePath = ""
     var publishAudio = true ///< 通话时是否推流本地音频

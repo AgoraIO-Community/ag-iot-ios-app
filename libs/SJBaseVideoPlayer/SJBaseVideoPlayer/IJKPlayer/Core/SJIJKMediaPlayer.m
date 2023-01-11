@@ -50,6 +50,7 @@ typedef struct {
 @synthesize muted = _muted;
 @synthesize pauseWhenAppDidEnterBackground = _pauseWhenAppDidEnterBackground;
 @synthesize presentationSize = _presentationSize;
+@synthesize lastValueTime = _lastValueTime;
 
 + (void)initialize {
     static dispatch_once_t onceToken;
@@ -161,58 +162,60 @@ typedef struct {
     self.timeControlStatus = SJPlaybackTimeControlStatusPaused;
     [_player stop];
     [_player shutdown];
-
-//    https://github.com/bilibili/ijkplayer/blob/cced91e3ae3730f5c63f3605b00d25eafcf5b97b/ios/IJKMediaPlayer/IJKMediaPlayer/IJKFFMoviePlayerController.m#L434
-//
-//    - (void)setScreenOn: (BOOL)on {
-//        [IJKMediaModule sharedModule].mediaModuleIdleTimerDisabled = on;
-//        // [UIApplication sharedApplication].idleTimerDisabled = on;
-//    }
-//
-//    - (void)shutdown {
-//        if (!_mediaPlayer)
-//            return;
-//
-//        [self stopHudTimer];
-//        [self unregisterApplicationObservers];
-//        [self setScreenOn:NO];
-//
-//        [self performSelectorInBackground:@selector(shutdownWaitStop:) withObject:self];
-//    }
-//
-//    - (void)shutdownWaitStop:(IJKFFMoviePlayerController *) mySelf  {
-//        if (!_mediaPlayer)
-//            return;
-//
-//        ijkmp_stop(_mediaPlayer);
-//        ijkmp_shutdown(_mediaPlayer);
-//
-//        [self performSelectorOnMainThread:@selector(shutdownClose:) withObject:self waitUntilDone:YES];
-//    }
-//
-//    - (void)stop {
-//        if (!_mediaPlayer)
-//            return;
-//
-//        [self setScreenOn:NO];
-//
-//        [self stopHudTimer];
-//        ijkmp_stop(_mediaPlayer);
-//    }
-//
+    
+    //    https://github.com/bilibili/ijkplayer/blob/cced91e3ae3730f5c63f3605b00d25eafcf5b97b/ios/IJKMediaPlayer/IJKMediaPlayer/IJKFFMoviePlayerController.m#L434
+    //
+    //    - (void)setScreenOn: (BOOL)on {
+    //        [IJKMediaModule sharedModule].mediaModuleIdleTimerDisabled = on;
+    //        // [UIApplication sharedApplication].idleTimerDisabled = on;
+    //    }
+    //
+    //    - (void)shutdown {
+    //        if (!_mediaPlayer)
+    //            return;
+    //
+    //        [self stopHudTimer];
+    //        [self unregisterApplicationObservers];
+    //        [self setScreenOn:NO];
+    //
+    //        [self performSelectorInBackground:@selector(shutdownWaitStop:) withObject:self];
+    //    }
+    //
+    //    - (void)shutdownWaitStop:(IJKFFMoviePlayerController *) mySelf  {
+    //        if (!_mediaPlayer)
+    //            return;
+    //
+    //        ijkmp_stop(_mediaPlayer);
+    //        ijkmp_shutdown(_mediaPlayer);
+    //
+    //        [self performSelectorOnMainThread:@selector(shutdownClose:) withObject:self waitUntilDone:YES];
+    //    }
+    //
+    //    - (void)stop {
+    //        if (!_mediaPlayer)
+    //            return;
+    //
+    //        [self setScreenOn:NO];
+    //
+    //        [self stopHudTimer];
+    //        ijkmp_stop(_mediaPlayer);
+    //    }
+    //
 }
 
 - (void)seekToTime:(CMTime)time completionHandler:(nullable void (^)(BOOL))completionHandler {
+    NSLog(@"seek:lastValueTime归零");
+    self.lastValueTime = 0;
     if ( self.assetStatus != SJAssetStatusReadyToPlay ) {
         if ( completionHandler ) completionHandler(NO);
         return;
     }
-
+    
     time = [self _adjustSeekTimeIfNeeded:time];
     BOOL isPlaybackEnded = _playbackFinishedInfo.isFinished;
     [self _willSeeking:time];
     _seekCompletionHandler = completionHandler;
-
+    
     NSTimeInterval secs = CMTimeGetSeconds(time);
     if ( ceil(secs) == ceil(self.duration) ) secs = secs * 0.98;
     if ( isPlaybackEnded ) {
@@ -343,6 +346,14 @@ typedef struct {
     });
 }
 
+- (void)playbackDidFinishCustom {
+    NSLog(@"_playbackDidFinish777");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self _updatePlaybackFinishedInfo:nil];
+        [self _toEvaluating];
+    });
+}
+
 - (void)_naturalSizeAvailable:(NSNotification *)note {
     dispatch_async(dispatch_get_main_queue(), ^{
         [self _updatePresentationSize];
@@ -465,7 +476,7 @@ typedef struct {
     }
 }
 
-- (void)_updatePlaybackFinishedInfo:(NSNotification *)note {
+- (void)_updatePlaybackFinishedInfo:(NSNotification * __nullable)note {
     IJKMPMovieFinishReason reason = [note.userInfo[IJKMPMoviePlayerPlaybackDidFinishReasonUserInfoKey] integerValue];
     if ( reason == IJKMPMovieFinishReasonPlaybackError ) {
         _error = [NSError errorWithDomain:SJIJKMediaPlayerErrorDomain code:reason userInfo:@{

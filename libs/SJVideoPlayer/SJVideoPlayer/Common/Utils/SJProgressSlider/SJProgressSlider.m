@@ -195,6 +195,11 @@ NS_ASSUME_NONNULL_BEGIN
 //    }
     _value = value_new;
     
+//    if (value_new < value_old){
+//        NSLog(@"时间出错了：value_new:%f------value_old:%f",value_new,value_old);
+//        return;
+//    }
+    
     if ( animated ) {
         CGFloat duration = 0;
         if ( animated ) duration = [self _calculateAnimaDuration:value_new - value_old];

@@ -228,6 +228,23 @@ class TopControTooBarView: UIView {
          }
     }
     
+    //系统音量键打开
+    func sysVoiceAudioOpen(){
+        
+        var isShutAudio : Bool = true
+        if volumeBtn.isSelected {
+            isShutAudio = false
+            volumeBtn.isSelected = !volumeBtn.isSelected
+        }else {
+            return
+        }
+        DoorBellManager.shared.mutePeerAudio(mute: isShutAudio) { success, msg in
+            if success{
+                log.i("设置静音成功")
+            }
+         }
+    }
+    
     func showPictureQualiSheet(){
         
         let itemsCode = [1,2]

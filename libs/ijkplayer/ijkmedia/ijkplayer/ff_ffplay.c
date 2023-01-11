@@ -3116,10 +3116,13 @@ static int read_thread(void *arg)
 
     if (ffp->iformat_name)
         is->iformat = av_find_input_format(ffp->iformat_name);
-
-    av_dict_set_intptr(&ffp->format_opts, "video_cache_ptr", (intptr_t)&ffp->stat.video_cache, 0);
-    av_dict_set_intptr(&ffp->format_opts, "audio_cache_ptr", (intptr_t)&ffp->stat.audio_cache, 0);
-    err = avformat_open_input(&ic, is->filename, is->iformat, &ffp->format_opts);
+    
+    //
+    // @2022-09-14 luxiaohua: fix crash issue on Xiaomi10 mobile phone
+    //  The issue caused by 'ffp->format_opts' parameter
+    //
+    //err = avformat_open_input(&ic, is->filename, is->iformat, &ffp->format_opts);
+    err = avformat_open_input(&ic, is->filename, is->iformat, NULL);
     if (err < 0) {
         print_error(is->filename, err);
         ret = -1;
@@ -3274,7 +3277,7 @@ static int read_thread(void *arg)
 
     /* open the streams */
     if (st_index[AVMEDIA_TYPE_AUDIO] >= 0) {
-        stream_component_open(ffp, st_index[AVMEDIA_TYPE_AUDIO]);
+        int open_ret = stream_component_open(ffp, st_index[AVMEDIA_TYPE_AUDIO]);
     } else {
         ffp->av_sync_type = AV_SYNC_VIDEO_MASTER;
         is->av_sync_type  = ffp->av_sync_type;
@@ -3996,6 +3999,7 @@ FFPlayer *ffp_create()
     ffp->meta = ijkmeta_create();
 
     av_opt_set_defaults(ffp);
+
     return ffp;
 }
 
@@ -4136,7 +4140,7 @@ void *ffp_set_ijkio_inject_opaque(FFPlayer *ffp, void *opaque)
     ijkio_manager_destroyp(&ffp->ijkio_manager_ctx);
     ijkio_manager_create(&ffp->ijkio_manager_ctx, ffp);
     ijkio_manager_set_callback(ffp->ijkio_manager_ctx, ijkio_app_func_event);
-    ffp_set_option_intptr(ffp, FFP_OPT_CATEGORY_FORMAT, "ijkiomanager", (uintptr_t)ffp->ijkio_manager_ctx);
+    ffp_set_option_int(ffp, FFP_OPT_CATEGORY_FORMAT, "ijkiomanager", (int64_t)(intptr_t)ffp->ijkio_manager_ctx);
 
     return prev_weak_thiz;
 }
@@ -4150,7 +4154,7 @@ void *ffp_set_inject_opaque(FFPlayer *ffp, void *opaque)
 
     av_application_closep(&ffp->app_ctx);
     av_application_open(&ffp->app_ctx, ffp);
-    ffp_set_option_intptr(ffp, FFP_OPT_CATEGORY_FORMAT, "ijkapplication", (uint64_t)(intptr_t)ffp->app_ctx);
+    ffp_set_option_int(ffp, FFP_OPT_CATEGORY_FORMAT, "ijkapplication", (int64_t)(intptr_t)ffp->app_ctx);
 
     ffp->app_ctx->func_on_app_event = app_func_event;
     return prev_weak_thiz;
@@ -4172,15 +4176,6 @@ void ffp_set_option_int(FFPlayer *ffp, int opt_category, const char *name, int64
 
     AVDictionary **dict = ffp_get_opt_dict(ffp, opt_category);
     av_dict_set_int(dict, name, value, 0);
-}
-
-void ffp_set_option_intptr(FFPlayer *ffp, int opt_category, const char *name, uintptr_t value)
-{
-    if (!ffp)
-        return;
-
-    AVDictionary **dict = ffp_get_opt_dict(ffp, opt_category);
-    av_dict_set_intptr(dict, name, value, 0);
 }
 
 void ffp_set_overlay_format(FFPlayer *ffp, int chroma_fourcc)
@@ -4428,38 +4423,94 @@ int ffp_seek_to_l(FFPlayer *ffp, long msec)
     return 0;
 }
 
+
+/* get the current clock value */
+static double get_current_pos_clock(VideoState *is)
+{
+    double val = 0;
+
+    // Judge the valid AV sync type, if audio or vide is invalid, use external clock
+    int sync_type = AV_SYNC_EXTERNAL_CLOCK;
+    if ((is->av_sync_type == AV_SYNC_AUDIO_MASTER) && (is->audio_st) && (is->audclk.serial >= 0)) {
+        sync_type = AV_SYNC_AUDIO_MASTER;
+    }
+    if ((is->av_sync_type == AV_SYNC_VIDEO_MASTER) && (is->video_st) && (is->vidclk.serial >= 0)) {
+        sync_type = AV_SYNC_VIDEO_MASTER;
+    }
+ 
+    // get stream clock
+    switch (sync_type) {
+        case AV_SYNC_VIDEO_MASTER:
+            val = get_clock(&is->vidclk);
+            // IjkLog("<get_current_pos_clock> [VIDEO_MASTER] val=%lf, pts=%lf, pts_drift=%lf, last_updated=%lf, speed=%lf, serial=%d, paused=%d\n", 
+            //         val, is->vidclk.pts, is->vidclk.pts_drift, is->vidclk.last_updated,
+            //          is->vidclk.speed, is->vidclk.serial, is->vidclk.paused  );
+            break;
+        case AV_SYNC_AUDIO_MASTER:
+            val = get_clock(&is->audclk);
+            // IjkLog("<get_current_pos_clock> [AUDIO_MASTER] val=%lf, pts=%lf, pts_drift=%lf, last_updated=%lf, speed=%lf, serial=%d, paused=%d\n", 
+            //         val, is->audclk.pts, is->audclk.pts_drift, is->audclk.last_updated,
+            //          is->audclk.speed, is->audclk.serial, is->audclk.paused  );
+            break;
+        default:
+            val = get_clock(&is->extclk);
+            // IjkLog("<get_current_pos_clock> [EXT] val=%lf, pts=%lf, pts_drift=%lf, last_updated=%lf, speed=%lf, serial=%d, paused=%d\n", 
+            //         val, is->extclk.pts, is->extclk.pts_drift, is->extclk.last_updated,
+            //          is->extclk.speed, is->extclk.serial, is->extclk.paused  );
+            break;
+    }
+
+    return val;
+}
+
 long ffp_get_current_position_l(FFPlayer *ffp)
 {
     assert(ffp);
     VideoState *is = ffp->is;
-    if (!is || !is->ic)
+    if (!is || !is->ic) {
         return 0;
+    }
 
     int64_t start_time = is->ic->start_time;
     int64_t start_diff = 0;
     if (start_time > 0 && start_time != AV_NOPTS_VALUE)
         start_diff = fftime_to_milliseconds(start_time);
+    // IjkLog("<ffp_get_current_position_l> start_time=%" PRId64 ", start_diff=%" PRId64 "\n",
+    //         start_time, start_diff);    
 
     int64_t pos = 0;
-    double pos_clock = get_master_clock(is);
+    double pos_clock = get_current_pos_clock(is);
     if (isnan(pos_clock)) {
         pos = fftime_to_milliseconds(is->seek_pos);
     } else {
         pos = pos_clock * 1000;
     }
+    // IjkLog("<ffp_get_current_position_l> pos=%" PRId64 ", pos_clock=%.4f\n",
+    //         pos, (float)pos_clock);  
+        
+    // IjkLog("<get_current_pos_clock> [VIDEO_MASTER] pts=%lf, pts_drift=%lf, last_updated=%lf, speed=%lf, serial=%d, paused=%d\n", 
+    //         is->vidclk.pts, is->vidclk.pts_drift, is->vidclk.last_updated,
+    //         is->vidclk.speed, is->vidclk.serial, is->vidclk.paused  );
+
+    // IjkLog("<get_current_pos_clock> [AUDIO_MASTER] pts=%lf, pts_drift=%lf, last_updated=%lf, speed=%lf, serial=%d, paused=%d\n", 
+    //         is->audclk.pts, is->audclk.pts_drift, is->audclk.last_updated,
+    //             is->audclk.speed, is->audclk.serial, is->audclk.paused  );            
 
     // If using REAL time and not ajusted, then return the real pos as calculated from the stream
     // the use case for this is primarily when using a custom non-seekable data source that starts
     // with a buffer that is NOT the start of the stream.  We want the get_current_position to
     // return the time in the stream, and not the player's internal clock.
     if (ffp->no_time_adjust) {
+        //IjkLog("<ffp_get_current_position_l> no time adjust\n");
         return (long)pos;
     }
 
-    if (pos < 0 || pos < start_diff)
+    if (pos < 0 || pos < start_diff) {
         return 0;
+    }
 
     int64_t adjust_pos = pos - start_diff;
+    //IjkLog("<ffp_get_current_position_l> adjust_pos=%" PRId64 "\n", adjust_pos);
     return (long)adjust_pos;
 }
 

@@ -18,7 +18,7 @@ public enum JumpType {
     ///设置密码
     case setPassword(account:String, captchaCode:String, type:SetPasswordType)
     ///重置密码
-    //case resetPassword
+    case resetPassword
     //验证码
     case verifyCode(account:String, type:VerifyInputType)
     
@@ -72,9 +72,9 @@ public class DispatchCenter {
             controller = tempVC
             break
         //重置密码
-//        case .resetPassword:
-//            controller = ResetPasswordVC()
-//            break
+        case .resetPassword:
+            controller = ResetPasswordVC()
+            break
         //验证码
         case .verifyCode(let account, let type):
             let  tempVC = VerifyInputCodeVC()

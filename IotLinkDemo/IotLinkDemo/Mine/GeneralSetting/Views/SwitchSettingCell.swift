@@ -40,6 +40,7 @@ class SwitchSettingCell: UITableViewCell {
     var valueChangedAction:((_ aSwitch: UISwitch,_ curIdex: IndexPath)->(Void))?
     
     func createSubviews(){
+        contentView.backgroundColor = .white
         contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(47)

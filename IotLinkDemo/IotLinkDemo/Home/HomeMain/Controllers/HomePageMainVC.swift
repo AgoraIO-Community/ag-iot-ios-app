@@ -17,8 +17,12 @@ import SwiftDate
 
 // 网络监测通知
 let cNetChangeNotify = "cNetChangeNotify"
+//添加新设备通知（蓝牙配网）
+let cAddDeviceSuccessNotify = "cAddDeviceSuccessNotify"
 
 private let kCellID = "HomeMainDeviceCell"
+
+
 
 class HomePageMainVC: AGBaseVC {
     
@@ -104,6 +108,17 @@ class HomePageMainVC: AGBaseVC {
     // 添加监听
     private func addObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(receiveLoginSuccess), name: Notification.Name(cUserLoginSuccessNotify), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(receiveAddDeviceSuccess), name: Notification.Name(cAddDeviceSuccessNotify), object: nil)
+    }
+    
+    @objc private func receiveAddDeviceSuccess(){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
+            // 获取设备列表
+            self?.getDevicesArray()
+            self?.getPropertyList();
+            debugPrint("添加设备成功回调刷新")
+        }
+        
     }
     
     @objc private func receiveLoginSuccess(){
@@ -233,6 +248,7 @@ class HomePageMainVC: AGBaseVC {
                     normalDevices.append(dev)
                 }
             }
+            TDUserInforManager.shared.currentDeviceCount = normalDevices.count
             self?.shareDevieces = shareDevieces
             self?.dataSource = [normalDevices,shareDevieces]
             self?.tableView.mj_header?.endRefreshing()

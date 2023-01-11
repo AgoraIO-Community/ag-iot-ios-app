@@ -20,6 +20,7 @@ class AGNavigationVC: UINavigationController {
         navigationBar.barTintColor=UIColor.white
     //仅用这句话去掉导航栏下面的线,在10系统以上管用,10线依然存在,解决办法找UI要图,再设个背景图就好了
         navigationBar.shadowImage = UIImage()
+        navigationBar.backgroundColor = MainColor
         
         interactivePopGestureRecognizer?.delegate=self
     }

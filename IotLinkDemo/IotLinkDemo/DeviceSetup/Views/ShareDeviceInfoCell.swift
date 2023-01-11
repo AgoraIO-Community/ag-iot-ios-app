@@ -50,6 +50,7 @@ class ShareDeviceInfoCell: UITableViewCell {
     }
     
     func createSubviews(){
+        contentView.backgroundColor = .white
         contentView.addSubview(headImgView)
         headImgView.snp.makeConstraints { make in
             make.left.equalTo(37)
