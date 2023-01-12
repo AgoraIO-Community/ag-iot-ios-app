@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AgoraIotLink'
-  s.version          = '1.2.0.1'
+  s.version          = '1.3.0.1'
   s.summary          = 'AgoraIotLink for iot development.'
 
 # This description is used to generate tags and improve search results.
@@ -32,7 +32,7 @@ TODO: Add long description of the pod here.
 
 #  s.xcconfig = { "USER_HEADER_SEARCH_PATHS" => "$(PODS_ROOT)" }
 #  s.xcconfig = { 'USER_HEADER_SEARCH_PATHS' => '"${PODS_ROOT}"' }
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '12.0'
 #  s.public_header_files = "AgoraIotLink/AgoraIotLink-Swift.h"
   s.source_files = 'AgoraIotLink/Source/**/*.{swift,h,m}'
   s.swift_version = '5.5'
