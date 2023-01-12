@@ -4,6 +4,7 @@
 [![Version](https://img.shields.io/badge/pod-v1.3.0.1-519dd9.svg)](https://cocoapods.org/pods/AgoraIotLink)
 [![License](https://img.shields.io/cocoapods/l/AgoraIotLink.svg?style=flat)](https://cocoapods.org/pods/AgoraIotLink)
 [![Platform](https://img.shields.io/cocoapods/p/AgoraIotLink.svg?style=flat)](https://cocoapods.org/pods/AgoraIotLink)
+[![Platform](https://img.shields.io/badge/language-swift-orange.svg)](https://cocoapods.org/pods/AgoraIotLink)
 
 ## Example
 
