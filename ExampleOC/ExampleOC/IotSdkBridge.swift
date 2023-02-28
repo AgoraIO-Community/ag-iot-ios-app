@@ -241,6 +241,11 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
 }
 
 public class AlarmManager : NSObject,IAlarmMgr{
+    
+    public func queryAlarmVideoUrl(deviceId: String, tenantId: String, beginTime: UInt64, result: @escaping (Int, String, AgoraIotLink.AlarmVideoInfo?) -> Void) {
+        return mgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId:tenantId, beginTime: beginTime, result: result)
+    }
+    
     @objc public func addAlarm(device: IotDevice, desc: String, result: @escaping (Int, String) -> Void) {
         return mgr.addAlarm(device: device, desc: desc, result: result)
     }
@@ -249,9 +254,6 @@ public class AlarmManager : NSObject,IAlarmMgr{
         return mgr.queryAlarmImage(alertImageId: alertImageId, result: result)
     }
     
-    @objc public func queryAlarmVideoUrl(deviceId: String, tenantId:String, beginTime: UInt64, result: @escaping (Int, String, String?) -> Void) {
-        return mgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId:tenantId, beginTime: beginTime, result: result)
-    }
     
     public func querySysCount(productId: String?, deviceIds: [String], messageType: Int?, status: Int?, createDateBegin: Date?, createDateEnd: Date?, result: @escaping (Int, String, UInt) -> Void) {
         return mgr.querySysCount(productId: productId, deviceIds: deviceIds, messageType: messageType, status: status, createDateBegin: createDateBegin, createDateEnd: createDateEnd, result: result)
