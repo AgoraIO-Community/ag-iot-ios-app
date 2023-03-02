@@ -636,6 +636,7 @@ extension RtcEngine : AgoraVideoFrameDelegate{
         if  videoRecordM.videoW == 0{
             videoRecordM.videoW = videoFrame.width
             videoRecordM.videoH = videoFrame.height
+            debugPrint("onRenderVideoFrame:width:\(videoFrame.width)height:\(videoFrame.height)")
         }
         if (isRecording.getValue()){
             

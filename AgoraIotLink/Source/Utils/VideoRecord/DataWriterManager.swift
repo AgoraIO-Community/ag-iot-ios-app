@@ -290,7 +290,7 @@ public class DataWriterManager: NSObject {
 									 AVVideoProfileLevelKey : AVVideoProfileLevelH264BaselineAutoLevel] as [String : Any]//画质级别
 		
         videoCompressionSetting = [AVVideoCodecKey : AVVideoCodecType.h264,
-								   AVVideoScalingModeKey : AVVideoScalingModeResizeAspectFill,
+								   AVVideoScalingModeKey : AVVideoScalingModeResizeAspect,
 								   AVVideoWidthKey : NSNumber.init(value: Int(outputSize.height)),
 								   AVVideoHeightKey : NSNumber.init(value: Int(outputSize.width)),
 								   AVVideoCompressionPropertiesKey : compressionProperties]
