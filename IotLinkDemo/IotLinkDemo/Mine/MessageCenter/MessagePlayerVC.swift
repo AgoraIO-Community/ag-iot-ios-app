@@ -167,13 +167,20 @@ class MessagePlayerVC: UIViewController {
                     SVProgressHUD.dismiss(withDelay: 2)
                     return
                 }
+                //swift 实现代码
                 let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
                 let options = IJKFFOptions.byDefault()
                 ijkVC.options = options
                 self?.player.playbackController = ijkVC
                 self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
+                
+                //OC 播放器调用示例代码
+//                let playerVC = PlayerExampleOC()
+//                playerVC.urlString = info.url;
+//                self?.navigationController?.pushViewController(playerVC, animated: false)
 
 
+                
     //            self?.player.play(alarm: alert!)
                 //self?.player.play(url: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8")
                 SVProgressHUD.dismiss()
