@@ -291,8 +291,8 @@ public class DataWriterManager: NSObject {
 		
         videoCompressionSetting = [AVVideoCodecKey : AVVideoCodecType.h264,
 								   AVVideoScalingModeKey : AVVideoScalingModeResizeAspect,
-								   AVVideoWidthKey : NSNumber.init(value: Int(outputSize.height)),
-								   AVVideoHeightKey : NSNumber.init(value: Int(outputSize.width)),
+								   AVVideoWidthKey : NSNumber.init(value: Int(outputSize.width)),
+								   AVVideoHeightKey : NSNumber.init(value: Int(outputSize.height)),
 								   AVVideoCompressionPropertiesKey : compressionProperties]
 		
 		assetWriterVideoInput = AVAssetWriterInput.init(mediaType: .video, outputSettings: videoCompressionSetting)
