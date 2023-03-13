@@ -521,16 +521,16 @@ class RtcEngine : NSObject{
     func startRecord(result: @escaping (Int, String) -> Void){
         
         log.i("rtc try capturePeerVideoFrame ...")
-        if(state != RtcEngine.ENTERED){
-            log.e("rtc state : \(state) error for capturePeerVideoFrame()")
-            result(ErrCode.XERR_BAD_STATE,"rtc state error")
-            return
-        }
-        if(!peerEntered){
-            log.w("rtc peer not entered for capture")
-            result(ErrCode.XERR_BAD_STATE,"rtc peer not joined")
-            return
-        }
+//        if(state != RtcEngine.ENTERED){
+//            log.e("rtc state : \(state) error for capturePeerVideoFrame()")
+//            result(ErrCode.XERR_BAD_STATE,"rtc state error")
+//            return
+//        }
+//        if(!peerEntered){
+//            log.w("rtc peer not entered for capture")
+//            result(ErrCode.XERR_BAD_STATE,"rtc peer not joined")
+//            return
+//        }
     
         videoRecoredHanle(true)
         isRecording.setValue(true)

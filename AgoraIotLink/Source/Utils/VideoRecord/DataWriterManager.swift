@@ -274,7 +274,21 @@ public class DataWriterManager: NSObject {
 		
         videoUrl = getTempVideoUrl()
         outputSize = CGSize.init(width: videoW, height: videoH)
-        debugPrint("%@",outputSize)
+        debugPrint("--outputSize--%@---%@",videoW,videoH)
+        
+        
+        // 获取当前屏幕的最佳分辨率
+        guard let screenSize = UIScreen.main.currentMode?.size else{
+            return
+        }
+          
+        let wScale = screenSize.width / (outputSize.width)
+        outputSize.width = screenSize.width
+        outputSize.height = wScale * outputSize.height
+        
+        debugPrint("---mWScale---%@",wScale)
+        debugPrint("---screenSize---%@",screenSize)
+        debugPrint("--outputSize_New--%@",outputSize)
         
 		//写入视频大小
 		let numPixels: NSInteger = NSInteger(outputSize.width * outputSize.height)
@@ -290,7 +304,7 @@ public class DataWriterManager: NSObject {
 									 AVVideoProfileLevelKey : AVVideoProfileLevelH264BaselineAutoLevel] as [String : Any]//画质级别
 		
         videoCompressionSetting = [AVVideoCodecKey : AVVideoCodecType.h264,
-								   AVVideoScalingModeKey : AVVideoScalingModeResizeAspect,
+								   AVVideoScalingModeKey : AVVideoScalingModeResizeAspectFill,
 								   AVVideoWidthKey : NSNumber.init(value: Int(outputSize.width)),
 								   AVVideoHeightKey : NSNumber.init(value: Int(outputSize.height)),
 								   AVVideoCompressionPropertiesKey : compressionProperties]
