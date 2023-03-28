@@ -610,14 +610,20 @@ class AWSMqtt{
             log.e("mqtt no 'deviceId' found for \(topic)")
             return false
         }
-        guard let isOnlineStr = jsonData["connect"] as? String else{
+        
+        guard let data = jsonData["data"] as? [String:Any] else{
+            log.e("mqtt no 'data' found for \(topic)")
+            return false
+        }
+        
+        guard let onoff = data["connect"] as? Int else{
             log.e("mqtt no 'connect' found for \(topic)")
             return false
         }
-        guard let onoff = UInt(isOnlineStr) else{
-            log.e("mqtt connect:'\(isOnlineStr)' format error for \(topic)")
-            return false
-        }
+//        guard let onoff = UInt(isOnlineStr) else{
+//            log.e("mqtt connect:'\(isOnlineStr)' format error for \(topic)")
+//            return false
+//        }
         if(onoff != 0 && onoff != 1){
             log.e("mqtt connect value:'\(onoff)' error")
             return false
@@ -634,6 +640,7 @@ class AWSMqtt{
             log.e("mqtt no 'deviceId' found for \(topic)")
             return false
         }
+        log.i("onPropertyChanged:\(devNumber)")
         devStateListener?.onDevicePropertyUpdated(deviceId: mac,deviceNumber:String(devNumber), props: jsonDict["data"] as? [String:Any])
         return true
     }
@@ -673,6 +680,7 @@ class AWSMqtt{
             log.w("mqtt no 'messageType' found")
             return false
         }
+        log.i("onTopic3Callback:\(messageType)---:\(jsonDict)")
         switch(messageType){
         case 1:
             return onDeviceOnOffline(topicRcv,jsonDict)
@@ -831,6 +839,7 @@ class AWSMqtt{
                 }
                 else{
                     let succ = e == 0 ? true : false
+                    log.i("mqtt topic 注册完毕 \(topics)，失败率\(e)/\(topics.count)")
                     completion(succ,succ ? "注册topic成功" : "注册topic部分失败:失败率\(e)/\(topics.count)" )
                     self.syncRemoteRtcStatus()
                     //self.updateRemoteRtcStatus()
