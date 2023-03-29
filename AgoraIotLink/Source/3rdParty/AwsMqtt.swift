@@ -335,7 +335,7 @@ class AWSMqtt{
         else{
             action = .UnknownAction
             desc = "Unknown"
-            log.e("unknown action reason:\(reason)")
+            log.i("unknown action reason:\(reason)")
         }
         return (action,desc)
     }
@@ -413,7 +413,7 @@ class AWSMqtt{
               """)
         
         if(cfg.mqttLogLevel == 0){
-            AWSDDLog.sharedInstance.logLevel = .all
+            AWSDDLog.sharedInstance.logLevel = .debug
             AWSDDLog.add(AWSDDTTYLogger.sharedInstance)
         }
         
@@ -444,7 +444,7 @@ class AWSMqtt{
                                                                    endpoint: iotEndPoint,
                                                                    credentialsProvider: credentialsProvider)
         
-        let mqttConfig = AWSIoTMQTTConfiguration(keepAliveTimeInterval: 20.0,
+        let mqttConfig = AWSIoTMQTTConfiguration(keepAliveTimeInterval: 10.0,
                                              baseReconnectTimeInterval: 1.0,
                                          minimumConnectionTimeInterval: 20.0,
                                           maximumReconnectTimeInterval: 128.0,
@@ -463,7 +463,7 @@ class AWSMqtt{
     func connect(completion:@escaping(Bool,String)->Void){
         log.i("mqtt try connect ...")
         self.onConnect = completion
-        let ret = iotDataManager?.connectUsingWebSocket(withClientId: self.identityId, cleanSession: true, statusCallback: mqttConnEventCallback)
+        let ret = iotDataManager?.connectUsingWebSocket(withClientId: self.identityId, cleanSession: false, statusCallback: mqttConnEventCallback)
         if(ret != true){
             log.e("mqtt connect fail")
             completion(false,"mqtt connect fail")
@@ -672,6 +672,7 @@ class AWSMqtt{
     }
     //topic3 = "granwin/" + clientId + "/message"
     func onTopic3Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
+        log.i("onTopic3Callback:\(jsonDict)")
         var messageType = -1
         if let type = jsonDict["messageType"] as? Int{
             messageType = type
@@ -698,6 +699,7 @@ class AWSMqtt{
     }
     //topic4 = "$aws/things/" + clientId + "/shadow/name/rtc/update/accepted"
     func onTopic4Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
+        log.i("onTopic4Callback:\(jsonDict)")
         let version = jsonDict["version"] as? UInt
         guard let state = jsonDict["state"] as? [String:Any] else{
             log.e("mqtt no 'state' found for \(topicRcv)")
@@ -715,6 +717,7 @@ class AWSMqtt{
     }
     //topic5 = "$aws/things/" + clientId + "/shadow/name/rtc/get/accepted"
     func onTopic5Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
+        log.i("onTopic5Callback:\(jsonDict)")
         let version = jsonDict["version"] as? UInt
         guard let state = jsonDict["state"] as? [String:Any] else{
             log.e("mqtt no 'state' found for \(topicRcv)")
