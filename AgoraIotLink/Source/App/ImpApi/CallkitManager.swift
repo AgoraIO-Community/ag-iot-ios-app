@@ -119,6 +119,32 @@ class CallkitManager : ICallkitMgr{
         app.proxy.al.reqAnswer(agToken,req,traceId, cb)
     }
     
+    private func doCallHangupSync(result:@escaping(Int,String)->Void){
+        let sessionId = app.context.call.session.sessionId
+        let caller = app.context.call.session.caller
+        let callee = app.context.call.session.callee
+        let localId = app.context.gyiot.session.cert.thingName
+        let req = AgoraLab.Answer.Payload(sessionId: sessionId, calleeId: callee, callerId: caller,localId: localId, answer: 1)
+        let traceId:String = app.context.call.session.traceId
+        let cb = { (ec:Int,msg:String,data:[String : Any]?) in
+            if(ec != ErrCode.XOK){
+                log.e("call Hangup fail:\(msg)(\(ec)) caller:\(caller)  callee:\(callee)  local:\(localId)")
+            }
+            result(ec,msg)
+            self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
+        }
+        app.rule.trigger.local_join_watcher = {b in}
+        let agToken = app.context.aglab.session.accessToken
+        app.proxy.al.reqAnswerSync(agToken,req,traceId, cb)
+    }
+    
+    func callHangupSync(result:@escaping(Int,String)->Void){
+        log.i("call callHangup")
+        app.rule.trans(FsmCall.Event.LOCAL_HANGUP,
+                       {self.doCallHangupSync(result: {ec,msg in self.asyncResult(ec, msg, result)})},
+                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
+    }
+    
     func callHangup(result:@escaping(Int,String)->Void){
         log.i("call callHangup")
         app.rule.trans(FsmCall.Event.LOCAL_HANGUP,

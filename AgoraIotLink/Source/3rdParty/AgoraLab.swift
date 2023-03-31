@@ -74,6 +74,7 @@ class AgoraLab {
                     if(ret.code == 100001){
                         ec = ErrCode.XERR_CALLKIT_PEER_BUSY
                     }
+                    log.i("al reqCall resonse \(ret)")
                     rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
                 case .failure(let error):
                     log.e("al reqCall \(url) failed,detail:\(error) ")
@@ -111,6 +112,81 @@ class AgoraLab {
                     rsp(ErrCode.XERR_NETWORK,reqPayload.answer == 0 ? "answer fail" : "hangup fail",nil)
                 }
             }
+    }
+
+    func reqAnswerSync(_ token:String,_ reqPayload:Answer.Payload,_ traceId:String, _ rsp:@escaping (Int,String,[String:Any]?)->Void){
+        
+        let act = reqPayload.answer == 0 ? "accept" : "hangup"
+        
+        let header = Header()
+        let urlString = http + api.answer
+        guard let url = URL(string: urlString) else { return  }
+
+        let request = NSMutableURLRequest(url: url)
+        request.addValue("Application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("\(token)", forHTTPHeaderField: "Authorization")
+        request.addValue("\(header.traceId)", forHTTPHeaderField: "traceId")
+        request.addValue("\(header.timestamp)", forHTTPHeaderField: "timestamp")
+  
+        var jsonStr : String = ""
+        let dict = ["sessionId": reqPayload.sessionId, "calleeId": reqPayload.calleeId, "localId": reqPayload.localId, "callerId": reqPayload.callerId, "answer": reqPayload.answer] as [String : Any]
+        let paramsDic = ["payload":dict]
+
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: paramsDic, options: [])
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                jsonStr = jsonString
+                log.i("reqAnswer_jsonString:\(jsonString) ")
+            }
+        } catch {
+            print("Error converting dictionary to JSON: \(error.localizedDescription)")
+        }
+ 
+        request.httpMethod = "POST"
+        request.httpBody = jsonStr.data(using: .utf8)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        var resultData = [String:Any]()
+        let httpTask = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+
+            if error == nil {
+                guard let jsonData:[String:Any] = try? JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String : Any] else{
+                    log.i("reqAnswer--success,解析失败 ")
+                    return
+                }
+                log.i("reqAnswer--success \(jsonData) ")
+                resultData = jsonData
+                sleep(UInt32(0.5))
+                semaphore.signal()
+
+            }else{
+                log.e("al reqAnswer '\(act)' \(url) failed,detail:\(String(describing: error)) ")
+                semaphore.signal()
+            }
+        }
+        httpTask.resume()
+
+        semaphore.wait()
+        
+        if let success = resultData["success"] as? Bool,let code = resultData["code"] as? Int,let msg = resultData["msg"] as? String{
+            
+            if(code != 0){
+                log.w("al reqAnswer '\(act)' fail \(msg)(\(code)) from \(url)")
+            }
+            if(code == AgoraLab.tokenExpiredCode){
+                rsp(ErrCode.XERR_TOKEN_INVALID,msg,nil)
+                return
+            }
+            let op = reqPayload.answer == 0 ? "answer :" : "hangup:"
+            let ret = success ? "succ" : "fail("+String(code)+")"
+            
+            log.i("reqAnswer--success 成功返回")
+            rsp(code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,  op + ret, resultData["data"] as? [String:Any] )
+            
+        }else{
+            rsp(ErrCode.XERR_NETWORK,reqPayload.answer == 0 ? "answer fail" : "hangup fail",nil)
+        }
     }
 
 //    func reqLogin(_ username:String,_ password:String,rsp:@escaping(Int,String,LoginRspData?)->Void){

@@ -123,6 +123,12 @@ public protocol ICallkitMgr {
     func callHangup(result:@escaping(Int,String)->Void)
 
     /*
+     * @brief 挂断当前通话
+     * @param result: 调用该接口是否成功
+     */
+//    func callHangupSync(result:@escaping(Int,String)->Void)
+    
+    /*
      * @brief 接听当前来电
      * @param result     : 调用该接口是否成功
      * @param actionAck  : callAnswer 通话中的事件
