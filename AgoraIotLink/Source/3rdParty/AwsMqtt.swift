@@ -78,20 +78,11 @@ class DeveloperAuthenticatedIdentityProviderInChina: AWSCognitoCredentialsProvid
             return "cognito-identity.cn-north-1.amazonaws.com.cn";
         }
     }
-//    override func logins () -> AWSTask<NSDictionary> {
-//        let tokens : NSDictionary = ["cognito-identity.amazonaws.com": self._token]
-//        let t = tokens as NSDictionary
-//        return AWSTask<NSDictionary>(result: t)
-//    }
-//    override var identityProviderName: String{
-//        return self._identityProviderName
-//    }
+    
     override func getIdentityId() -> AWSTask<NSString> {
         return AWSTask<NSString>(result: self._vendorIdentityId as NSString?)
     }
-//    override var identityPoolId: String{
-//        get{return self.identityPoolId}
-//    }
+
     public var vendorIdentityId: String?{
         get{
             return _vendorIdentityId
@@ -177,6 +168,9 @@ class AWSMqtt{
     var deviceAlias:String = ""
     var subScribeWithClientCalled:Bool = false
     var credentialsProvider:AWSCognitoCredentialsProvider? = nil
+    
+    var curRtcUpdateVersion : UInt = 0
+    var curRtcGetVersion : UInt = 0
 
     fileprivate var listeners:[String:Listeners] = [String:Listeners]()
 
@@ -350,6 +344,8 @@ class AWSMqtt{
         let reason = r ?? 0
         let (action,desc) = getActionFromReason(reason: reason)
 
+        log.i("\(action)): action(\(desc))")
+        
         let sess = dictToSession(reason:reason, desired: desired,reported: reported)
         if let callStatus = desired["callStatus"] as? Int{
             switch callStatus{
@@ -586,6 +582,7 @@ class AWSMqtt{
     
     //topic2 = "$aws/things/+/shadow/get/+"
     func onTopic2Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
+        let version = jsonDict["version"] as? UInt
         guard let listener = self.listeners[topicRcv] else{
             log.w("mqtt \(topicRcv) no listener")
             return false
@@ -673,6 +670,7 @@ class AWSMqtt{
     //topic3 = "granwin/" + clientId + "/message"
     func onTopic3Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
         log.i("onTopic3Callback:\(jsonDict)")
+        let version = jsonDict["version"] as? UInt
         var messageType = -1
         if let type = jsonDict["messageType"] as? Int{
             messageType = type
@@ -700,7 +698,14 @@ class AWSMqtt{
     //topic4 = "$aws/things/" + clientId + "/shadow/name/rtc/update/accepted"
     func onTopic4Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
         log.i("onTopic4Callback:\(jsonDict)")
-        let version = jsonDict["version"] as? UInt
+        
+        guard let version = jsonDict["version"] as? UInt, version > curRtcUpdateVersion else{
+            log.i(" version error:\(jsonDict)")
+            return true
+        }
+        curRtcUpdateVersion = version
+        
+        
         guard let state = jsonDict["state"] as? [String:Any] else{
             log.e("mqtt no 'state' found for \(topicRcv)")
             return false
@@ -718,7 +723,13 @@ class AWSMqtt{
     //topic5 = "$aws/things/" + clientId + "/shadow/name/rtc/get/accepted"
     func onTopic5Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
         log.i("onTopic5Callback:\(jsonDict)")
-        let version = jsonDict["version"] as? UInt
+        
+        guard let version = jsonDict["version"] as? UInt, version > curRtcGetVersion else{
+            log.i(" version error:\(jsonDict)")
+            return true
+        }
+        curRtcGetVersion = version
+
         guard let state = jsonDict["state"] as? [String:Any] else{
             log.e("mqtt no 'state' found for \(topicRcv)")
             return false
@@ -740,6 +751,7 @@ class AWSMqtt{
             return true
         }
     }
+    
     func syncRemoteRtcStatus(){
         guard let iotDataManager = iotDataManager else {
             log.e("mqtt iotDataManager is nil")
@@ -997,6 +1009,7 @@ class AWSMqtt{
         }
     }
     
+    //获取设备属性的状态
     func getDeviceStatus(things_name:String,result: @escaping (Int, String,Dictionary<String, Any>?,Dictionary<String, Any>?)->Void){
         let topic = "$aws/things/" + things_name + "/shadow/get"
         
