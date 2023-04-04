@@ -337,6 +337,9 @@ class AWSMqtt{
         
     }
     private func onUpdateRtcStatus(version:UInt?,desired:[String:Any],reported:[String:Any]?){
+        
+        log.i("onUpdateRtcStatus:\(desired))")
+        
         let r = desired["reason"] as? Int
         if(r == nil){
             log.w("mqtt reason is nil,set to default 0")
@@ -345,20 +348,19 @@ class AWSMqtt{
         let (action,desc) = getActionFromReason(reason: reason)
 
         let sess = dictToSession(reason:reason, desired: desired,reported: reported)
-        log.i("onUpdateRtcStatus:\(action)): action(\(desc)) sess:(\(String(describing: sess)))")
         if let callStatus = desired["callStatus"] as? Int{
             switch callStatus{
             case 1: 
-                log.i("mqtt local idle(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))")
+                log.i("mqtt local idle(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))  sess:(\(String(describing: sess)))")
                 _onActionDesired(action,sess)
             case 2:
-                log.i("mqtt local calling(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))")
+                log.i("mqtt local calling(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))  sess:(\(String(describing: sess)))")
                 _onActionDesired(.CallOutgoing,sess)
             case 3:
-                log.i("mqtt remote calling(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))")
+                log.i("mqtt remote calling(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))  sess:(\(String(describing: sess)))")
                 _onActionDesired(.CallIncoming,sess)
             case 4: 
-                log.i("mqtt in talking(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))")
+                log.i("mqtt in talking(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))  sess:(\(String(describing: sess)))")
                 _onActionDesired(.RemoteAnswer,sess)
             default:
                 log.e("mqtt unknown state for callStatus:\(callStatus)")
