@@ -163,7 +163,7 @@ extension AgoraLab{
         init(traceId:String = ""){
             let timeInterval: TimeInterval = Date().timeIntervalSince1970
             timestamp = UInt64(round(timeInterval*1000))
-            self.traceId = traceId
+            self.traceId = "\(timestamp)"
         }
     }
     class AlertMessageDelete{

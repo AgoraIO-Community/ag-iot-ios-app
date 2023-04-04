@@ -57,12 +57,13 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         //let url = api.http_multicall + api.callV2
         let url = http + api.call
-        log.i("al reqCall \(req)")
+        log.i("Call： \(req)")
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
             .validate()
             .responseDecodable(of:Call.Rsp.self){(dataRsp:AFDataResponse<Call.Rsp>) in
                 switch dataRsp.result{
                 case .success(let ret):
+                    log.i("Call resonse: \(ret)")
                     if(ret.code != 0){
                         log.w("al reqCall rsp:'\(ret.msg)(\(ret.code))' from:\(url)")
                     }
@@ -74,7 +75,6 @@ class AgoraLab {
                     if(ret.code == 100001){
                         ec = ErrCode.XERR_CALLKIT_PEER_BUSY
                     }
-                    log.i("al reqCall resonse \(ret)")
                     rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
                 case .failure(let error):
                     log.e("al reqCall \(url) failed,detail:\(error) ")
@@ -89,15 +89,16 @@ class AgoraLab {
         let act = reqPayload.answer == 0 ? "accept" : "hangup"
         //let url = api.http_multicall + api.answerV2
         let url = http + api.answer
-        log.i("al reqAnswer '\(act)' by local:\(reqPayload.localId) with: callee:\(reqPayload.calleeId) by caller:\(reqPayload.callerId) sess:\(reqPayload.sessionId)")
+        log.i("reqAnswer '\(act)' by local:\(reqPayload.localId) with: callee:\(reqPayload.calleeId) by caller:\(reqPayload.callerId) sessionId:\(reqPayload.sessionId) header:\(header)")
         let headers : HTTPHeaders = ["Authorization":token]
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
             .validate()
             .responseDecodable(of:Answer.Rsp.self){(dataRsp:AFDataResponse<Answer.Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
+                    log.i("reqAnswer response : \(value)")
                     if(value.code != 0){
-                        log.w("al reqAnswer '\(act)' fail \(value.msg)(\(value.code)) from \(url)")
+                        log.w("reqAnswer '\(act)' fail \(value) msg:\(value.msg) code:(\(value.code)) from \(url)")
                     }
                     if(value.code == AgoraLab.tokenExpiredCode){
                         rsp(ErrCode.XERR_TOKEN_INVALID,value.msg,nil)
@@ -108,7 +109,7 @@ class AgoraLab {
                     
                     rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,  op + ret, value.data)
                 case .failure(let error):
-                    log.e("al reqAnswer '\(act)' \(url) failed,detail:\(error) ")
+                    log.e("reqAnswer response fail error  '\(act)' \(url) detail:\(error) ")
                     rsp(ErrCode.XERR_NETWORK,reqPayload.answer == 0 ? "answer fail" : "hangup fail",nil)
                 }
             }

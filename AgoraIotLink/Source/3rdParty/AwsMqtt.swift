@@ -344,9 +344,8 @@ class AWSMqtt{
         let reason = r ?? 0
         let (action,desc) = getActionFromReason(reason: reason)
 
-        log.i("\(action)): action(\(desc))")
-        
         let sess = dictToSession(reason:reason, desired: desired,reported: reported)
+        log.i("onUpdateRtcStatus:\(action)): action(\(desc)) sess:(\(String(describing: sess)))")
         if let callStatus = desired["callStatus"] as? Int{
             switch callStatus{
             case 1: 

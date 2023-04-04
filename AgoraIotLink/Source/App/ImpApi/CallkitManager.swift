@@ -49,7 +49,7 @@ class CallkitManager : ICallkitMgr{
     
     func register(incoming: @escaping (String,String, ActionAck) -> Void) {
         self._incoming = incoming
-        self._onPeerRinging = onCallOngoing
+//        self._onPeerRinging = onCallOngoing
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
     }
 
@@ -65,31 +65,31 @@ class CallkitManager : ICallkitMgr{
         self.app.context.call.session.cloudRecordStatus = sess.cloudRecordStatus
     }
     
-    private func onCallOngoing(ec:Int,msg:String,sess:CallSession?){
-        if(ec != ErrCode.XOK){
-            log.w("call onCallOngoing \(msg)(\(ec))")
-            self.app.context.call.session.callee = ""
-            self.app.context.call.session.caller = ""
-            self.app.rule.trans(ec == ErrCode.XERR_TIMEOUT ? FsmCall.Event.REMOTE_TIMEOUT :  FsmCall.Event.MQTT_ACK_ERROR)
-        }
-        else{
-            guard let sess = sess else{
-                log.e("call unknown error: nil session with \(ec),\(msg)")
-                self.app.rule.trans(FsmCall.Event.MQTT_ACK_ERROR)
-                return
-            }
-
-            onCallSessionUpdated(sess: sess)
-
-            self.app.rule.trans(
-                FsmCall.Event.REMOTE_RINGING,
-                {},
-                {
-                log.e("call state error from trans REMOTE_RINGING")
-                self.app.rule.trans(FsmCall.Event.STATUS_ERROR)
-            })
-        }
-    }
+//    private func onCallOngoing(ec:Int,msg:String,sess:CallSession?){
+//        if(ec != ErrCode.XOK){
+//            log.w("call onCallOngoing \(msg)(\(ec))")
+//            self.app.context.call.session.callee = ""
+//            self.app.context.call.session.caller = ""
+//            self.app.rule.trans(ec == ErrCode.XERR_TIMEOUT ? FsmCall.Event.REMOTE_TIMEOUT :  FsmCall.Event.MQTT_ACK_ERROR)
+//        }
+//        else{
+//            guard let sess = sess else{
+//                log.e("call unknown error: nil session with \(ec),\(msg)")
+//                self.app.rule.trans(FsmCall.Event.MQTT_ACK_ERROR)
+//                return
+//            }
+//
+//            onCallSessionUpdated(sess: sess)
+//
+//            self.app.rule.trans(
+//                FsmCall.Event.REMOTE_RINGING,
+//                {},
+//                {
+//                log.e("call state error from trans REMOTE_RINGING")
+//                self.app.rule.trans(FsmCall.Event.STATUS_ERROR)
+//            })
+//        }
+//    }
 
     private var app:Application
     private let rtc:RtcEngine
@@ -236,6 +236,9 @@ class CallkitManager : ICallkitMgr{
             self.app.rule.trans(FsmCall.Event.REMOTE_HANGUP)
         }
         else if(action == .RemoteAnswer){
+            self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
+                 log.i("all reqCall REMOTE_RINGING")
+            })
             self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
             log.i("call remote answered,waiting for remote join channel")
             if(sess == nil){
@@ -262,9 +265,9 @@ class CallkitManager : ICallkitMgr{
             self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
         }
         else if(action == .CallOutgoing){
-            self._onPeerRinging(ErrCode.XOK,"calling ...", sess)
+//            self._onPeerRinging(ErrCode.XOK,"calling ...", sess)
             self.onCallSessionUpdated(sess: sess!)
-            self._onPeerRinging = {e,m,s in }
+//            self._onPeerRinging = {e,m,s in }
         }
         else if(action == .LocalHangup){
             //no need to handle because LocalHangup by local
@@ -320,60 +323,60 @@ class CallkitManager : ICallkitMgr{
         
         let rcb = TimeCallback<(Int,String)>(cb:result)
         
-        let local_join_watcher : (FsmCall.Event)->Void = {event in
-            log.i("call local_join_watcher triggered")
-            if(event == FsmCall.Event.LOCAL_JOIN_FAIL){
-                rcb.invoke(args:(ErrCode.XERR_CALLKIT_DIAL,"join channel fail"))
-            }
-            else if(event == FsmCall.Event.REMOTE_ANSWER){
-                rcb.invoke(args: (ErrCode.XOK,"device answer"))
-                actionAck(.RemoteAnswer)
-            }
-            else if(event == FsmCall.Event.LOCAL_JOIN_SUCC){
-                rcb.invoke(args: (ErrCode.XOK,"device is ringing"))
-                let pacb = TimeCallback<ActionAck>(cb:actionAck)
-                pacb.schedule(time:self.app.config.calloutTimeOut,timeout: {
-                    log.i("call reqCall peerAction waitForAction timeout")
-                    self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
-                    actionAck(.RemoteTimeout)
-                })
-                self.app.proxy.mqtt.waitForActionDesired(actionDesired: {action,sess in
-                    log.i("call reqCall action ack:\(action.rawValue)")
-                    self.onActionDesired(action:action,sess: sess)
-                    pacb.invoke(args: action)
-                })
-            }
-        }
+//        let local_join_watcher : (FsmCall.Event)->Void = {event in
+//            log.i("call local_join_watcher triggered")
+//            if(event == FsmCall.Event.LOCAL_JOIN_FAIL){
+//                rcb.invoke(args:(ErrCode.XERR_CALLKIT_DIAL,"join channel fail"))
+//            }
+//            else if(event == FsmCall.Event.REMOTE_ANSWER){
+//                rcb.invoke(args: (ErrCode.XOK,"device answer"))
+//                actionAck(.RemoteAnswer)
+//            }
+//            else if(event == FsmCall.Event.LOCAL_JOIN_SUCC){
+//                rcb.invoke(args: (ErrCode.XOK,"device is ringing"))
+//                let pacb = TimeCallback<ActionAck>(cb:actionAck)
+//                pacb.schedule(time:self.app.config.calloutTimeOut,timeout: {
+//                    log.i("call reqCall peerAction waitForAction timeout")
+//                    self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
+//                    actionAck(.RemoteTimeout)
+//                })
+//                self.app.proxy.mqtt.waitForActionDesired(actionDesired: {action,sess in
+//                    log.i("call reqCall action ack:\(action.rawValue)")
+//                    self.onActionDesired(action:action,sess: sess)
+//                    pacb.invoke(args: action)
+//                })
+//            }
+//        }
 
         //1.wait_mqtt_ntf result
-        let pr = {(ec:Int,msg:String,sess:CallSession?) in
-            if(ec != ErrCode.XOK){
-                log.w("call waitForDidCalling \(msg)(\(ec))")
-                self.app.context.call.session.reset()
-                self.app.rule.trans(ec == ErrCode.XERR_TIMEOUT ? FsmCall.Event.REMOTE_TIMEOUT :  FsmCall.Event.MQTT_ACK_ERROR)
-                rcb.invoke(args: (ec,msg))
-            }
-            else{
-                guard let sess = sess else{
-                    log.e("call unknown error: nil session with \(ec),\(msg)")
-                    self.app.rule.trans(FsmCall.Event.MQTT_ACK_ERROR)
-                    rcb.invoke(args: (ErrCode.XERR_UNKNOWN,"unknown error"))
-                    return
-                }
-                
-                log.i("call reqCall remote shadow ringing session:\(sess.sessionId)")
-                self.onCallSessionUpdated(sess: sess)
-
-                self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
-                    log.i("all reqCall set local_join_watcher after mqtt ack")
-                    self.app.rule.trigger.local_join_watcher = local_join_watcher
-                    actionAck(.CallOutgoing)
-                },{
-                    log.e("call state error from trans REMOTE_RINGING")
-                    self.app.rule.trans(FsmCall.Event.STATUS_ERROR)
-                })
-            }
-        }
+//        let pr = {(ec:Int,msg:String,sess:CallSession?) in
+//            if(ec != ErrCode.XOK){
+//                log.w("call waitForDidCalling \(msg)(\(ec))")
+//                self.app.context.call.session.reset()
+//                self.app.rule.trans(ec == ErrCode.XERR_TIMEOUT ? FsmCall.Event.REMOTE_TIMEOUT :  FsmCall.Event.MQTT_ACK_ERROR)
+//                rcb.invoke(args: (ec,msg))
+//            }
+//            else{
+//                guard let sess = sess else{
+//                    log.e("call unknown error: nil session with \(ec),\(msg)")
+//                    self.app.rule.trans(FsmCall.Event.MQTT_ACK_ERROR)
+//                    rcb.invoke(args: (ErrCode.XERR_UNKNOWN,"unknown error"))
+//                    return
+//                }
+//
+//                log.i("call reqCall remote shadow ringing session:\(sess.sessionId)")
+//                self.onCallSessionUpdated(sess: sess)
+//
+//                self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
+//                    log.i("all reqCall set local_join_watcher after mqtt ack")
+//                    self.app.rule.trigger.local_join_watcher = local_join_watcher
+//                    actionAck(.CallOutgoing)
+//                },{
+//                    log.e("call state error from trans REMOTE_RINGING")
+//                    self.app.rule.trans(FsmCall.Event.STATUS_ERROR)
+//                })
+//            }
+//        }
         
         //1.query_agoraLab result
         let cbDial = { (ec:Int,msg:String,rsp:AgoraLab.Call.Rsp?) in
@@ -441,7 +444,7 @@ class CallkitManager : ICallkitMgr{
                 }
                 
                 log.i("call reqCall recv session data from agoraLab, waiting for shadow ring ack")
-                log.i("    sessionId:\(data.sessionId) uid:\(data.uid)")
+                log.i("call reqCall sessionId:\(data.sessionId) uid:\(data.uid) data:\(data)")
                 self.app.context.call.session.appId = data.appId
                 self.app.context.call.session.sessionId = data.sessionId
                 self.app.context.call.session.channelName = data.channelName
@@ -451,6 +454,7 @@ class CallkitManager : ICallkitMgr{
                         
                 self.app.rule.trans(FsmCall.Event.ACK_SUCC,{
                     actionAck(.CallForward)
+                    log.i("call reqCall CallForward")
                     rcb.schedule(time:self.app.config.calloutTimeOut,timeout: {
                         self._onPeerRinging = {e,m,s in }
                         log.i("call reqCall ring remote timeout")
@@ -467,7 +471,7 @@ class CallkitManager : ICallkitMgr{
             }
         }
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
-        self._onPeerRinging = pr
+//        self._onPeerRinging = pr
         let agToken = app.context.aglab.session.accessToken
         app.proxy.al.reqCall(agToken,req,traceId, cbDial)
     }
