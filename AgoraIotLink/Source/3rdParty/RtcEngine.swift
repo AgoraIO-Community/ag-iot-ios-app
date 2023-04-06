@@ -526,11 +526,11 @@ class RtcEngine : NSObject{
 //            result(ErrCode.XERR_BAD_STATE,"rtc state error")
 //            return
 //        }
-//        if(!peerEntered){
-//            log.w("rtc peer not entered for capture")
-//            result(ErrCode.XERR_BAD_STATE,"rtc peer not joined")
-//            return
-//        }
+        if(!peerEntered){
+            log.i("startRecord: rtc peer not entered for capture")
+            result(ErrCode.XERR_BAD_STATE,"rtc peer not joined")
+            return
+        }
     
         videoRecoredHanle(true)
         isRecording.setValue(true)
@@ -577,6 +577,11 @@ extension RtcEngine: AgoraRtcEngineDelegate{
         peerEntered = false
         _onPeerAction(.Leave,uid)
         _memberState(.Leave,[uid])
+        if (isRecording.getValue()){
+            stopRecord { code, msg in
+                log.i("didOfflineOfUid:stopRecord")
+            }
+        }
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoFrameOfUid uid: UInt, size: CGSize, elapsed: Int) {
