@@ -171,6 +171,10 @@ class AWSMqtt{
     
     var curRtcUpdateVersion : UInt = 0
     var curRtcGetVersion : UInt = 0
+    
+    //当前请求的时间戳
+    var curTimeStamp : Int = 0
+    
 
     fileprivate var listeners:[String:Listeners] = [String:Listeners]()
 
@@ -706,6 +710,18 @@ class AWSMqtt{
         }
         curRtcUpdateVersion = version
         
+        guard let timestamp = jsonDict["timestamp"] as? Int else{
+            log.i(" timestamp error:\(jsonDict)")
+            return true
+        }
+        
+        if curTimeStamp != 0,timestamp < curTimeStamp{
+            log.i(" timestamp:\(timestamp)")
+            log.i(" curTimeStamp:\(curTimeStamp)")
+            log.i(" onTopic4_timestamp_error")
+            return true
+        }
+        
         
         guard let state = jsonDict["state"] as? [String:Any] else{
             log.e("mqtt no 'state' found for \(topicRcv)")
@@ -730,6 +746,19 @@ class AWSMqtt{
             return true
         }
         curRtcGetVersion = version
+        
+        guard let timestamp = jsonDict["timestamp"] as? Int else{
+            log.i(" timestamp error:\(jsonDict)")
+            return true
+        }
+        
+        if curTimeStamp != 0,timestamp < curTimeStamp{
+            log.i(" timestamp:\(timestamp)")
+            log.i(" curTimeStamp:\(curTimeStamp)")
+            log.i(" onTopic5_timestamp_error")
+            return true
+        }
+        
 
         guard let state = jsonDict["state"] as? [String:Any] else{
             log.e("mqtt no 'state' found for \(topicRcv)")

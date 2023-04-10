@@ -21,6 +21,63 @@ class AgoraLab {
         self.http = http
     }
 
+    func resetDevice(_ deviceId:String, _ appId:String,_ token:String, _ rsp:@escaping(Int,String)->Void){
+        
+        let header = Header()
+        
+        let nodePayload = AgoraLab.ResetDevice.Payload(deviceId: deviceId, appId: appId)
+        let paramsDic = AgoraLab.ResetDevice.Req(header: header, payload: nodePayload)
+        
+        let headers : HTTPHeaders = ["Authorization":token]
+        
+        let url = http + api.resetDevice
+
+        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: headers)
+            .validate()
+            .responseDecodable(of:ResetDevice.Rsp.self){(dataRsp:AFDataResponse<ResetDevice.Rsp>) in
+            URLCache.shared.removeAllCachedResponses()
+            switch dataRsp.result{
+            case .success(let ret):
+                if(ret.code != 0){
+                    log.e("3rd resetPassword fail \(ret.msg)(\(ret.code))")
+                }
+                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
+            case .failure(let error):
+                log.e("3rd resetPassword \(url) , detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
+            }
+        }
+    }
+    
+    func publicKeySet(_ userId:String, _ publicKey:String,_ token:String, _ rsp:@escaping(Int,String)->Void){
+        
+        let header = Header()
+        
+        let nodePayload = AgoraLab.PublicKeySet.Payload(userId: userId, publicKey:publicKey )
+        let paramsDic = AgoraLab.PublicKeySet.Req(header: header, payload: nodePayload)
+        
+        let headers : HTTPHeaders = ["Authorization":token]
+        
+        let url = http + api.publicKeySet
+        log.i("publicKeySet：url: \(url) param:\(paramsDic)")
+
+        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: headers)
+            .validate()
+            .responseDecodable(of:PublicKeySet.Rsp.self){(dataRsp:AFDataResponse<PublicKeySet.Rsp>) in
+            URLCache.shared.removeAllCachedResponses()
+            switch dataRsp.result{
+            case .success(let ret):
+                if(ret.code != 0){
+                    log.e(" publicKeySet fail \(ret.msg)(\(ret.code))")
+                }
+                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
+            case .failure(let error):
+                log.e(" publicKeySet \(url) , detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
+            }
+        }
+    }
+    
     func reqUploadIcon(_ token:String,_ image:UIImage,_ traceId:String, _ rsp:@escaping(Int,String,String?)->Void){
         let url = http + api.uploadHeadIcon
         //let httpHeaders = HTTPHeaders([:])
@@ -55,7 +112,6 @@ class AgoraLab {
         let header = Header(traceId: traceId)
         let req = Call.Req(header: header, payload: reqPayload)
         let headers : HTTPHeaders = ["Authorization":token]
-        //let url = api.http_multicall + api.callV2
         let url = http + api.call
         log.i("Call： \(req)")
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
@@ -72,8 +128,11 @@ class AgoraLab {
                         return
                     }
                     var ec = ErrCode.XERR_API_RET_FAIL
-                    if(ret.code == 100001){
+                    if(ret.code == 100001){//对端忙
                         ec = ErrCode.XERR_CALLKIT_PEER_BUSY
+                    }
+                    if(ret.code == 100005){
+                        ec = ErrCode.XERR_CALLKIT_LOCAL_BUSY
                     }
                     rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
                 case .failure(let error):
@@ -84,13 +143,13 @@ class AgoraLab {
     }
 
     func reqAnswer(_ token:String,_ reqPayload:Answer.Payload,_ traceId:String, _ rsp:@escaping (Int,String,Answer.Data?)->Void){
-        let header = Header()
+        let header = Header.init(traceId: traceId)
         let req = Answer.Req(header: header, payload: reqPayload)
         let act = reqPayload.answer == 0 ? "accept" : "hangup"
-        //let url = api.http_multicall + api.answerV2
         let url = http + api.answer
-        log.i("reqAnswer '\(act)' by local:\(reqPayload.localId) with: callee:\(reqPayload.calleeId) by caller:\(reqPayload.callerId) sessionId:\(reqPayload.sessionId) header:\(header)")
+        log.i("reqAnswer param: '\(act)' sessionId:\(reqPayload.sessionId) callee:\(reqPayload.calleeId) caller:\(reqPayload.callerId) header:\(header)")
         let headers : HTTPHeaders = ["Authorization":token]
+        
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
             .validate()
             .responseDecodable(of:Answer.Rsp.self){(dataRsp:AFDataResponse<Answer.Rsp>) in
@@ -1056,6 +1115,60 @@ class AgoraLab {
                     }
     }
 }
+
+let group = DispatchGroup()
+extension AgoraLab{
+    
+//    func reqCallNew(_ token:String, _ reqPayload:Call.Payload,_ traceId:String, _ rsp:@escaping (Int,String,Call.Rsp?)->Void){
+//        
+//        group.enter()
+//        let header = Header(traceId: traceId)
+//        let req = Call.Req(header: header, payload: reqPayload)
+//        let headers : HTTPHeaders = ["Authorization":token]
+//        let url = http + api.call
+//        log.i("Call： \(req)")
+//        AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
+//            .validate()
+//            .responseDecodable(of:Call.Rsp.self){(dataRsp:AFDataResponse<Call.Rsp>) in
+//                switch dataRsp.result{
+//                case .success(let ret):
+//                    log.i("Call resonse: \(ret)")
+//                    sleep(3)
+//                    group.leave()
+//                    if(ret.code != 0){
+//                        log.w("al reqCall rsp:'\(ret.msg)(\(ret.code))' from:\(url)")
+//                    }
+//                    if(ret.code == AgoraLab.tokenExpiredCode){
+//                        rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
+//                        return
+//                    }
+//                    var ec = ErrCode.XERR_API_RET_FAIL
+//                    if(ret.code == 100001){//对端忙
+//                        ec = ErrCode.XERR_CALLKIT_PEER_BUSY
+//                    }
+//                    if(ret.code == 100005){
+//                        ec = ErrCode.XERR_CALLKIT_LOCAL_BUSY
+//                    }
+//                    rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
+//                case .failure(let error):
+//                    group.leave()
+//                    log.e("al reqCall \(url) failed,detail:\(error) ")
+//                    rsp(ErrCode.XERR_NETWORK,"dial number fail",nil)
+//                }
+//            }
+//        
+//        group.notify(queue: .main) {
+//            // 所有异步请求完成，可以继续执行后续逻辑了
+//            log.i("呼叫请求完成了666")
+//        }
+//    }
+    
+}
+
+
+
+
+
 /* test code
  
  .responseString(completionHandler: {(response) in

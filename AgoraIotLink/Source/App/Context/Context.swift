@@ -110,6 +110,46 @@ class CallKitSession{
     }
 }
 
+class CallKitLastSession{
+    
+    var talkingId = 0//当前呼叫id
+    var stopSuc = true//是否挂断成功
+    
+    var appId = ""
+    var traceId = ""
+    var sessionId = ""
+    var channelName = ""
+    var uid:UInt = 0
+    var peerId:UInt = 0
+    var rtcToken = ""
+    var callee = ""
+    var caller = ""
+    var cloudRecordStatus:Int = 0
+    var deviceAlias:String = ""
+    //var peerAccount = CallKitAccount()
+    private var _rtc:RtcSession = RtcSession()
+    var rtc:RtcSession{get{return _rtc}}
+    
+    func reset(){
+        
+        talkingId = 0//当前呼叫id
+        stopSuc = true//是否挂断成功
+        
+        appId = ""
+        sessionId = ""
+        channelName = ""
+        uid = 0
+        peerId = 0
+        rtcToken = ""
+        callee = ""
+        caller = ""
+        cloudRecordStatus = 0
+        deviceAlias = ""
+        rtc.pairing.uid = 0
+        rtc.pairing.view = nil
+    }
+}
+
 struct CallKitSetting{
     var dimension = AgoraVideoDimension640x360
     var frameRate = AgoraVideoFrameRate.fps15
@@ -220,10 +260,12 @@ struct PlayerContext{
 
 struct CallKitContext{
     private var _session = CallKitSession()
+    private var _lastSession = CallKitLastSession()
     private var _setting = CallKitSetting()
     
     var setting:CallKitSetting{get{return _setting} set{_setting = newValue}}
     var session:CallKitSession{get{return _session} set{_session = newValue}}
+    var lastSession:CallKitLastSession{get{return _lastSession} set{_lastSession = newValue}}
 }
 
 struct RtmKitContext{
@@ -317,6 +359,7 @@ class IotLinkContext{
 
 class Context{
     private var _virtualNumber:String = ""
+    private var _account:String = ""
     private var _push:PushNtfContext = PushNtfContext()
     private var _call:CallKitContext = CallKitContext()
     private var _player:PlayerContext = PlayerContext()
@@ -336,7 +379,7 @@ class Context{
     var rtm:RtmKitContext{get{return _rtm}set{_rtm = newValue}}
     var devices:[IotDevice]{get{return _devices}set{_devices = newValue}}
     var products:[ProductInfo]?{get{return _products}set{_products = newValue}}
-    //var account:String{get{return _account}set{_account = newValue}}
+    var account:String{get{return _account}set{_account = newValue}}
     var virtualNumber:String{get{return _virtualNumber}set{_virtualNumber = newValue}}
     var callbackFilter:(Int,String)->(Int,String){get{return _callBackFilter}set{_callBackFilter = newValue}}
 }

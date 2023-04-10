@@ -256,13 +256,37 @@ class AccountManager : IAccountMgr{
         let rear = pool_identifier.substring(from: last + 1)
         let thingName = certId + "-" + rear
         
-        //self.app.context.account = data.account
+        self.app.context.account = data.account
         self.app.context.virtualNumber = thingName
         self.app.context.gyiot.session.cert.thingName = thingName
         self.rule.trans(.LOGIN_SUCC,
                         {result(ErrCode.XOK,"succ")}
                         )//{result(ErrCode.XERR_BAD_STATE,"state error")}
         
+        resetDevice()
+        
+    }
+    
+    func resetDevice(){
+        let deviceId = self.app.context.gyiot.session.cert.thingName
+        let appid = self.app.config.appId
+        let agToken = app.context.aglab.session.accessToken
+        self.app.proxy.al.resetDevice(deviceId, appid, agToken) { code, msg in
+            log.i("---resetDevice--\(code):--\(msg)")
+        }
+        
+    }
+    
+    func publicKeySet(publicKey:String, _ result:@escaping (Int,String)->Void){
+        let uid =  self.app.context.gyiot.session.cert.thingName
+        let agToken = app.context.aglab.session.accessToken
+        let cb = { (ec:Int,msg:String) in
+            if(ec != ErrCode.XOK){
+                log.e("publicKeySet fail:\(ec):\(msg)")
+            }
+            result(ec,msg)
+        }
+        self.app.proxy.al.publicKeySet(uid,publicKey,agToken,cb)
     }
     
    private var onLogoutResult:()->Void = {}

@@ -70,13 +70,9 @@ class CallListener : FsmCall.IListener{
     }
     
     func on_callHangup(_ srcEvent: FsmCall.Event) {
-        log.i("listener call.on_callHangup")
-//        app.rule.trans(FsmCall.Event.LOCAL_HANGUP,
-//                       {self.app.callkitMgr.doCallHangup(result: {ec,msg in
-//            log.i("reqCall auto hangup locally by CallListener:\(msg)(\(ec))")
-//        })})
-        self.app.callkitMgr.callHangup(result: {ec,msg in
-            log.i("reqCall auto hangup locally by CallListener:\(msg)(\(ec))")
+        log.i("listener auto call.on_callHangup")
+        self.app.callkitMgr.doCallHangupInter(result: {ec,msg in
+            log.i("auto hangup locally by CallListener:\(msg)(\(ec))")
         })
     }
     

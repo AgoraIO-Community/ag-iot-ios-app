@@ -305,6 +305,10 @@ extension RtmEngine : AgoraRtmDelegate{
         }
     }
     
+    func rtmKit(_ kit: AgoraRtmKit, peersOnlineStatusChanged onlineStatus: [AgoraRtmPeerOnlineStatus]) {
+        
+    }
+    
     func rtmKitTokenDidExpire(_ kit: AgoraRtmKit) {
         log.e("rtm rtmKitTokenDidExpire")
         DispatchQueue.main.async {

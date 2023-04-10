@@ -53,6 +53,11 @@ extension AgoraLab{
         static let uploadHeadIcon =     "/file-system/image/v1/uploadFile"
         static let getImageUrl =        "/file-system/image-record/v1/getByImageId"
         static let getVideoUrl =        "/cloud-recorder/video-record/v1/getByTimePoint"
+        
+        //重置设备
+        static let  resetDevice = "/call-service/v1/reset"
+        //设置用户公钥
+        static let  publicKeySet = "/oauth/public-key/set"
     }
 
     static let tokenExpiredCode = 401
@@ -76,6 +81,46 @@ extension AgoraLab{
         let msg:String
         let timestamp:UInt64
         let success:Bool
+    }
+    
+    class ResetDevice{
+        
+        struct Payload : Encodable{
+            let deviceId:String
+            let appId:String
+        }
+        struct Req : Encodable{
+            let header:Header
+            let payload:Payload
+        }
+        
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+        }
+        
+    }
+    
+    class PublicKeySet{
+        
+        struct Payload : Encodable{
+            let userId:String
+            let publicKey:String
+        }
+        struct Req : Encodable{
+            let header:Header
+            let payload:Payload
+        }
+        
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+        }
+        
     }
     
     class Login{
@@ -163,7 +208,12 @@ extension AgoraLab{
         init(traceId:String = ""){
             let timeInterval: TimeInterval = Date().timeIntervalSince1970
             timestamp = UInt64(round(timeInterval*1000))
-            self.traceId = "\(timestamp)"
+            
+            if traceId == ""{
+                self.traceId = "\(timestamp)"
+            }else{
+                self.traceId = traceId
+            }
         }
     }
     class AlertMessageDelete{

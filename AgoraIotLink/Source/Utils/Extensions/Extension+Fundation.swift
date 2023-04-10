@@ -49,6 +49,13 @@ public extension Formatter {
 }
 
 public extension String {
+    
+    static func dateTimeRounded()->Int {
+        let timeInterval: TimeInterval = Date().timeIntervalSince1970
+        let timestamp = Int(timeInterval) //Int((timeInterval * 1000.0).rounded())
+        return timestamp
+    }
+    
     var dateFromISO8601: Date? {
         return Formatter.iso8601.date(from: self)
     }

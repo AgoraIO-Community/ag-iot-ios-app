@@ -213,6 +213,13 @@ public protocol IAccountMgr{
      */
     //func login(account: String, password: String,result:@escaping (Int,String)->Void)
     func login(param:LoginParam,result:@escaping(Int,String)->Void)
+    
+    /*
+     * @brief 设置公钥，触发 result() 回调
+     * @param publicKey : 公钥内容
+     */
+    func publicKeySet(publicKey:String, _ result:@escaping (Int,String)->Void)
+    
 }
 
 
