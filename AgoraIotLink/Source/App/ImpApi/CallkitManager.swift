@@ -42,6 +42,7 @@ class CallkitManager : ICallkitMgr{
     }
     
     typealias InComing = (String,String,ActionAck)->Void
+    typealias resultCallback = (Int,String)->Void
     var _incoming:InComing = {callerId,msg,calling in log.w("'incoming' callback not registered,please register it with 'CallkitManager'")}
     private var _onCallIncoming:(CallSession)->Void = {s in log.w("mqtt _onCallIncoming not inited")}
     
@@ -111,6 +112,7 @@ class CallkitManager : ICallkitMgr{
         if self.app.context.call.lastSession.sessionId == "" && self.app.context.call.lastSession.talkingId != 0{
             self.app.context.call.lastSession.stopSuc = false
             result(-10002,"param empty")
+            app.rule.trigger.local_join_watcher = {b in}
             self.app.rule.trans(FsmCall.Event.LOCAL_HANGUP_FAIL)
             log.i("doCallHangup_fail_stopSuc=false: sessionId:\(app.context.call.session.sessionId)")
             return
@@ -197,6 +199,7 @@ class CallkitManager : ICallkitMgr{
     
     func callHangup(result:@escaping(Int,String)->Void){
         log.i("call callHangup")
+        callRcbTime?.invalidate()
         app.rule.trans(FsmCall.Event.LOCAL_HANGUP,
                        {self.doCallHangup(isCuHp:true,result: {ec,msg in self.asyncResult(ec, msg, result)})}
                        ,{self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)}
@@ -359,6 +362,7 @@ class CallkitManager : ICallkitMgr{
         }
     }
     
+    private var  callRcbTime : TimeCallback<(Int,String)>? = nil
     private func doCallDial(deviceId:String,attachMsg:String,result:@escaping(Int,String)->Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?){
         let appId = app.config.appId
         app.context.call.session.caller = app.context.gyiot.session.cert.thingName
@@ -382,35 +386,36 @@ class CallkitManager : ICallkitMgr{
         app.rule.trigger.remote_state_watcher = { s in
             actionAck(s)
         }
+ 
+        callRcbTime = TimeCallback<(Int,String)>(cb:result)
         
-        let rcb = TimeCallback<(Int,String)>(cb:result)
-        
-        let local_join_watcher : (FsmCall.Event)->Void = {event in
+        let local_join_watcher : (FsmCall.Event)->Void = {[weak self] event in
             log.i("call local_join_watcher triggered")
             if(event == FsmCall.Event.LOCAL_JOIN_FAIL){
-                rcb.invoke(args:(ErrCode.XERR_CALLKIT_DIAL,"join channel fail"))
+                self?.callRcbTime?.invoke(args:(ErrCode.XERR_CALLKIT_DIAL,"join channel fail"))
             }
             else if(event == FsmCall.Event.REMOTE_ANSWER){
-                rcb.invoke(args: (ErrCode.XOK,"device answer"))
+                self?.callRcbTime?.invoke(args: (ErrCode.XOK,"device answer"))
                 actionAck(.RemoteAnswer)
             }
             else if(event == FsmCall.Event.LOCAL_JOIN_SUCC){
-                rcb.invoke(args: (ErrCode.XOK,"device is ringing"))
+                self?.callRcbTime?.invoke(args: (ErrCode.XOK,"device is ringing"))
                 let pacb = TimeCallback<ActionAck>(cb:actionAck)
-                pacb.schedule(time:self.app.config.calloutTimeOut,timeout: {
+                pacb.schedule(time:self?.app.config.calloutTimeOut ?? 15,timeout: {
                     log.i("call reqCall peerAction waitForAction timeout")
-                    self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
+                    self?.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
                     actionAck(.RemoteTimeout)
                 })
-                self.app.proxy.mqtt.waitForActionDesired(actionDesired: {action,sess in
+                self?.app.proxy.mqtt.waitForActionDesired(actionDesired: {action,sess in
                     log.i("call reqCall action ack:\(action.rawValue)")
-                    self.onActionDesired(action:action,sess: sess)
+                    self?.onActionDesired(action:action,sess: sess)
                     pacb.invoke(args: action)
                 })
             }
         }
-        
+
         self.app.rule.trigger.local_join_watcher = local_join_watcher
+        
 
         //1.wait_mqtt_ntf result
 //        let pr = {(ec:Int,msg:String,sess:CallSession?) in
@@ -530,7 +535,7 @@ class CallkitManager : ICallkitMgr{
                 self.app.rule.trans(FsmCall.Event.ACK_SUCC,{
                     actionAck(.CallForward)
                     log.i("call reqCall CallForward")
-                    rcb.schedule(time:self.app.config.calloutTimeOut,timeout: {
+                    self.callRcbTime?.schedule(time:self.app.config.calloutTimeOut,timeout: {
                         self._onPeerRinging = {e,m,s in }
                         log.i("call reqCall ring remote timeout")
                         self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT,{
@@ -649,4 +654,16 @@ class CallkitManager : ICallkitMgr{
     func getNetworkStatus() -> RtcNetworkStatus {
         return self.app.proxy.rtc.getNetworkStatus()
     }
+}
+
+extension CallkitManager {
+    
+    //重置设备状态
+    private func resetDevice(_ rsp:@escaping(Int,String)->Void){
+        let deviceId = self.app.context.gyiot.session.cert.thingName
+        let appid = self.app.config.appId
+        let agToken = app.context.aglab.session.accessToken
+        self.app.proxy.al.resetDevice(deviceId, appid, agToken, rsp)
+    }
+    
 }

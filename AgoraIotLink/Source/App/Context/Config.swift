@@ -22,7 +22,7 @@ class Config {
     
     var logFilePath : String? = nil
     
-    let calloutTimeOut:Double = 40
+    let calloutTimeOut:Double = 15
     var appId:String{get{return _appId}set{_appId = newValue}}
     
     var agoraServerUrl:String = "" 
