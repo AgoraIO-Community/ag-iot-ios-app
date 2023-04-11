@@ -111,8 +111,12 @@ class CallkitManager : ICallkitMgr{
         
         if self.app.context.call.lastSession.sessionId == "" && self.app.context.call.lastSession.talkingId != 0{
             self.app.context.call.lastSession.stopSuc = false
+            self.app.context.call.lastSession.talkingId = 0
             result(-10002,"param empty")
             app.rule.trigger.local_join_watcher = {b in}
+            self.app.proxy.mqtt.waitForActionDesired { ack, sess in
+                log.i("waitForActionDesired 置空: \(ack.rawValue)")
+            }
             self.app.rule.trans(FsmCall.Event.LOCAL_HANGUP_FAIL)
             log.i("doCallHangup_fail_stopSuc=false: sessionId:\(app.context.call.session.sessionId)")
             return
@@ -122,7 +126,12 @@ class CallkitManager : ICallkitMgr{
         var caller = app.context.call.session.caller
         var localId = app.context.gyiot.session.cert.thingName
         var callee = app.context.call.session.callee
+        
+        app.context.call.lastSession.lastSessionId = app.context.call.session.sessionId
+        self.app.context.call.lastSession.talkingId = 0
+        
         if isCuHp == false{
+            log.i("doCallHangup isCuHp == false")
             sessionId = app.context.call.lastSession.sessionId
             caller = app.context.call.lastSession.caller
             localId = app.context.call.lastSession.caller
@@ -141,6 +150,9 @@ class CallkitManager : ICallkitMgr{
             self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
         }
         app.rule.trigger.local_join_watcher = {b in}
+        self.app.proxy.mqtt.waitForActionDesired { ack, sess in
+            log.i("waitForActionDesired 置空: \(ack.rawValue)")
+        }
         let agToken = app.context.aglab.session.accessToken
         app.proxy.al.reqAnswer(agToken,req,"\(traceId)", cb)
     }
@@ -280,6 +292,9 @@ class CallkitManager : ICallkitMgr{
             self.app.rule.trans(FsmCall.Event.REMOTE_HANGUP)
         }
         else if(action == .RemoteAnswer){
+            
+            if self.app.context.call.lastSession.talkingId == 0 { return }
+            
             self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
                  log.i("all reqCall REMOTE_RINGING")
             })
@@ -309,6 +324,7 @@ class CallkitManager : ICallkitMgr{
             self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
         }
         else if(action == .CallOutgoing){
+            if self.app.context.call.lastSession.talkingId == 0 { return  }
 //            self._onPeerRinging(ErrCode.XOK,"calling ...", sess)
             self.onCallSessionUpdated(sess: sess!)
 //            self._onPeerRinging = {e,m,s in }
@@ -352,11 +368,13 @@ class CallkitManager : ICallkitMgr{
 
     private func judegLastCall(deviceId:String,attachMsg:String,result:@escaping(Int,String)->Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?){
         if app.context.call.lastSession.sessionId != ""{
-            self.doCallHangup(isCuHp: false, result: {[weak self] code, msg in
-                log.i("judegLastCall:doCallHangup code:\(code) msg:\(msg)")
+            self.resetDevice {[weak self] code, msg in
+                log.i("judegLastCall:resetDevice code:\(code) msg:\(msg)")
                 self?.app.context.call.lastSession.reset()
-                self?.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
-            })
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                    self?.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
+                }
+            }
         }else{
             self.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
         }
@@ -554,6 +572,7 @@ class CallkitManager : ICallkitMgr{
 //        self._onPeerRinging = pr
         let agToken = app.context.aglab.session.accessToken
         app.proxy.al.reqCall(agToken,req,"\(traceId)", cbDial)
+        
     }
     
     func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?) {

@@ -114,6 +114,7 @@ class CallKitLastSession{
     
     var talkingId = 0//当前呼叫id
     var stopSuc = true//是否挂断成功
+    var lastSessionId = ""
     
     var appId = ""
     var traceId = ""
@@ -137,6 +138,7 @@ class CallKitLastSession{
         
         appId = ""
         sessionId = ""
+        lastSessionId = ""
         channelName = ""
         uid = 0
         peerId = 0
