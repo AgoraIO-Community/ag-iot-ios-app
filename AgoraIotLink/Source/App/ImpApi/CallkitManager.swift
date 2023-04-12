@@ -25,6 +25,7 @@ class CallSession{
 }
 
 class CallkitManager : ICallkitMgr{
+    
     private func asyncResult(_ ec:Int,_ msg:String,_ result:@escaping(Int,String)->Void) {
         DispatchQueue.main.async {
             let filter = self.app.context.callbackFilter
@@ -99,6 +100,7 @@ class CallkitManager : ICallkitMgr{
 
     private var app:Application
     private let rtc:RtcEngine
+    var isCallRet = true
     
     init(app:Application){
         self.app = app
@@ -107,7 +109,7 @@ class CallkitManager : ICallkitMgr{
     }
     
     //挂断
-    private func doCallHangup(isCuHp:Bool = true, result:@escaping(Int,String)->Void){
+    private func doCallHangup(result:@escaping(Int,String)->Void){
         
         if self.app.context.call.lastSession.sessionId == "" && self.app.context.call.lastSession.talkingId != 0{
             self.app.context.call.lastSession.stopSuc = false
@@ -130,13 +132,6 @@ class CallkitManager : ICallkitMgr{
         app.context.call.lastSession.lastSessionId = app.context.call.session.sessionId
         self.app.context.call.lastSession.talkingId = 0
         
-        if isCuHp == false{
-            log.i("doCallHangup isCuHp == false")
-            sessionId = app.context.call.lastSession.sessionId
-            caller = app.context.call.lastSession.caller
-            localId = app.context.call.lastSession.caller
-            callee = app.context.call.lastSession.callee
-        }
         
         let req = AgoraLab.Answer.Payload(sessionId: sessionId, calleeId: callee, callerId: caller,localId: localId, answer: 1)
         let traceId:Int = String.dateTimeRounded()
@@ -213,7 +208,7 @@ class CallkitManager : ICallkitMgr{
         log.i("call callHangup")
         callRcbTime?.invalidate()
         app.rule.trans(FsmCall.Event.LOCAL_HANGUP,
-                       {self.doCallHangup(isCuHp:true,result: {ec,msg in self.asyncResult(ec, msg, result)})}
+                       {self.doCallHangup(result: {ec,msg in self.asyncResult(ec, msg, result)})}
                        ,{self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)}
         )
     }
@@ -376,7 +371,11 @@ class CallkitManager : ICallkitMgr{
                     self?.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
                 }
             }
-        }else{
+        }else if app.context.call.lastSession.sessionId == "",self.isCallRet == false{
+            log.i("judegLastCall:___上次呼叫未通___)")
+            result(ErrCode.XERR_CALLKIT_DIAL,"call error")
+        }
+        else{
             self.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
         }
     }
@@ -399,6 +398,7 @@ class CallkitManager : ICallkitMgr{
         app.context.call.lastSession.caller = app.context.gyiot.session.cert.thingName
         app.context.call.lastSession.callee = deviceId
         self.app.proxy.mqtt.curTimeStamp = traceId
+        self.isCallRet = false
         //留存当前呼叫的信息------
         
         app.rule.trigger.member_state_watcher = memberState
@@ -470,6 +470,9 @@ class CallkitManager : ICallkitMgr{
         let cbDial = { (ec:Int,msg:String,rsp:AgoraLab.Call.Rsp?) in
    
             if(ec == ErrCode.XOK){
+                
+                self.isCallRet = true
+                
                 guard let rsp = rsp else{
                     log.e("call callDial ret XOK, but rsp is nil")
                     result(ErrCode.XERR_CALLKIT_DIAL,"param error")
@@ -545,7 +548,7 @@ class CallkitManager : ICallkitMgr{
                 
                 //------如果有未挂断的，则进行挂断------
                 if  self.app.context.call.lastSession.stopSuc == false && self.app.context.call.lastSession.talkingId == 0 {
-                    self.doCallHangup(isCuHp: true) { code, msg in
+                    self.doCallHangup { code, msg in
                         log.i("redoCallHangup code:\(code) msg:\(msg)")
                     }
                 }
