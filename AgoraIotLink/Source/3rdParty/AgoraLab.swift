@@ -113,7 +113,7 @@ class AgoraLab {
         let req = Call.Req(header: header, payload: reqPayload)
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.call
-        log.i("Call： \(req)")
+        log.i("Call：param： \(req) token:\(token)")
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
             .validate()
             .responseDecodable(of:Call.Rsp.self){(dataRsp:AFDataResponse<Call.Rsp>) in
@@ -147,7 +147,7 @@ class AgoraLab {
         let req = Answer.Req(header: header, payload: reqPayload)
         let act = reqPayload.answer == 0 ? "accept" : "hangup"
         let url = http + api.answer
-        log.i("reqAnswer param: '\(act)' sessionId:\(reqPayload.sessionId) callee:\(reqPayload.calleeId) caller:\(reqPayload.callerId) header:\(header)")
+        log.i("reqAnswer param: '\(act)' sessionId:\(reqPayload.sessionId) callee:\(reqPayload.calleeId) caller:\(reqPayload.callerId) header:\(header) token:\(token)")
         let headers : HTTPHeaders = ["Authorization":token]
         
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
