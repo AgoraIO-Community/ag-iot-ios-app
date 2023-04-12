@@ -16,6 +16,10 @@ extension Date{
 }
 
 class AgoraLab {
+    
+    // http过滤状态码
+    let acceptableStatusCodes = Array(200..<300) + [401, 404]
+    
     private var http:String
     init(http:String){
         self.http = http
@@ -33,7 +37,7 @@ class AgoraLab {
         let url = http + api.resetDevice
 
         AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: headers)
-            .validate()
+            .validate(statusCode: acceptableStatusCodes)
             .responseDecodable(of:ResetDevice.Rsp.self){(dataRsp:AFDataResponse<ResetDevice.Rsp>) in
             URLCache.shared.removeAllCachedResponses()
             switch dataRsp.result{
@@ -62,7 +66,7 @@ class AgoraLab {
         log.i("publicKeySet：url: \(url) param:\(paramsDic)")
 
         AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: headers)
-            .validate()
+            .validate(statusCode: acceptableStatusCodes)
             .responseDecodable(of:PublicKeySet.Rsp.self){(dataRsp:AFDataResponse<PublicKeySet.Rsp>) in
             URLCache.shared.removeAllCachedResponses()
             switch dataRsp.result{
@@ -115,7 +119,7 @@ class AgoraLab {
         let url = http + api.call
         log.i("Call：param： \(req) token:\(token)")
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
-            .validate()
+            .validate(statusCode: acceptableStatusCodes)
             .responseDecodable(of:Call.Rsp.self){(dataRsp:AFDataResponse<Call.Rsp>) in
                 switch dataRsp.result{
                 case .success(let ret):
@@ -151,7 +155,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
-            .validate()
+            .validate(statusCode: acceptableStatusCodes)
             .responseDecodable(of:Answer.Rsp.self){(dataRsp:AFDataResponse<Answer.Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
