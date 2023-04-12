@@ -497,4 +497,8 @@ public class IotSdk: NSObject {
     @objc public func getNotificationManager()->NotificationManager{
         return NotificationManager(mgr:iotsdk.notificationMgr)
     }
+    
+    @objc public func getMqttIsConnected()->Bool{
+        return iotsdk.getMqttIsConnected()
+    }
 }

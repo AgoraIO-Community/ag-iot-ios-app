@@ -12,6 +12,10 @@ open class IotAppSdk : IAgoraIotAppSdk{
         return IAgoraIotSdkVersion
     }
     
+    public func getMqttIsConnected() -> Bool {
+        return app!.proxy.mqtt.curMtConnected
+    }
+    
     private var _callbackFilter:(Int,String)->(Int,String) = {ec,msg in return (ec,msg)}
     private func onCallbackFilter(ec:Int,msg:String)->(Int,String){
         if(ec == ErrCode.XERR_TOKEN_INVALID){

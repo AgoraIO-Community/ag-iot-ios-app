@@ -61,6 +61,10 @@ public protocol IAgoraIotAppSdk {
      */
     func getSdkVersion()->String
     /*
+     * @biref 获取当前mqtt是否连接 连接:true 断开:false
+     */
+    func getMqttIsConnected() -> Bool
+    /*
      * @brief 初始化Sdk
      * @param netStatus:返回当前mqtt网络状态
      * @param callBackFilter：回调函数返回错误码集中回调(可作为返回错误码/错误消息)过滤。所有带有result回调的接口，都会在调用前触发该回调，参数1:ErrCode,参数2:ErrMessage,返回值:新的(ErrCode,ErrMessage)

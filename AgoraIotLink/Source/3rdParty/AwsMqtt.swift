@@ -174,6 +174,8 @@ class AWSMqtt{
     
     //当前请求的时间戳
     var curTimeStamp : Int = 0
+    //当前Mqtt是否连接
+    var curMtConnected: Bool = false
     
 
     fileprivate var listeners:[String:Listeners] = [String:Listeners]()
@@ -487,13 +489,14 @@ class AWSMqtt{
         DispatchQueue.main.async {
             switch status {
             case .connecting:
+                self.curMtConnected = false
                 log.i("mqtt .connecting...")
                 if(self.onConnect == nil){
                     self._onStatusChanged(.Connecting)
                 }
             case .connected:
                 log.i("mqtt .connected")
-                
+//                self.curMtConnected = true
                 if(self.onConnect != nil){
                     self.onConnect!(true,"mqtt connect succ")
                     self.onConnect = nil
@@ -885,6 +888,7 @@ class AWSMqtt{
                 else{
                     let succ = e == 0 ? true : false
                     log.i("mqtt topic 注册完毕 \(topics)，失败率\(e)/\(topics.count)")
+                    self.curMtConnected = true
                     completion(succ,succ ? "注册topic成功" : "注册topic部分失败:失败率\(e)/\(topics.count)" )
                     self.syncRemoteRtcStatus()
                     //self.updateRemoteRtcStatus()
