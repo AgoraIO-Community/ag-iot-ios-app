@@ -544,7 +544,7 @@ class CallkitManager : ICallkitMgr{
                 self.onLastCallSessionUpdated(sessionId: data.sessionId)
                 
                 //------如果有未挂断的，则进行挂断------
-                if  self.app.context.call.lastSession.stopSuc == false {
+                if  self.app.context.call.lastSession.stopSuc == false && self.app.context.call.lastSession.talkingId == 0 {
                     self.doCallHangup(isCuHp: true) { code, msg in
                         log.i("redoCallHangup code:\(code) msg:\(msg)")
                     }
