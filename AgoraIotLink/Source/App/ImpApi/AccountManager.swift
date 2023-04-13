@@ -291,12 +291,12 @@ class AccountManager : IAccountMgr{
     }
     
    private var onLogoutResult:()->Void = {}
-   private func doLogout(_ result:@escaping (Int,String)->Void){
-       log.i("doLogout:")
+   private func doLogoutNew(_ result:@escaping (Int,String)->Void){
+       log.i("doLogout:登出")
         let cbal = {(ec:Int,msg:String) in
-            log.i("agoralab logout exception:\(ec):\(msg)")
+            log.i("doLogoutNew :\(ec):\(msg)")
             if(ec != ErrCode.XOK){
-                log.w("agoralab logout exception:\(ec):\(msg)")
+                log.w("doLogoutNew:\(ec):\(msg)")
             }
             self.app.context.aglab.session.reset()
             self.app.context.call.session.reset()
@@ -410,9 +410,9 @@ class AccountManager : IAccountMgr{
                        {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
 #endif
-    func logout(result:@escaping (Int,String)->Void){
+    func logoutAccount(result:@escaping (Int,String)->Void){
         app.rule.trans(FsmApp.Event.LOGOUT,
-                       {self.doLogout({ec,msg in self.asyncResult(ec,msg,result)})},
+                       {self.doLogoutNew({ec,msg in self.asyncResult(ec,msg,result)})},
                        {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
     

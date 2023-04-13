@@ -438,8 +438,12 @@ public class AccountManager : NSObject,IAccountMgr{
                 result(ec,msg)
                 return
             }
-            self.mgr.logout(result: result)
+            self.mgr.logoutAccount(result: result)
         }
+    }
+    
+    @objc public func logoutAccount(result: @escaping (Int, String) -> Void) {
+        self.mgr.logoutAccount(result: result)
     }
 
     @objc public func getUserId() -> String {
