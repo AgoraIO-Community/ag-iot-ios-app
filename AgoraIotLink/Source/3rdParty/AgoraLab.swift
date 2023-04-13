@@ -277,7 +277,7 @@ class AgoraLab {
         let url = http + api.oauthRegister
         
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
-            .validate()
+            .validate(statusCode: acceptableStatusCodes)
             .responseDecodable(of:Rsp.self){(dataRsp:AFDataResponse<Rsp>) in
                 switch dataRsp.result{
                 case .success(let ret):
@@ -335,7 +335,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.delete
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -361,7 +361,7 @@ class AgoraLab {
         let url = http + api.batchDelete
         log.i("al reqAlertBatchDelete \(indexes)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageBatchRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -386,7 +386,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.singleRead
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -412,7 +412,7 @@ class AgoraLab {
         let url = http + api.batchRead
         log.i("al reqAlertBatchRead \(indexes)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageBatchRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -438,7 +438,7 @@ class AgoraLab {
         log.i("al reqAlertById \(alertMessageId)")
         let req = AlertMessageGetById.Req(header,alertMessageId)
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageGetById.Rsp.self){(dataRsp:AFDataResponse<AlertMessageGetById.Rsp>) in
                     switch dataRsp.result{
                     case .success(let value):
@@ -499,7 +499,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         log.v("al reqAlertCount \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertCount.Rsp.self){(dataRsp:AFDataResponse<AlertCount.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -548,7 +548,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         log.v("al reqAlert \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageGetPage.Rsp.self){(dataRsp:AFDataResponse<AlertMessageGetPage.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -602,7 +602,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.addV2
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageAddV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageAddV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -627,7 +627,7 @@ class AgoraLab {
         let url = http + api.singleReadV2
         log.v("al reqAlertRead \(index)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageReadV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageReadV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -653,7 +653,7 @@ class AgoraLab {
         let url = http + api.batchReadV2
         log.v("al reqAlertBatchRead \(indexes)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageBatchReadV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchReadV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -689,7 +689,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         log.v("al reqAlertCount \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertCountV2.Rsp.self){(dataRsp:AFDataResponse<AlertCountV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -715,7 +715,7 @@ class AgoraLab {
         log.v("al reqAlertById \(alertMessageId)")
         let req = AlertMessageGetById.Req(header,alertMessageId)
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageGetByIdV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageGetByIdV2.Rsp>) in
                     switch dataRsp.result{
                     case .success(let value):
@@ -744,7 +744,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         log.v("al reqAlert \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageGetPageV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageGetPageV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -763,7 +763,7 @@ class AgoraLab {
         let url = http + api.deleteV2
         log.v("al reqAlertDelete \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageDeleteV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageDeleteV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -789,7 +789,7 @@ class AgoraLab {
         let url = http + api.batchDeleteV2
         log.v("al reqAlertBatchDelete \(indexes)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageBatchDeleteV2.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchDeleteV2.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -815,7 +815,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         log.v("al reqAlertImageUrl \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertImageUrl.Rsp.self){(dataRsp:AFDataResponse<AlertImageUrl.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -835,7 +835,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         log.v("al reqAlertVideoUrl \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertVideoUrl.Rsp.self){(dataRsp:AFDataResponse<AlertVideoUrl.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -855,7 +855,7 @@ class AgoraLab {
         let url = http + api.sysReadMsg
         log.v("al reqSysAlertRead \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
               .responseDecodable(of:AlertMessageRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -881,7 +881,7 @@ class AgoraLab {
         let url = http + api.sysReadMsgBatch
         log.v("al reqSysAlertBatchRead \(indexes)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageBatchRead.Rsp.self){(dataRsp:AFDataResponse<AlertMessageBatchRead.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -917,7 +917,7 @@ class AgoraLab {
         let headers : HTTPHeaders = ["Authorization":token]
         log.v("al reqSysAlert \(req)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:SysAlertMessageGetPage.Rsp.self){(dataRsp:AFDataResponse<SysAlertMessageGetPage.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -970,7 +970,7 @@ class AgoraLab {
         log.v("al reqSysAlertById \(alertMessageId)")
         let req = AlertMessageGetById.Req(header,alertMessageId)
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:AlertMessageGetById.Rsp.self){(dataRsp:AFDataResponse<AlertMessageGetById.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -1031,7 +1031,7 @@ class AgoraLab {
         log.v("al reqSysAlertCount \(req)")
         let url = http + api.sysGetAlertCount
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:SysAlertCount.Rsp.self){(dataRsp:AFDataResponse<SysAlertCount.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -1058,7 +1058,7 @@ class AgoraLab {
         let url = http + api.control
         log.v("al reqControlInfo localVirtualNumb:\(localVirtualNumber) peerVirtualNumb:\(peerVirtualNumber)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:ControlInfo.Rsp.self){(dataRsp:AFDataResponse<ControlInfo.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
@@ -1092,7 +1092,7 @@ class AgoraLab {
         let url = http + api.rtcToken
         log.v("al reqRtcToekn appId:\(appId) channelName:\(channelName)")
         AF.request(url,method: .post,parameters:req,encoder:JSONParameterEncoder.default, headers: headers)
-                  .validate()
+                  .validate(statusCode: acceptableStatusCodes)
                   .responseDecodable(of:RtcToken.Rsp.self){(dataRsp:AFDataResponse<RtcToken.Rsp>) in
                         switch dataRsp.result{
                         case .success(let value):
