@@ -379,7 +379,7 @@ public class NotificationManager : NSObject,INotificationMgr{
 
 public class AccountManager : NSObject,IAccountMgr{
     
-    public func publicKeySet(publicKey: String, _ result: @escaping (Int, String) -> Void) {
+    @objc public func publicKeySet(publicKey: String, _ result: @escaping (Int, String) -> Void) {
         return mgr.publicKeySet(publicKey: publicKey, result)
     }
     
