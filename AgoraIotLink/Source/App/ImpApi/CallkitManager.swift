@@ -124,14 +124,12 @@ class CallkitManager : ICallkitMgr{
             return
         }
         log.i("doCallHangup 走下去了")
-        var sessionId = app.context.call.session.sessionId
-        var caller = app.context.call.session.caller
-        var localId = app.context.gyiot.session.cert.thingName
-        var callee = app.context.call.session.callee
+        let sessionId = app.context.call.session.sessionId
+        let caller = app.context.call.session.caller
+        let localId = app.context.gyiot.session.cert.thingName
+        let callee = app.context.call.session.callee
         
-        app.context.call.lastSession.lastSessionId = app.context.call.session.sessionId
         self.app.context.call.lastSession.talkingId = 0
-        
         
         let req = AgoraLab.Answer.Payload(sessionId: sessionId, calleeId: callee, callerId: caller,localId: localId, answer: 1)
         let traceId:Int = String.dateTimeRounded()
@@ -366,13 +364,17 @@ class CallkitManager : ICallkitMgr{
             self.resetDevice {[weak self] code, msg in
                 log.i("judegLastCall:resetDevice code:\(code) msg:\(msg)")
                 self?.app.context.call.lastSession.reset()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
                     log.i("judegLastCall:recall___重置后重新呼叫___)")
                     self?.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
                 }
             }
         }else if app.context.call.lastSession.sessionId == "",self.isCallRet == false{
             log.i("judegLastCall:___上次呼叫未通___)")
+            self.resetDevice {[weak self] code, msg in
+                self?.app.context.call.lastSession.reset()
+                log.i("judegLastCall:___上次呼叫未通___:resetDevice code:\(code) msg:\(msg)")
+            }
             result(ErrCode.XERR_CALLKIT_DIAL,"call error")
         }
         else{
@@ -567,7 +569,13 @@ class CallkitManager : ICallkitMgr{
                 })
             }
             else{
-                log.e("call reqCall fail:\(msg)(\(ec))")
+                
+                if(ec == ErrCode.XERR_CALLKIT_LOCAL_BUSY){
+                    self.resetDevice { code, msg in
+                        log.i("XERR_CALLKIT_LOCAL_BUSY:resetDevice code:\(code) msg:\(msg)")
+                    }
+                }
+                log.e("call reqCall fail:\(msg) ec: (\(ec))")
                 self.app.rule.trans(FsmCall.Event.ACK_INVALID)
                 result(ec,msg)
             }
@@ -580,6 +588,7 @@ class CallkitManager : ICallkitMgr{
     }
     
     func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?) {
+        log.i("---callDial--发起呼叫---")
         app.rule.trans(FsmCall.Event.CALL
                        ,
                        {self.judegLastCall(deviceId: device.deviceId, attachMsg: attachMsg, result: {ec,msg in self.asyncResult(ec, msg, result)}, actionAck: actionAck,memberState:memberState)}

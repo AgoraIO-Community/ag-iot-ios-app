@@ -87,20 +87,20 @@ class AccountManager : IAccountMgr{
         }
     }
     
-    func unregister(result:@escaping(Int,String)->Void){
-        DispatchQueue.main.async {
-            let token = self.app.context.gyiot.session.iotlink_token
-            self.app.proxy.gw.reqUnRegister(token,{ec,msg in
-                if(ec == ErrCode.XOK){
-                    self.app.context.gyiot.session.reset()
-                    self.logout(result: result)
-                }
-                else{
-                    self.asyncResult(ec,msg,result)
-                }
-            });
-        }
-    }
+//    func unregister(result:@escaping(Int,String)->Void){
+//        DispatchQueue.main.async {
+//            let token = self.app.context.gyiot.session.iotlink_token
+//            self.app.proxy.gw.reqUnRegister(token,{ec,msg in
+//                if(ec == ErrCode.XOK){
+//                    self.app.context.gyiot.session.reset()
+//                    self.logout(result: result)
+//                }
+//                else{
+//                    self.asyncResult(ec,msg,result)
+//                }
+//            });
+//        }
+//    }
     
     private func doLoginGw(_ account: String, _ password: String,_ result:@escaping (Int,String)->Void){
         let gwcb = {(ec:Int,msg:String,sess:IotLinkSession?) in
@@ -224,6 +224,7 @@ class AccountManager : IAccountMgr{
     
     private func doLogin(_ param:LoginParam,_ result:@escaping (Int,String)->Void) {
         let data = param
+        log.i("---doLogin--accessToken:\(param.accessToken) refreshToken:\(param.refreshToken)")
         //self.app.context.aglab.session.userName = data.account
         self.app.context.aglab.session = AgoraLabSession(
             tokenType: data.tokenType,
@@ -291,7 +292,9 @@ class AccountManager : IAccountMgr{
     
    private var onLogoutResult:()->Void = {}
    private func doLogout(_ result:@escaping (Int,String)->Void){
+       log.i("doLogout:")
         let cbal = {(ec:Int,msg:String) in
+            log.i("agoralab logout exception:\(ec):\(msg)")
             if(ec != ErrCode.XOK){
                 log.w("agoralab logout exception:\(ec):\(msg)")
             }

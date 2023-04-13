@@ -19,7 +19,7 @@ open class IotAppSdk : IAgoraIotAppSdk{
     private var _callbackFilter:(Int,String)->(Int,String) = {ec,msg in return (ec,msg)}
     private func onCallbackFilter(ec:Int,msg:String)->(Int,String){
         if(ec == ErrCode.XERR_TOKEN_INVALID){
-            log.w("sdk token invalid,try logout")
+            log.i("sdk token invalid,try logout")
             self.accountMgr.logout { ec, msg in
                 log.i("sdk logout done")
             }

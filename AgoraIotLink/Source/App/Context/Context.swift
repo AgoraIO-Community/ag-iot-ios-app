@@ -239,6 +239,7 @@ class AgoraLabSession{
     }
 
     func reset(){
+        log.i("reset:accessToken")
         tokenType = ""
         accessToken = ""
         expireIn = 0

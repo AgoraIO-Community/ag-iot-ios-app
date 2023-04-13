@@ -140,7 +140,7 @@ class AgoraLab {
                     }
                     rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
                 case .failure(let error):
-                    log.e("al reqCall \(url) failed,detail:\(error) ")
+                    log.e("call failure: \(url) failed,detail:\(error) ")
                     rsp(ErrCode.XERR_NETWORK,"dial number fail",nil)
                 }
             }
@@ -1119,57 +1119,6 @@ class AgoraLab {
                     }
     }
 }
-
-let group = DispatchGroup()
-extension AgoraLab{
-    
-//    func reqCallNew(_ token:String, _ reqPayload:Call.Payload,_ traceId:String, _ rsp:@escaping (Int,String,Call.Rsp?)->Void){
-//        
-//        group.enter()
-//        let header = Header(traceId: traceId)
-//        let req = Call.Req(header: header, payload: reqPayload)
-//        let headers : HTTPHeaders = ["Authorization":token]
-//        let url = http + api.call
-//        log.i("Call： \(req)")
-//        AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
-//            .validate()
-//            .responseDecodable(of:Call.Rsp.self){(dataRsp:AFDataResponse<Call.Rsp>) in
-//                switch dataRsp.result{
-//                case .success(let ret):
-//                    log.i("Call resonse: \(ret)")
-//                    sleep(3)
-//                    group.leave()
-//                    if(ret.code != 0){
-//                        log.w("al reqCall rsp:'\(ret.msg)(\(ret.code))' from:\(url)")
-//                    }
-//                    if(ret.code == AgoraLab.tokenExpiredCode){
-//                        rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
-//                        return
-//                    }
-//                    var ec = ErrCode.XERR_API_RET_FAIL
-//                    if(ret.code == 100001){//对端忙
-//                        ec = ErrCode.XERR_CALLKIT_PEER_BUSY
-//                    }
-//                    if(ret.code == 100005){
-//                        ec = ErrCode.XERR_CALLKIT_LOCAL_BUSY
-//                    }
-//                    rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
-//                case .failure(let error):
-//                    group.leave()
-//                    log.e("al reqCall \(url) failed,detail:\(error) ")
-//                    rsp(ErrCode.XERR_NETWORK,"dial number fail",nil)
-//                }
-//            }
-//        
-//        group.notify(queue: .main) {
-//            // 所有异步请求完成，可以继续执行后续逻辑了
-//            log.i("呼叫请求完成了666")
-//        }
-//    }
-    
-}
-
-
 
 
 
