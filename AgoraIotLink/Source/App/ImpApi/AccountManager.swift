@@ -410,7 +410,8 @@ class AccountManager : IAccountMgr{
                        {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
 #endif
-    func logoutAccount(result:@escaping (Int,String)->Void){
+    func logoutAccount(_ isSourceOut:Bool, result:@escaping (Int,String)->Void){
+        log.i("logoutAccount_isInter:\(isSourceOut)")
         app.rule.trans(FsmApp.Event.LOGOUT,
                        {self.doLogoutNew({ec,msg in self.asyncResult(ec,msg,result)})},
                        {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})

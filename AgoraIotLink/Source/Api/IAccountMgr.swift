@@ -174,8 +174,9 @@ public protocol IAccountMgr{
 
     /*
      * @brief 登出当前账号
+     * isInter 应用层默认传true
      */
-    func logoutAccount(result:@escaping (Int,String)->Void)
+    func logoutAccount(_ isSourceOut:Bool, result:@escaping (Int,String)->Void)
 
     /*
      * @brief 更换账号密码，触发 onChangePasswordDone() 回调
