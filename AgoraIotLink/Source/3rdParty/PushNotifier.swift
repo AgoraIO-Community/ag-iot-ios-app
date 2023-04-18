@@ -14,6 +14,7 @@ class PushNotifier : NSObject, UIApplicationDelegate{
     
     private var state:Int = PushNotifier.NULLED
     private var _completion:(TaskResult,String)->Void = {ret,msg in }
+    private var _QueryAllcompletion:(UNNotification,String)->Void = {ret,msg in }
 
     static private let NULLED = 0
     static private let CREATED = 1
@@ -23,6 +24,10 @@ class PushNotifier : NSObject, UIApplicationDelegate{
         self.cfg = cfg
         self.state = PushNotifier.NULLED
     }
+    func createQueryAllcompletion(queryAllcompletion:@escaping(UNNotification,String)->Void){
+        _QueryAllcompletion = queryAllcompletion
+    }
+    
     func create(completion:@escaping(TaskResult,String)->Void){
         _completion = completion
         if(state != PushNotifier.NULLED){
@@ -276,12 +281,14 @@ extension PushNotifier : EMLocalNotificationDelegate{
             }
         }
         
-        if(state == EMDidReceiveNotificationResponse){
-            
-        }
-        else{
-            
-        }
+        _QueryAllcompletion(notification,"\(state)")
+        
+//        if(state == EMDidReceiveNotificationResponse){
+//
+//        }
+//        else{
+//
+//        }
     }
     func emDidRecivePushSilentMessage(_ messageDic: [AnyHashable : Any]) {
         log.i("ntf recv silent message")

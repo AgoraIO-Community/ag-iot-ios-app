@@ -339,6 +339,7 @@ public class AlarmManager : NSObject,IAlarmMgr{
 }
 
 public class NotificationManager : NSObject,INotificationMgr{
+    
     @objc public func getEid() -> String {
         return mgr.getEid()
     }
@@ -351,7 +352,7 @@ public class NotificationManager : NSObject,INotificationMgr{
         return notifyEnabled()
     }
     
-    @objc public func queryAll(result:@escaping(Int,String)->Void) {
+    @objc public func queryAll(result: @escaping (UNNotification, String) -> Void) {
         return mgr.queryAll(result: result)
     }
     

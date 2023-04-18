@@ -49,8 +49,8 @@ class NotificationManager : INotificationMgr{
         }
     }
 
-    func queryAll(result:@escaping(Int,String)->Void){
-        self.asyncResult(ErrCode.XERR_UNSUPPORTED,"unimplemented",result)
+    func queryAll(result:@escaping(UNNotification,String)->Void){
+        app.proxy.ntf.createQueryAllcompletion(queryAllcompletion: result)
     }
 
     func queryByDevice(productKey: String, deviceId: String,result:@escaping(Int,String)->Void){

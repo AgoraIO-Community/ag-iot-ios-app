@@ -32,10 +32,10 @@ public protocol INotificationMgr {
     func updateToken(_ deviceToken:Data)
 
     /*
-     * @brief 查询所有通知信息，触发 onAllNotificationQueryDone() 回调
+     * @brief 返回所有通知信息
      * @return 错误码
      */
-    func queryAll(result:@escaping(Int,String)->Void)
+    func queryAll(result:@escaping(UNNotification,String)->Void)
 
     /*
      * @brief 查询指定设备的所有通知信息，触发 onDeviceNotificationQueryDone() 回调
