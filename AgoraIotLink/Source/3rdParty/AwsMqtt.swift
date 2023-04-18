@@ -496,7 +496,6 @@ class AWSMqtt{
                 }
             case .connected:
                 log.i("mqtt .connected")
-//                self.curMtConnected = true
                 if(self.onConnect != nil){
                     self.onConnect!(true,"mqtt connect succ")
                     self.onConnect = nil
@@ -742,7 +741,7 @@ class AWSMqtt{
     }
     //topic5 = "$aws/things/" + clientId + "/shadow/name/rtc/get/accepted"
     func onTopic5Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
-        log.i("onTopic5Callback:\(jsonDict)")
+//        log.i("onTopic5Callback:\(jsonDict)")
         
         guard let version = jsonDict["version"] as? UInt, version > curRtcGetVersion else{
             log.i(" version error:\(jsonDict)")
@@ -1050,9 +1049,7 @@ class AWSMqtt{
         addDeviceStatusListener(topic:topic, result: result)
         
         log.i("mqtt topic pub: '\(topic)'")
-        self.iotDataManager?.publishString("", onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce,ackCallback: {
-            log.i("mqtt topic ack: '\(topic)'")
-        })
+        self.iotDataManager?.publishString("", onTopic: topic, qoS: .messageDeliveryAttemptedAtMostOnce,ackCallback: nil)
     }
     
 //    func getClientDesired(clientId:String, result: @escaping (Int, String,Dictionary<String, Any>?)->Void){
