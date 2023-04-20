@@ -27,6 +27,7 @@ class PushListener : FsmPush.IListener{
         log.i("listener push.on_initialize")
         app.proxy.ntf.create(completion: {succ,eid in
             if(succ != .Abort){
+                log.i("listener push :\(succ)")
                 self.app.context.push.session.eid = succ == .Succ ? eid : ""
                 self.app.rule.trans(succ == .Succ ? FsmPush.Event.INITSUCC : FsmPush.Event.INITFAIL)
             }

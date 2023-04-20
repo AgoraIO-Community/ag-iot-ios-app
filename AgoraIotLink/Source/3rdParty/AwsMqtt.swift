@@ -707,7 +707,7 @@ class AWSMqtt{
         log.i("onTopic4Callback:\(jsonDict)")
         
         guard let version = jsonDict["version"] as? UInt, version > curRtcUpdateVersion else{
-            log.i(" version error:\(jsonDict)")
+            log.i(" version error:\(jsonDict) curRtcUpdateVersion:\(curRtcUpdateVersion)")
             return true
         }
         curRtcUpdateVersion = version
@@ -1099,5 +1099,12 @@ class AWSMqtt{
         }catch let error {
             log.e("mqtt update client status error \(error)")
         }
+    }
+    
+    //每次登陆重置version等信息
+    func reset(){
+        curRtcGetVersion = 0
+        curRtcUpdateVersion = 0
+        curTimeStamp = 0
     }
 }

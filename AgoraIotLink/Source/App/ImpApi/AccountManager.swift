@@ -260,6 +260,7 @@ class AccountManager : IAccountMgr{
         self.app.context.account = data.account
         self.app.context.virtualNumber = thingName
         self.app.context.gyiot.session.cert.thingName = thingName
+        log.i("---doLogin--thingName:\(thingName)")
         self.rule.trans(.LOGIN_SUCC,
                         {result(ErrCode.XOK,"succ")}
                         )//{result(ErrCode.XERR_BAD_STATE,"state error")}
@@ -300,6 +301,7 @@ class AccountManager : IAccountMgr{
             }
             self.app.context.aglab.session.reset()
             self.app.context.call.session.reset()
+            self.app.proxy.mqtt.reset()
             self.rule.trigger.logout_watcher = {result(ErrCode.XOK,"")}
             self.rule.trans(FsmApp.Event.LOGOUT)
         }
