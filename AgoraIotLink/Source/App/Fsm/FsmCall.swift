@@ -237,6 +237,7 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.REMOTE_RINGING.rawValue,State.callHangup.rawValue,nil,{(e:Int)->Void in self._listener?.on_callHangup(Event(rawValue:e)!)}),
             Node(Fsm.FLAG_POST,Event.RESETCALL.rawValue,State.reset_call.rawValue,nil,{(e:Int)->Void in self._listener?.on_reset_call(Event(rawValue:e)!)}),
             Node(Fsm.FLAG_POST,Event.RESETRTC.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_RESETRTC(Event(rawValue:e)!)},nil),
+            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up0.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P4_query_agoraLab = [
             Node(Fsm.FLAG_NONE,Event.ACK_INVALID.rawValue,State.callkit_ready.rawValue,nil,nil),
