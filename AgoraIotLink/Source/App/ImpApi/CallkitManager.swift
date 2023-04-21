@@ -161,11 +161,15 @@ class CallkitManager : ICallkitMgr{
         let traceId:Int = String.dateTimeRounded()
         if app.context.call.session.sessionId == ""{
             log.i("doCallHangupInter fail sessionId:\(sessionId)")
+            self.app.rule.trans(FsmCall.Event.LOCAL_HANGUP_FAIL)
             return
         }
         let cb = { (ec:Int,msg:String,data:AgoraLab.Answer.Data?) in
             if(ec != ErrCode.XOK){
                 log.e("doCallHangupInter_fail:\(msg)(\(ec)) caller:\(caller)  callee:\(callee)  local:\(localId)")
+            }else{
+                log.i("doCallHangupInter succ sessionId:\(sessionId)")
+                self.app.context.call.lastSession.reset()
             }
             result(ec,msg)
             self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
