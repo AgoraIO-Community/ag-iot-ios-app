@@ -66,7 +66,7 @@ public class RtcNetworkStatus : NSObject{
     case RemoteAudioReady               //首次收到设备音频
     case RemoteBusy                     //设备忙
     case CallIncoming                   //设备来电振铃
-    case CallForward                    //本地去电中继
+    case CallForward                    //本地呼叫中
     case CallOutgoing                   //本地去电振铃
     case UnknownAction                  //未知错误
 }

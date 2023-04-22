@@ -285,6 +285,7 @@ class CallkitManager : ICallkitMgr{
     private func onActionDesired(action:ActionAck,sess:CallSession?){
         log.i("call action desired:\(action.rawValue)")
         if(action == .RemoteHangup){
+            if self.app.context.call.lastSession.talkingId == 0 { return }
             self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
             self.app.rule.trans(FsmCall.Event.REMOTE_HANGUP)
         }
@@ -313,10 +314,13 @@ class CallkitManager : ICallkitMgr{
                 self.doCallHangupInter(result: {ec,msg in})})
         }
         else if(action == .RemoteTimeout){
+            if self.app.context.call.lastSession.talkingId == 0 { return  }
+            log.i("call RemoteTimeout 对端超时")
             self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
             self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
         }
         else if(action == .LocalTimeout){
+            if self.app.context.call.lastSession.talkingId == 0 { return  }
             self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
             self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
         }
@@ -378,6 +382,10 @@ class CallkitManager : ICallkitMgr{
             self.resetDevice {[weak self] code, msg in
                 self?.app.context.call.lastSession.reset()
                 log.i("judegLastCall:___上次呼叫未通___:resetDevice code:\(code) msg:\(msg)")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+                    log.i("judegLastCall:recall___上次呼叫未通___重置后重新呼叫___)")
+                    self?.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
+                }
             }
             result(ErrCode.XERR_CALLKIT_DIAL,"call error")
         }
@@ -548,6 +556,7 @@ class CallkitManager : ICallkitMgr{
                 self.app.context.call.session.channelName = data.channelName
                 self.app.context.call.session.rtcToken = data.rtcToken
                 self.app.context.call.session.uid = UInt(data.uid) ?? 0
+                self.app.context.call.session.peerId = UInt(data.peerUid) ?? 0
                 self.app.context.call.session.cloudRecordStatus = data.cloudRecordStatus
 
                 self.onLastCallSessionUpdated(sessionId: data.sessionId)
@@ -573,7 +582,7 @@ class CallkitManager : ICallkitMgr{
                 })
             }
             else{
-                
+                self.isCallRet = true
                 if(ec == ErrCode.XERR_CALLKIT_LOCAL_BUSY){
                     self.resetDevice { code, msg in
                         log.i("XERR_CALLKIT_LOCAL_BUSY:resetDevice code:\(code) msg:\(msg)")
@@ -700,6 +709,11 @@ extension CallkitManager {
         let appid = self.app.config.appId
         let agToken = app.context.aglab.session.accessToken
         self.app.proxy.al.resetDevice(deviceId, appid, agToken, rsp)
+    }
+    
+    //每次登陆需重置的信息
+    func reset(){
+        self.isCallRet = true
     }
     
 }

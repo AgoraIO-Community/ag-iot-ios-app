@@ -969,6 +969,7 @@ extension AgoraLab{
             let channelName:String
             let rtcToken:String
             let uid:String
+            let peerUid:String
             let sessionId:String
             let callStatus:Int
             let cloudRecordStatus:Int
