@@ -419,12 +419,13 @@ class IotLink{
         let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
         let params:Dictionary<String,String> = ["mac":deviceId]
         let url = http + api.OtaGetInfo
-        log.v("iotlink reqOtaInfo \(deviceId)")
+        log.v("iotlink reqOtaInfo \(deviceId) token：\(token)")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of:OtaInfo.Rsp.self) { (dataRsp : AFDataResponse<OtaInfo.Rsp>) in
                 switch dataRsp.result{
                 case .success(let value):
+                    log.i("reqOtaInfo response \(value)")
                     self.handleRspOtaInfo(value, rsp)
                 case .failure(let error):
                     log.e("iotlink reqOtaInfo \(url) fail, detail: \(error) ")
@@ -438,7 +439,7 @@ class IotLink{
         let params:Dictionary<String,String> = ["upgradeId":upgradeId]
         let url = http + api.OtaStatus
         
-        log.v("iotlink reqOtaStatus")
+        log.v("iotlink reqOtaStatus token：\(token)")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of:OtaStatus.Rsp.self) { (dataRsp : AFDataResponse<OtaStatus.Rsp>) in
@@ -456,7 +457,7 @@ class IotLink{
         let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
         let params:Dictionary<String,String> = ["upgradeId":upgradeId,"decide":String(decide)]
         let url = http + api.OtaUpdate
-        log.v("iotlink reqOtaUpdate")
+        log.v("iotlink reqOtaUpdate token：\(token)")
         AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of:Rsp.self) { (dataRsp : AFDataResponse<Rsp>) in
