@@ -74,7 +74,7 @@ class RtcListener : FsmRtc.IListener{
         },
         memberState:{s,a in
             if(s == .Enter){
-                if(a[0] != self.app.context.call.session.peerId){
+                if(a[0] == self.app.context.call.session.peerId){
                     self.app.rule.trigger.member_state_watcher?(s,a)
                 }
             }

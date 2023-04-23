@@ -169,7 +169,10 @@ class AgoraLab {
                     }
                     let op = reqPayload.answer == 0 ? "answer :" : "hangup:"
                     let ret = value.success ? "succ" : "fail("+String(value.code)+")"
-                    
+                    if(value.code == 999998){
+                        rsp(value.code,  op + ret, value.data)
+                        return
+                    }
                     rsp(value.code == 0 ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,  op + ret, value.data)
                 case .failure(let error):
                     log.e("reqAnswer response fail error  '\(act)' \(url) detail:\(error) ")

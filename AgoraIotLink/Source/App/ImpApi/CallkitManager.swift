@@ -51,7 +51,6 @@ class CallkitManager : ICallkitMgr{
     
     func register(incoming: @escaping (String,String, ActionAck) -> Void) {
         self._incoming = incoming
-//        self._onPeerRinging = onCallOngoing
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
     }
 
@@ -70,33 +69,6 @@ class CallkitManager : ICallkitMgr{
     private func onLastCallSessionUpdated(sessionId:String){
         self.app.context.call.lastSession.sessionId = sessionId
     }
-    
-    
-//    private func onCallOngoing(ec:Int,msg:String,sess:CallSession?){
-//        if(ec != ErrCode.XOK){
-//            log.w("call onCallOngoing \(msg)(\(ec))")
-//            self.app.context.call.session.callee = ""
-//            self.app.context.call.session.caller = ""
-//            self.app.rule.trans(ec == ErrCode.XERR_TIMEOUT ? FsmCall.Event.REMOTE_TIMEOUT :  FsmCall.Event.MQTT_ACK_ERROR)
-//        }
-//        else{
-//            guard let sess = sess else{
-//                log.e("call unknown error: nil session with \(ec),\(msg)")
-//                self.app.rule.trans(FsmCall.Event.MQTT_ACK_ERROR)
-//                return
-//            }
-//
-//            onCallSessionUpdated(sess: sess)
-//
-//            self.app.rule.trans(
-//                FsmCall.Event.REMOTE_RINGING,
-//                {},
-//                {
-//                log.e("call state error from trans REMOTE_RINGING")
-//                self.app.rule.trans(FsmCall.Event.STATUS_ERROR)
-//            })
-//        }
-//    }
 
     private var app:Application
     private let rtc:RtcEngine
@@ -293,9 +265,6 @@ class CallkitManager : ICallkitMgr{
             
             if self.app.context.call.lastSession.talkingId == 0 { return }
             
-            self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
-                 log.i("all reqCall REMOTE_RINGING")
-            })
             self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
             log.i("call remote answered,waiting for remote join channel")
             if(sess == nil){
@@ -305,9 +274,6 @@ class CallkitManager : ICallkitMgr{
                 if(sess?.sessionId != ""){
                     //abnormal call ack after an unfinished call session
                     self.onCallSessionUpdated(sess: sess!)
-                }
-                else{
-                    //during a normal call session,this will be empty
                 }
             }
             self.app.rule.trans(FsmCall.Event.REMOTE_ANSWER,{},{
@@ -324,15 +290,7 @@ class CallkitManager : ICallkitMgr{
             self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
             self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
         }
-        else if(action == .CallOutgoing){
-            if self.app.context.call.lastSession.talkingId == 0 { return  }
-//            self._onPeerRinging(ErrCode.XOK,"calling ...", sess)
-            self.onCallSessionUpdated(sess: sess!)
-//            self._onPeerRinging = {e,m,s in }
-        }
-        else if(action == .LocalHangup){
-            //no need to handle because LocalHangup by local
-        }
+       
         else if(action == .CallIncoming){
             if(sess == nil){
                 log.e("call reqCall action ack:sess is nil when call CallIncoming")
@@ -356,15 +314,15 @@ class CallkitManager : ICallkitMgr{
             log.i("call action \(action.rawValue) not handled")
         }
         
-        if(self.app.context.push.session.pushEnabled == nil){
-            let enabled = sess?.disabledPush == true ? false : true
-            log.i("call action \(action.rawValue) StateInited pushEnabled:\(enabled)")
-            
-            self.app.context.push.session.pushEnabled = enabled
-            let eid = app.context.push.session.eid
-
-            app.proxy.mqtt.publishPushId(id: eid,enableNotify:enabled)
-        }
+//        if(self.app.context.push.session.pushEnabled == nil){
+//            let enabled = sess?.disabledPush == true ? false : true
+//            log.i("call action \(action.rawValue) StateInited pushEnabled:\(enabled)")
+//
+//            self.app.context.push.session.pushEnabled = enabled
+//            let eid = app.context.push.session.eid
+//
+//            app.proxy.mqtt.publishPushId(id: eid,enableNotify:enabled)
+//        }
     }
 
     private func judegLastCall(deviceId:String,attachMsg:String,result:@escaping(Int,String)->Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?){
@@ -433,17 +391,17 @@ class CallkitManager : ICallkitMgr{
             }
             else if(event == FsmCall.Event.LOCAL_JOIN_SUCC){
                 self?.callRcbTime?.invoke(args: (ErrCode.XOK,"device is ringing"))
-                let pacb = TimeCallback<ActionAck>(cb:actionAck)
-                pacb.schedule(time:self?.app.config.calloutTimeOut ?? 15,timeout: {
-                    log.i("call reqCall peerAction waitForAction timeout")
-                    self?.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
-                    actionAck(.RemoteTimeout)
-                })
-                self?.app.proxy.mqtt.waitForActionDesired(actionDesired: {action,sess in
-                    log.i("call reqCall action ack:\(action.rawValue)")
-                    self?.onActionDesired(action:action,sess: sess)
-                    pacb.invoke(args: action)
-                })
+//                let pacb = TimeCallback<ActionAck>(cb:actionAck)
+//                pacb.schedule(time:self?.app.config.calloutTimeOut ?? 15,timeout: {
+//                    log.i("call reqCall peerAction waitForAction timeout")
+//                    self?.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
+//                    actionAck(.RemoteTimeout)
+//                })
+//                self?.app.proxy.mqtt.waitForActionDesired(actionDesired: {action,sess in
+//                    log.i("call reqCall action ack:\(action.rawValue)")
+//                    self?.onActionDesired(action:action,sess: sess)
+//                    pacb.invoke(args: action)
+//                })
             }
         }
 
@@ -579,6 +537,10 @@ class CallkitManager : ICallkitMgr{
                             result(ErrCode.XERR_TIMEOUT,"dial number timeout")
                         })
                     })
+                })
+                
+                self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
+                     log.i("all reqCall REMOTE_RINGING")
                 })
             }
             else{
