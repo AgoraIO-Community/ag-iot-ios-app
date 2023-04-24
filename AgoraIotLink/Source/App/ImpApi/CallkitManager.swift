@@ -374,6 +374,11 @@ class CallkitManager : ICallkitMgr{
                 self?.app.context.call.lastSession.reset()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
                     log.i("judegLastCall:recall___重置后重新呼叫___)")
+                    if self?.isCallRet == false {
+                        log.i("judegLastCall:recall___isCallRet = false___)")
+                        return
+                    }
+                    log.i("judegLastCall:recall___重置后继续呼叫___)")
                     self?.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
                 }
             }
