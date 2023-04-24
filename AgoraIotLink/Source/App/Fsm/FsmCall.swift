@@ -228,6 +228,7 @@ class FsmCall : Fsm {
         FsmCall_P2_local_ready = [
             Node(Fsm.FLAG_RUN,Event.LOCAL_READY.rawValue,State.callkit_ready.rawValue,nil,nil),
             Node(Fsm.FLAG_POST|Fsm.FLAG_FSM,Event.CALL_READY.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmApp_CALL_READY(Event(rawValue:e)!)},nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P3_callkit_ready = [
             Node(Fsm.FLAG_NONE,Event.CALL.rawValue,State.query_agoraLab.rawValue,nil,nil),
@@ -245,6 +246,7 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.REMOTE_RINGING.rawValue,State.local_joining.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up0.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_TIMEOUT.rawValue,State.ntf_join_fail.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P5_remote_incoming = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),
@@ -252,6 +254,7 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.incoming_hangup.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_FAIL.rawValue,State.incoming_local_error.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.CREATEANDENTER.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_CREATEANDENTER(Event(rawValue:e)!)},nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P6_exited = [
             Node(Fsm.FLAG_RUN,Event.IDLE.rawValue,State.idle.rawValue,nil,nil),
@@ -261,6 +264,7 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P8_callHangup = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P9_reset_call = [
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
@@ -271,6 +275,7 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.REMOTE_TIMEOUT.rawValue,State.ntf_join_fail.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_TIMEOUT.rawValue,State.ntf_join_fail.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P11_local_joining = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_SUCC.rawValue,State.local_join_succ.rawValue,nil,nil),
@@ -280,22 +285,26 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.ntf_join_fail.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_ANSWER.rawValue,State.remote_answer_first.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.CREATEANDENTER.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_CREATEANDENTER(Event(rawValue:e)!)},nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P12_hanging_up0 = [
             Node(Fsm.FLAG_NONE,Event.ACK_INVALID.rawValue,State.callkit_ready.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP_SUCC.rawValue,State.callkit_ready.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.ACK_SUCC.rawValue,State.callkit_ready.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP_FAIL.rawValue,State.callkit_ready.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
 //            Node(Fsm.FLAG_NONE,Event.ACK_SUCC.rawValue,State.re_wait_mqtt.rawValue,nil,nil),
 //            Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP_FAIL.rawValue,State.re_wait_mqtt.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P13_ntf_join_fail = [
             Node(Fsm.FLAG_RUN,Event.NTF_HANGUP.rawValue,State.callHangup.rawValue,nil,{(e:Int)->Void in self._listener?.on_callHangup(Event(rawValue:e)!)}),
             Node(Fsm.FLAG_POST,Event.LOCAL_JOIN_FAIL.rawValue,State.local_join_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_local_join_watcher(Event(rawValue:e)!)}),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P14_hanging_up = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP_SUCC.rawValue,State.callkit_ready.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP_FAIL.rawValue,State.callkit_ready.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.RESETRTC.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_RESETRTC(Event(rawValue:e)!)},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P15_local_viewing = [
@@ -304,6 +313,7 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.incoming_hangup.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_TIMEOUT.rawValue,State.incoming_hangup.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_VIDEOREADY.rawValue,State.remoteVReady2.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_JOIN.rawValue,State.local_viewing.rawValue,{(s:Int)->Void in self._listener?.do_REMOTE_JOIN(State(rawValue:s)!)},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P16_incoming_hangup = [
@@ -317,6 +327,7 @@ class FsmCall : Fsm {
         FsmCall_P18_local_join_succ = [
             Node(Fsm.FLAG_RUN,Event.LOCAL_JOIN_SUCC.rawValue,State.waiting.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.LOCAL_JOIN_SUCC.rawValue,State.local_join_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_local_join_watcher(Event(rawValue:e)!)}),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P19_remote_answer_first = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_SUCC.rawValue,State.local_join_succ_second.rawValue,nil,nil),
@@ -352,6 +363,7 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.remote_hangingup.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_ANSWER.rawValue,State.remote_answered.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P26_local_join_succ_second = [
             Node(Fsm.FLAG_RUN,Event.LOCAL_JOIN_SUCC.rawValue,State.remote_answered.rawValue,nil,nil),
@@ -360,6 +372,7 @@ class FsmCall : Fsm {
         FsmCall_P27_remote_hangingup = [
             Node(Fsm.FLAG_RUN,Event.REMOTE_HANGUP_DONE.rawValue,State.callkit_ready.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.NTF_REMOTE_HANGUP.rawValue,State.remote_state_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_remote_state_watcher(Event(rawValue:e)!)}),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P28_talking = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),
@@ -373,16 +386,19 @@ class FsmCall : Fsm {
         FsmCall_P29_remote_answered = [
             Node(Fsm.FLAG_NONE,Event.REMOTE_JOIN.rawValue,State.talking.rawValue,{(s:Int)->Void in self._listener?.do_REMOTE_JOIN(State(rawValue:s)!)},nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P30_remote_state_watcher = [
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P31_remote_dropped = [
             Node(Fsm.FLAG_RUN,Event.REMOTE_LEFT.rawValue,State.callHangup.rawValue,nil,{(e:Int)->Void in self._listener?.on_callHangup(Event(rawValue:e)!)}),
             Node(Fsm.FLAG_POST,Event.NTF_REMOTE_HANGUP.rawValue,State.remote_state_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_remote_state_watcher(Event(rawValue:e)!)}),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P32_remoteVReady1 = [
             Node(Fsm.FLAG_RUN,Event.NTF.rawValue,State.talking.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.VIDEOREADY.rawValue,State.remote_state_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_remote_state_watcher(Event(rawValue:e)!)}),
+            Node(Fsm.FLAG_NONE,Event.FINICALL.rawValue,State.exited.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
 
         _diagram = [
