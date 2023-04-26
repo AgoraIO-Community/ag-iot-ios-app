@@ -112,6 +112,49 @@ class AgoraLab {
         }
     }
     
+    func reqCallSimple(_ token:String, _ reqPayload:CallSimple.Payload,_ traceId:String, _ rsp:@escaping (Int,String,CallSimple.Rsp?)->Void){
+        let header = Header(traceId: traceId)
+        let req = CallSimple.Req(header: header, payload: reqPayload)
+        let headers : HTTPHeaders = ["Authorization":token]
+        let url = http + api.simpleCall
+        log.i("Call：param： \(req) token:\(token)")
+//        AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default, headers: headers) .validate().responseString() { reData in
+//
+//                    guard  reData != nil else{
+//                        return
+//                    }
+//
+//                    print("123456")
+//
+//                }
+        AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
+            .validate(statusCode: acceptableStatusCodes)
+            .responseDecodable(of:CallSimple.Rsp.self){(dataRsp:AFDataResponse<CallSimple.Rsp>) in
+                switch dataRsp.result{
+                case .success(let ret):
+                    log.i("reqCallSimple resonse: \(ret)")
+                    if(ret.code != 0){
+                        log.w("al reqCall rsp:'\(ret.msg)(\(ret.code))' from:\(url)")
+                    }
+                    if(ret.code == AgoraLab.tokenExpiredCode){
+                        rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
+                        return
+                    }
+                    var ec = ErrCode.XERR_API_RET_FAIL
+                    if(ret.code == 100001){//对端忙
+                        ec = ErrCode.XERR_CALLKIT_PEER_BUSY
+                    }
+                    if(ret.code == 100005){
+                        ec = ErrCode.XERR_CALLKIT_LOCAL_BUSY
+                    }
+                    rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
+                case .failure(let error):
+                    log.e("reqCallSimple failure: \(url) failed,detail:\(error) ")
+                    rsp(ErrCode.XERR_NETWORK,"dial number fail",nil)
+                }
+            }
+    }
+    
     func reqCall(_ token:String, _ reqPayload:Call.Payload,_ traceId:String, _ rsp:@escaping (Int,String,Call.Rsp?)->Void){
         let header = Header(traceId: traceId)
         let req = Call.Req(header: header, payload: reqPayload)

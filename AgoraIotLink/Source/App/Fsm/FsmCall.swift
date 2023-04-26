@@ -13,7 +13,22 @@ protocol IFsmCallListener{
     func on_incoming_state_watcher(_ srcEvent:FsmCall.Event)
      //srcEvent:NTF_REMOTE_HANGUP
     func on_remote_state_watcher(_ srcEvent:FsmCall.Event)
+    
+    // rtc事件
+    func do_FsmCall_LOCAL_JOIN_SUCC()
+    func do_FsmCall_LOCAL_JOIN_FAIL()
+    func do_FsmCall_REMOTE_JOIN()
+    func do_FsmCall_REMOTE_LEFT()
+    func do_FsmCall_REMOTE_VIDEOREADY()
+    
+    //srcState:stopAll
+    func do_LEAVEANDDESTROY()
+     //srcState:ready
+    func do_CREATEANDENTER()
+    
  };
+
+
 class FsmCall : Fsm {
     typealias IListener = IFsmCallListener
     enum State : Int{
@@ -217,7 +232,6 @@ class FsmCall : Fsm {
 
     init(_ onPost:@escaping Fsm.PostFun,_ _FsmApp:FsmApp){
         super.init(onPost)
-        _FsmRtc = FsmRtc(onPost,self)
         self._FsmApp = _FsmApp
         FsmCall_P0_FsmCall = [
             Node(Fsm.FLAG_RUN,Event.IDLE.rawValue,State.idle.rawValue,nil,nil),
@@ -236,7 +250,7 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.REMOTE_ANSWER.rawValue,State.callHangup.rawValue,nil,{(e:Int)->Void in self._listener?.on_callHangup(Event(rawValue:e)!)}),
             Node(Fsm.FLAG_NONE,Event.REMOTE_RINGING.rawValue,State.callHangup.rawValue,nil,{(e:Int)->Void in self._listener?.on_callHangup(Event(rawValue:e)!)}),
             Node(Fsm.FLAG_POST,Event.RESETCALL.rawValue,State.reset_call.rawValue,nil,{(e:Int)->Void in self._listener?.on_reset_call(Event(rawValue:e)!)}),
-            Node(Fsm.FLAG_POST,Event.RESETRTC.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_RESETRTC(Event(rawValue:e)!)},nil),
+            Node(Fsm.FLAG_POST,Event.RESETRTC.rawValue,State.SCount.rawValue,{(e:Int)->Void in self._listener?.do_LEAVEANDDESTROY()},nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.hanging_up0.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P4_query_agoraLab = [
@@ -251,7 +265,7 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_SUCC.rawValue,State.local_viewing.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.incoming_hangup.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_JOIN_FAIL.rawValue,State.incoming_local_error.rawValue,nil,nil),
-            Node(Fsm.FLAG_POST,Event.CREATEANDENTER.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_CREATEANDENTER(Event(rawValue:e)!)},nil),
+            Node(Fsm.FLAG_POST,Event.CREATEANDENTER.rawValue,State.SCount.rawValue,{(e:Int)->Void in self._listener?.do_CREATEANDENTER()},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P6_exited = [
             Node(Fsm.FLAG_RUN,Event.IDLE.rawValue,State.idle.rawValue,nil,nil),
@@ -279,7 +293,8 @@ class FsmCall : Fsm {
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP.rawValue,State.ntf_join_fail.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_HANGUP.rawValue,State.ntf_join_fail.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.REMOTE_ANSWER.rawValue,State.remote_answer_first.rawValue,nil,nil),
-            Node(Fsm.FLAG_POST,Event.CREATEANDENTER.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_CREATEANDENTER(Event(rawValue:e)!)},nil),
+            Node(Fsm.FLAG_NONE,Event.REMOTE_VIDEOREADY.rawValue,State.remoteVReady1.rawValue,nil,nil),
+            Node(Fsm.FLAG_POST,Event.CREATEANDENTER.rawValue,State.SCount.rawValue,{(e:Int)->Void in self._listener?.do_CREATEANDENTER()},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P12_hanging_up0 = [
             Node(Fsm.FLAG_NONE,Event.ACK_INVALID.rawValue,State.callkit_ready.rawValue,nil,nil),
@@ -296,7 +311,7 @@ class FsmCall : Fsm {
         FsmCall_P14_hanging_up = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP_SUCC.rawValue,State.callkit_ready.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOCAL_HANGUP_FAIL.rawValue,State.callkit_ready.rawValue,nil,nil),
-            Node(Fsm.FLAG_POST,Event.RESETRTC.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmRtc_RESETRTC(Event(rawValue:e)!)},nil),
+            Node(Fsm.FLAG_POST,Event.RESETRTC.rawValue,State.SCount.rawValue,{(e:Int)->Void in self._listener?.do_LEAVEANDDESTROY()},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmCall_P15_local_viewing = [
             Node(Fsm.FLAG_NONE,Event.LOCAL_ACCEPT.rawValue,State.accepting.rawValue,nil,nil),
@@ -408,14 +423,13 @@ class FsmCall : Fsm {
     }
     //trans
     private func do_FsmApp_CALLIDLE(_ e:Event)->Void{_FsmApp?.trans(FsmApp.Event.CALLIDLE.rawValue)}
-    private func do_FsmRtc_CREATEANDENTER(_ e:Event)->Void{_FsmRtc?.trans(FsmRtc.Event.CREATEANDENTER.rawValue)}
-    private func do_FsmRtc_RESETRTC(_ e:Event)->Void{_FsmRtc?.trans(FsmRtc.Event.RESETRTC.rawValue)}
+//    private func do_FsmRtc_CREATEANDENTER(_ e:Event)->Void{_FsmRtc?.trans(FsmRtc.Event.CREATEANDENTER.rawValue)}
+//    private func do_FsmRtc_RESETRTC(_ e:Event)->Void{_FsmRtc?.trans(FsmRtc.Event.RESETRTC.rawValue)}
     private func do_FsmApp_CALL_READY(_ e:Event)->Void{_FsmApp?.trans(FsmApp.Event.CALL_READY.rawValue)}
+    
+    
     //fsm
     private var _FsmApp:Fsm? = nil
-    //sub state get set
-    func getFsmRtc()->FsmRtc{return _FsmRtc!}
-    //sub state
-    private var _FsmRtc:FsmRtc? = nil
+
 };
 

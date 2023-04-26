@@ -224,7 +224,7 @@ class AccountManager : IAccountMgr{
     
     private func doLogin(_ param:LoginParam,_ result:@escaping (Int,String)->Void) {
         let data = param
-        log.i("---doLogin--accessToken:\(param.accessToken) refreshToken:\(param.refreshToken)")
+        log.i("---doLogin--accessToken:\(param.accessToken) refreshToken:\(param.refreshToken) grawin_token:\(param.grawin_token)")
         //self.app.context.aglab.session.userName = data.account
         self.app.context.aglab.session = AgoraLabSession(
             tokenType: data.tokenType,

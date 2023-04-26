@@ -22,6 +22,9 @@ class CallSession{
     var cloudRecordStatus:Int = 0
     var reason:Int = 0
     var disabledPush:Bool = false
+    
+    var token = ""
+    var cname = ""
 }
 
 class CallkitManager : ICallkitMgr{
@@ -66,8 +69,8 @@ class CallkitManager : ICallkitMgr{
         self.app.context.call.session.cloudRecordStatus = sess.cloudRecordStatus
     }
     
-    private func onLastCallSessionUpdated(sessionId:String){
-        self.app.context.call.lastSession.sessionId = sessionId
+    private func onLastCallSessionUpdated(uId:UInt){
+        self.app.context.call.lastSession.uid = uId
     }
 
     private var app:Application
@@ -78,120 +81,6 @@ class CallkitManager : ICallkitMgr{
         self.app = app
         self.rtc = app.proxy.rtc
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
-    }
-    
-    //挂断
-    private func doCallHangup(result:@escaping(Int,String)->Void){
-        
-        if self.app.context.call.lastSession.sessionId == "" && self.app.context.call.lastSession.talkingId != 0{
-            self.app.context.call.lastSession.stopSuc = false
-            self.app.context.call.lastSession.talkingId = 0
-            result(-10002,"param empty")
-            app.rule.trigger.local_join_watcher = {b in}
-            self.app.proxy.mqtt.waitForActionDesired { ack, sess in
-                log.i("waitForActionDesired 置空: \(ack.rawValue)")
-            }
-            self.app.rule.trans(FsmCall.Event.LOCAL_HANGUP_FAIL)
-            log.i("doCallHangup_fail_stopSuc=false: sessionId:\(app.context.call.session.sessionId)")
-            return
-        }
-        log.i("doCallHangup 走下去了")
-        let sessionId = app.context.call.session.sessionId
-        let caller = app.context.call.session.caller
-        let localId = app.context.gyiot.session.cert.thingName
-        let callee = app.context.call.session.callee
-        
-        self.app.context.call.lastSession.talkingId = 0
-        
-        let req = AgoraLab.Answer.Payload(sessionId: sessionId, calleeId: callee, callerId: caller,localId: localId, answer: 1)
-        let traceId:Int = String.dateTimeRounded()
-        let cb = { (ec:Int,msg:String,data:AgoraLab.Answer.Data?) in
-            if(ec != ErrCode.XOK){
-                log.e("Hangup_fail:\(msg)(\(ec)) caller:\(caller)  callee:\(callee)  local:\(localId) sessionId:\(sessionId)")
-            }else{
-                self.app.context.call.lastSession.reset()
-            }
-            result(ec,msg)
-            self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
-        }
-        app.rule.trigger.local_join_watcher = {b in}
-        self.app.proxy.mqtt.waitForActionDesired { ack, sess in
-            log.i("waitForActionDesired 置空: \(ack.rawValue)")
-        }
-        let agToken = app.context.aglab.session.accessToken
-        app.proxy.al.reqAnswer(agToken,req,"\(traceId)", cb)
-    }
-    
-    //内部调用
-    public func doCallHangupInter(result:@escaping(Int,String)->Void){
-        
-        let sessionId = app.context.call.session.sessionId
-        let caller = app.context.call.session.caller
-        let callee = app.context.call.session.callee
-        let localId = app.context.gyiot.session.cert.thingName
-        let req = AgoraLab.Answer.Payload(sessionId: sessionId, calleeId: callee, callerId: caller,localId: localId, answer: 1)
-        let traceId:Int = String.dateTimeRounded()
-        if app.context.call.session.sessionId == ""{
-            log.i("doCallHangupInter fail sessionId:\(sessionId)")
-            self.app.rule.trans(FsmCall.Event.LOCAL_HANGUP_FAIL)
-            return
-        }
-        let cb = { (ec:Int,msg:String,data:AgoraLab.Answer.Data?) in
-            if(ec != ErrCode.XOK){
-                log.e("doCallHangupInter_fail:\(msg)(\(ec)) caller:\(caller)  callee:\(callee)  local:\(localId)")
-            }else{
-                log.i("doCallHangupInter succ sessionId:\(sessionId)")
-                self.app.context.call.lastSession.reset()
-            }
-            result(ec,msg)
-            self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
-        }
-        app.rule.trigger.local_join_watcher = {b in}
-        let agToken = app.context.aglab.session.accessToken
-        app.proxy.al.reqAnswer(agToken,req,"\(traceId)", cb)
-    }
-    
-    
-    private func doCallHangupSync(result:@escaping(Int,String)->Void){
-        let sessionId = app.context.call.session.sessionId
-        let caller = app.context.call.session.caller
-        let callee = app.context.call.session.callee
-        let localId = app.context.gyiot.session.cert.thingName
-        let req = AgoraLab.Answer.Payload(sessionId: sessionId, calleeId: callee, callerId: caller,localId: localId, answer: 1)
-        let traceId:String = app.context.call.session.traceId
-        let cb = { (ec:Int,msg:String,data:[String : Any]?) in
-            if(ec != ErrCode.XOK){
-                log.e("call Hangup fail:\(msg)(\(ec)) caller:\(caller)  callee:\(callee)  local:\(localId)")
-            }
-            result(ec,msg)
-            self.app.rule.trans(ec == ErrCode.XOK ? FsmCall.Event.LOCAL_HANGUP_SUCC : FsmCall.Event.LOCAL_HANGUP_FAIL)
-        }
-        app.rule.trigger.local_join_watcher = {b in}
-        let agToken = app.context.aglab.session.accessToken
-        app.proxy.al.reqAnswerSync(agToken,req,traceId, cb)
-    }
-    
-    func callHangupSync(result:@escaping(Int,String)->Void){
-        log.i("call callHangup")
-        app.rule.trans(FsmCall.Event.LOCAL_HANGUP,
-                       {self.doCallHangupSync(result: {ec,msg in self.asyncResult(ec, msg, result)})},
-                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
-    }
-    
-    func callHangup(result:@escaping(Int,String)->Void){
-        log.i("call callHangup")
-        callRcbTime?.invalidate()
-        app.rule.trans(FsmCall.Event.LOCAL_HANGUP,
-                       {self.doCallHangup(result: {ec,msg in self.asyncResult(ec, msg, result)})}
-                       ,{self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)}
-        )
-    }
-    
-    private func finiCall(result:@escaping(Int,String)->Void){
-        app.rule.trans(FsmCall.Event.FINICALL)
-        let filter = self.app.context.callbackFilter
-        let ret = filter(ErrCode.XOK,"")
-        result(ret.0,ret.1)
     }
     
     private func doCallAnswer(result:@escaping(Int,String)->Void,
@@ -232,9 +121,8 @@ class CallkitManager : ICallkitMgr{
                     actionAck:@escaping(ActionAck)->Void,
                     memberState:((MemberState,[UInt])->Void)?){
         log.i("call callAnswer")
-        app.rule.trans(FsmCall.Event.LOCAL_ACCEPT,
-                       {self.doCallAnswer(result: {ec,msg in self.asyncResult(ec, msg, result)},actionAck: actionAck,memberState: memberState)},
-                                          {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
+        CallListenerManager.sharedInstance.acceptCall()
+        result(ErrCode.XOK,"suc")
     }
     
     class AsyncCallback{
@@ -256,58 +144,23 @@ class CallkitManager : ICallkitMgr{
     
     private func onActionDesired(action:ActionAck,sess:CallSession?){
         log.i("call action desired:\(action.rawValue)")
-        if(action == .RemoteHangup){
-            if self.app.context.call.lastSession.talkingId == 0 { return }
-            self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
-            self.app.rule.trans(FsmCall.Event.REMOTE_HANGUP)
-        }
-        else if(action == .RemoteAnswer){
-            
-            if self.app.context.call.lastSession.talkingId == 0 { return }
-            
-            self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
-            log.i("call remote answered,waiting for remote join channel")
-            if(sess == nil){
-                log.w("call action ack:sess is nil when .RemoteAnswer")
-            }
-            else{//don't update sess because mqtt return status only during normal condition
-                if(sess?.sessionId != ""){
-                    //abnormal call ack after an unfinished call session
-                    self.onCallSessionUpdated(sess: sess!)
-                }
-            }
-            self.app.rule.trans(FsmCall.Event.REMOTE_ANSWER,{},{
-                self.doCallHangupInter(result: {ec,msg in})})
-        }
-        else if(action == .RemoteTimeout){
-            if self.app.context.call.lastSession.talkingId == 0 { return  }
-            log.i("call RemoteTimeout 对端超时")
-            self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
-            self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
-        }
-        else if(action == .LocalTimeout){
-            if self.app.context.call.lastSession.talkingId == 0 { return  }
-            self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
-            self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
-        }
-       
-        else if(action == .CallIncoming){
+
+        if(action == .CallIncoming){
             if(sess == nil){
                 log.e("call reqCall action ack:sess is nil when call CallIncoming")
             }
             else{
                 self.onCallSessionUpdated(sess: sess!)
+                CallListenerManager.sharedInstance.incomeCall(incoming: _incoming)
                 let local = self.app.context.gyiot.session.cert.thingName
-                
                 log.i("call sess caller:\(sess!.callerId) callee:\(sess!.calleeId) local:\(local)")
-                self.app.rule.trans(FsmCall.Event.INCOME)
                 
-                if(local != sess!.callerId){
-                    _incoming(sess!.callerId,sess!.attachedMsg,action)
-                    self.app.rule.trigger.incoming_state_watcher = {a in
-                        self._incoming(sess!.callerId,sess!.attachedMsg,a)
-                    }
-                }
+//                if(local != sess!.callerId){
+//                    _incoming(sess!.callerId,sess!.attachedMsg,action)
+//                    self.app.rule.trigger.incoming_state_watcher = {a in
+//                        self._incoming(sess!.callerId,sess!.attachedMsg,a)
+//                    }
+//                }
             }
         }
         else{
@@ -324,43 +177,87 @@ class CallkitManager : ICallkitMgr{
 //            app.proxy.mqtt.publishPushId(id: eid,enableNotify:enabled)
 //        }
     }
-
-    private func judegLastCall(deviceId:String,attachMsg:String,result:@escaping(Int,String)->Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?){
-        if app.context.call.lastSession.sessionId != ""{
-            self.resetDevice {[weak self] code, msg in
-                log.i("judegLastCall:resetDevice code:\(code) msg:\(msg)")
-                self?.app.context.call.lastSession.reset()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
-                    log.i("judegLastCall:recall___重置后重新呼叫___)")
-                    self?.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
-                }
-            }
-        }else if app.context.call.lastSession.sessionId == "",self.isCallRet == false{
-            log.i("judegLastCall:___上次呼叫未通___)")
-            self.resetDevice {[weak self] code, msg in
-                self?.app.context.call.lastSession.reset()
-                log.i("judegLastCall:___上次呼叫未通___:resetDevice code:\(code) msg:\(msg)")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
-                    log.i("judegLastCall:recall___上次呼叫未通___重置后重新呼叫___)")
-                    self?.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
-                }
-            }
-            result(ErrCode.XERR_CALLKIT_DIAL,"call error")
-        }
-        else{
-            self.doCallDial(deviceId: deviceId, attachMsg: attachMsg, result: result, actionAck: actionAck,memberState:memberState)
-        }
-    }
     
-    private var  callRcbTime : TimeCallback<(Int,String)>? = nil
-    private func doCallDial(deviceId:String,attachMsg:String,result:@escaping(Int,String)->Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?){
+    
+//    private func onActionDesired(action:ActionAck,sess:CallSession?){
+//        log.i("call action desired:\(action.rawValue)")
+//        if(action == .RemoteHangup){
+//            if self.app.context.call.lastSession.talkingId == 0 { return }
+//            self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
+//            self.app.rule.trans(FsmCall.Event.REMOTE_HANGUP)
+//        }
+//        else if(action == .RemoteAnswer){
+//
+//            if self.app.context.call.lastSession.talkingId == 0 { return }
+//
+//            self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
+//            log.i("call remote answered,waiting for remote join channel")
+//            if(sess == nil){
+//                log.w("call action ack:sess is nil when .RemoteAnswer")
+//            }
+//            else{//don't update sess because mqtt return status only during normal condition
+//                if(sess?.sessionId != ""){
+//                    //abnormal call ack after an unfinished call session
+//                    self.onCallSessionUpdated(sess: sess!)
+//                }
+//            }
+//            self.app.rule.trans(FsmCall.Event.REMOTE_ANSWER,{},{
+//                self.doCallHangupInter(result: {ec,msg in})})
+//        }
+//        else if(action == .RemoteTimeout){
+//            if self.app.context.call.lastSession.talkingId == 0 { return  }
+//            log.i("call RemoteTimeout 对端超时")
+//            self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
+//            self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
+//        }
+//        else if(action == .LocalTimeout){
+//            if self.app.context.call.lastSession.talkingId == 0 { return  }
+//            self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
+//            self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
+//        }
+//
+//        else if(action == .CallIncoming){
+//            if(sess == nil){
+//                log.e("call reqCall action ack:sess is nil when call CallIncoming")
+//            }
+//            else{
+//                self.onCallSessionUpdated(sess: sess!)
+//                let local = self.app.context.gyiot.session.cert.thingName
+//
+//                log.i("call sess caller:\(sess!.callerId) callee:\(sess!.calleeId) local:\(local)")
+//                self.app.rule.trans(FsmCall.Event.INCOME)
+//
+//                if(local != sess!.callerId){
+//                    _incoming(sess!.callerId,sess!.attachedMsg,action)
+//                    self.app.rule.trigger.incoming_state_watcher = {a in
+//                        self._incoming(sess!.callerId,sess!.attachedMsg,a)
+//                    }
+//                }
+//            }
+//        }
+//        else{
+//            log.i("call action \(action.rawValue) not handled")
+//        }
+//
+//        if(self.app.context.push.session.pushEnabled == nil){
+//            let enabled = sess?.disabledPush == true ? false : true
+//            log.i("call action \(action.rawValue) StateInited pushEnabled:\(enabled)")
+//
+//            self.app.context.push.session.pushEnabled = enabled
+//            let eid = app.context.push.session.eid
+//
+//            app.proxy.mqtt.publishPushId(id: eid,enableNotify:enabled)
+//        }
+//    }
+
+    
+    private func doCallSimpleDial(deviceId:String,attachMsg:String,result:@escaping(Int,String)->Void){
         let appId = app.config.appId
         app.context.call.session.caller = app.context.gyiot.session.cert.thingName
         app.context.call.session.callee = deviceId
-
-        let caller = app.context.gyiot.session.cert.thingName
-        let callee = app.context.call.session.callee
-        let req = AgoraLab.Call.Payload(callerId:caller,calleeIds: [callee],attachMsg: attachMsg,appId: appId)
+        
+        let userId = app.context.gyiot.session.cert.thingName
+        let req = AgoraLab.CallSimple.Payload(appId: appId, deviceId: deviceId, userId: userId, extraMsg: attachMsg)
         
         log.i("talkingId:\(app.context.call.lastSession.talkingId)")
         let traceId:Int = String.dateTimeRounded()
@@ -371,204 +268,63 @@ class CallkitManager : ICallkitMgr{
         app.context.call.lastSession.callee = deviceId
         self.app.proxy.mqtt.curTimeStamp = traceId
         self.isCallRet = false
-        //留存当前呼叫的信息------
-        
-        app.rule.trigger.member_state_watcher = memberState
-        app.rule.trigger.remote_state_watcher = { s in
-            actionAck(s)
-        }
- 
-        callRcbTime = TimeCallback<(Int,String)>(cb:result)
-        
-        let local_join_watcher : (FsmCall.Event)->Void = {[weak self] event in
-            log.i("call local_join_watcher triggered")
-            if(event == FsmCall.Event.LOCAL_JOIN_FAIL){
-                self?.callRcbTime?.invoke(args:(ErrCode.XERR_CALLKIT_DIAL,"join channel fail"))
-            }
-            else if(event == FsmCall.Event.REMOTE_ANSWER){
-                self?.callRcbTime?.invoke(args: (ErrCode.XOK,"device answer"))
-                actionAck(.RemoteAnswer)
-            }
-            else if(event == FsmCall.Event.LOCAL_JOIN_SUCC){
-                self?.callRcbTime?.invoke(args: (ErrCode.XOK,"device is ringing"))
-//                let pacb = TimeCallback<ActionAck>(cb:actionAck)
-//                pacb.schedule(time:self?.app.config.calloutTimeOut ?? 15,timeout: {
-//                    log.i("call reqCall peerAction waitForAction timeout")
-//                    self?.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT)
-//                    actionAck(.RemoteTimeout)
-//                })
-//                self?.app.proxy.mqtt.waitForActionDesired(actionDesired: {action,sess in
-//                    log.i("call reqCall action ack:\(action.rawValue)")
-//                    self?.onActionDesired(action:action,sess: sess)
-//                    pacb.invoke(args: action)
-//                })
-            }
-        }
-
-        self.app.rule.trigger.local_join_watcher = local_join_watcher
-        
-
-        //1.wait_mqtt_ntf result
-//        let pr = {(ec:Int,msg:String,sess:CallSession?) in
-//            if(ec != ErrCode.XOK){
-//                log.w("call waitForDidCalling \(msg)(\(ec))")
-//                self.app.context.call.session.reset()
-//                self.app.rule.trans(ec == ErrCode.XERR_TIMEOUT ? FsmCall.Event.REMOTE_TIMEOUT :  FsmCall.Event.MQTT_ACK_ERROR)
-//                rcb.invoke(args: (ec,msg))
-//            }
-//            else{
-//                guard let sess = sess else{
-//                    log.e("call unknown error: nil session with \(ec),\(msg)")
-//                    self.app.rule.trans(FsmCall.Event.MQTT_ACK_ERROR)
-//                    rcb.invoke(args: (ErrCode.XERR_UNKNOWN,"unknown error"))
-//                    return
-//                }
-//
-//                log.i("call reqCall remote shadow ringing session:\(sess.sessionId)")
-//                self.onCallSessionUpdated(sess: sess)
-//
-//                self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
-//                    log.i("all reqCall set local_join_watcher after mqtt ack")
-//                    self.app.rule.trigger.local_join_watcher = local_join_watcher
-//                    actionAck(.CallOutgoing)
-//                },{
-//                    log.e("call state error from trans REMOTE_RINGING")
-//                    self.app.rule.trans(FsmCall.Event.STATUS_ERROR)
-//                })
-//            }
-//        }
         
         //1.query_agoraLab result
-        let cbDial = { (ec:Int,msg:String,rsp:AgoraLab.Call.Rsp?) in
+        let cbDial = { (ec:Int,msg:String,rsp:AgoraLab.CallSimple.Rsp?) in
    
             if(ec == ErrCode.XOK){
-                
                 self.isCallRet = true
                 
                 guard let rsp = rsp else{
                     log.e("call callDial ret XOK, but rsp is nil")
+                    CallListenerManager.sharedInstance.callRequest(false)
                     result(ErrCode.XERR_CALLKIT_DIAL,"param error")
-                    return
-                }
-                
-                var ec = ErrCode.XERR_UNKNOWN
-                var msg = "unknown rsp:\(rsp.code)"
-                switch(rsp.code){
-                case AgoraLab.RspCode.IN_TALKING:
-                    msg = "peer is in talking"
-                    ec = ErrCode.XERR_CALLKIT_PEER_BUSY
-                case AgoraLab.RspCode.ANSWER:
-                    msg = "answer fail"
-                    ec = ErrCode.XERR_CALLKIT_ANSWER
-                case AgoraLab.RspCode.HANGUP:
-                    ec = ErrCode.XERR_CALLKIT_HANGUP
-                    msg = "hangup fail"
-                case AgoraLab.RspCode.ANSWER_TIMEOUT:
-                    ec = ErrCode.XERR_CALLKIT_TIMEOUT
-                    msg = "timeout for answering"
-                case AgoraLab.RspCode.CALL:
-                    ec = ErrCode.XERR_CALLKIT_LOCAL_BUSY
-                    msg = "can't call again during calling"
-                case AgoraLab.RspCode.INVALID_ANSWER:
-                    ec = ErrCode.XERR_CALLKIT_ERR_OPT
-                    msg = "invalid answer"
-                case AgoraLab.RspCode.SYS_ERROR:
-                    ec = ErrCode.XERR_UNKNOWN
-                    msg = "system error"
-                case AgoraLab.RspCode.APPID_NOT_SAME:
-                    ec = ErrCode.XERR_CALLKIT_APPID_DIFF
-                    msg = "appid not same"
-                case AgoraLab.RspCode.SAME_ID:
-                    ec = ErrCode.XERR_CALLKIT_SAME_ID
-                    msg = "caller and callee id are same"
-                case AgoraLab.RspCode.APPID_NOT_REPORT:
-                    ec = ErrCode.XERR_CALLKIT_NO_APPID
-                    msg = "appid not report"
-                case AgoraLab.RspCode.OK:
-                    ec = ErrCode.XOK
-                    msg = "succ"
-                
-                default:
-                    ec = ErrCode.XERR_INVALID_PARAM
-                    msg = "unknown rsp:\(rsp.code)"
-                }
-                if(ec != ErrCode.XOK){
-                    log.e("call callDial ret \(msg)(\(ec))")
-                    self.app.rule.trans(FsmCall.Event.ACK_INVALID,{
-                        result(ec,msg)
-                    })
                     return
                 }
                 
                 guard let data = rsp.data else{
                     log.e("call reqCall ret data is nil for \(rsp.msg) (\(rsp.code))")
-                    self.app.rule.trans(FsmCall.Event.ACK_INVALID)
+                    CallListenerManager.sharedInstance.callRequest(false)
                     result(ErrCode.XERR_INVALID_PARAM,"param error")
                     return
                 }
                 
-                log.i("call reqCall recv session data from agoraLab, waiting for shadow ring ack")
-                log.i("call reqCall sessionId:\(data.sessionId) uid:\(data.uid) data:\(data)")
-                self.app.context.call.session.appId = data.appId
-                self.app.context.call.session.sessionId = data.sessionId
-                self.app.context.call.session.channelName = data.channelName
-                self.app.context.call.session.rtcToken = data.rtcToken
-                self.app.context.call.session.uid = UInt(data.uid) ?? 0
-                self.app.context.call.session.peerId = UInt(data.peerUid) ?? 0
-                self.app.context.call.session.cloudRecordStatus = data.cloudRecordStatus
+                self.app.context.call.session.token = data.token
+                self.app.context.call.session.uid = UInt(data.uid)
+                self.app.context.call.session.cname = data.cname
+                self.app.context.call.session.peerId = 10
 
-                self.onLastCallSessionUpdated(sessionId: data.sessionId)
+                self.onLastCallSessionUpdated(uId: UInt(data.uid) )
                 
-                //------如果有未挂断的，则进行挂断------
-                if  self.app.context.call.lastSession.stopSuc == false && self.app.context.call.lastSession.talkingId == 0 {
-                    self.doCallHangup { code, msg in
-                        log.i("redoCallHangup code:\(code) msg:\(msg)")
-                    }
-                }
-                //------如果有未挂断的，则进行挂断------
+                CallListenerManager.sharedInstance.callRequest(true)
                 
-                self.app.rule.trans(FsmCall.Event.ACK_SUCC,{
-                    actionAck(.CallForward)
-                    log.i("call reqCall CallForward")
-                    self.callRcbTime?.schedule(time:self.app.config.calloutTimeOut,timeout: {
-                        self._onPeerRinging = {e,m,s in }
-                        log.i("call reqCall ring remote timeout")
-                        self.app.rule.trans(FsmCall.Event.REMOTE_TIMEOUT,{
-                            result(ErrCode.XERR_TIMEOUT,"dial number timeout")
-                        })
-                    })
-                })
+                log.i("call reqCall token:\(data.token) uid:\(data.uid) data:\(data)")
                 
-                self.app.rule.trans(FsmCall.Event.REMOTE_RINGING,{
-                     log.i("all reqCall REMOTE_RINGING")
-                })
+                result(ec,msg)
             }
             else{
                 self.isCallRet = true
-                if(ec == ErrCode.XERR_CALLKIT_LOCAL_BUSY){
-                    self.resetDevice { code, msg in
-                        log.i("XERR_CALLKIT_LOCAL_BUSY:resetDevice code:\(code) msg:\(msg)")
-                    }
-                }
                 log.e("call reqCall fail:\(msg) ec: (\(ec))")
-                self.app.rule.trans(FsmCall.Event.ACK_INVALID)
+                CallListenerManager.sharedInstance.callRequest(false)
                 result(ec,msg)
             }
         }
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
-//        self._onPeerRinging = pr
         let agToken = app.context.aglab.session.accessToken
-        app.proxy.al.reqCall(agToken,req,"\(traceId)", cbDial)
+        app.proxy.al.reqCallSimple(agToken,req,"\(traceId)", cbDial)
         
     }
     
     func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void,actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?) {
         log.i("---callDial--发起呼叫---")
-        app.rule.trans(FsmCall.Event.CALL
-                       ,
-                       {self.judegLastCall(deviceId: device.deviceId, attachMsg: attachMsg, result: {ec,msg in self.asyncResult(ec, msg, result)}, actionAck: actionAck,memberState:memberState)}
-                       ,{self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)}
-                       )
+        CallListenerManager.sharedInstance.startCall(actionAck: actionAck, memberState: memberState)
+        doCallSimpleDial(deviceId: device.deviceId, attachMsg: attachMsg, result: result)
+        
+    }
+    
+    func callHangup(result:@escaping(Int,String)->Void){
+        log.i("call callHangup")
+        CallListenerManager.sharedInstance.hangUp()
     }
     
     func setLocalVideoView(localView: UIView?) -> Int {

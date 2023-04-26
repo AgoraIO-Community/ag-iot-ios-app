@@ -342,6 +342,32 @@ class AWSMqtt{
     private func onUpdateCommStatus(dict:[String:Any]){
         
     }
+    
+    private func onUpdateRtcSimple(state:[String:Any]){
+        
+        log.i("onUpdateRtcSimple:\(state))")
+
+        let sess = CallSession()
+        if let token = state["token"] as? String {
+            sess.token = token
+        }else{
+            sess.token = ""
+        }
+        if let uid = state["uid"] as? UInt {
+            sess.uid = UInt(uid)
+        }else{
+            sess.uid = 0
+        }
+        if let cname = state["cname"] as? String {
+            sess.cname = cname
+        }else{
+            sess.cname = ""
+        }
+        
+        _onActionDesired(.CallIncoming,sess)
+        
+    }
+    
     private func onUpdateRtcStatus(version:UInt?,desired:[String:Any],reported:[String:Any]?){
         
         log.i("onUpdateRtcStatus:\(desired))")
@@ -504,7 +530,7 @@ class AWSMqtt{
                     if(!self.subScribeWithClientCalled){
                         self.subScribeWithClient(completion: {succ,msg in})
                     }
-                    self.shadowRtcGet()
+//                    self.shadowRtcGet()
                     self._onStatusChanged(.Connected)
                 }
             case .disconnected:
@@ -711,6 +737,17 @@ class AWSMqtt{
         }
     }
     
+    //topic5 = "$aws/things/" + thingName + "/shadow/name/rtc2/update/delta"  // 1.5版本中来电通知
+    func onTopic5Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
+        let version = jsonDict["version"] as? UInt
+        guard let state = jsonDict["state"] as? [String:Any] else{
+            log.e("mqtt no 'state' found for \(topicRcv) jsonDict:\(jsonDict)")
+            return false
+        }
+        self.onUpdateRtcSimple(state: state)
+        return true
+    }
+    
     func syncRemoteRtcStatus(){
         guard let iotDataManager = iotDataManager else {
             log.e("mqtt iotDataManager is nil")
@@ -790,10 +827,11 @@ class AWSMqtt{
         let thingName = self.thingName
         let topic3 = "granwin/" + self.identityId + "/message"
         let topic4 = "$aws/things/" + thingName + "/shadow/name/rtc/update/accepted"
+        let topic5 = "$aws/things/" + thingName + "/shadow/name/rtc2/update/delta"  // 1.5版本中来电通知
         
-        let topics:[String] = [AWSMqtt.topic2,topic3,topic4]//AWSMqtt.topic1,
+        let topics:[String] = [AWSMqtt.topic2,topic3,topic4,topic5]//AWSMqtt.topic1,
         let qos:[AWSIoTMQTTQoS] = [.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce]//.messageDeliveryAttemptedAtLeastOnce,
-        let callbacks:[(String,String,[String:Any])->Bool] = [onTopic2Callback,onTopic3Callback,onTopic4Callback]//onTopic1Callback,
+        let callbacks:[(String,String,[String:Any])->Bool] = [onTopic2Callback,onTopic3Callback,onTopic4Callback,onTopic5Callback]//onTopic1Callback,
         var loop:(Int)->Void = {i in}
         var e = 0
         loop = {i in
@@ -814,7 +852,7 @@ class AWSMqtt{
                     log.i("mqtt topic 注册完毕 \(topics)，失败率\(e)/\(topics.count)")
                     self.curMtConnected = true
                     completion(succ,succ ? "注册topic成功" : "注册topic部分失败:失败率\(e)/\(topics.count)" )
-                    self.syncRemoteRtcStatus()
+//                    self.syncRemoteRtcStatus()
                     //self.updateRemoteRtcStatus()
                 }
             }

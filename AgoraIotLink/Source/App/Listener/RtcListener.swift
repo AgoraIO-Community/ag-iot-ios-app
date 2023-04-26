@@ -58,6 +58,7 @@ class RtcListener : FsmRtc.IListener{
                 if(self.app.context.call.session.peerId == uid){
                     self.app.context.call.session.rtc.pairing.uid = uid
                     self.app.rule.trans(FsmRtc.Event.PEER_JOIN)
+//                    self.app.rule.trans(FsmCall.Event.REMOTE_JOIN)
                 }
             }
             else if(act == .Leave){
@@ -89,11 +90,11 @@ class RtcListener : FsmRtc.IListener{
         })
     }
 
-    func do_DESTROY(_ srcState: FsmRtc.State) {
-        log.i("listener rtc.do_DESTROY")
-        app.proxy.rtc.destroy()
-        app.rule.trans(FsmRtc.Event.DESTROY_SUCC)
-    }
+//    func do_DESTROY(_ srcState: FsmRtc.State) {
+//        log.i("listener rtc.do_DESTROY")
+//        app.proxy.rtc.destroy()
+//        app.rule.trans(FsmRtc.Event.DESTROY_SUCC)
+//    }
     
     var app:Application
     init(app:Application){

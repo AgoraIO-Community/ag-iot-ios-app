@@ -18,13 +18,9 @@ class FsmApp : Fsm {
         case FsmState       
         case initPush       
         case FsmPush        
-        case PushFailed     
-        case initCall       
+        case PushFailed
         case finiPush       
-        case initMqtt       
-        case FsmCall        
-        case CallFailed     
-        case finiCall       
+        case initMqtt
         case logouted       
         case FsmMqtt        
         case initRtm        
@@ -53,13 +49,10 @@ class FsmApp : Fsm {
         case LOGIN_SUCC     
         case LOGOUT_CONTINUE
         case PUSH_ERROR     
-        case PUSH_READY     
-        case CALL_READY     
-        case CALL_ERROR     
+        case PUSH_READY
         case MQTT_READY     
         case MQTT_ERROR     
-        case MQTTIDLE       
-        case CALLIDLE       
+        case MQTTIDLE
         case RTM_READY      
         case RTM_ERROR      
         case PUSHIDLE       
@@ -67,11 +60,8 @@ class FsmApp : Fsm {
         case NOTREADY       
         case INITPUSH       
         case INITPUSH_FAIL  
-        case FINIMQTT       
-        case INITCALL       
-        case INITRTM_FAIL   
-        case FINICALL       
-        case INITCALL_FAIL  
+        case FINIMQTT
+        case INITRTM_FAIL
         case INITMQTT_FAIL  
         case FINIPUSH       
         case ALLREADY       
@@ -89,12 +79,8 @@ class FsmApp : Fsm {
         "initPush",
         "FsmPush",
         "PushFailed",
-        "initCall",
         "finiPush",
         "initMqtt",
-        "FsmCall",
-        "CallFailed",
-        "finiCall",
         "logouted",
         "FsmMqtt",
         "initRtm",
@@ -124,12 +110,9 @@ class FsmApp : Fsm {
         "LOGOUT_CONTINUE",
         "PUSH_ERROR",
         "PUSH_READY",
-        "CALL_READY",
-        "CALL_ERROR",
         "MQTT_READY",
         "MQTT_ERROR",
         "MQTTIDLE",
-        "CALLIDLE",
         "RTM_READY",
         "RTM_ERROR",
         "PUSHIDLE",
@@ -138,10 +121,7 @@ class FsmApp : Fsm {
         "INITPUSH",
         "INITPUSH_FAIL",
         "FINIMQTT",
-        "INITCALL",
         "INITRTM_FAIL",
-        "FINICALL",
-        "INITCALL_FAIL",
         "INITMQTT_FAIL",
         "FINIPUSH",
         "ALLREADY",
@@ -158,12 +138,8 @@ class FsmApp : Fsm {
     var FsmApp_P5_initPush:[Node] = Fsm.None
     var FsmApp_P6_FsmPush:[Node] = Fsm.None
     var FsmApp_P7_PushFailed:[Node] = Fsm.None
-    var FsmApp_P8_initCall:[Node] = Fsm.None
     var FsmApp_P9_finiPush:[Node] = Fsm.None
     var FsmApp_P10_initMqtt:[Node] = Fsm.None
-    var FsmApp_P11_FsmCall:[Node] = Fsm.None
-    var FsmApp_P12_CallFailed:[Node] = Fsm.None
-    var FsmApp_P13_finiCall:[Node] = Fsm.None
     var FsmApp_P14_logouted:[Node] = Fsm.None
     var FsmApp_P15_FsmMqtt:[Node] = Fsm.None
     var FsmApp_P16_initRtm:[Node] = Fsm.None
@@ -187,7 +163,6 @@ class FsmApp : Fsm {
         super.init(onPost)
         _FsmState = FsmState(onPost,self)
         _FsmPush = FsmPush(onPost,self)
-        _FsmCall = FsmCall(onPost,self)
         _FsmMqtt = FsmMqtt(onPost,self)
         FsmApp_P0_FsmApp = [
             Node(Fsm.FLAG_RUN,Event.INIT.rawValue,State.Idle.rawValue,nil,nil),
@@ -204,15 +179,13 @@ class FsmApp : Fsm {
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P3_Logining = [
             Node(Fsm.FLAG_NONE,Event.LOGIN_FAIL.rawValue,State.CfgReady.rawValue,nil,nil),
-            Node(Fsm.FLAG_NONE,Event.LOGIN_SUCC.rawValue,State.initCall.rawValue,nil,nil),
-//            Node(Fsm.FLAG_NONE,Event.LOGIN_SUCC.rawValue,State.initPush.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.LOGIN_SUCC.rawValue,State.initMqtt.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P4_FsmState = [
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P5_initPush = [
             Node(Fsm.FLAG_NONE,Event.PUSH_ERROR.rawValue,State.PushFailed.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.PUSH_READY.rawValue,State.allReady.rawValue,nil,nil),
-//            Node(Fsm.FLAG_NONE,Event.PUSH_READY.rawValue,State.initCall.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOGOUT.rawValue,State.finiPush.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.INITPUSH.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmPush_INITPUSH(Event(rawValue:e)!)},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
@@ -220,14 +193,7 @@ class FsmApp : Fsm {
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P7_PushFailed = [
             Node(Fsm.FLAG_RUN,Event.NEXT.rawValue,State.allReady.rawValue,nil,nil),
-//            Node(Fsm.FLAG_RUN,Event.NEXT.rawValue,State.initCall.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.INITPUSH_FAIL.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmState_INITPUSH_FAIL(Event(rawValue:e)!)},nil),
-            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmApp_P8_initCall = [
-            Node(Fsm.FLAG_NONE,Event.CALL_READY.rawValue,State.initMqtt.rawValue,nil,nil),
-            Node(Fsm.FLAG_NONE,Event.CALL_ERROR.rawValue,State.CallFailed.rawValue,nil,nil),
-            Node(Fsm.FLAG_NONE,Event.LOGOUT.rawValue,State.finiCall.rawValue,nil,nil),
-            Node(Fsm.FLAG_POST,Event.INITCALL.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmCall_INITCALL(Event(rawValue:e)!)},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P9_finiPush = [
             Node(Fsm.FLAG_NONE,Event.LOGOUT.rawValue,State.logouted.rawValue,nil,nil),
@@ -240,17 +206,6 @@ class FsmApp : Fsm {
             Node(Fsm.FLAG_NONE,Event.LOGOUT.rawValue,State.finiMqtt.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.INITMQTT.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmMqtt_INITMQTT(Event(rawValue:e)!)},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmApp_P11_FsmCall = [
-            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmApp_P12_CallFailed = [
-            Node(Fsm.FLAG_RUN,Event.NEXT.rawValue,State.initMqtt.rawValue,nil,nil),
-            Node(Fsm.FLAG_POST,Event.INITCALL_FAIL.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmState_INITCALL_FAIL(Event(rawValue:e)!)},nil),
-            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
-        FsmApp_P13_finiCall = [
-            Node(Fsm.FLAG_NONE,Event.CALLIDLE.rawValue,State.finiPush.rawValue,nil,nil),
-            Node(Fsm.FLAG_NONE,Event.LOGOUT.rawValue,State.finiPush.rawValue,nil,nil),
-            Node(Fsm.FLAG_POST,Event.FINICALL.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmCall_FINICALL(Event(rawValue:e)!)},nil),
-            Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P14_logouted = [
             Node(Fsm.FLAG_RUN,Event.LOGOUT_SUCC.rawValue,State.CfgReady.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.LOGOUT_DONE.rawValue,State.logout_watcher.rawValue,nil,{(e:Int)->Void in self._listener?.on_logout_watcher(Event(rawValue:e)!)}),
@@ -259,7 +214,6 @@ class FsmApp : Fsm {
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P16_initRtm = [
             Node(Fsm.FLAG_NONE,Event.RTM_READY.rawValue,State.initPush.rawValue,nil,nil),
-//            Node(Fsm.FLAG_NONE,Event.RTM_READY.rawValue,State.allReady.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.RTM_ERROR.rawValue,State.RtmFailed.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE,Event.LOGOUT.rawValue,State.finiRtm.rawValue,nil,{(e:Int)->Void in self._listener?.on_finiRtm(Event(rawValue:e)!)}),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
@@ -268,8 +222,8 @@ class FsmApp : Fsm {
             Node(Fsm.FLAG_POST,Event.INITMQTT_FAIL.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmState_INITMQTT_FAIL(Event(rawValue:e)!)},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P18_finiMqtt = [
-            Node(Fsm.FLAG_NONE,Event.MQTTIDLE.rawValue,State.finiCall.rawValue,nil,nil),
-            Node(Fsm.FLAG_NONE,Event.LOGOUT.rawValue,State.finiCall.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.MQTTIDLE.rawValue,State.finiPush.rawValue,nil,nil),
+            Node(Fsm.FLAG_NONE,Event.LOGOUT.rawValue,State.finiPush.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.FINIMQTT.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmMqtt_FINIMQTT(Event(rawValue:e)!)},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P19_logout_watcher = [
@@ -278,7 +232,6 @@ class FsmApp : Fsm {
             Node(Fsm.FLAG_RUN,Event.ALL_READY.rawValue,State.Running.rawValue,nil,nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
         FsmApp_P21_RtmFailed = [
-//            Node(Fsm.FLAG_RUN,Event.NEXT.rawValue,State.allReady.rawValue,nil,nil),
             Node(Fsm.FLAG_RUN,Event.NEXT.rawValue,State.initPush.rawValue,nil,nil),
             Node(Fsm.FLAG_POST,Event.INITRTM_FAIL.rawValue,State.SCount.rawValue,{(e:Int)->Void in self.do_FsmState_INITRTM_FAIL(Event(rawValue:e)!)},nil),
             Node(Fsm.FLAG_NONE, Event.ECount.rawValue,State.SCount.rawValue,nil,nil)]
@@ -298,8 +251,7 @@ class FsmApp : Fsm {
         _diagram = [
             FsmApp_P0_FsmApp, FsmApp_P1_Idle, FsmApp_P2_CfgReady, FsmApp_P3_Logining,
             FsmApp_P4_FsmState, FsmApp_P5_initPush, FsmApp_P6_FsmPush, FsmApp_P7_PushFailed,
-            FsmApp_P8_initCall, FsmApp_P9_finiPush, FsmApp_P10_initMqtt, FsmApp_P11_FsmCall,
-            FsmApp_P12_CallFailed, FsmApp_P13_finiCall, FsmApp_P14_logouted, FsmApp_P15_FsmMqtt,
+            FsmApp_P9_finiPush, FsmApp_P10_initMqtt, FsmApp_P14_logouted, FsmApp_P15_FsmMqtt,
             FsmApp_P16_initRtm, FsmApp_P17_MqttFailed, FsmApp_P18_finiMqtt, FsmApp_P19_logout_watcher,
             FsmApp_P20_allReady, FsmApp_P21_RtmFailed, FsmApp_P22_finiRtm, FsmApp_P23_Running,
             FsmApp_P24_logouting]
@@ -319,10 +271,7 @@ class FsmApp : Fsm {
     private func do_FsmPush_INITPUSH(_ e:Event)->Void{_FsmPush?.trans(FsmPush.Event.INITPUSH.rawValue)}
     private func do_FsmState_INITPUSH_FAIL(_ e:Event)->Void{_FsmState?.trans(FsmState.Event.INITPUSH_FAIL.rawValue)}
     private func do_FsmMqtt_FINIMQTT(_ e:Event)->Void{_FsmMqtt?.trans(FsmMqtt.Event.FINIMQTT.rawValue)}
-    private func do_FsmCall_INITCALL(_ e:Event)->Void{_FsmCall?.trans(FsmCall.Event.INITCALL.rawValue)}
     private func do_FsmState_INITRTM_FAIL(_ e:Event)->Void{_FsmState?.trans(FsmState.Event.INITRTM_FAIL.rawValue)}
-    private func do_FsmCall_FINICALL(_ e:Event)->Void{_FsmCall?.trans(FsmCall.Event.FINICALL.rawValue)}
-    private func do_FsmState_INITCALL_FAIL(_ e:Event)->Void{_FsmState?.trans(FsmState.Event.INITCALL_FAIL.rawValue)}
     private func do_FsmState_INITMQTT_FAIL(_ e:Event)->Void{_FsmState?.trans(FsmState.Event.INITMQTT_FAIL.rawValue)}
     private func do_FsmPush_FINIPUSH(_ e:Event)->Void{_FsmPush?.trans(FsmPush.Event.FINIPUSH.rawValue)}
     private func do_FsmState_ALLREADY(_ e:Event)->Void{_FsmState?.trans(FsmState.Event.ALLREADY.rawValue)}
@@ -331,12 +280,10 @@ class FsmApp : Fsm {
     //sub state get set
     func getFsmState()->FsmState{return _FsmState!}
     func getFsmPush()->FsmPush{return _FsmPush!}
-    func getFsmCall()->FsmCall{return _FsmCall!}
     func getFsmMqtt()->FsmMqtt{return _FsmMqtt!}
     //sub state
     private var _FsmState:FsmState? = nil
     private var _FsmPush:FsmPush? = nil
-    private var _FsmCall:FsmCall? = nil
     private var _FsmMqtt:FsmMqtt? = nil
 };
 

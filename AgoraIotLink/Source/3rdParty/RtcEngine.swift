@@ -192,7 +192,7 @@ class RtcEngine : NSObject{
             cb(.Fail,"join channel fail")
         }
         _onEnterChannel = TimeCallback<(TaskResult,String)>(cb: cb)
-        _onEnterChannel?.schedule(time: 10, timeout: {
+        _onEnterChannel?.schedule(time: 20, timeout: {
             log.e("rtc join channel timeout")
             cb(.Fail,"join channel timeout")
         })
@@ -430,6 +430,7 @@ class RtcEngine : NSObject{
         }
         _onPeerAction = peerAction
         _memberState = memberState
+        log.i("rtc enterChannel when uid:\(uid) token:\(token) name:\(name)")
         enterChannel(uid:uid,token:token, name: name,info: info,cb:cb)
     }
     
@@ -589,7 +590,7 @@ extension RtcEngine: AgoraRtcEngineDelegate{
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoDecodedOfUid uid: UInt, size: CGSize, elapsed: Int) {
-        log.i("rtc firstRemoteVideoDecodedOfUid first video frame decoded \(uid)")
+        log.i("rtc firstRemoteVideoDecodedOfUid first video frame decoded： \(uid)")
         _onPeerAction(.VideoReady,uid)
     }
 
