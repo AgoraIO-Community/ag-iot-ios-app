@@ -265,7 +265,7 @@ class AccountManager : IAccountMgr{
                         {result(ErrCode.XOK,"succ")}
                         )//{result(ErrCode.XERR_BAD_STATE,"state error")}
         
-        resetDevice()
+//        resetDevice()
         
     }
     

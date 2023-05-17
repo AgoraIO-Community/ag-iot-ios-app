@@ -172,7 +172,7 @@ class LoginMainVM: NSObject {
         if(sdk == nil){
             cb(false,"sdk 未初始化")
         }
-        sdk?.accountMgr.logout(result: {
+        sdk?.accountMgr.logoutAccount(true, result: {
             ec,msg in
             cb(ec == ErrCode.XOK ? true : false,msg)
         })

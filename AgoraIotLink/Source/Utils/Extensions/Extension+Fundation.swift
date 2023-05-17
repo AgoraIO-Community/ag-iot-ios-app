@@ -56,6 +56,13 @@ public extension String {
         return timestamp
     }
     
+    static func dateTimeSpace(_ lastTime : Int)->Int {
+        let timeInterval: TimeInterval = Date().timeIntervalSince1970
+        let timestamp = Int(timeInterval)
+        log.i("dateTimeSpace currentTime:\(timestamp)")
+        return timestamp - lastTime
+    }
+    
     var dateFromISO8601: Date? {
         return Formatter.iso8601.date(from: self)
     }

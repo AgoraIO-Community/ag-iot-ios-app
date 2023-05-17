@@ -7,14 +7,11 @@
 
 import UIKit
 
-protocol CallStateMachineListener : NSObjectProtocol {
-
-    func on_callHangup()
+@objc protocol CallStateMachineListener : NSObjectProtocol {
     
-    //srcState:stopAll
-    func do_LEAVEANDDESTROY()
-     //srcState:ready
-    func do_CREATEANDENTER()
+    @objc func do_LEAVEANDDESTROY()  //srcState:stopAll
+     
+    @objc func do_CREATEANDENTER()   //srcState:ready
     
  }
 
@@ -32,7 +29,6 @@ enum CallEvent {
     case peerOnline            // 对端上线
     case peerOffline           // 对端离线
     case incomingCall          // 来电事件
-    case IncomingCallSuc       // 来电加入频道成功
     case endCall               // 结束通话事件
 }
 
@@ -40,7 +36,7 @@ class CallStateMachine: NSObject {
     
     weak var delegate : CallStateMachineListener?
     
-    private var currentState: CallState = .idle
+    var currentState: CallState = .idle
     
     func handleEvent(_ event: CallEvent) {
         switch currentState {
@@ -80,7 +76,7 @@ class CallStateMachine: NSObject {
             
         case .incoming:
             switch event {
-            case .IncomingCallSuc:
+            case .peerOnline:
                 currentState = .onCall
             case .endCall:
                 currentState = .idle
@@ -98,4 +94,10 @@ class CallStateMachine: NSObject {
             
         }
     }
+    
+    deinit {
+        delegate = nil
+        log.i("CallStateMachine 销毁了")
+    }
+    
 }

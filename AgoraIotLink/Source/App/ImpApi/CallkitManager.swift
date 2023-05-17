@@ -46,27 +46,26 @@ class CallkitManager : ICallkitMgr{
     }
     
     typealias InComing = (String,String,ActionAck)->Void
+    typealias InComMemberState = ((MemberState,[UInt])->Void)?
     typealias resultCallback = (Int,String)->Void
     var _incoming:InComing = {callerId,msg,calling in log.w("'incoming' callback not registered,please register it with 'CallkitManager'")}
+    var _incomMemState:InComMemberState = {m,c in log.w("incomMemState not inited")}
     private var _onCallIncoming:(CallSession)->Void = {s in log.w("mqtt _onCallIncoming not inited")}
-    
     private var _onPeerRinging:(Int,String,CallSession?)->Void = {ec,msg,sess in log.w("mqtt _onPeerRinging not inited for \(msg)(\(ec))")}
     
-    func register(incoming: @escaping (String,String, ActionAck) -> Void) {
+    
+    func register(incoming: @escaping (String,String, ActionAck) -> Void,memberState:((MemberState,[UInt])->Void)?) {
         self._incoming = incoming
+        self._incomMemState = memberState
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
     }
 
     private func onCallSessionUpdated(sess:CallSession){
-        self.app.context.call.session.appId = sess.appId
-        self.app.context.call.session.caller = sess.callerId
-        self.app.context.call.session.callee = sess.calleeId
-        self.app.context.call.session.sessionId = sess.sessionId
-        self.app.context.call.session.rtcToken = sess.rtcToken
-        self.app.context.call.session.channelName = sess.channelName
+        
         self.app.context.call.session.uid = sess.uid
-        self.app.context.call.session.peerId = sess.peerUid
-        self.app.context.call.session.cloudRecordStatus = sess.cloudRecordStatus
+        self.app.context.call.session.token = sess.token
+        self.app.context.call.session.cname = sess.cname
+        self.app.context.call.session.peerId = 10
     }
     
     private func onLastCallSessionUpdated(uId:UInt){
@@ -83,40 +82,6 @@ class CallkitManager : ICallkitMgr{
         self.app.proxy.mqtt.waitForActionDesired(actionDesired: onActionDesired)
     }
     
-    private func doCallAnswer(result:@escaping(Int,String)->Void,
-                              actionAck:@escaping(ActionAck)->Void,
-                              memberState:((MemberState,[UInt])->Void)?){
-        let sessionId = app.context.call.session.sessionId
-        if(sessionId == ""){
-            log.e("call callAnswer session is empty")
-            result(ErrCode.XERR_BAD_STATE,"state error")
-            return
-        }
-        
-        let caller = app.context.call.session.caller
-        let callee = app.context.call.session.callee
-        let localId = app.context.gyiot.session.cert.thingName
-        app.rule.trigger.member_state_watcher = memberState
-        app.rule.trigger.remote_state_watcher = { s in
-            actionAck(s)
-        }
-        
-        let req = AgoraLab.Answer.Payload(sessionId: sessionId, calleeId: callee, callerId: caller,localId: localId, answer: 0)
-        let traceId:Int = String.dateTimeRounded()
-        let cb = { (ec:Int,msg:String,data:AgoraLab.Answer.Data?) in
-            if(ec == ErrCode.XOK){
-                self.app.context.call.setting.publishVideo = false
-                self.app.context.call.setting.publishAudio = true
-                result(ec,msg)
-            }
-            else{
-                result(ec,msg)
-            }
-        }
-        let agToken = app.context.aglab.session.accessToken
-        app.proxy.al.reqAnswer(agToken,req,"\(traceId)", cb)
-    }
-    
     func callAnswer(result:@escaping(Int,String)->Void,
                     actionAck:@escaping(ActionAck)->Void,
                     memberState:((MemberState,[UInt])->Void)?){
@@ -125,57 +90,37 @@ class CallkitManager : ICallkitMgr{
         result(ErrCode.XOK,"suc")
     }
     
-    class AsyncCallback{
-        public var invoked:Bool = false
-        var callback:(Int,String)->Void
-        public var timer:Timer
-        public func call(_ ec:Int,_ msg:String){
-            if(!invoked){
-                callback(ec,msg)
-                timer.invalidate()
-                invoked = true
-            }
-        }
-        public init(_ cb:@escaping (Int,String)->Void,_ timer:Timer){
-            self.callback = cb
-            self.timer = timer
-        }
-    }
-    
     private func onActionDesired(action:ActionAck,sess:CallSession?){
         log.i("call action desired:\(action.rawValue)")
 
         if(action == .CallIncoming){
+            if CallListenerManager.sharedInstance.isTaking() == true{//通话中来了呼叫直接返回
+                log.i("talking incoming------:\(String(describing: sess))")
+                return
+            }
             if(sess == nil){
                 log.e("call reqCall action ack:sess is nil when call CallIncoming")
             }
             else{
                 self.onCallSessionUpdated(sess: sess!)
-                CallListenerManager.sharedInstance.incomeCall(incoming: _incoming)
+                CallListenerManager.sharedInstance.incomeCall(incoming: _incoming, memberState: _incomMemState)
                 let local = self.app.context.gyiot.session.cert.thingName
-                log.i("call sess caller:\(sess!.callerId) callee:\(sess!.calleeId) local:\(local)")
-                
-//                if(local != sess!.callerId){
-//                    _incoming(sess!.callerId,sess!.attachedMsg,action)
-//                    self.app.rule.trigger.incoming_state_watcher = {a in
-//                        self._incoming(sess!.callerId,sess!.attachedMsg,a)
-//                    }
-//                }
+                log.i("call sess caller:\(sess!.peerUid) callee:\(sess!.uid) local:\(local)")
             }
         }
         else{
             log.i("call action \(action.rawValue) not handled")
         }
         
-//        if(self.app.context.push.session.pushEnabled == nil){
-//            let enabled = sess?.disabledPush == true ? false : true
-//            log.i("call action \(action.rawValue) StateInited pushEnabled:\(enabled)")
-//
-//            self.app.context.push.session.pushEnabled = enabled
-//            let eid = app.context.push.session.eid
-//
-//            app.proxy.mqtt.publishPushId(id: eid,enableNotify:enabled)
-//        }
+        if(self.app.context.push.session.pushEnabled == nil){
+            let enabled = sess?.disabledPush == true ? false : true
+            log.i("call action \(action.rawValue) StateInited pushEnabled:\(enabled)")
+
+            self.app.context.push.session.pushEnabled = enabled
+            let eid = app.context.push.session.eid
+
+            app.proxy.mqtt.publishPushId(id: eid,enableNotify:enabled)
+        }
     }
     
     
@@ -282,13 +227,19 @@ class CallkitManager : ICallkitMgr{
                     return
                 }
                 
+                log.i("rsp.traceId:\(rsp.traceId) lastSession.talkingId:\(self.app.context.call.lastSession.talkingId)")
+                guard Int(rsp.traceId) == self.app.context.call.lastSession.talkingId else {//如果不是本次呼叫，直接返回，不做处理
+                    log.i("not current call response rsp.traceId:\(rsp.traceId) lastSession.talkingId:\(self.app.context.call.lastSession.talkingId)")
+                    return
+                }
+                
                 guard let data = rsp.data else{
                     log.e("call reqCall ret data is nil for \(rsp.msg) (\(rsp.code))")
                     CallListenerManager.sharedInstance.callRequest(false)
                     result(ErrCode.XERR_INVALID_PARAM,"param error")
                     return
                 }
-                
+ 
                 self.app.context.call.session.token = data.token
                 self.app.context.call.session.uid = UInt(data.uid)
                 self.app.context.call.session.cname = data.cname
@@ -305,6 +256,17 @@ class CallkitManager : ICallkitMgr{
             else{
                 self.isCallRet = true
                 log.e("call reqCall fail:\(msg) ec: (\(ec))")
+                guard let rsp = rsp else{
+                    log.e("call callDial ret fail, but rsp is nil")
+                    CallListenerManager.sharedInstance.callRequest(false)
+                    result(ec,msg)
+                    return
+                }
+                log.i("rsp.traceId:\(rsp.traceId) lastSession.talkingId:\(self.app.context.call.lastSession.talkingId)")
+//                guard Int(rsp.traceId) == self.app.context.call.lastSession.talkingId else { //如果不是本次呼叫，直接返回，不做处理
+//                    log.i("not current call response rsp.traceId:\(rsp.traceId) lastSession.talkingId:\(self.app.context.call.lastSession.talkingId)")
+//                    return
+//                }
                 CallListenerManager.sharedInstance.callRequest(false)
                 result(ec,msg)
             }
@@ -325,6 +287,7 @@ class CallkitManager : ICallkitMgr{
     func callHangup(result:@escaping(Int,String)->Void){
         log.i("call callHangup")
         CallListenerManager.sharedInstance.hangUp()
+        result(ErrCode.XOK,"success")
     }
     
     func setLocalVideoView(localView: UIView?) -> Int {

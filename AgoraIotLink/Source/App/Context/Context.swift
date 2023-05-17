@@ -100,9 +100,9 @@ class CallKitSession{
     
     func reset(){
         
-        var token = ""
-//        var uid = ""
-        var cname = ""
+        token = ""
+//      uid = ""
+        cname = ""
         
         appId = ""
         sessionId = ""

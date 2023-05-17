@@ -179,11 +179,29 @@ class AgoraIotConfig{
 
     public static let ntfAppKey: String = "81717241#1023627" //离线推送的appkey
     public static let ntfApnsCertName:String = "io.agora.iot.prod"////离线推送的AnpsCertName（开发环境为：io.agora.iot）
-#elseif true //正式上架配置，给文强测试也用这个
+#elseif false //正式上架配置，给文强测试也用这个
     public static let appId = "4b31fcfaca7c472cbb07637260953037" //文强测试
     public static let productKey = "EJIJEIm68gl5b5lI4"
     public static let masterServerUrl:String = "https://app.agoralink-iot-cn.sd-rtn.com"
     public static let slaveServerUrl:String = "https://api.agora.io/agoralink/cn/api"
+    public static let projectId:String = "aWZhPaN_C"
+
+    public static let ntfAppKey: String = "52116232#400198" //离线推送的appkey
+    public static let ntfApnsCertName:String = "io.agora.iot.prod"////离线推送的AnpsCertName（开发环境为：io.agora.iot）
+#elseif false //简化版呼叫 测试环境配置
+    public static let appId = "d0177a34373b482a9c4eb4dedcfa586a" //文强测试
+    public static let productKey = "EJImm64m65ECOl5"
+    public static let masterServerUrl:String = "https://app.agoralink-iot-cn.sd-rtn.com"
+    public static let slaveServerUrl:String = "https://iot-api-gateway.sh.agoralab.co/api"
+    public static let projectId:String = "fV833nCXq"
+
+    public static let ntfAppKey: String = "52116232#400178" //离线推送的appkey
+    public static let ntfApnsCertName:String = "io.agora.iot.prod"////离线推送的AnpsCertName（开发环境为：io.agora.iot）
+#elseif true //简化版呼叫 生产环境配置
+    public static let appId = "4b31fcfaca7c472cbb07637260953037" //文强测试
+    public static let productKey = "EJIJEIm68gl5b5lI4"
+    public static let masterServerUrl:String = "https://app.agoralink-iot-cn.sd-rtn.com"
+    public static let slaveServerUrl:String = "https://api.sd-rtn.com/agoralink/cn/api"
     public static let projectId:String = "aWZhPaN_C"
 
     public static let ntfAppKey: String = "52116232#400198" //离线推送的appkey

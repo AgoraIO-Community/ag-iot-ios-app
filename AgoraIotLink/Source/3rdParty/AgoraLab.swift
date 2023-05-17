@@ -117,16 +117,7 @@ class AgoraLab {
         let req = CallSimple.Req(header: header, payload: reqPayload)
         let headers : HTTPHeaders = ["Authorization":token]
         let url = http + api.simpleCall
-        log.i("Call：param： \(req) token:\(token)")
-//        AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default, headers: headers) .validate().responseString() { reData in
-//
-//                    guard  reData != nil else{
-//                        return
-//                    }
-//
-//                    print("123456")
-//
-//                }
+        log.i("reqCallSimple_param： \(req) token:\(token)")
         AF.request(url,method: .post,parameters: req,encoder: JSONParameterEncoder.default,headers: headers)
             .validate(statusCode: acceptableStatusCodes)
             .responseDecodable(of:CallSimple.Rsp.self){(dataRsp:AFDataResponse<CallSimple.Rsp>) in
@@ -144,8 +135,14 @@ class AgoraLab {
                     if(ret.code == 100001){//对端忙
                         ec = ErrCode.XERR_CALLKIT_PEER_BUSY
                     }
-                    if(ret.code == 100005){
+                    if(ret.code == 100005){//本地忙
                         ec = ErrCode.XERR_CALLKIT_LOCAL_BUSY
+                    }
+                    if(ret.code == 100011){//aws设备影子更新失败
+                        ec = ErrCode.XERR_CALLKIT_UPDATE_SHADOW_FAIL
+                    }
+                    if(ret.code == 100012){//生成rtc token错误
+                        ec = ErrCode.XERR_CALLKIT_CREAT_RTCTOKEN_FAIL
                     }
                     rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
                 case .failure(let error):

@@ -1005,6 +1005,7 @@ extension AgoraLab{
             let msg:String
             let timestamp:UInt64
             let success:Bool
+            let traceId:String
             let data:Data?
         }
     }

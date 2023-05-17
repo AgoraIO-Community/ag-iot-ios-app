@@ -117,7 +117,12 @@ class ShareDeviceListVC: UIViewController {
                 
                 AGToolHUD.showInfo(info: "共享设备列表获取成功")
                 guard let dataArr = deviceCancelable else{ return }
-                self?.dataArray = dataArr
+//                self?.dataArray = dataArr
+                if let filterArray = self?.getFilterData(dataArray: dataArr){
+                    self?.dataArray = filterArray
+                }else{
+                    self?.dataArray = dataArr
+                }
 //                for deviceLable in dataArr {
 //                    self?.dataArray.append(ShareDeviceInfo(headImage:deviceLable.avatar, nickname: deviceLable.deviceNickname, account: deviceLable.email))
 //                }
@@ -131,6 +136,17 @@ class ShareDeviceListVC: UIViewController {
         
         
         
+    }
+    
+    func getFilterData(dataArray : [DeviceCancelable])->[DeviceCancelable]{
+        guard let device = device else { return dataArray}
+        let tempArray = dataArray
+        let pridicateById = NSPredicate(format: "deviceId == %@","\(device.deviceId)")
+        guard let result = (tempArray as NSArray).filtered(using: pridicateById) as? [DeviceCancelable] else {
+            debugPrint("getFilterData fail")
+            return dataArray
+        }
+        return result
     }
     
     // 点击添加共享

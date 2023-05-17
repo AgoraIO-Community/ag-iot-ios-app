@@ -140,6 +140,22 @@ class ThirdAccountManager{
             
             rsp(ErrCode.XOK,ret.msg,param)
         }
+        
+        static var privateKey : PrivateKey? = nil
+        class func testPublicKeySet(){
+            let keyPair = try? SwiftyRSA.generateRSAKeyPair(sizeInBits: 1024)
+            let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
+            let publicKey = try? keyPair?.publicKey.base64String()
+            guard let publicKey = try? keyPair?.publicKey.base64String() else {
+                return
+            }
+            
+            AgoraIotLink.iotsdk.accountMgr.publicKeySet(publicKey: publicKey) { code, msg in
+                debugPrint("\(code)")
+            }
+            
+        }
+        
     }
         
     class func reqRegister(_ userName:String,_ password:String,_ rsp:@escaping(Int,String)->Void){
