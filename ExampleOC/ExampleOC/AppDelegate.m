@@ -111,17 +111,22 @@
     } callback:(self)];
     
     [[IotSdk.shared getDeviceMgr] registerWithListener:(self)];
+    
     [[IotSdk.shared getCallManager] registerWithIncoming:^(NSString * _Nonnull msg, NSString * _Nonnull hint, enum ActionAck act) {
-        NSLog(@"💙💜收到来电:%@,%@,%ld",msg,hint,act);
-        if(act == ActionAckCallIncoming){
-            [[IotSdk.shared getCallManager] callAnswerWithResult:^(NSInteger ec, NSString * _Nonnull msg) {
-                UIView* uiView = nil; //关联到自己的UIView
-                [[IotSdk.shared getCallManager] setPeerVideoViewWithPeerView:uiView];
-                NSLog(@"💙💜接听来电:%@,%ld",msg,ec);
-            } actionAck:^(enum ActionAck ack) {
-                NSLog(@"💙💜收到响应:%ld",ack);
-            } memberState:Nil];
-        }
+
+                NSLog(@"💙💜收到来电:%@,%@,%ld",msg,hint,act);
+                if(act == ActionAckCallIncoming){
+                    [[IotSdk.shared getCallManager] callAnswerWithResult:^(NSInteger ec, NSString * _Nonnull msg) {
+                        UIView* uiView = nil; //关联到自己的UIView
+                        [[IotSdk.shared getCallManager] setPeerVideoViewWithPeerView:uiView];
+                        NSLog(@"💙💜接听来电:%@,%ld",msg,ec);
+                    } actionAck:^(enum ActionAck ack) {
+                        NSLog(@"💙💜收到响应:%ld",ack);
+                    } memberState:Nil];
+                }
+
+            } memberState:^(enum MemberState state, NSArray<NSNumber *> * _Nonnull arr) {
+
     }];
     
     [[IotSdk.shared getAccountMgr] registerWithAccount:@"youraccount" password:@"88888888" result:^(NSInteger ec, NSString * _Nonnull msg) {

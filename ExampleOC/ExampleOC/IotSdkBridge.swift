@@ -9,7 +9,7 @@ import Foundation
 import AgoraIotLink
 
 public class CallkitManager : NSObject,ICallkitMgr{
-    
+ 
     @objc public func talkingRecordStop(result: @escaping (Int, String) -> Void) {
         return mgr.talkingRecordStop(result: result)
     }
@@ -22,8 +22,8 @@ public class CallkitManager : NSObject,ICallkitMgr{
         return mgr.capturePeerVideoFrame(result: result)
     }
     
-    @objc public func register(incoming: @escaping (String,String, ActionAck) -> Void) {
-        return mgr.register(incoming: incoming)
+    @objc public func register(incoming: @escaping (String, String, AgoraIotLink.ActionAck) -> Void, memberState: ((AgoraIotLink.MemberState, [UInt]) -> Void)?) {
+        return mgr.register(incoming: incoming, memberState: memberState)
     }
     
     @objc public func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void, actionAck: @escaping (ActionAck) -> Void, memberState: (((MemberState, [UInt]) -> Void)?)) {
