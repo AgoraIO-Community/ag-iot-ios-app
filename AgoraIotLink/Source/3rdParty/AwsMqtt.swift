@@ -492,7 +492,7 @@ class AWSMqtt{
     func connect(completion:@escaping(Bool,String)->Void){
         log.i("mqtt try connect ...")
         self.onConnect = completion
-        let ret = iotDataManager?.connectUsingWebSocket(withClientId: self.identityId, cleanSession: false, statusCallback: mqttConnEventCallback)
+        let ret = iotDataManager?.connectUsingWebSocket(withClientId: self.identityId, cleanSession: true, statusCallback: mqttConnEventCallback)
         if(ret != true){
             log.e("mqtt connect fail")
             completion(false,"mqtt connect fail")
