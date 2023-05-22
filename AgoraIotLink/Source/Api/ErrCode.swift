@@ -80,6 +80,8 @@ public class ErrCode : NSObject{
     @objc public static let XERR_CALLKIT_NO_APPID = -40011               ///< 未上报appid
     @objc public static let XERR_CALLKIT_SAME_ID = -40012                ///< 主叫和被叫同一个id
     @objc public static let XERR_CALLKIT_APPID_DIFF = -4001              ///< 主控和被控方app id不一致
+    @objc public static let XERR_CALLKIT_UPDATE_SHADOW_FAIL = -40013     ///<aws设备影子更新失败
+    @objc public static let XERR_CALLKIT_CREAT_RTCTOKEN_FAIL = -40014    ///<生成rtc token错误
     //
     // 设备管理相关错误
     //

@@ -79,6 +79,10 @@ class IotLinkSetting{
 }
 
 class CallKitSession{
+    var token = ""
+//    var uid = ""
+    var cname = ""
+    
     var appId = ""
     var traceId = ""
     var sessionId = ""
@@ -95,6 +99,11 @@ class CallKitSession{
     var rtc:RtcSession{get{return _rtc}}
     
     func reset(){
+        
+        token = ""
+//      uid = ""
+        cname = ""
+        
         appId = ""
         sessionId = ""
         channelName = ""

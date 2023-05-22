@@ -154,9 +154,15 @@ class DoorbellContainerVC: UIViewController {
     }
     
     @objc private func didClickRightBarButton(_ item: UIBarButtonItem){
-        let vc = DeviceSetupHomeVC()
-        vc.device = device
-        navigationController?.pushViewController(vc, animated: true)
+        if device?.userType == 2 {
+            let deviceSetVC = ShareDeviceSetupVC()
+            deviceSetVC.device = device
+            navigationController?.pushViewController(deviceSetVC, animated: true)
+        }else{
+            let vc = DeviceSetupHomeVC()
+            vc.device = device
+            navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     //收到呼叫弹框页面

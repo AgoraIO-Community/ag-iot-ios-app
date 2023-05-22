@@ -31,11 +31,15 @@ class DoorbellAbilityTopView: UIView {
     var fullHBtnClickBlock:(() -> (Void))?
     var backVBtnClickBlock:(() -> (Void))?
     
+    var isReceiveCall : Bool? = false
+    
     var device: IotDevice?{
         didSet{
             logicView.device = device
-            if(device?.connected == false){
+            if device?.connected == false, isReceiveCall == false{
                 videoTipView.tipType = .deviceOffLine
+            }else{
+                videoTipView.tipType = .loading
             }
         }
     }

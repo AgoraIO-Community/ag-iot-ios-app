@@ -91,20 +91,44 @@ class ShareDeviceSetupVC: UIViewController {
         tableView.reloadData()
     }
     
+//    @objc private func didClickDeleteButton(){
+//
+//        AGToolHUD.showNetWorkWait()
+//        guard let device = device else { return }
+//
+//        deviceShareVM.removeMember(deviceId: device.deviceId, userId:device.userId) { success, msg in
+//            AGToolHUD.disMiss()
+//            if success == true {
+//                AGToolHUD.showInfo(info: "已移除分享")
+//            }else{
+//                AGToolHUD.showInfo(info: msg)
+//            }
+//        }
+//    }
+    
+    // 点击移除设备
     @objc private func didClickDeleteButton(){
-        
-        AGToolHUD.showNetWorkWait()
-        guard let device = device else { return }
-        
-        deviceShareVM.removeMember(deviceId: device.deviceId, userId:device.userId) { success, msg in
-            AGToolHUD.disMiss()
-            if success == true {
-                AGToolHUD.showInfo(info: "已移除分享")
+        guard device != nil else { return }
+        AGAlertViewController.showTitle("确定要移除设备吗", message: "") {[weak self] in
+            self?.realRemoveDevice()
+        }
+    }
+    
+    // 移除设备
+    private func realRemoveDevice(){
+        guard device != nil else { return }
+        DeviceManager.shared.removeDevice(device!) {[weak self] ec, msg in
+            if(ec == ErrCode.XOK) {
+                //移除设备后，挂断通话
+                DoorBellManager.shared.hungUpAnswer { success, msg in }
+                debugPrint("调用挂断")
+                self?.navigationController?.popToRootViewController(animated: true)
             }else{
-                AGToolHUD.showInfo(info: msg)
+                AGToolHUD.showInfo(info: "删除失败:\(msg)")
             }
         }
     }
+    
 }
 
 

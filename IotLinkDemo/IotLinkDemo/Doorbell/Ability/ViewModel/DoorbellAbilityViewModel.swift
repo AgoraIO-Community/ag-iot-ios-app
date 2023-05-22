@@ -57,7 +57,7 @@ extension DoorBellManager{
             }
             action(s)
         },memberState:{s,a in
-            if(s == .Exist){self.members = self.members + a.count}
+            if(s == .Exist){self.members = 0}
             if(s == .Enter){self.members = self.members + 1}
             if(s == .Leave){self.members = self.members - 1}
             log.i("demo app member count \(self.members):\(s.rawValue) \(a)")
@@ -120,7 +120,7 @@ extension DoorBellManager{
             
         },
         memberState:{s,a in
-             if(s == .Exist){self.members = self.members + a.count}
+             if(s == .Exist){self.members = 0}
              if(s == .Enter){self.members = self.members + a.count}
              if(s == .Leave){self.members = self.members - a.count}
              log.i("demo app member count \(self.members):\(s.rawValue) \(a)")

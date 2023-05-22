@@ -401,8 +401,8 @@ extension DoorbellAbilityLogicView{//下层View传值
     
     func recordScreenPre(){
         
-        AGToolHUD.showInfo(info:"该功能暂未开放，敬请期待！")
-        return
+//        AGToolHUD.showInfo(info:"该功能暂未开放，敬请期待！")
+//        return
         
         if fetchPHAuthorization() == true{
             recordScreen()
@@ -477,7 +477,7 @@ extension DoorbellAbilityLogicView{//下层View传值
         
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(image:didFinishSavingWithError:contextInfo:)), nil)
         
-        UISaveVideoAtPathToSavedPhotosAlbum("", self, #selector(image(image:didFinishSavingWithError:contextInfo:)), nil)
+//        UISaveVideoAtPathToSavedPhotosAlbum("", self, #selector(image(image:didFinishSavingWithError:contextInfo:)), nil)
     }
     
     @objc func image(image: UIImage,didFinishSavingWithError: NSError?,contextInfo: AnyObject) {

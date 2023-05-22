@@ -134,6 +134,7 @@ class DoorbellAbilityVC: UIViewController {
     lazy var topAbilityV : DoorbellAbilityTopView = {
         
         let view = DoorbellAbilityTopView()
+        view.isReceiveCall = isReceiveCall
         view.device = device
         view.delegate = self
         view.fullHBtnClickBlock = { [weak self] in
@@ -215,7 +216,7 @@ extension DoorbellAbilityVC {
         
         topAbilityV.handelVideoTopView(tipsType: .loading)
         
-        AGToolHUD.showNetWorkWait(20)
+//        AGToolHUD.showNetWorkWait(20)
         doorbellVM.wakeupDevice(device) {[weak self] success, msg in
             if(!success){
                 debugPrint("呼叫失败")

@@ -342,6 +342,32 @@ class AWSMqtt{
     private func onUpdateCommStatus(dict:[String:Any]){
         
     }
+    
+    private func onUpdateRtcSimple(state:[String:Any]){
+        
+        log.i("onUpdateRtcSimple:\(state))")
+
+        let sess = CallSession()
+        if let token = state["token"] as? String {
+            sess.token = token
+        }else{
+            sess.token = ""
+        }
+        if let uid = state["uid"] as? UInt {
+            sess.uid = UInt(uid)
+        }else{
+            sess.uid = 0
+        }
+        if let cname = state["cname"] as? String {
+            sess.cname = cname
+        }else{
+            sess.cname = ""
+        }
+        
+        _onActionDesired(.CallIncoming,sess)
+        
+    }
+    
     private func onUpdateRtcStatus(version:UInt?,desired:[String:Any],reported:[String:Any]?){
         
         log.i("onUpdateRtcStatus:\(desired))")
@@ -358,16 +384,16 @@ class AWSMqtt{
             switch callStatus{
             case 1: 
                 log.i("mqtt local idle(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))  sess:(\(String(describing: sess)))")
-                _onActionDesired(action,sess)
+//                _onActionDesired(action,sess)
             case 2:
                 log.i("mqtt local calling(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))  sess:(\(String(describing: sess)))")
-                _onActionDesired(.CallOutgoing,sess)
+//                _onActionDesired(.CallOutgoing,sess)
             case 3:
                 log.i("mqtt remote calling(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))  sess:(\(String(describing: sess)))")
                 _onActionDesired(.CallIncoming,sess)
             case 4: 
                 log.i("mqtt in talking(callStatus:\(callStatus)):reason(\(reason)) action(\(desc))  sess:(\(String(describing: sess)))")
-                _onActionDesired(.RemoteAnswer,sess)
+//                _onActionDesired(.RemoteAnswer,sess)
             default:
                 log.e("mqtt unknown state for callStatus:\(callStatus)")
             }
@@ -466,7 +492,7 @@ class AWSMqtt{
     func connect(completion:@escaping(Bool,String)->Void){
         log.i("mqtt try connect ...")
         self.onConnect = completion
-        let ret = iotDataManager?.connectUsingWebSocket(withClientId: self.identityId, cleanSession: false, statusCallback: mqttConnEventCallback)
+        let ret = iotDataManager?.connectUsingWebSocket(withClientId: self.identityId, cleanSession: true, statusCallback: mqttConnEventCallback)
         if(ret != true){
             log.e("mqtt connect fail")
             completion(false,"mqtt connect fail")
@@ -561,32 +587,6 @@ class AWSMqtt{
         }
     }
     
-    //let topic1 = "+/+/device/connect"
-//    func onTopic1Callback(topicPub:String,topicRcv:String,jsonDict:[String:Any])->Bool{
-//        let bs1 = topicRcv.findFirst("/")
-//        let productKey = topicRcv.substring(to: bs1)
-//        let remain = topicRcv.substring(from: bs1 + 1)
-//        let bs2 = remain.findFirst("/")
-//        let mac = remain.substring(to: bs2)
-//
-//        guard let data = jsonDict["data"] as? [String:Any] else{
-//            log.e("mqtt no 'data' found for \(topicRcv)")
-//            return false
-//        }
-//
-//        guard let onoff = data["connect"] as? UInt else{
-//            log.e("mqtt no 'connect' found for \(topicRcv)")
-//            return false
-//        }
-//
-//        if(onoff != 0 && onoff != 1){
-//            log.e("mqtt connect value:'\(onoff)' error")
-//            return false
-//        }
-//        devStateListener?.onDeviceOnOffline(online: onoff == 0 ? false : true, deviceId: mac, productId: productKey)
-//        return true
-//    }
-    
     //topic2 = "$aws/things/+/shadow/get/+"
     func onTopic2Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
         let version = jsonDict["version"] as? UInt
@@ -624,10 +624,7 @@ class AWSMqtt{
             log.e("mqtt no 'connect' found for \(topic)")
             return false
         }
-//        guard let onoff = UInt(isOnlineStr) else{
-//            log.e("mqtt connect:'\(isOnlineStr)' format error for \(topic)")
-//            return false
-//        }
+
         if(onoff != 0 && onoff != 1){
             log.e("mqtt connect value:'\(onoff)' error")
             return false
@@ -739,50 +736,47 @@ class AWSMqtt{
             return true
         }
     }
-    //topic5 = "$aws/things/" + clientId + "/shadow/name/rtc/get/accepted"
+    
+    //topic5 = "$aws/things/" + thingName + "/shadow/name/rtc2/update/delta"  // 1.5版本中来电通知
     func onTopic5Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
-//        log.i("onTopic5Callback:\(jsonDict)")
-        
-        guard let version = jsonDict["version"] as? UInt, version > curRtcGetVersion else{
-            log.i(" version error:\(jsonDict)")
+        log.i("onTopic5Callback:\(jsonDict) topicPub:\(topicPub)")
+        let metadata = jsonDict["metadata"] as? [String:Any]
+        if let tokenDic = metadata?["token"] as? [String:Any], let tokenTimestamp = tokenDic["timestamp"] as? Int, String.dateTimeSpace(tokenTimestamp) > 30{
+            log.e("calling more than 30 tokenTimestamp:\(tokenTimestamp):\(String.dateTimeSpace(tokenTimestamp))")
             return true
         }
-        curRtcGetVersion = version
-        
-        guard let timestamp = jsonDict["timestamp"] as? Int else{
-            log.i(" timestamp error:\(jsonDict)")
-            return true
-        }
-        
-        if curTimeStamp != 0,timestamp < curTimeStamp{
-            log.i(" timestamp:\(timestamp)")
-            log.i(" curTimeStamp:\(curTimeStamp)")
-            log.i(" onTopic5_timestamp_error")
-            return true
-        }
-        
-
         guard let state = jsonDict["state"] as? [String:Any] else{
-            log.e("mqtt no 'state' found for \(topicRcv)")
+            log.e("mqtt no 'state' found for \(topicRcv) jsonDict:\(jsonDict)")
             return false
         }
-        
-        let reported = state["reported"] as? [String:Any]
-        
-        if let desired = state["desired"] as? [String:Any]{
-            self.onUpdateRtcStatus(version:version, desired:desired, reported:reported)
-            return true
-        }
-        else if let reported = reported{
-            let sess = dictToSession(reason:0,desired: nil,reported: reported)
-            _onActionDesired(.StateInited,sess)
-            return true
-        }
-        else{
-            log.w("mqtt json string: no 'desired' for \(topicRcv)")
-            return true
-        }
+        self.onUpdateRtcSimple(state: state)
+        return true
     }
+    
+    //topic6 = "$aws/things/" + clientId + "/shadow/name/rtc2/get/accepted"
+    func onTopic6Callback(topicPub:String,topicRcv:String, jsonDict:[String:Any])->Bool{
+        log.i("onTopic6Callback:\(jsonDict) topicPub:\(topicPub)")
+        let metadata = jsonDict["metadata"] as? [String:Any]
+        if let desired = metadata?["desired"] as? [String:Any],let tokenDic = desired["token"] as? [String:Any], let tokenTimestamp = tokenDic["timestamp"] as? Int, String.dateTimeSpace(tokenTimestamp) > 30{
+            log.e("calling more than 30 tokenTimestamp:\(tokenTimestamp):\(String.dateTimeSpace(tokenTimestamp))")
+            return true
+        }
+        
+        //todo:
+        let desired = metadata?["desired"] as? [String:Any]
+        let tokenDic = desired?["token"] as? [String:Any]
+        let tokenTimestamp = tokenDic?["timestamp"] as? Int ?? 0
+        log.i("onTopic6Callback tokenDic:\(tokenDic) result :\(String.dateTimeSpace(tokenTimestamp))")
+        
+        
+        guard let state = jsonDict["state"] as? [String:Any], let delta = state["delta"] as? [String:Any] else{
+            log.e("mqtt no 'state' found for \(topicRcv) jsonDict:\(jsonDict)")
+            return false
+        }
+        self.onUpdateRtcSimple(state: delta)
+        return true
+    }
+    
     
     func syncRemoteRtcStatus(){
         guard let iotDataManager = iotDataManager else {
@@ -806,7 +800,7 @@ class AWSMqtt{
             iotDataManager.publishString(jsonStr!, onTopic: topicUpdate, qoS: qos) {
                 log.i("mqtt topic ack: '\(topicUpdate)'")
                 let qos:AWSIoTMQTTQoS = .messageDeliveryAttemptedAtLeastOnce
-                let topicGet = "$aws/things/" + self.thingName + "/shadow/name/rtc/get"
+                let topicGet = "$aws/things/" + self.thingName + "/shadow/name/rtc2/get"
                 log.i("mqtt topic pub: qos \(qos.rawValue): '\(topicGet)'")
                 iotDataManager.publishString("", onTopic: topicGet, qoS: qos) {
                     log.i("mqtt topic ack: '\(topicGet)'")
@@ -824,7 +818,7 @@ class AWSMqtt{
             return
         }
         let qos:AWSIoTMQTTQoS = .messageDeliveryAttemptedAtLeastOnce
-        let topicGet = "$aws/things/" + self.thingName + "/shadow/name/rtc/get"
+        let topicGet = "$aws/things/" + self.thingName + "/shadow/name/rtc2/get"
         log.i("mqtt topic pub: qos \(qos.rawValue): '\(topicGet)'")
         iotDataManager.publishString("", onTopic: topicGet, qoS: qos) {
             log.i("mqtt topic ack: '\(topicGet)'")
@@ -864,11 +858,12 @@ class AWSMqtt{
         let thingName = self.thingName
         let topic3 = "granwin/" + self.identityId + "/message"
         let topic4 = "$aws/things/" + thingName + "/shadow/name/rtc/update/accepted"
-        let topic5 = "$aws/things/" + thingName + "/shadow/name/rtc/get/accepted"
+        let topic5 = "$aws/things/" + thingName + "/shadow/name/rtc2/update/delta"  // 1.5版本中来电通知
+        let topic6 = "$aws/things/" + thingName + "/shadow/name/rtc2/get/accepted"
         
-        let topics:[String] = [AWSMqtt.topic2,topic3,topic4,topic5]//AWSMqtt.topic1,
-        let qos:[AWSIoTMQTTQoS] = [.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce]//.messageDeliveryAttemptedAtLeastOnce,
-        let callbacks:[(String,String,[String:Any])->Bool] = [onTopic2Callback,onTopic3Callback,onTopic4Callback,onTopic5Callback]//onTopic1Callback,
+        let topics:[String] = [AWSMqtt.topic2,topic3,topic4,topic5,topic6]//AWSMqtt.topic1,
+        let qos:[AWSIoTMQTTQoS] = [.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce,.messageDeliveryAttemptedAtLeastOnce]//.messageDeliveryAttemptedAtLeastOnce,
+        let callbacks:[(String,String,[String:Any])->Bool] = [onTopic2Callback,onTopic3Callback,onTopic4Callback,onTopic5Callback,onTopic6Callback]//onTopic1Callback,
         var loop:(Int)->Void = {i in}
         var e = 0
         loop = {i in
@@ -895,8 +890,6 @@ class AWSMqtt{
             }
         }
         loop(0)
-        //let topicShadow = "$aws/things/" + thingName + "/shadow/get"
-        //self.listeners[AWSMqtt.topic2] = Listeners();
     }
     ////https://confluence.agoralab.co/pages/viewpage.action?pageId=944705001
     public func publishPushId(id:String,enableNotify:Bool){
@@ -1051,32 +1044,7 @@ class AWSMqtt{
         log.i("mqtt topic pub: '\(topic)'")
         self.iotDataManager?.publishString("", onTopic: topic, qoS: .messageDeliveryAttemptedAtMostOnce,ackCallback: nil)
     }
-    
-//    func getClientDesired(clientId:String, result: @escaping (Int, String,Dictionary<String, Any>?)->Void){
-//        let topic = "$aws/things/" + clientId + "/shadow/name/rtc/get"
-//        DispatchQueue.main.async {
-//            let listener = AwsMqttTopicListener()
-//            listener.setCallback(cb:{
-//                (topic,dict) in
-//                //todo
-//            })
-//            if let l = self.listeners[topic] {
-//                l.append(listener)
-//                let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false){tm in
-//                    result(ErrCode.XERR_TIMEOUT,"等待处理超时",nil)
-//                    l.remove(listener)
-//                }
-//                listener.setTimer(timer: timer)
-//            }
-//            else{
-//                log.e("mqtt no listener for topic:'\(AWSMqtt.topic1)'")
-//            }
-//
-//            self.iotDataManager?.publishString("", onTopic: topic, qoS: .messageDeliveryAttemptedAtLeastOnce,ackCallback: {
-//                log.i("mqtt publish ack for \(topic)")
-//            })
-//        }
-//    }
+
     
     struct StateValue{
         let reported:Any?

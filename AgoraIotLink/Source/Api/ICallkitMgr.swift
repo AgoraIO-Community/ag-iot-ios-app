@@ -99,8 +99,9 @@ public protocol ICallkitMgr {
     /*
      * @brief 注册来电通知
      * @param incoming: 参数1:设备名称，参数2: attahcMsg,参数3:CallIncoming,RemoteHangup,RemoteVideoReady
+     * @param memberState:多人通话时他人的状态，state:成员状态，uid:成员uid
      */
-    func register(incoming:@escaping(String,String,ActionAck)->Void)
+    func register(incoming: @escaping (String,String, ActionAck) -> Void,memberState:((MemberState,[UInt])->Void)?)
     /*
      * @brief 呼叫设备
      * @param device     : 被呼叫设备

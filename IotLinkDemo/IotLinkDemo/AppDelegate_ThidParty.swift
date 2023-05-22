@@ -19,7 +19,7 @@ extension AppDelegate{
         let param:InitParam = InitParam()
         param.rtcAppId = AgoraIotConfig.appId
         param.subscribeVideo = true
-        param.subscribeAudio = true
+        param.subscribeAudio = false
         param.publishAudio = true
         param.publishVideo = true
         
@@ -48,7 +48,7 @@ extension AppDelegate{
         
 //        AgoraIotSdk.iotsdk.callkitMgr.register(incoming: {peerId,msg,action in})
         sdk?.callkitMgr.register(incoming: {[weak self] deviceId,msg,callin  in
-            debugPrint("---来电呼叫---")
+            debugPrint("---来电呼叫---\(callin.rawValue)")
             if (callin == .CallIncoming) {
                 iotsdk.callkitMgr.muteLocalAudio(mute: true) { ec, msg in}
                 iotsdk.callkitMgr.muteLocalVideo(mute: true){ ec,msg in}
@@ -56,16 +56,29 @@ extension AppDelegate{
             }else if(callin == .RemoteHangup){
                 log.i("demo app remote hangup")
                 //被动呼叫挂断发通知
+                self?.members = 0
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil)
             }else if(callin == .RemoteVideoReady){
                 log.i("demo app RemoteVideoReady")
+                self?.members = (self?.members ?? 0) + 1
                 //首帧成功可显示发通知
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteVideoReadyNotify), object: nil)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self?.members ?? 1])
 
             }else if(callin == .AcceptFail){
                 log.e("demo app accept error \(msg)")
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil)
+            }else if(callin == .LocalHangup){
+                self?.members = 0
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self?.members ?? 0])
             }
+        },memberState:{s,a in
+            if(s == .Enter){self.members = self.members + a.count}
+            if(s == .Leave){self.members = self.members - a.count}
+            if(s == .Exist){self.members = 0}
+            log.i("demo app income member count \(DoorBellManager.shared.members):\(s.rawValue) \(a)")
+            
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
         })
         sdk?.deviceMgr.register(listener: self)
     }

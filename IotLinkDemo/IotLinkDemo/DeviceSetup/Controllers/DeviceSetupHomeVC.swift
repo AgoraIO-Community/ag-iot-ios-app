@@ -193,7 +193,7 @@ class DeviceSetupHomeVC: UIViewController {
     // 点击共享设备
     private func didSelectShareSetupCell(){
         
-        if device?.userType == 3 {
+        if device?.userType == 2 {
             let deviceSetVC = ShareDeviceSetupVC()
             deviceSetVC.device = device
             navigationController?.pushViewController(deviceSetVC, animated: true)

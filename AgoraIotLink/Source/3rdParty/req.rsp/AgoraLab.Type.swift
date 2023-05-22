@@ -20,6 +20,7 @@ extension AgoraLab{
         
         static let control =            "/call-service/v1/control/start"
         static let call =               "/call-service/v1/call"
+        static let simpleCall =         "/call-service/v1/simple-call"
         static let answer =             "/call-service/v1/answer"
         static let rtcToken =           "/call-service/v1/getRtcToken"
         static let callV2 =             "/call-service/v2/call"
@@ -979,6 +980,32 @@ extension AgoraLab{
             let code:Int
             let msg:String
             let timestamp:UInt64
+            let data:Data?
+        }
+    }
+    
+    class CallSimple{
+        struct Payload : Encodable{
+            let appId:String
+            let deviceId:String
+            let userId:String
+            let extraMsg:String
+        }
+        struct Req : Encodable{
+            let header:Header
+            let payload:Payload
+        }
+        struct Data : Decodable{
+            let token:String
+            let uid:Int
+            let cname:String
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let traceId:String
             let data:Data?
         }
     }

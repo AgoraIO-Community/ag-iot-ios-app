@@ -160,7 +160,7 @@ class DoorBellManager: NSObject {
         memberState:{s,a in
              if(s == .Enter){self.members = self.members + a.count}
              if(s == .Leave){self.members = self.members - a.count}
-             if(s == .Exist){self.members = a.count + 1}
+             if(s == .Exist){self.members = 0}
              log.i("demo app member count \(DoorBellManager.shared.members):\(s.rawValue) \(a)")
              
              NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
@@ -185,8 +185,8 @@ class DoorBellManager: NSObject {
 //            cb(ec == ErrCode.XOK ? true : false, msg)
 //        })
         //note:
-        let password = TDUserInforManager.shared.readPasswordNumber()
-        ThirdAccountManager.reqUnRegister(account, password) { ec, msg in
+        let accAndPwd = TDUserInforManager.shared.readKeyChainAccountAndPwd()
+        ThirdAccountManager.reqUnRegister(account, accAndPwd.pwd) { ec, msg in
             cb(ec == ErrCode.XOK ? true : false, msg)
         }
     }
