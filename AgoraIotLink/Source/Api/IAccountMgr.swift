@@ -174,7 +174,7 @@ public protocol IAccountMgr{
 
     /*
      * @brief 登出当前账号
-     * isInter 应用层默认传true
+     * isInter 应用层默认传true todo:需要去掉
      */
     func logoutAccount(_ isSourceOut:Bool, result:@escaping (Int,String)->Void)
 
