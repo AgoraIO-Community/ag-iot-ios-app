@@ -100,7 +100,7 @@
     initParam.slaveServerUrl = @"https://api.agora.io/agoralink/cn/api" ;//  for release
     //initParam.slaveServerUrl = @"https://iot-api-gateway.sh.agoralab.co/api"; //for debug
     initParam.projectId =@"4OJG85tCF";
-    
+     
     [IotSdk.shared initializeWithInitParam:initParam sdkStatus:^(enum SdkStatus status, NSString * _Nonnull hint) {
         NSLog(@"💙💜当前状态:%@,%ld",hint,status);
         if (status == SdkStatusAllReady) {
