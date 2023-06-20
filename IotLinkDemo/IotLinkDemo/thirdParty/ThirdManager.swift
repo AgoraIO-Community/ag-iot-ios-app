@@ -11,6 +11,25 @@ import AgoraIotLink
 import SwiftyRSA
 import Kingfisher
 
+class ActivateNode{
+    
+    struct Data : Decodable{
+        let nodeId:String
+        let nodeToken:String
+        let nodeRegion:String
+        let mqttServer:String
+        let mqttPort:UInt
+        let mqttUsername:String
+    }
+    struct Rsp : Decodable{
+        let code:Int
+        let msg:String
+        let timestamp:UInt64
+        let success:Bool
+        let data:Data?
+    }
+}
+
 class ThirdAccountManager{
     class api{
     #if false //dev 国内环境
@@ -30,6 +49,13 @@ class ThirdAccountManager{
         static let getUid =          "/auth/getUidByUsername"
         static let getVerifyCode =   "/sys-verification-code/v1/sendRegisterCode" //注册 发送验证码
         static let getResetPwdVerifyCode =   "/sys-verification-code/v1/sendResetPwdCode" //重置密码 发送验证码
+        
+        //创建用户mode
+        static let  nodeCreate = "/iot-core/v2/secret-node/user/create"
+        //激活用户node
+        static let  nodeActivate = "/iot-core/v2/secret-node/user/activate"
+        
+        
         
         struct Rsp:Decodable{
             let code:Int
@@ -88,6 +114,21 @@ class ThirdAccountManager{
             }
         }
         
+        class createNode{
+            
+            struct Data : Decodable{
+                let nodeId:String
+                let region:String
+            }
+            struct Rsp : Decodable{
+                let code:Int
+                let msg:String
+                let timestamp:UInt64
+                let success:Bool
+                let data:Data?
+            }
+        }
+ 
         public class func handleLoginRsp(_ ret:Login.Rsp,_ rsp:@escaping (Int,String,LoginParam?)->Void){
             if(ret.code != 0){
                 log.e("3rd handleLoginRsp fail \(ret.msg)(\(ret.code))")
@@ -150,9 +191,9 @@ class ThirdAccountManager{
                 return
             }
             
-            AgoraIotLink.iotsdk.accountMgr.publicKeySet(publicKey: publicKey) { code, msg in
-                debugPrint("\(code)")
-            }
+//            AgoraIotLink.iotsdk.accountMgr.publicKeySet(publicKey: publicKey) { code, msg in
+//                debugPrint("\(code)")
+//            }
             
         }
         
@@ -340,33 +381,72 @@ class ThirdAccountManager{
             }
         }
     }
+    
+    
+    
+    
+    class func nodeActivate(userId:String, _ rsp:@escaping(Int,String, ActivateNode.Rsp?)->Void){
+        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8","traceId":"123456"]
+        let params = ["userId":userId,"clientType":"2","masterAppId":"d0177a34373b482a9c4eb4dedcfa586a","pusherId":"d0177a34"]
+        let paramsDic = ["payload":params]
+        let url = "https://iot-api-gateway.sh.agoralab.co/api" + api.nodeActivate
+        
+//        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in
+//
+//            guard  reData != nil else{
+//                return
+//            }
+//
+//
+//            print("123456")
+//
+//        }
+
+        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
+            .validate()
+            .responseDecodable(of:ActivateNode.Rsp.self){(dataRsp:AFDataResponse<ActivateNode.Rsp>) in
+            URLCache.shared.removeAllCachedResponses()
+            switch dataRsp.result{
+            case .success(let ret):
+                if(ret.code != 0){
+                    log.e("3rd resetPassword fail \(ret.msg)(\(ret.code))")
+                }
+                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret)
+            case .failure(let error):
+                log.e("3rd resetPassword \(url) , detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
+            }
+        }
+    }
+    
+    
 }
 
 class Utils{
     class private func loadAlertById(_ alertImageId:String,_ rsp:@escaping(Int,String,UIImage?)->Void){
-        AgoraIotLink.iotsdk.alarmMgr.queryAlarmImage(alertImageId: alertImageId) { ec, msg, url in
-            if(ec != ErrCode.XOK || url == nil){
-                rsp(ec,msg,nil)
-                return
-            }
-            let fullurl = URL(string: url!)
-            guard let fullurl = fullurl else{
-                log.e("3rd loadImage url:\(url!) error:\(msg) for \(alertImageId)")
-                rsp(ec,msg,nil)
-                return
-            }
-
-            ImageDownloader.default.downloadImage(with: fullurl, options: nil) { result in
-                switch(result){
-                case .success(let data):
-                    ImageCache.default.store(data.image, forKey: String(alertImageId))
-                    rsp(ErrCode.XOK,"cache image:\(alertImageId)",data.image)
-                case .failure(let err):
-                    log.e("3rd ImageDownloader failed(\(err)):\(msg) for \(alertImageId) url:\(url!)")
-                    rsp(ErrCode.XERR_API_RET_FAIL,"download image fail: \(alertImageId)",nil)
-                }
-            }
-        }
+//        AgoraIotLink.iotsdk.alarmMgr.queryAlarmImage(alertImageId: alertImageId) { ec, msg, url in
+//            if(ec != ErrCode.XOK || url == nil){
+//                rsp(ec,msg,nil)
+//                return
+//            }
+//            let fullurl = URL(string: url!)
+//            guard let fullurl = fullurl else{
+//                log.e("3rd loadImage url:\(url!) error:\(msg) for \(alertImageId)")
+//                rsp(ec,msg,nil)
+//                return
+//            }
+//
+//            ImageDownloader.default.downloadImage(with: fullurl, options: nil) { result in
+//                switch(result){
+//                case .success(let data):
+//                    ImageCache.default.store(data.image, forKey: String(alertImageId))
+//                    rsp(ErrCode.XOK,"cache image:\(alertImageId)",data.image)
+//                case .failure(let err):
+//                    log.e("3rd ImageDownloader failed(\(err)):\(msg) for \(alertImageId) url:\(url!)")
+//                    rsp(ErrCode.XERR_API_RET_FAIL,"download image fail: \(alertImageId)",nil)
+//                }
+//            }
+//        }
     }
 
     class func loadAlertImage(_ alertImageId:String,_ rsp:@escaping(Int,String,UIImage?)->Void){
@@ -390,31 +470,31 @@ class Utils{
     
     class func loadAlertVideoUrl(_ deviceId:String,_ tenantId:String, _ beginTime:UInt64,_ rsp:@escaping(Int,String,AlarmVideoInfo?)->Void){
         //rsp(ErrCode.XOK,"","http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/conn-1.m3u8")
-        AgoraIotLink.iotsdk.alarmMgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId: tenantId, beginTime: beginTime,result:{ ec, msg, info in
-            guard let info = info else{
-                return rsp(ec,msg,info)
-            }
-            
-            //如果没有加密，则正常播放
-            guard  info.videoSecretKey != "" else {
-                return rsp(ec,msg,info)
-            }
-            
-            guard let privateKey = ThirdAccountManager.privateKey else{
-                return rsp(ErrCode.XERR_INVALID_PARAM,"3rd private key is nil",info)
-            }
-            
-            let encrypted = try? EncryptedMessage(base64Encoded: info.videoSecretKey)
-            let clear = try? encrypted?.decrypted(with: privateKey, padding: .PKCS1)
-            
-            guard let clear = clear else{
-                return rsp(ErrCode.XERR_INVALID_PARAM,"3d key can't be decoded",info)
-            }
-            
-            info.videoSecretKey = clear.base64String
-            info.url = info.url + "&agora-key=" + info.videoSecretKey
-            return rsp(ec,msg,info)
-            
-        })
+//        AgoraIotLink.iotsdk.alarmMgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId: tenantId, beginTime: beginTime,result:{ ec, msg, info in
+//            guard let info = info else{
+//                return rsp(ec,msg,info)
+//            }
+//
+//            //如果没有加密，则正常播放
+//            guard  info.videoSecretKey != "" else {
+//                return rsp(ec,msg,info)
+//            }
+//
+//            guard let privateKey = ThirdAccountManager.privateKey else{
+//                return rsp(ErrCode.XERR_INVALID_PARAM,"3rd private key is nil",info)
+//            }
+//
+//            let encrypted = try? EncryptedMessage(base64Encoded: info.videoSecretKey)
+//            let clear = try? encrypted?.decrypted(with: privateKey, padding: .PKCS1)
+//
+//            guard let clear = clear else{
+//                return rsp(ErrCode.XERR_INVALID_PARAM,"3d key can't be decoded",info)
+//            }
+//
+//            info.videoSecretKey = clear.base64String
+//            info.url = info.url + "&agora-key=" + info.videoSecretKey
+//            return rsp(ec,msg,info)
+//
+//        })
     }
 }

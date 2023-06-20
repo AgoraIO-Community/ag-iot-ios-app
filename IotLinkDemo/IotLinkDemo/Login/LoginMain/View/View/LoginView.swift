@@ -47,7 +47,7 @@ class LoginView: UIView {
 //        backView.addSubview(selectCountry)
         backView.addSubview(forgetBtn)
         backView.addSubview(phoneNumView)
-        backView.addSubview(passwordView)
+//        backView.addSubview(passwordView)
         backView.addSubview(tipsLabel)
         backView.addSubview(loginBtn)
         backView.addSubview(registerBtn)
@@ -90,27 +90,27 @@ class LoginView: UIView {
             make.height.equalTo(cHeight)
         }
         
-        passwordView.snp.makeConstraints { (make) in
-            make.top.equalTo(phoneNumView.snp.bottom).offset(28.VS)
-            make.left.equalTo(margain)
-            make.right.equalTo(-margain)
-            make.height.equalTo(cHeight)
-        }
+//        passwordView.snp.makeConstraints { (make) in
+//            make.top.equalTo(phoneNumView.snp.bottom).offset(28.VS)
+//            make.left.equalTo(margain)
+//            make.right.equalTo(-margain)
+//            make.height.equalTo(cHeight)
+//        }
         
-        forgetBtn.snp.makeConstraints { (make) in
-            make.top.equalTo(passwordView.snp.bottom).offset(12.VS)
-            make.right.equalTo(passwordView.snp.right).offset(-10.S)
-            make.height.equalTo(18.S)
-        }
+//        forgetBtn.snp.makeConstraints { (make) in
+//            make.top.equalTo(passwordView.snp.bottom).offset(12.VS)
+//            make.right.equalTo(passwordView.snp.right).offset(-10.S)
+//            make.height.equalTo(18.S)
+//        }
         
         tipsLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(passwordView.snp.bottom).offset(8.VS)
-            make.left.equalTo(passwordView.snp.left)
-            make.right.equalTo(passwordView.snp.right).offset(-65.S)
+            make.top.equalTo(phoneNumView.snp.bottom).offset(8.VS)
+            make.left.equalTo(phoneNumView.snp.left)
+            make.right.equalTo(phoneNumView.snp.right).offset(-65.S)
         }
         
         loginBtn.snp.makeConstraints { (make) in
-            make.top.equalTo(passwordView.snp.bottom).offset(81.VS)
+            make.top.equalTo(phoneNumView.snp.bottom).offset(61.VS)
             make.centerX.equalToSuperview()
             make.width.equalTo(140.S)
             make.height.equalTo(56.S)

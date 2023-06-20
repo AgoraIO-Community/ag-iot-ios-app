@@ -32,8 +32,8 @@ class AlarmManager : IAlarmMgr{
             result(ret.0,ret.1,data)
         }
     }
-    
-    func queryByParam(queryParam: QueryParam, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
+    //todo
+    func queryByParam(queryParam: QueryParam1, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
         DispatchQueue.main.async {
             let tenantId = self.app.context.gyiot.session.cert.thingName
             let agToken = self.app.context.aglab.session.accessToken
@@ -56,7 +56,7 @@ class AlarmManager : IAlarmMgr{
         }
     }
     
-    func queryByPage(queryParam: QueryParam, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
+    func queryByPage(queryParam: QueryParam1, result: @escaping (Int, String, [IotAlarm]?) -> Void) {
         DispatchQueue.main.async {
             let tenantId = self.app.context.gyiot.session.cert.thingName
             let agToken = self.app.context.aglab.session.accessToken

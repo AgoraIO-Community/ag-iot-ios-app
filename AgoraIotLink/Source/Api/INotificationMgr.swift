@@ -59,10 +59,10 @@ public protocol INotificationMgr {
      * @return 错误码
      */
     func mark(markFlag: Int, notificationIdList: [String],result:@escaping(Int,String)->Void)
-    /*
-     * @brief 是否接受推送消息
-     */
-    func enableNotify(enable:Bool,result:@escaping(Int,String)->Void)
+//    /*
+//     * @brief 是否接受推送消息
+//     */
+//    func enableNotify(enable:Bool,result:@escaping(Int,String)->Void)
     /*
      * @brief 查询是否接受推送消息
      */

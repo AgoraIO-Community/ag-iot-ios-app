@@ -85,15 +85,15 @@ class DeviceSetupHomeVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool){
-        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(deviceId: device!.deviceId) { ec, msg, info in
-            if(ErrCode.XOK == ec){
-                guard let info = info else{
-                    return
-                }
-                self.firmware = info
-                self.setupData(verHint: info.isUpgrade ? "发现新版本:\(info.upgradeVersion)" : "已是最新版本", showDot: info.isUpgrade)
-            }
-        }
+//        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(deviceId: device!.deviceId) { ec, msg, info in
+//            if(ErrCode.XOK == ec){
+//                guard let info = info else{
+//                    return
+//                }
+//                self.firmware = info
+//                self.setupData(verHint: info.isUpgrade ? "发现新版本:\(info.upgradeVersion)" : "已是最新版本", showDot: info.isUpgrade)
+//            }
+//        }
         return
     }
     

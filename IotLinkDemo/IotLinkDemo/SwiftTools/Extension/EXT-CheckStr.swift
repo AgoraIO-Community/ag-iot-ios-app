@@ -694,6 +694,18 @@ import UIKit
 
     }
 
+     static func getDictionaryFromJSONString(data:[UInt8]) -> Dictionary<String, Any> {
+         if let string = String(bytes: data, encoding: .utf8) {
+             // 将字符串转化为字典
+             if let dictionary = try? JSONSerialization.jsonObject(with: string.data(using: .utf8)!, options: []) as? [String: Any] {
+                 return dictionary
+             }else{
+                 return  Dictionary<String, Any>()
+             }
+         }else{
+             return  Dictionary<String, Any>()
+         }
+     }
 }
 
 extension NSMutableAttributedString {

@@ -79,7 +79,7 @@ extension PushMsgSettingVC: UITableViewDelegate, UITableViewDataSource {
         currentCell = tableView.cellForRow(at: curIdex) as? SwitchSettingCell
         switch title {
         case alamTitle:
-            enableNotify(enable: isOpen)
+//            enableNotify(enable: isOpen)
             break
         default:
             break
@@ -91,27 +91,28 @@ extension PushMsgSettingVC: UITableViewDelegate, UITableViewDataSource {
 extension PushMsgSettingVC{
     
     //推送开关控制接口
-    func enableNotify(enable:Bool){
-        
-        guard let sdk = AgoraIotManager.shared.sdk else { return }
-        sdk.notificationMgr.enableNotify(enable: enable, result: {[weak self] ec, msg in
-            if (ec !=  ErrCode.XOK) {
-                debugPrint("\(msg)")
-                AGToolHUD.showInfo(info: msg)
-                self?.currentCell?.aSwitch.isOn = !enable
-                return
-            }
-            AGToolHUD.showInfo(info: "告警消息开关设置成功！")
-        })
-        
-    }
+//    func enableNotify(enable:Bool){
+//        
+//        guard let sdk = AgoraIotManager.shared.sdk else { return }
+//        sdk.notificationMgr.enableNotify(enable: enable, result: {[weak self] ec, msg in
+//            if (ec !=  ErrCode.XOK) {
+//                debugPrint("\(msg)")
+//                AGToolHUD.showInfo(info: msg)
+//                self?.currentCell?.aSwitch.isOn = !enable
+//                return
+//            }
+//            AGToolHUD.showInfo(info: "告警消息开关设置成功！")
+//        })
+//        
+//    }
     
     //查询推送开关状态接口
     func queryNotifySwitch()->Bool{
         
-        guard let sdk = AgoraIotManager.shared.sdk else { return false}
-        let isOpen = sdk.notificationMgr.notifyEnabled()
-        return isOpen
+//        guard let sdk = AgoraIotManager.shared.sdk else { return false}
+//        let isOpen = sdk.notificationMgr.notifyEnabled()
+//        return isOpen
+        return false
         
     }
     

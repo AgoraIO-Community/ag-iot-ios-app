@@ -27,7 +27,7 @@ class RuleManager{
         _fsmPlay.listener = _playback
         _fsmApp.getFsmState().listener = app.status
         _fsmApp.getFsmPush().listener = PushListener(app:app)
-        _fsmApp.getFsmMqtt().listener = MqttListener(app:app)
+//        _fsmApp.getFsmMqtt().listener = MqttListener(app:app)
         
     }
     
@@ -44,7 +44,7 @@ class RuleManager{
         else{
             _fsmApp.getFsmState().start(queue: queue)
             _fsmApp.getFsmPush().start(queue: queue)
-            _fsmApp.getFsmMqtt().start(queue: queue)
+//            _fsmApp.getFsmMqtt().start(queue: queue)
             _fsmApp.start(queue:queue)
             _fsmPlay.start(queue: queue)
         }

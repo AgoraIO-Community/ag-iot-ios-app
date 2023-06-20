@@ -19,6 +19,7 @@ class MainTopView: UIView {
     }
     
     var clickAddButtonAction:(()->(Void))?
+    var clickDeleteButtonAction:(()->(Void))?
     
     
     private lazy var titleLabel:UILabel = {
@@ -31,15 +32,30 @@ class MainTopView: UIView {
     
     private lazy var addButton:UIButton = {
         let button = UIButton(type: .custom)
-        button.setBackgroundImage(UIImage(named: ""), for: .normal)
-        button.setImage(UIImage(named: "device_add"), for: .normal)
+        button.setTitle("添加", for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+//        button.setBackgroundImage(UIImage(named: ""), for: .normal)
+//        button.setImage(UIImage(named: "device_add"), for: .normal)
         button.addTarget(self, action: #selector(didClickAddButton), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var deleteButton:UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle("删除", for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+//        button.setBackgroundImage(UIImage(named: ""), for: .normal)
+//        button.setImage(UIImage(named: "device_add"), for: .normal)
+        button.addTarget(self, action: #selector(didClickDeleteButton), for: .touchUpInside)
         return button
     }()
     
     private func createSubviews(){
         addSubview(titleLabel)
         addSubview(addButton)
+        addSubview(deleteButton)
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(20)
             make.bottom.equalTo(-10)
@@ -49,9 +65,19 @@ class MainTopView: UIView {
             make.right.equalTo(-20)
             make.width.height.equalTo(40)
         }
+        
+        deleteButton.snp.makeConstraints { make in
+            make.centerY.equalTo(titleLabel)
+            make.right.equalTo(addButton.snp.left).offset(-20)
+            make.width.height.equalTo(40)
+        }
     }
     
     @objc private func didClickAddButton(){
         clickAddButtonAction?()
+    }
+    
+    @objc private func didClickDeleteButton(){
+        clickDeleteButtonAction?()
     }
 }

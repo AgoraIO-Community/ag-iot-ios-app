@@ -103,31 +103,31 @@ class MinePageMainVC: AGBaseVC {
             let startIndex = account.startIndex
             account.replaceSubrange(account.index(startIndex, offsetBy: 3)...account.index(startIndex, offsetBy: 6), with: "****")
         }
-        AgoraIotManager.shared.sdk?.accountMgr.getAccountInfo(result: { [weak self] _, _, userInfo in
-            let uid:String = DeviceManager.shared.sdk?.accountMgr.getUserId() ?? ""
-            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: account,count:DeviceManager.shared.devices?.count ?? 0,uid: uid)
-            self?.userInfo = userInfo
-            if(self?.userInfo?.sex == 0){
-                self?.userInfo?.sex = 1
-            }
-            if(self?.userInfo?.age == 0){
-                self?.userInfo?.age = 10
-            }
-        })
-        // 更新是否有告警消息
-        AgoraIotManager.shared.sdk?.alarmMgr.queryCount(productId: nil, deviceId: nil, messageType: nil, status: 0, createDateBegin: nil, createDateEnd: nil, result: {[weak self] _, _, count in
-            DispatchQueue.main.async {
-                self?.alamUnreadCount = count
-            }
-        })
-        // 更新是否有通知消息
-        if let ids = DeviceManager.shared.deviceIds {
-            AgoraIotManager.shared.sdk?.alarmMgr.querySysCount(productId: nil, deviceIds: ids, messageType: nil, status: 0, createDateBegin: nil, createDateEnd: nil, result: {[weak self] ec, msg, count in
-                DispatchQueue.main.async {
-                    self?.notifyUnrendCount = count
-                }
-            })
-        }
+//        AgoraIotManager.shared.sdk?.accountMgr.getAccountInfo(result: { [weak self] _, _, userInfo in
+//            let uid:String = DeviceManager.shared.sdk?.accountMgr.getUserId() ?? ""
+//            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: account,count:DeviceManager.shared.devices?.count ?? 0,uid: uid)
+//            self?.userInfo = userInfo
+//            if(self?.userInfo?.sex == 0){
+//                self?.userInfo?.sex = 1
+//            }
+//            if(self?.userInfo?.age == 0){
+//                self?.userInfo?.age = 10
+//            }
+//        })
+//        // 更新是否有告警消息
+//        AgoraIotManager.shared.sdk?.alarmMgr.queryCount(productId: nil, deviceId: nil, messageType: nil, status: 0, createDateBegin: nil, createDateEnd: nil, result: {[weak self] _, _, count in
+//            DispatchQueue.main.async {
+//                self?.alamUnreadCount = count
+//            }
+//        })
+//        // 更新是否有通知消息
+//        if let ids = DeviceManager.shared.deviceIds {
+//            AgoraIotManager.shared.sdk?.alarmMgr.querySysCount(productId: nil, deviceIds: ids, messageType: nil, status: 0, createDateBegin: nil, createDateEnd: nil, result: {[weak self] ec, msg, count in
+//                DispatchQueue.main.async {
+//                    self?.notifyUnrendCount = count
+//                }
+//            })
+//        }
     }
     
     private func setupUI() {
@@ -154,11 +154,11 @@ class MinePageMainVC: AGBaseVC {
     
     // 点击消息中心
     private func didSelectMessageCell(){
-        let vc = MessageCenterVC()
-        vc.alamUnreadCount = Int(alamUnreadCount)
-        vc.notifyUnreadCount = Int(notifyUnrendCount)
-        vc.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
+//        let vc = MessageCenterVC()
+//        vc.alamUnreadCount = Int(alamUnreadCount)
+//        vc.notifyUnreadCount = Int(notifyUnrendCount)
+//        vc.hidesBottomBarWhenPushed = true
+//        navigationController?.pushViewController(vc, animated: true)
     }
     
     // 点击通用设置

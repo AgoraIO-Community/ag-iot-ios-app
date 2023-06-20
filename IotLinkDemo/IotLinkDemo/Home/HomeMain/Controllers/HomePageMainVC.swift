@@ -22,12 +22,21 @@ let cAddDeviceSuccessNotify = "cAddDeviceSuccessNotify"
 
 private let kCellID = "HomeMainDeviceCell"
 
+var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
+
 
 
 class HomePageMainVC: AGBaseVC {
     
-    var dataSource:[[IotDevice]] = [[IotDevice]]()
-    var shareDevieces = [IotDevice]()
+    fileprivate var  doorbellVM = DoorBellManager.shared
+    var mDevicesArray = [MDeviceModel]()
+    var members:Int = 0
+    
+    var curSessionId:String = ""
+    
+    var curIndex : IndexPath?
+    
+    var curTraceId : UInt = 0//用来过滤多余的返回数据
     
     // 告警消息时间
     var alarmDates = [String: UInt64]()
@@ -37,9 +46,12 @@ class HomePageMainVC: AGBaseVC {
         topView.clickAddButtonAction = {[weak self] in
             self?.addDevice()
         }
+        topView.clickDeleteButtonAction = {[weak self] in
+            self?.beginEditList()
+        }
         return topView
     }()
-    
+
     lazy var tipsView:NetworkTipsView = {
         let tips = NetworkTipsView()
         return tips
@@ -58,6 +70,25 @@ class HomePageMainVC: AGBaseVC {
         return tableView
     }()
     
+    lazy var selectAllView: DoorbellSelectAllSimpleView = {
+        let selectAllView = DoorbellSelectAllSimpleView()
+        selectAllView.clickSelectedButtonAction = { [weak self] button in
+            button.isSelected = !button.isSelected
+            if self == nil { return }
+            for data in self!.mDevicesArray {
+                data.isSelected = button.isSelected
+            }
+            self!.tableView.reloadData()
+        }
+        selectAllView.clickDeleteButtonAction = { [weak self] in
+            self?.didClickDeleteButton()
+        }
+        selectAllView.clickCancelButtonAction = { [weak self] in
+            self?.endEditMsgList()
+        }
+        return selectAllView
+    }()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,24 +97,34 @@ class HomePageMainVC: AGBaseVC {
         setUpUI()
         // 监听网络状态
         startListeningNetStatus()
-        // 添加下拉刷新
-        addRefresh()
+        loadPreConfig()
         
     }
     
-    // 收到共享设备
-    func showReceiveShareDevice(shareInfo: ShareItem) {
-        let vc = ReceiveDeviceShareVC()
-        vc.shareInfo = shareInfo
-        vc.modalPresentationStyle = .overCurrentContext
-        self.tabBarController?.present(vc, animated: true, completion: nil)
+    func loadPreConfig(){
+        
+        TDUserInforManager.shared.mqttInit()
+        
     }
-
+    
+    func loadData(){
+        mDevicesArray.removeAll()
+        let tempArray = TDUserInforManager.shared.readMarkPeerNodeId()
+        for item in tempArray{
+            let mModel = MDeviceModel()
+            mModel.peerNodeId = item
+            mDevicesArray.append(mModel)
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // 隐藏导航栏
         navigationController?.navigationBar.isHidden = true
+        let callkitMgr = getDevSessionMgr("")
+        if((callkitMgr?.getNetworkStatus().isBusy) != nil){
+           callkitMgr?.mutePeerAudio(mute: false, result: {ec,msg in})
+        }
         
     }
     override func viewWillDisappear(_ animated: Bool) {
@@ -92,39 +133,46 @@ class HomePageMainVC: AGBaseVC {
         navigationController?.navigationBar.isHidden = false
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if(TDUserInforManager.shared.isLogin){
-            getDevicesArray()
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        let callkitMgr = getDevSessionMgr("")
+        if((callkitMgr?.getNetworkStatus().isBusy) != nil){
+            callkitMgr?.mutePeerAudio(mute: true, result: {ec,msg in
+                print("\(ec)---\(msg)")
+            })
         }
-        //checkNewShareDevice()
     }
     
-     //检查用户登录状态
-    private func checkLoginState(){
-        TDUserInforManager.shared.checkLoginState()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
+    
+    func getDevSessionMgr(_ sessionId:String)->IDevPreviewMgr?{
+        return sdk?.deviceSessionMgr.getDevPreviewMgr(sessionId: sessionId)
+    }
+    
+    //检查用户登录状态
+   private func checkLoginState(){
+       TDUserInforManager.shared.checkLoginState()
+   }
     
     // 添加监听
     private func addObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(receiveLoginSuccess), name: Notification.Name(cUserLoginSuccessNotify), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(receiveAddDeviceSuccess), name: Notification.Name(cAddDeviceSuccessNotify), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(receiveLogoutSuccess), name: Notification.Name(cUserLoginOutNotify), object: nil)
     }
     
-    @objc private func receiveAddDeviceSuccess(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
-            // 获取设备列表
-            self?.getDevicesArray()
-            self?.getPropertyList();
-            debugPrint("添加设备成功回调刷新")
+    @objc private func receiveLoginSuccess(){//登陆成功
+        loadData()
+        tableView.reloadData()
+    }
+    
+    @objc private func receiveLogoutSuccess(){//退出登陆成功
+        for data in mDevicesArray {
+            if data.sessionId != ""{
+                handUpDevice(data.sessionId)
+            }
         }
-        
-    }
-    
-    @objc private func receiveLoginSuccess(){
-        // 获取设备列表
-        getDevicesArray()
-        getPropertyList();
     }
     
     // 设置UI
@@ -140,25 +188,6 @@ class HomePageMainVC: AGBaseVC {
             make.left.right.bottom.equalToSuperview()
             make.top.equalTo(tipsView.snp.bottom)
         }
-    }
-    
-    // 添加设备
-    @objc private func addDevice(){
-        print("点击添加设备")
-        let vc = QRCodeReaderVC()
-        vc.modalPresentationStyle = .overFullScreen
-        present(vc, animated: true)
-        vc.getScanResult = { [weak self] resultStr in
-            self?.showResetVC(resultStr: resultStr)
-        }
-    }
-    
-    private func showResetVC(resultStr:String){
-        let resetVC = DeviceResetVC()
-        resetVC.productKey = resultStr
-        let resetNC = AGNavigationVC(rootViewController: resetVC)
-        resetNC.modalPresentationStyle = .overFullScreen
-        present(resetNC, animated: true)
     }
     
     // 监听网络状态
@@ -184,102 +213,21 @@ class HomePageMainVC: AGBaseVC {
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: cNetChangeNotify), object: nil, userInfo: ["netType":netType])
         })
     }
-    
-    // 获取是否有设备分享给我
-//    private func checkNewShareDevice(){
-//        DeviceManager.shared.qureySharePushList(result: {[weak self] items in
-//            if let shareInfo = items?.first {
-//                self?.showReceiveShareDevice(shareInfo: shareInfo)
-//            }
-//        })
-//    }
-    
-    // 获取消息列表
-    private func loadAlarmDates() {
-        // 清空原有字典
-        alarmDates.removeAll()
-        let sdk = AgoraIotManager.shared.sdk
-        guard let alarmMgr = sdk?.alarmMgr else{ return }
-        var query:IAlarmMgr.QueryParam
-        let date = Date()
-        let beginDate = Date(year: date.year, month: date.month, day: date.day, hour: 0, minute: 0,second: 0)
-        let endDate = Date(year: date.year, month: date.month, day: date.day, hour: 23, minute: 59,second: 59)
-        query = IAlarmMgr.QueryParam(dateBegin: beginDate)
-        query.createdDateEnd = endDate
-       
-        query.status = 0
-        query.currentPage = 1
-        query.pageSize = 50
-        alarmMgr.queryByParam(queryParam: query) { [weak self] ec, msg, alarms in
-            if(ec != ErrCode.XOK){
-                debugPrint("查询告警记录失败")
-//                SVProgressHUD.showError(withStatus: msg)
-//                SVProgressHUD.dismiss(withDelay: 2)
-                return
-            }
-            guard let alarmList = alarms else {
-                return
-            }
-            
-            for alarm:IotAlarm in alarmList {
-                if let oldTime = self?.alarmDates[alarm.deviceId] {
-                    self?.alarmDates[alarm.deviceId] = max(alarm.createdDate, oldTime)
-                }else{
-                    self?.alarmDates[alarm.deviceId] = alarm.createdDate
-                }
-            }
-            self?.tableView.reloadData()
-        }
-    }
-    private func getPropertyList(){
-        DeviceManager.shared.displayPropertyList()
-    }
-    // 获取设备列表
-    private func getDevicesArray(){
-//        SVProgressHUD.show()
-        DeviceManager.shared.updateDevicesList{[weak self] _, _, devs in
-            guard let devices = devs else { return }
-            var normalDevices = [IotDevice]()
-            var shareDevieces = [IotDevice]()
-            for dev in devices {
-                if dev.sharer != "0" {
-                    shareDevieces.append(dev)
-                }else{
-                    normalDevices.append(dev)
-                }
-            }
-            TDUserInforManager.shared.currentDeviceCount = normalDevices.count
-            self?.shareDevieces = shareDevieces
-            self?.dataSource = [normalDevices,shareDevieces]
-            self?.tableView.mj_header?.endRefreshing()
-            self?.tableView.reloadData()
-//            SVProgressHUD.dismiss()
-            self?.loadAlarmDates()
-        }
-    }
-    
-    // 下拉刷新
-    private func addRefresh(){
-        tableView.mj_header = MJRefreshNormalHeader(refreshingBlock: {[weak self] in
-            self?.getDevicesArray()
-        })
-    }
 }
 
 
 extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 146
+        return 230
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return dataSource.count
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let devices = dataSource[section]
-        return devices.count
+        return mDevicesArray.count
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -287,27 +235,360 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 1 && shareDevieces.count > 0 {
-            return "我接收的共享"
-        }
         return nil
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let device = self.dataSource[indexPath.section][indexPath.row]
+        let device = mDevicesArray[indexPath.row]
         let cell:HomeMainDeviceCell = tableView.dequeueReusableCell(withIdentifier: kCellID, for: indexPath) as! HomeMainDeviceCell
-        cell.setDevice(device, alarmDate: alarmDates[device.deviceId] ?? 0)
+        cell.indexPath = indexPath
+        cell.device = device
+        cell.dailBlock = { index in
+            self.callDevice(indexPath: index)
+        }
+        cell.fullScreenBlock = { index in
+            self.goToFullVC(indexPath:indexPath)
+        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let device = self.dataSource[indexPath.section][indexPath.row]
-        let dbVC = DoorbellContainerVC()
-        dbVC.device = device
-        navigationController?.pushViewController(dbVC, animated: true)
+        
+        let device = mDevicesArray[indexPath.row]
+        if device.canEdit {
+            device.isSelected = !device.isSelected
+            self.selectAllView.selectedbutton.isSelected = isSelectedAll()
+            tableView.reloadData()
+        }
     }
 }
+
+
+extension HomePageMainVC { //呼叫
+
+    //---------设备控制相关-----------
+    //呼叫设备
+    func callDevice(indexPath : IndexPath){
+        
+        curIndex = indexPath
+        let device = mDevicesArray[indexPath.row]
+        callDialRequest(device)
+  
+    }
+    
+    private func onMqttDesired(sess:CallSession?){//呼叫mqtt回调
+
+        guard let sess = sess else {
+            log.e("onMqttDesired : sess is nil when call CallIncoming")
+            return
+        }
+        if curTraceId == sess.traceId{
+            print("过滤mqtt多余的返回数据")
+            return
+        }
+        curTraceId = sess.traceId
+        let accountInfor = TDUserInforManager.shared.readKeyChainAccountAndPwd()
+        let userId = accountInfor.acc
+        let connectParam = ConnectParam(mUserId: userId, mPeerDevId: sess.peerNodeId, mLocalRtcUid: sess.uid, mChannelName: sess.cname, mRtcToken: sess.token, mRtmToken: "")
+        connectDevice(connectParam: connectParam)
+    }
+    
+    func callDialRequest(_ dev:MDeviceModel) {
+        
+        guard let nodeToken = TDUserInforManager.shared.nodeData?.nodeToken else{ return }
+        
+        curTraceId = 0
+        
+        let curTimestamp:Int = String.dateTimeRounded()
+        let appId = "d0177a34373b482a9c4eb4dedcfa586a"
+        let headerParam = ["traceId": curTimestamp, "timestamp": curTimestamp, "nodeToken": nodeToken, "method": "user-start-call"] as [String : Any]
+        let payloadParam = ["appId": appId, "deviceId": dev.peerNodeId, "extraMsg": "attachMsg"] as [String : Any]
+        let paramDic = ["header":headerParam,"payload":payloadParam]
+        let jsonString = paramDic.convertDictionaryToJSONString()
+        TDUserInforManager.shared.cocoaMqtt?.waitForActionDesired(actionDesired: onMqttDesired)
+        TDUserInforManager.shared.cocoaMqtt?.publishCallData(data: jsonString)
+        log.i("---callDial--发起呼叫---")
+        
+    }
+    
+    //呼叫设备
+    func connectDevice(connectParam : ConnectParam){
+        
+        guard let indexPath = curIndex else {
+            return
+        }
+        
+        let cell = tableView.cellForRow(at: indexPath) as? HomeMainDeviceCell
+        let device = mDevicesArray[indexPath.row]
+        
+        log.i("connectDevice \(device.peerNodeId)")
+        
+        doorbellVM.connectDevice(connectParam) { [weak self] sessionId, act in
+            cell?.handelCallStateText(true)
+            if(act == .onConnectDone){
+                device.sessionId = sessionId
+                cell?.tag = (self?.getTagFromSessionId(sessionId))!
+                self?.handelUserMembers(1,sessionId)
+                self?.previewStart(sessionId: sessionId)
+            }else{
+                self?.handelCallAct(sessionId,act)
+            }
+            
+        } _: { [weak self] members,sessionId in
+            self?.handelUserMembers(members,sessionId)
+        }
+        
+    }
+    
+    func handelUserMembers(_ members:Int,_ sessionId:String){
+        let viewTag = getTagFromSessionId(sessionId)
+        let cell = getCellWithTag(tag: viewTag)
+        cell.handelUserMembers(members)
+    }
+    
+    //处理呼叫返回
+    func handelCallAct(_ sessionId:String,_ act:SessionCallback){
+        
+        if(act == .onDisconnected){
+            debugPrint("本地挂断")
+            let cell = getCurrentCellWithTag(sessionId)
+            let tempModel = getCurrentDataModel(indexPath: cell.indexPath ?? IndexPath(row: 0, section: 0))
+            tempModel.sessionId = ""
+            cell.handelCallTipType(.none)
+            cell.handelCallStateText(false)
+            cell.handelStateNone()
+        }else if(act == .onError){
+            debugPrint("呼叫超时")
+            let cell = getCurrentCellWithTag(sessionId)
+            cell.handelCallTipType(.loadFail)
+            cell.handelCallStateText(false)
+            AGToolHUD.showInfo(info: "呼叫超时,请检查设备状态")
+        }
+        
+    }
+    
+    //挂断设备
+    func handUpDevice(_ sessionId : String){
+        
+        doorbellVM.hangupDevice(sessionId:sessionId) { success, msg in
+            debugPrint("调用挂断：\(msg)")
+            AGToolHUD.showInfo(info: "挂断成功")
+        }
+    }
+    
+    func previewStart(sessionId:String){//获取到首帧
+        
+        DoorBellManager.shared.previewStart(sessionId: sessionId) {[weak self] sessionId, videoWidth, videoHeight in
+            
+            debugPrint("获取到首帧")
+            let cell = self?.getCurrentCellWithTag(sessionId)
+            cell?.configPeerView(sessionId)
+            cell?.handelCallTipType(.playing)
+            if self?.isFullScreemVisible() == true{
+                //首帧如果是详情页，则发送通知
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: ReceiveFirstVideoFrameNotify), object: nil, userInfo: nil)
+            }
+            
+        }
+    }
+    
+    func getTagFromSessionId(_ sessionId : String)->Int{
+        let strArray = sessionId.split(separator: "&")
+        print(strArray)
+        guard strArray.count > 0 else {
+            return 1000
+        }
+        let tag = strArray[1]
+        return Int(tag) ?? 0
+    }
+    
+    func getCellWithTag(tag:Int) -> HomeMainDeviceCell {
+        if let cell = tableView.viewWithTag(tag) as? HomeMainDeviceCell{
+            return cell
+        }
+        debugPrint("未找到对应cell：\(tag)")
+        return HomeMainDeviceCell()
+    }
+    
+    func getCurrentCellWithTag(_ sessionId:String) -> HomeMainDeviceCell {
+        let viewTag = getTagFromSessionId(sessionId)
+        let cell = getCellWithTag(tag: viewTag)
+        return cell
+    }
+    
+    func getCurrentDataModel(indexPath : IndexPath)->MDeviceModel{
+        
+        if mDevicesArray.count == 0 {
+            return MDeviceModel()
+        }
+        return mDevicesArray[indexPath.row]
+    }
+}
+
+
+extension HomePageMainVC{
+    
+    func goToFullVC(indexPath : IndexPath){
+        
+        let device = mDevicesArray[indexPath.row]
+        let cell = tableView.cellForRow(at: indexPath) as! HomeMainDeviceCell
+        
+//        let sessionInfor = sdk?.deviceSessionMgr.getSessionInfo(sessionId: device.sessionId)
+//        if device.sessionId == "" ||  sessionInfor?.mState != .onCall{//未在通话中，返回
+//            return
+//        }
+        
+        let fullVC = CallFullScreemVC()
+        fullVC.sessionId = device.sessionId
+        fullVC.CallFullScreemBlock = { sessionId in
+            cell.configPeerView(sessionId)
+        }
+        self.navigationController?.pushViewController(fullVC, animated: false)
+    }
+}
+
+extension HomePageMainVC{ //删除，添加
+    
+    // 添加设备
+    @objc private func addDevice(){
+        print("点击添加设备")
+        guard isDeviceEditing() == false else {
+            AGToolHUD.showInfo(info: "请将删除操作完成，再进行添加!")
+            return
+        }
+        AGEditAlertVC.showTitleTop("添加设备", editText: "",alertType:.modifyDeviceName ) {[weak self] nodeId in
+            self?.addDeviceToArray(nodeId)
+            print("-----\(nodeId)")
+        }
+    }
+    
+    func addDeviceToArray(_ nodeId : String){
+        
+        TDUserInforManager.shared.savePeerNodeId(nodeId)
+        let mModel = MDeviceModel()
+        mModel.peerNodeId = nodeId //01GTKG1X7AEZWY7ACB7N2EV7C9
+        mDevicesArray.append(mModel)
+        tableView.reloadData()
+    }
+    
+    // 开始编辑
+    private func beginEditList() {
+        for data in mDevicesArray {
+            data.canEdit = true
+        }
+        showSelectAllView()
+        tableView.reloadData()
+    }
+    
+    // 结束编辑
+    private func endEditMsgList() {
+        for data in mDevicesArray {
+            data.canEdit = false
+        }
+        hideSelectAllView()
+        tableView.reloadData()
+    }
+    
+    // 显示选中所有
+    private func showSelectAllView(){
+        if mDevicesArray.count == 0 {
+            return
+        }
+        
+        UIApplication.shared.keyWindow?.addSubview(selectAllView)
+        selectAllView.snp.makeConstraints { make in
+            make.left.bottom.right.equalToSuperview()
+            make.height.equalTo(103.S)
+        }
+    }
+    
+    // 隐藏选中所有
+    private func hideSelectAllView(){
+        selectAllView.removeFromSuperview()
+    }
+    
+    private func didClickDeleteButton()  {
+        // 选中的数量大于0
+        if selectedIsNotEmpty() {
+            selectAllView.disabled = true
+            AGAlertViewController.showTitle("提示", message: "确定要删除所选中的设备吗", cancelTitle: "取消", commitTitle: "确定") {[weak self] in
+                self?.selectAllView.disabled = false
+                self?.endEditMsgList()
+                self?.deleteMessages()
+            } cancelAction: { [weak self] in
+                self?.selectAllView.disabled = false
+            }
+        }else{
+            SVProgressHUD.showInfo(withStatus: "请选择要删除的设备")
+            SVProgressHUD.dismiss(withDelay: 2)
+        }
+    }
+    
+    // 删除消息
+    private func deleteMessages(_ id: UInt64? = nil ){
+        
+        var deviceList = [MDeviceModel]()
+        var peerNodeIdList = [String]()
+        for item in mDevicesArray {
+            if item.isSelected == false {
+                deviceList.append(item)
+                peerNodeIdList.append(item.peerNodeId)
+            }else{
+                if item.sessionId != ""{//如果选中的设备正在通话中，则先挂断
+                    print("---delete calling device---")
+                    handUpDevice(item.sessionId)
+                }
+            }
+        }
+        TDUserInforManager.shared.deletePeerNodeIdArray(peerNodeIdList)
+        mDevicesArray.removeAll()
+        mDevicesArray.append(contentsOf: deviceList)
+        tableView.reloadData()
+    }
+    
+    
+    // 判断是否选中所有
+    private func isSelectedAll() -> Bool {
+        if mDevicesArray.count == 0 {
+            return false
+        }
+        for data in mDevicesArray {
+            if !data.isSelected {
+                return false
+            }
+        }
+        return true
+    }
+    
+    // 判断是否有选中
+    private func selectedIsNotEmpty() -> Bool {
+        for data in mDevicesArray {
+            if data.isSelected {
+                return true
+            }
+        }
+        return false
+    }
+    
+    // 判断是否处于删除消息的状态
+    private func isDeviceEditing() -> Bool {
+        for data in mDevicesArray {
+            if data.canEdit {
+                return true
+            }
+        }
+        return false
+    }
+    
+    func isFullScreemVisible()->Bool{
+        
+        guard let topViewController = UIApplication.topViewController() else { return false}
+        guard topViewController.isKind(of: CallFullScreemVC.self) == true else { return false}
+        return true
+    }
+}
+                                
 
 extension HomePageMainVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
 
@@ -347,6 +628,7 @@ extension HomePageMainVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
     }
     
     func emptyDataSetDidTap(_ scrollView: UIScrollView!) {
-        getDevicesArray()
+//        getDevicesArray()
     }
 }
+

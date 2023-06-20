@@ -59,7 +59,7 @@ class DoorbellAbilityVC: UIViewController {
     @objc private func receiveLocalHangupNotify(){
         // 设置视频view
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":0])
-        self.handelCallAct(.LocalHangup)
+        self.handelCallAct("",.LocalHangup)
     }
 
     @objc private func netWorkChange(notification: NSNotification){
@@ -74,12 +74,13 @@ class DoorbellAbilityVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if(AgoraIotLink.iotsdk.callkitMgr.getNetworkStatus().isBusy){
+        let  callkitMgr = (sdk?.deviceSessionMgr.getDevPreviewMgr(sessionId: ""))!
+        if(callkitMgr.getNetworkStatus().isBusy){
 //            AgoraIotLink.iotsdk.callkitMgr.muteLocalAudio(mute: false, result: {ec,msg in
 //                print("\(ec)---\(msg)")
 //
 //            })
-            AgoraIotLink.iotsdk.callkitMgr.mutePeerAudio(mute: false, result: {ec,msg in})
+            callkitMgr.mutePeerAudio(mute: false, result: {ec,msg in})
             
         }
 //        if isReceiveCall == false {
@@ -90,13 +91,14 @@ class DoorbellAbilityVC: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        if(AgoraIotLink.iotsdk.callkitMgr.getNetworkStatus().isBusy){
+        let  callkitMgr = (sdk?.deviceSessionMgr.getDevPreviewMgr(sessionId: ""))!
+        if(callkitMgr.getNetworkStatus().isBusy){
             
 //            AgoraIotLink.iotsdk.callkitMgr.muteLocalAudio(mute: true, result: {ec,msg in
 //                print("\(ec)---\(msg)")
 //
 //            })
-            AgoraIotLink.iotsdk.callkitMgr.mutePeerAudio(mute: true, result: {ec,msg in
+            callkitMgr.mutePeerAudio(mute: true, result: {ec,msg in
                 print("\(ec)---\(msg)")
 
             })
@@ -209,43 +211,36 @@ extension DoorbellAbilityVC {
 //            AGToolHUD.showInfo(info: "设备离线,请检查设备状态")
 //            return
 //        }
-        if(!device.connected){
-            //videoTipView.tipType = .deviceOffLine
-            return;
-        }
+        //todo:
+//        if(!device.connected){
+//            //videoTipView.tipType = .deviceOffLine
+//            return;
+//        }
         
         topAbilityV.handelVideoTopView(tipsType: .loading)
         
 //        AGToolHUD.showNetWorkWait(20)
-        doorbellVM.wakeupDevice(device) {[weak self] success, msg in
-            if(!success){
-                debugPrint("呼叫失败")
-                AGToolHUD.showInfo(info: "呼叫失败,请检查设备状态")
-                self?.topAbilityV.handelVideoTopView(tipsType: .loadFail)
-            }else{
-                debugPrint("呼叫成功")
-            }
-            
-        } _: { [weak self] act in
-            self?.handelCallAct(act)
-        }
+//        doorbellVM.wakeupDevice(device) {[weak self] success, msg in
+//            if(!success){
+//                debugPrint("呼叫失败")
+//                AGToolHUD.showInfo(info: "呼叫失败,请检查设备状态")
+//                self?.topAbilityV.handelVideoTopView(tipsType: .loadFail)
+//            }else{
+//                debugPrint("呼叫成功")
+//            }
+//
+//        } _: { [weak self] sessionId, act in
+//            self?.handelCallAct(sessionId,act)
+//        }
         
     }
     
     //处理呼叫返回
-    func handelCallAct(_ act:ActionAck){
+    func handelCallAct(_ sessionId:String,_ act:ActionAck){
         
         //AGToolHUD.disMiss()
         
-        if(act == .CallOutgoing){
-            debugPrint("本地去电振铃")
-        }
-        else if(act == .RemoteBusy){
-            debugPrint("设备忙碌")
-            topAbilityV.handelVideoTopView(tipsType: .loadFail)
-            AGToolHUD.disMiss()
-        }
-        else if(act == .RemoteHangup){
+        if(act == .RemoteHangup){
             //设备休眠时会走此回调
             debugPrint("设备挂断")
             topAbilityV.handelVideoTopView(tipsType: .deviceSleep)
@@ -264,9 +259,6 @@ extension DoorbellAbilityVC {
             debugPrint("设备接听")
             AGToolHUD.disMiss()
         }
-        else if(act == .CallForward){
-            debugPrint("呼叫中")
-        }
         else if(act == .RemoteVideoReady){
             debugPrint("获取到首帧")
             topAbilityV.configPeerView()
@@ -278,9 +270,9 @@ extension DoorbellAbilityVC {
             debugPrint("接听超时")
             //AGToolHUD.disMiss()
             AGToolHUD.showInfo(info: "对端接听超时,请检查设备状态")
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteHangupNotify), object: nil ,userInfo: ["sessionId":sessionId])
         }
-        else if(act == .LocalTimeout || act == .UnknownAction){
+        else if(act == .UnknownAction){
             topAbilityV.handelVideoTopView(tipsType: .loadFail)
             debugPrint("呼叫超时")
             //AGToolHUD.disMiss()
@@ -357,7 +349,7 @@ extension DoorbellAbilityVC {
     //设置静音
     func shutDownAudio(_ isShutAudio : Bool){
 
-        DoorBellManager.shared.mutePeerAudio(mute: isShutAudio) { success, msg in
+        DoorBellManager.shared.mutePeerAudio(sessionId: "", mute: isShutAudio) { success, msg in
             if success{
                 log.i("设置静音成功")
             }

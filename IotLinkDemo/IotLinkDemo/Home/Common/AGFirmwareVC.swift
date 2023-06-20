@@ -61,24 +61,24 @@ class AGFirmwareVC: UIViewController {
         view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.6)
         setupUI()
         
-        if(info.isUpgrade){
-            alertView.clickCancelButtonAction = {[weak self] in
-                self?.dismiss(animated: false)
-            }
-            alertView.clickCommitButtonAction = {[weak self] in
-                AgoraIotLink.iotsdk.deviceMgr.otaUpgrade(upgradeId: String(self?.info.upgradeId ?? "")) { ec, msg in
-                    if(ec != ErrCode.XOK){
-                        log.e("otaUpgrade failed:" + msg)
-                    }
-                }
-                self?.dismiss(animated: true)
-            }
-        }
-        else{
-            confirmView.clickCommitButtonAction = {[weak self] in
-                self?.dismiss(animated: true)
-            }
-        }
+//        if(info.isUpgrade){
+//            alertView.clickCancelButtonAction = {[weak self] in
+//                self?.dismiss(animated: false)
+//            }
+//            alertView.clickCommitButtonAction = {[weak self] in
+//                AgoraIotLink.iotsdk.deviceMgr.otaUpgrade(upgradeId: String(self?.info.upgradeId ?? "")) { ec, msg in
+//                    if(ec != ErrCode.XOK){
+//                        log.e("otaUpgrade failed:" + msg)
+//                    }
+//                }
+//                self?.dismiss(animated: true)
+//            }
+//        }
+//        else{
+//            confirmView.clickCommitButtonAction = {[weak self] in
+//                self?.dismiss(animated: true)
+//            }
+//        }
     }
     
     private func setupUI(){

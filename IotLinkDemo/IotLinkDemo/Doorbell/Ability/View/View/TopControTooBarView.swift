@@ -220,7 +220,7 @@ class TopControTooBarView: UIView {
         if btn.isSelected {
             isShutAudio = false
         }
-        DoorBellManager.shared.mutePeerAudio(mute: isShutAudio) { success, msg in
+        DoorBellManager.shared.mutePeerAudio(sessionId: "", mute: isShutAudio) { success, msg in
             if success{
                 log.i("设置静音成功")
                 btn.isSelected = !btn.isSelected
@@ -238,7 +238,7 @@ class TopControTooBarView: UIView {
         }else {
             return
         }
-        DoorBellManager.shared.mutePeerAudio(mute: isShutAudio) { success, msg in
+        DoorBellManager.shared.mutePeerAudio(sessionId: "", mute: isShutAudio) { success, msg in
             if success{
                 log.i("设置静音成功")
             }

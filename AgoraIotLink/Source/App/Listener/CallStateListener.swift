@@ -13,71 +13,125 @@ class CallStateListener: NSObject {
     var app  = Application.shared
     var rtc  = Application.shared.proxy.rtc
     private var  callRcbTime : TimeCallback<(Int,String)>? = nil
+//    private var  callReqTime : TimeCallback<(Int,String)>? = nil
     private var  incomeRcbTime : TimeCallback<(Int,String)>? = nil
     var isIcoming : Bool = false //是否是来电
     var callMachine : CallStateMachine?
     
-    typealias callActionAck = (ActionAck)->Void
-    typealias callMemberState = ((MemberState,[UInt])->Void)?
-    typealias InComing = (String,String,ActionAck)->Void
+    var callSession : CallSession?
+    
+//    typealias callResult = (_ errCode:Int,_ sessionId:String,_ peerNodeId:String) -> Void
+    typealias callActionAck = (SessionCallback,_ sessionId:String,_ errCode:Int)->Void
+    typealias callInterActionAck = (ActionAck,_ sessionId:String,_ peerNodeId:String)->Void
+    typealias callMemberState = ((MemberState,[UInt],String)->Void)?
+    typealias InComing = (_ sessionId:String,_ peerNodeId:String,ActionAck)->Void
     typealias hangUpRetAck = (Bool,String)->Void
-    private var callAct:callActionAck = {ack in log.w("callAct callActionAck not inited")}
+    typealias PreviewListener = (String, Int, Int)->Void
+    
+//    private var callRet:callResult = {code,sessionId,peerNodeId in log.w("callRet not inited")}
+    private var callAct:callActionAck = {ack,sessionId,errCode in log.w("callAct callActionAck not inited")}
     private var income:InComing = {callerId,msg,calling in log.w("'incoming' callback not registered,please register it with 'CallkitManager'")}
     private var hangUpRet :hangUpRetAck = {a,c in log.w("hangUpRetAck not inited")}
     
-    var callMemState:callMemberState = {m,c in log.w("callMemState callMemberState not inited")}
-    var interCallAct:callActionAck = {ack in log.w("interCallAct callActionAck not inited")}
+    var callMemState:callMemberState = {sessionId,m,c in log.w("callMemState callMemberState not inited")}
+    var interCallAct:callInterActionAck = {ack,sessionId,peerNodeId in log.w("interCallAct callActionAck not inited")}
+    var preViewlistener:PreviewListener = {sessionId,width,height in log.w("'_preViewlistener' callback not registered,please register it with 'PreviewListener'")}
     
     
-    init(actionAck:@escaping(ActionAck)->Void,memberState:((MemberState,[UInt])->Void)?) {
+    init(dialParam: ConnectParam,actionAck:@escaping(SessionCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?) {
         super.init()
+//        callRet = result
         callAct = actionAck
         callMemState = memberState
-        startCall()
+        startCall(dialParam)
+        
     }
     
-    init(incoming: @escaping (String,String, ActionAck) -> Void,memberState:((MemberState,[UInt])->Void)?) {
+    init(sess:CallSession?,incoming: @escaping (_ sessionId:String,_ peerNodeId:String, ActionAck) -> Void,memberState:((MemberState,[UInt],String)->Void)?) {
         super.init()
+        
         income = incoming
         callMemState = memberState
+        
+        callSession = CallSession()
+        updateCallSession(sess!)
+        callSession?.peerNodeId = sess?.peerNodeId ?? ""
+        
         startIncome()
     }
     
+    func registerPreViewListener(previewListener: @escaping (String, Int, Int) -> Void){
+        self.preViewlistener = previewListener
+    }
     
-    func startCall(){
+    func startCall(_ dialParam: ConnectParam){
         let callM = CallStateMachine()
         callMachine = callM
         callMachine?.delegate = self
         callMachine?.handleEvent(.startCall)
+        
+        callSession = CallSession()
+        callSession?.callType = .DIAL
+        callSession?.peerNodeId = dialParam.mPeerDevId
+        
+        //RTC需要的参数
+        callSession?.token = dialParam.mRtcToken
+        callSession?.cname = dialParam.mChannelName
+        callSession?.uid   = dialParam.mLocalRtcUid
+        callSession?.peerUid = 10
+        
+        //RTM需要的参数
+        callSession?.mRtmToken = dialParam.mRtmToken
+        
+        
+//        callReqTime = TimeCallback<(Int,String)>(cb: { (state, msg) in
+//            log.i("callReqTime :\(msg)")
+//        })
+//        callReqTime?.schedule(time:30 ,timeout: {
+//            log.i("callReqTime timeout")
+//            self.interCallAct(.RemoteHangup,self.callSession?.mSessionId ?? "",self.callSession?.peerNodeId ?? "")
+//        })
+        
     }
     
     func startIncome(){
+        
         isIcoming = true
         let callM = CallStateMachine()
         callM.delegate = self
         callMachine = callM
         callMachine?.handleEvent(.incomingCall)
+        
     }
     
-    func callRequest(_ suc:Bool){
-        if suc == true{
-            callMachine?.handleEvent(.makeCalling)
-        }else{
-            callMachine?.handleEvent(.endCall)
-        }
+    func callRequest(){
+        
+        callMachine?.handleEvent(.localJoining)
+        
+//        self.endReqTime()
+//        if suc == true{
+//            callRet(ErrCode.XOK,self.callSession?.mSessionId ?? "", self.callSession?.peerNodeId ?? "")
+//            callMachine?.handleEvent(.localJoining)
+//        }else{
+//            callRet(ErrCode.XERR_CALLKIT_DIAL,self.callSession?.mSessionId ?? "", self.callSession?.peerNodeId ?? "")
+//            interCallAct(.RemoteHangup,self.callSession?.mSessionId ?? "",self.callSession?.peerNodeId ?? "")
+//            callMachine?.handleEvent(.endCall)
+//        }
     }
     
     func hangUp(hangUpResult: @escaping (Bool,String) -> Void){
         hangUpRet = hangUpResult
         if self.isIcoming == false{
             endTime()
+//            self.endReqTime()
             callMachine?.handleEvent(.endCall)
-            self.callAct(.RemoteHangup)
+            self.callAct(.onDisconnected,self.callSession?.mSessionId ?? "",ErrCode.XOK)
             self.do_LEAVEANDDESTROY()
         }else{
             endTime()
+            self.endIncomeTime()
             callMachine?.handleEvent(.endCall)
-            self.income(String(self.app.context.call.session.cname), "", .LocalHangup)
+            self.income(self.callSession?.mSessionId ?? "", self.callSession?.peerNodeId ?? "", .LocalHangup)
             self.do_LEAVEANDDESTROY()
         }
         destory()
@@ -86,6 +140,9 @@ class CallStateListener: NSObject {
     func endTime(){
         self.callRcbTime?.invoke(args: (ErrCode.XOK,"stop call"))
     }
+//    func endReqTime(){
+//        self.callReqTime?.invoke(args: (ErrCode.XOK,"stop request"))
+//    }
     
     func endIncomeTime(){
         self.incomeRcbTime?.invoke(args: (ErrCode.XOK,"stop incoming"))
@@ -97,10 +154,10 @@ class CallStateListener: NSObject {
             incomeRcbTime = TimeCallback<(Int,String)>(cb: { (state, msg) in
                 log.i("incomeRcbTime :\(msg)")
             })
-            incomeRcbTime?.schedule(time:15,timeout: {
+            incomeRcbTime?.schedule(time:30,timeout: {
                 log.i("call reqCall ring remote timeout")
                 self.callMachine?.handleEvent(.endCall)
-                self.income(String(self.app.context.call.session.cname ), "", .RemoteHangup)
+                self.income(self.callSession?.mSessionId ?? "", self.callSession?.peerNodeId ?? "", .RemoteHangup)
             })
             log.i("incoming peer not online")
         }
@@ -112,14 +169,28 @@ class CallStateListener: NSObject {
 
 }
 
+extension CallStateListener {
+    
+    func updateCallSession(_ sess : CallSession){
+        callSession?.token = sess.token
+        callSession?.cname = sess.cname
+        callSession?.uid   = sess.uid
+        callSession?.peerUid = 10
+        callSession?.callType = sess.callType
+    }
+    
+}
+
 extension CallStateListener : CallStateMachineListener{
     
     func do_CREATEANDENTER() {
 
-        let appId = app.config.appId //app.context.call.session.appId
-        let uid = app.context.call.session.uid
-        let name = app.context.call.session.cname
-        let token = app.context.call.session.token
+        let appId = app.config.appId
+        let uid = callSession?.uid ?? 0
+        let name = callSession?.cname ?? ""
+        let token = callSession?.token ?? ""
+        
+        let peerId = callSession?.peerUid ?? 0
 
         let setting = app.context.call.setting
 
@@ -143,28 +214,29 @@ extension CallStateListener : CallStateMachineListener{
             log.i("callRcbTime :\(msg)")
         })
         
-        app.proxy.rtc.createAndEnter(appId: appId, setting: rtcSetting, uid: uid,name: name, token:token, info: "",
+        app.proxy.rtc.createAndEnter(appId: appId, setting: rtcSetting, uid: uid, peerId: peerId,name: name, token:token, info: "",
                                      cb: {[weak self]ret,msg in
             if(ret == .Fail){
                 log.e("listener rtc.createAndEnter failed:\(msg)")
                 self?.callMachine?.handleEvent(.endCall)
-                self?.callAct(.LocalHangup)
+                self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
             }
             else if(ret == .Succ){
                 if self?.isIcoming == false{
-                    self?.callAct(.LocalAnswer)
                     log.i("call reqCall CallForward")
+                    self?.callMachine?.handleEvent(.localJoinSuc)
                     self?.callRcbTime?.schedule(time:self?.app.config.calloutTimeOut ?? 30,timeout: {
                         log.i("call reqCall ring remote timeout")
                         self?.callMachine?.handleEvent(.endCall)
-                        self?.callAct(.RemoteTimeout)
+                        self?.callAct(.onError,self?.callSession?.mSessionId ?? "",ErrCode.XERR_CALLKIT_DIAL)
+                        self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
                     })
                 }else{
-                    self?.income(String(self?.app.context.call.session.cname ?? ""), "", .CallIncoming)
+                    self?.income(self?.callSession?.mSessionId ?? "", self?.callSession?.peerNodeId ?? "", .CallIncoming)
                     self?.callRcbTime?.schedule(time:self?.app.config.inComingTimeOut ?? 30,timeout: {
                         log.i("call reqCall ring remote timeout")
                         self?.callMachine?.handleEvent(.endCall)
-                        self?.income(String(self?.app.context.call.session.cname ?? ""), "", .RemoteHangup)
+                        self?.income(self?.callSession?.mSessionId ?? "", self?.callSession?.peerNodeId ?? "", .RemoteHangup)
                     })
                 }
 
@@ -176,10 +248,10 @@ extension CallStateListener : CallStateMachineListener{
         peerAction: {act,uid in
             if(act == .Enter){
                 log.i("listener Enter uid:\(uid)")
-                if(self.app.context.call.session.peerId == uid){
+                if(self.callSession?.peerUid == uid){
                     if self.isIcoming == false{
                         self.callMachine?.handleEvent(.peerOnline)
-                        self.callAct(.RemoteAnswer)
+                        self.callAct(.onConnectDone,self.callSession?.mSessionId ?? "",ErrCode.XOK)
                     }else{
                         self.callMachine?.handleEvent(.peerOnline)
                         if self.incomeRcbTime != nil{
@@ -191,24 +263,25 @@ extension CallStateListener : CallStateMachineListener{
             }
             else if(act == .Leave){
                 log.i("listener Leave uid:\(uid)")
-                if(self.app.context.call.session.peerId == uid){
+                if(self.callSession?.peerUid == uid){
                     if self.isIcoming == false{
-                        self.interCallAct(.RemoteHangup)
+                        self.callAct(.onDisconnected,self.callSession?.mSessionId ?? "",ErrCode.XOK)
+                        self.interCallAct(.RemoteHangup,self.callSession?.mSessionId ?? "",self.callSession?.peerNodeId ?? "")
                     }else{
                         self.callMachine?.handleEvent(.endCall)
-                        self.income(String(self.app.context.call.session.cname), "", .RemoteHangup)
+                        self.income(self.callSession?.mSessionId ?? "", self.callSession?.peerNodeId ?? "", .RemoteHangup)
                     }
                     
                 }
             }
             else if(act == .VideoReady){
                 log.i("listener VideoReady uid:\(uid)")
-                if(self.app.context.call.session.peerId == uid){
+                if(self.callSession?.peerUid == uid){
                     if self.isIcoming == false{
                         self.endTime()
-                        self.callAct(.RemoteVideoReady)
+                        self.preViewlistener(self.callSession?.mSessionId ?? "",0,0)
                     }else{
-                        self.income(String(self.app.context.call.session.cname), "", .RemoteVideoReady)
+                        self.income(self.callSession?.mSessionId ?? "", self.callSession?.peerNodeId ?? "", .RemoteVideoReady)
                     }
 
                 }
@@ -217,14 +290,14 @@ extension CallStateListener : CallStateMachineListener{
         memberState:{s,a in
             if(s == .Enter){
                 log.i("listener memberState Enter uid:\(a[0])")
-                if(a[0] != self.app.context.call.session.peerId){
-                    self.callMemState!(.Enter,[a[0]])
+                if(a[0] != self.callSession?.peerUid){
+                    self.callMemState!(.Enter,[a[0]],self.callSession?.mSessionId ?? "")
                 }
             }
             else if(s == .Leave){
                 log.i("listener memberState Leave:\(a[0])")
-                if(a[0] != self.app.context.call.session.peerId){
-                    self.callMemState!(.Leave,[a[0]])
+                if(a[0] != self.callSession?.peerUid){
+                    self.callMemState!(.Leave,[a[0]],self.callSession?.mSessionId ?? "")
                 }
             }
             else{

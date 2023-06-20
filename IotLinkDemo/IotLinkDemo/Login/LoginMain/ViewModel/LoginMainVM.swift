@@ -87,28 +87,28 @@ class LoginMainVM: NSObject {
 //    }
     
     func login2(_ acc:String,_ pwd:String,_ cb:@escaping (Bool,String)->Void){
-        log.i("demo app login(\(acc.replacePhone()))")
-        if(sdk == nil){
-            cb(false,"sdk 未初始化")
-        }
-        
-        ThirdAccountManager.reqLogin(acc, pwd) { ec, msg, param in
-            if(ec != ErrCode.XOK){
-                cb(false,"第三方接口登录失败")
-                return
-            }
-            guard let param = param else {
-                cb(false,"第三方接口登录返回空")
-                return
-            }
-            let result = {
-                (ec:Int,msg:String)->Void in
-                var hint = ErrCode.XOK == ec ? "登录成功" : "登录失败"
-                hint = hint + ":" + msg
-                cb(ErrCode.XOK == ec ? true : false , msg)
-            }
-            self.sdk?.accountMgr.login(param:param,result: result)
-        }
+//        log.i("demo app login(\(acc.replacePhone()))")
+//        if(sdk == nil){
+//            cb(false,"sdk 未初始化")
+//        }
+//        
+//        ThirdAccountManager.reqLogin(acc, pwd) { ec, msg, param in
+//            if(ec != ErrCode.XOK){
+//                cb(false,"第三方接口登录失败")
+//                return
+//            }
+//            guard let param = param else {
+//                cb(false,"第三方接口登录返回空")
+//                return
+//            }
+//            let result = {
+//                (ec:Int,msg:String)->Void in
+//                var hint = ErrCode.XOK == ec ? "登录成功" : "登录失败"
+//                hint = hint + ":" + msg
+//                cb(ErrCode.XOK == ec ? true : false , msg)
+//            }
+//            self.sdk?.accountMgr.login(param:param,result: result)
+//        }
     }
 
     func doGetCode(_ acc: String, type: String, _ cb:@escaping (Int,String)->Void){
@@ -168,14 +168,14 @@ class LoginMainVM: NSObject {
     
     //退出登陆
     func doLogOut(_ cb:@escaping (Bool,String)->Void){
-        log.i("demo app logout()")
-        if(sdk == nil){
-            cb(false,"sdk 未初始化")
-        }
-        sdk?.accountMgr.logoutAccount(true, result: {
-            ec,msg in
-            cb(ec == ErrCode.XOK ? true : false,msg)
-        })
+//        log.i("demo app logout()")
+//        if(sdk == nil){
+//            cb(false,"sdk 未初始化")
+//        }
+//        sdk?.accountMgr.logoutAccount(true, result: {
+//            ec,msg in
+//            cb(ec == ErrCode.XOK ? true : false,msg)
+//        })
     }
     
     

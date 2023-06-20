@@ -279,12 +279,12 @@ public class FirmwareStatus : NSObject{
  * @brief 设备管理接口
  */
 public protocol IDeviceMgr {
-    /*
-     * @brief 注册设备事件回调
-     * @param listener  : 设备状态改变回调
-     * @param setOnDataArrived : 设备发送消息回调
-     */
-    func register(listener:IDeviceStateListener)
+//    /*
+//     * @brief 注册设备事件回调
+//     * @param listener  : 设备状态改变回调
+//     * @param setOnDataArrived : 设备发送消息回调
+//     */
+//    func register(listener:IDeviceStateListener)
     /*
      * @brief 查询产品列表
      * @param productId  : 对应productId作为过滤字段
@@ -323,20 +323,20 @@ public protocol IDeviceMgr {
      * @param productNumber : 根据productNumber查询
      */
     func getPropertyDescription(deviceId:String,productNumber:String,result:@escaping(Int,String,[Property])->Void)
-    /*
-     * @brief 修改设备属性值
-     * @param deviceId   : 设备对应id
-     * @param propertites: 需要设置的属性
-     * @param result     : 调用该接口的返回值以及被修改的属性
-     */
-    func setDeviceProperty(deviceId:String, properties:Dictionary<String,Any>,result:@escaping(Int,String)->Void)
-    
-    /*
-     * @brief 查询设备属性值
-     * @param deviceId   : 设备对应id
-     * @param result     : 调用该接口的返回值,desired:期望设置给设备的参数信息，reported:设备设置成功后当前的参数信息
-     */
-    func getDeviceProperty(deviceId:String,result:@escaping(Int,String,_ desired:Dictionary<String, Any>?,_ reported:Dictionary<String, Any>?)->Void)
+//    /*
+//     * @brief 修改设备属性值
+//     * @param deviceId   : 设备对应id
+//     * @param propertites: 需要设置的属性
+//     * @param result     : 调用该接口的返回值以及被修改的属性
+//     */
+//    func setDeviceProperty(deviceId:String, properties:Dictionary<String,Any>,result:@escaping(Int,String)->Void)
+//
+//    /*
+//     * @brief 查询设备属性值
+//     * @param deviceId   : 设备对应id
+//     * @param result     : 调用该接口的返回值,desired:期望设置给设备的参数信息，reported:设备设置成功后当前的参数信息
+//     */
+//    func getDeviceProperty(deviceId:String,result:@escaping(Int,String,_ desired:Dictionary<String, Any>?,_ reported:Dictionary<String, Any>?)->Void)
     /*
      * @brief 分享设备给其他人
      * @param deviceId  : 被分享的设备Id

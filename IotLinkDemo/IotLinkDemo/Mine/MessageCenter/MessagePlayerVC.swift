@@ -107,90 +107,90 @@ class MessagePlayerVC: UIViewController {
     
     // 删除消息
     private func deleteMessages(_ id: UInt64? = nil ){
-        var msgidList = [UInt64]()
-        msgidList.append(id!)
-        let sdk = AgoraIotManager.shared.sdk
-        guard let alarmMgr = sdk?.alarmMgr else{ return }
-        alarmMgr.delete(alarmIdList: msgidList) {[weak self] ec, err in
-            if(ec != ErrCode.XOK){
-                SVProgressHUD.showError(withStatus: "删除警告失败\(err)")
-                SVProgressHUD.dismiss(withDelay: 2)
-                return
-            }
-            SVProgressHUD.showSuccess(withStatus: "删除成功")
-            self?.navigationController?.popViewController(animated: true)
-        }
+//        var msgidList = [UInt64]()
+//        msgidList.append(id!)
+//        let sdk = AgoraIotManager.shared.sdk
+//        guard let alarmMgr = sdk?.alarmMgr else{ return }
+//        alarmMgr.delete(alarmIdList: msgidList) {[weak self] ec, err in
+//            if(ec != ErrCode.XOK){
+//                SVProgressHUD.showError(withStatus: "删除警告失败\(err)")
+//                SVProgressHUD.dismiss(withDelay: 2)
+//                return
+//            }
+//            SVProgressHUD.showSuccess(withStatus: "删除成功")
+//            self?.navigationController?.popViewController(animated: true)
+//        }
     }
     
     
     // 获取消息详情
     private func loadMsgDetailForId(_ msgId:UInt64) {
         
-        let sdk = AgoraIotManager.shared.sdk
-        guard let alarmMgr = sdk?.alarmMgr else{ return }
-        SVProgressHUD.show()
-        alarmMgr.queryById(alertMessageId:msgId, result: {[weak self] ec, err, alert in
-            if(ec != ErrCode.XOK){
-                SVProgressHUD.showError(withStatus: "查询信息详情失败\(err)")
-                SVProgressHUD.dismiss(withDelay: 2)
-                return
-            }
-            guard let alert = alert else {
-                SVProgressHUD.dismiss()
-                return
-            }
-            
-            //"https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8"
-            //"http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/IVFES3LNGY2G2NRVIVBU63BVFVWWU4DFM52GK43U_1669280802359_1497503806.m3u8?agora-key=MDFlZDE1N2JkYjMzNjI1MA=="
-//            guard let url = URL(string: "http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/IVFES3LNGY2G2NRVIVBU63BVFVWWU4DFM52GK43U_1669280802359_1497503806.m3u8?agora-key=MDFlZDE1N2JkYjMzNjI1MA==") else {
-//                SVProgressHUD.showError(withStatus: "获取播放地址失败")
+//        let sdk = AgoraIotManager.shared.sdk
+//        guard let alarmMgr = sdk?.alarmMgr else{ return }
+//        SVProgressHUD.show()
+//        alarmMgr.queryById(alertMessageId:msgId, result: {[weak self] ec, err, alert in
+//            if(ec != ErrCode.XOK){
+//                SVProgressHUD.showError(withStatus: "查询信息详情失败\(err)")
 //                SVProgressHUD.dismiss(withDelay: 2)
 //                return
 //            }
-//            let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
-//            let options = IJKFFOptions.byDefault()
-//            ijkVC.options = options
-//            self?.player.playbackController = ijkVC
-//            self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
-//            SVProgressHUD.dismiss()
-//            return
-            
-            Utils.loadAlertVideoUrl(alert.deviceId,alert.tenantId, alert.beginTime) { ec, msg, info in
-                guard let info = info else{
-                    log.e("loadAlertVideoUrl failed")
-                    SVProgressHUD.showError(withStatus: "查询视频失败\(msg)")
-                    SVProgressHUD.dismiss(withDelay: 2)
-                    return
-                }
-                guard let url = URL(string: info.url) else {
-                    SVProgressHUD.showError(withStatus: "获取播放地址失败")
-                    SVProgressHUD.dismiss(withDelay: 2)
-                    return
-                }
-                //swift 实现代码
-                let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
-                let options = IJKFFOptions.byDefault()
-                ijkVC.options = options
-                self?.player.playbackController = ijkVC
-                self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
-                
-                //OC 播放器调用示例代码
-//                let playerVC = PlayerExampleOC()
-//                playerVC.urlString = info.url;
-//                self?.navigationController?.pushViewController(playerVC, animated: false)
-
-
-                
-    //            self?.player.play(alarm: alert!)
-                //self?.player.play(url: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8")
-                SVProgressHUD.dismiss()
-            }
-            
-            //self?.player.urlAsset =  SJVideoPlayerURLAsset(url: url)
-            
-            
-            
-        })
+//            guard let alert = alert else {
+//                SVProgressHUD.dismiss()
+//                return
+//            }
+//            
+//            //"https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8"
+//            //"http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/IVFES3LNGY2G2NRVIVBU63BVFVWWU4DFM52GK43U_1669280802359_1497503806.m3u8?agora-key=MDFlZDE1N2JkYjMzNjI1MA=="
+////            guard let url = URL(string: "http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/IVFES3LNGY2G2NRVIVBU63BVFVWWU4DFM52GK43U_1669280802359_1497503806.m3u8?agora-key=MDFlZDE1N2JkYjMzNjI1MA==") else {
+////                SVProgressHUD.showError(withStatus: "获取播放地址失败")
+////                SVProgressHUD.dismiss(withDelay: 2)
+////                return
+////            }
+////            let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
+////            let options = IJKFFOptions.byDefault()
+////            ijkVC.options = options
+////            self?.player.playbackController = ijkVC
+////            self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
+////            SVProgressHUD.dismiss()
+////            return
+//            
+//            Utils.loadAlertVideoUrl(alert.deviceId,alert.tenantId, alert.beginTime) { ec, msg, info in
+//                guard let info = info else{
+//                    log.e("loadAlertVideoUrl failed")
+//                    SVProgressHUD.showError(withStatus: "查询视频失败\(msg)")
+//                    SVProgressHUD.dismiss(withDelay: 2)
+//                    return
+//                }
+//                guard let url = URL(string: info.url) else {
+//                    SVProgressHUD.showError(withStatus: "获取播放地址失败")
+//                    SVProgressHUD.dismiss(withDelay: 2)
+//                    return
+//                }
+//                //swift 实现代码
+//                let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
+//                let options = IJKFFOptions.byDefault()
+//                ijkVC.options = options
+//                self?.player.playbackController = ijkVC
+//                self?.player.urlAsset = SJVideoPlayerURLAsset(url: url)
+//                
+//                //OC 播放器调用示例代码
+////                let playerVC = PlayerExampleOC()
+////                playerVC.urlString = info.url;
+////                self?.navigationController?.pushViewController(playerVC, animated: false)
+//
+//
+//                
+//    //            self?.player.play(alarm: alert!)
+//                //self?.player.play(url: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8")
+//                SVProgressHUD.dismiss()
+//            }
+//            
+//            //self?.player.urlAsset =  SJVideoPlayerURLAsset(url: url)
+//            
+//            
+//            
+//        })
     }
     
 

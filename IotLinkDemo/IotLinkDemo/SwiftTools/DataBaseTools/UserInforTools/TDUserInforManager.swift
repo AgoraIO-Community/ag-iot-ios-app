@@ -57,6 +57,12 @@ class TDUserInforManager: NSObject {
     //当前蓝牙配网成功
     var curBluefiSuc : Bool = false
     
+    //本地设备管理
+    var markPeerNodeIdArray = [String]()
+    
+    var cocoaMqtt:CocoaMqttMgr?
+    
+    var nodeData : ActivateNode.Data?
  
     fileprivate lazy var loginVM = LoginMainVM()
 
@@ -70,6 +76,19 @@ class TDUserInforManager: NSObject {
     
     fileprivate override init() {
         super.init()
+    }
+    
+    func mqttInit(){
+        cocoaMqtt = CocoaMqttMgr(customParam: "")
+    }
+    
+    func connectMqtt(userId:String, param:ActivateNode.Rsp?){
+        guard let data = param?.data else{ return }
+        nodeData = data
+        
+        let passWord = data.nodeId + "/" + userId
+        cocoaMqtt?.initialize(defaultHost: data.mqttServer, clientID: data.nodeId, userNameStr: data.mqttUsername, passWordStr: passWord,port:UInt(data.mqttPort))
+        
     }
     
     
@@ -96,6 +115,41 @@ class TDUserInforManager: NSObject {
         //退出登录发通知
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginOutNotify), object: nil)
 
+    }
+    
+    /// 保存最新的设备id
+    ///
+    /// - Parameters:
+    ///   - peerNodeId: 添加的设备ID
+    func savePeerNodeId(_ peerNodeId : String) {
+        
+        var muIdArray = readMarkPeerNodeId()
+        muIdArray.append(peerNodeId)
+        
+        let uDefault = getUserDefault()
+        uDefault.setValue(muIdArray, forKey: getPeerNodeArrKey())
+        uDefault.synchronize()
+    }
+    
+    /// 删除选中的设备id
+    ///
+    /// - Parameters:
+    ///   - peerNodeIdArray: 需要保留的设备id数组
+    func deletePeerNodeIdArray(_ peerNodeIdArray : [String]) {
+        
+        let uDefault = getUserDefault()
+        uDefault.setValue(peerNodeIdArray, forKey: getPeerNodeArrKey())
+        uDefault.synchronize()
+    }
+    
+    func getPeerNodeArrKey()->String{
+        var peerKey = "markPeerNodeId"
+        let accountInfor = readKeyChainAccountAndPwd()
+        if accountInfor.acc != "" {
+            peerKey = accountInfor.acc
+        }
+        print("peerKey: \(peerKey)")
+        return peerKey
     }
     
     /// 保存上次登录的账号与上次登录的账号的属性
@@ -148,20 +202,37 @@ class TDUserInforManager: NSObject {
         
     }
     
+    func getKeyChainAllAccount()->[String]{
+        
+        var tempAccountArray = [String]()
+        guard let  accountArr = SSKeychain.accounts(forService: kSSToolkitServiceName) else {
+            return tempAccountArray
+        }
+        for item in accountArr {
+            if let dict = item as? Dictionary<String, Any>, let acct = dict["acct"] as? String , acct.hasPrefix(kSSToolkitAccountKeyName) == true{
+                let tempAcc = acct.replacingOccurrences(of: kSSToolkitAccountKeyName, with: "")
+                tempAccountArray.append(tempAcc)
+            }
+        }
+        return tempAccountArray
+        
+    }
+    
     func readKeyChainAccountAndPwd()->(acc:String,pwd:String){
         
         let acc = getKeyChainAccount()
         guard let passWord = SSKeychain.password(forService: kSSToolkitServiceName, account: kSSToolkitAccountKeyName+acc)  else {
             return("","")
         }
-
         return (acc,passWord)
     }
     
     func deleteKeyChainInfor(){
         
-        let acc = getKeyChainAccount()
-        SSKeychain.deletePassword(forService: kSSToolkitServiceName, account: kSSToolkitAccountKeyName+acc)
+        let accArray = getKeyChainAllAccount()
+        for item in accArray{
+            SSKeychain.deletePassword(forService: kSSToolkitServiceName, account: kSSToolkitAccountKeyName+item)
+        }
         
     }
     
@@ -172,6 +243,15 @@ class TDUserInforManager: NSObject {
         uDefault.setValue(true, forKey: "ProcolType")
         uDefault.synchronize()
         
+    }
+    
+    //读取本地的设备Id
+    func readMarkPeerNodeId() -> [String]{
+        var idArray = [String]()
+        if let nodeIdArray = getUserDefault().object(forKey: getPeerNodeArrKey()) as? [String] {
+            idArray = nodeIdArray
+        }
+        return idArray
     }
     
     //读取上次登录的账号
@@ -223,16 +303,18 @@ class TDUserInforManager: NSObject {
 //        let password = readPasswordNumber()
         let accountInfor = readKeyChainAccountAndPwd()
         
-        if accountInfor.acc.isEmpty == false {
-            loginAction(accountInfor.acc,accountInfor.pwd)
-        }else{
-            
-            DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
-            
-//            loginAction(acc,pwd)
-//            saveAccountNumberAndLoginType(account: acc, type: false)
-//            saveAccountPassWord(pwd: pwd)
-        }
+        DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
+        
+//        if accountInfor.acc.isEmpty == false {
+//            loginAction(accountInfor.acc,accountInfor.pwd)
+//        }else{
+//
+//            DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
+//
+////            loginAction(acc,pwd)
+////            saveAccountNumberAndLoginType(account: acc, type: false)
+////            saveAccountPassWord(pwd: pwd)
+//        }
         
     }
     

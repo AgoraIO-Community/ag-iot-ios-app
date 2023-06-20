@@ -31,6 +31,8 @@ extension Dictionary{
         print(str)
     }
     
+    
+    
 //    func getObjPropertyClassType() {
 //
 //        var str = "{\n"
@@ -54,6 +56,27 @@ extension Dictionary{
 //    }
 //
 }
+
+extension Dictionary{
+    
+    public func convertDictionaryToJSONString()->String {
+        
+        var jsonStr : String = ""
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: self, options: [])
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                jsonStr = jsonString
+                print("convertDictionaryToJSONString:\(jsonString) ")
+            }
+        } catch {
+            print("Error converting dictionary to JSON: \(error.localizedDescription)")
+        }
+        return jsonStr
+        
+    }
+    
+}
+
 //
 //extension Array {
 //    

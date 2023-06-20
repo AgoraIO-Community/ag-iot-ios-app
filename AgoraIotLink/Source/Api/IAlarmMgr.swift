@@ -85,7 +85,7 @@ public class AlarmVideoInfo : NSObject{
  */
 public protocol IAlarmMgr {
 
-    typealias QueryParam = AlarmQueryParam
+    typealias QueryParam1 = AlarmQueryParam
     typealias SysQueryParam = SysAlarmQueryParam
 
     /*
@@ -99,7 +99,7 @@ public protocol IAlarmMgr {
      * @param queryParam : 查询参数
      * @param result     : 调用该接口的返回值
      */
-    func queryByParam(queryParam:QueryParam,result:@escaping(Int,String,[IotAlarm]?)->Void)
+    func queryByParam(queryParam:QueryParam1,result:@escaping(Int,String,[IotAlarm]?)->Void)
     /*
      * @brief 删除告警
      * @param alarmIdList: 告警id列表

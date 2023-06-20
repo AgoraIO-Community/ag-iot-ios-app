@@ -15,6 +15,7 @@ class AgoraIotManager: NSObject {
     var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
     
     func updateToken(deviceToken: Data){
-        sdk?.notificationMgr.updateToken(deviceToken)
+        //todo:
+//        sdk?.notificationMgr.updateToken(deviceToken)
     }
 }

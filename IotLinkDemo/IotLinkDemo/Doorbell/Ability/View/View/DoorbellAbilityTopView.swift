@@ -139,8 +139,8 @@ extension DoorbellAbilityTopView{
     
     //设置播放器view
     func configPeerView() {
-        let statusCode : Int = sdk?.callkitMgr.setPeerVideoView(peerView: videoParentView) ?? 0
-        debugPrint("--- \(statusCode)")
+//        let statusCode : Int = sdk?.callkitMgr.setPeerVideoView(sessionId: "", peerView: videoParentView) ?? 0
+//        debugPrint("--- \(statusCode)")
     }
     
     //设置播放器异常页

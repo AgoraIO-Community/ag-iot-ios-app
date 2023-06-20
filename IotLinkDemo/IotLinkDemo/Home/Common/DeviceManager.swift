@@ -30,42 +30,42 @@ class DeviceManager {
     }
     
     func displayPropertyList(){
-        guard let devMgr = sdk?.deviceMgr else{
-            log.e("sdk 设备服务 未初始化")
-            return
-        }
-        let param = ProductQueryParam()
-        devMgr.queryProductList(query: param) { ec, msg, prods in
-            for prd in prods{
-                devMgr.getPropertyDescription(deviceId:"",productNumber: prd.number) { ec, msg, props in
-                    if(ec == ErrCode.XOK){
-                        for prop in props{
-                            log.i("demo dp for \(prd.number)")
-                            log.i("        pointName: \(prop.pointName)")
-                            log.i("        pointName: \(prop.pointName)")
-                            log.i("         maxValue: \(prop.maxValue)")
-                            log.i("           remark: \(prop.remark)")
-                            log.i("         markName: \(prop.markName)")
-                            log.i("           status: \(prop.status)")
-                        }
-                    }
-                }
-            }
-        }
+//        guard let devMgr = sdk?.deviceMgr else{
+//            log.e("sdk 设备服务 未初始化")
+//            return
+//        }
+//        let param = ProductQueryParam()
+//        devMgr.queryProductList(query: param) { ec, msg, prods in
+//            for prd in prods{
+//                devMgr.getPropertyDescription(deviceId:"",productNumber: prd.number) { ec, msg, props in
+//                    if(ec == ErrCode.XOK){
+//                        for prop in props{
+//                            log.i("demo dp for \(prd.number)")
+//                            log.i("        pointName: \(prop.pointName)")
+//                            log.i("        pointName: \(prop.pointName)")
+//                            log.i("         maxValue: \(prop.maxValue)")
+//                            log.i("           remark: \(prop.remark)")
+//                            log.i("         markName: \(prop.markName)")
+//                            log.i("           status: \(prop.status)")
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
     
     /// 获取最新设备列表
     /// - Parameter cb: 回调
     func updateDevicesList(_ cb:@escaping (Bool,String,[IotDevice]?)->Void){
-        guard let devMgr = sdk?.deviceMgr else{
-            cb(false,"sdk 设备服务 未初始化",nil)
-            return
-        }
-        devMgr.queryAllDevices(result: {ec,msg,devs in
-            self.devices = devs
-            cb(ec == ErrCode.XOK ? true : false,msg,devs)
-        })
-        
+//        guard let devMgr = sdk?.deviceMgr else{
+//            cb(false,"sdk 设备服务 未初始化",nil)
+//            return
+//        }
+//        devMgr.queryAllDevices(result: {ec,msg,devs in
+//            self.devices = devs
+//            cb(ec == ErrCode.XOK ? true : false,msg,devs)
+//        })
+//
         
     }
     
@@ -90,16 +90,16 @@ class DeviceManager {
     }
         
     func renameDevice(device: IotDevice, newName: String, result:@escaping(Int,String)->Void) {
-        sdk?.deviceMgr.renameDevice(deviceId: device.deviceId, newName: newName, result: result)
+//        sdk?.deviceMgr.renameDevice(deviceId: device.deviceId, newName: newName, result: result)
     }
     
     // 查询分享给自己的设备
     func qureyShareWithMe(result: @escaping([DeviceShare]?)->Void) {
-        sdk?.deviceMgr.shareWithMe(result: { ec, msg, share in
-            if ec == ErrCode.XOK {
-                result(share)
-            }
-        })
+//        sdk?.deviceMgr.shareWithMe(result: { ec, msg, share in
+//            if ec == ErrCode.XOK {
+//                result(share)
+//            }
+//        })
     }
     
     // 查询是否有未读的分享
@@ -120,7 +120,7 @@ class DeviceManager {
 //    }
 
     func removeDevice(_ device: IotDevice,result:@escaping(Int,String)->Void) {
-        sdk?.deviceMgr.removeDevice(deviceId: device.deviceId, result:result)
+//        sdk?.deviceMgr.removeDevice(deviceId: device.deviceId, result:result)
     }
     private func deviceWithId(_ id: String) -> IotDevice? {
         for device in self.devices! {

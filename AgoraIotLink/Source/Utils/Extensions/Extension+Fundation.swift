@@ -52,7 +52,7 @@ public extension String {
     
     static func dateTimeRounded()->Int {
         let timeInterval: TimeInterval = Date().timeIntervalSince1970
-        let timestamp = Int(timeInterval) //Int((timeInterval * 1000.0).rounded())
+        let timestamp =  Int((timeInterval * 1000.0).rounded()) //Int(timeInterval)
         return timestamp
     }
     

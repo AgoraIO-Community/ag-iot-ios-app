@@ -13,80 +13,80 @@ public class DoorBell{
     var dict:Dictionary<String,Any> = [:]
     
     public func sync(devMgr:IDeviceMgr,result:@escaping(Int,String)->Void){
-        devMgr.setDeviceProperty(deviceId:dev.deviceId, properties: dict, result: {
-            (ec,msg) in
-            self.dict.removeAll()
-            result(ec,msg)
-//            guard let props = props else {
-//                result(ErrCode.XERR_DEVMGR_PROPERTY,"查询设备属性失败")
-//                return
-//            }
-//            self.lock.lock()
-//            var ep:String = ""
-//            log.i("dict used \(self) \(self.dict)")
-//            for e in self.dict{
-//                switch e.key{
-//                case "100":
-//                    if(e.value as? Bool != props[e.key] as? Bool){
-//                        if(ep != ""){ep.append(",")}
-//                        ep.append("osdSWitch")
-//                        log.w("osdSwitch 100:\(e.value)")
-//                    }
-//                case "101":
-//                    if(e.value as? Int != props[e.key] as? Int){
-//                        if(ep != ""){ep.append(",")}
-//                        ep.append("nightView")
-//                        log.w("nightView 101:\(e.value)")
-//                    }
-//                case "102":
-//                    if(e.value as? Bool != props[e.key] as? Bool){
-//                        if(ep != ""){ep.append(",")}
-//                        ep.append("motionAlarm")
-//                        log.w("motionAlarm 102:\(e.value)")
-//                    }
-//                case "103":
-//                    if(e.value as? Int != props[e.key] as? Int){
-//                        if(ep != ""){ep.append(",")}
-//                        ep.append("priSwitch")
-//                        log.w("priSwitch 103:\(e.value)")
-//                    }
-//                case "104":
-//                    if(e.value as? Int != props[e.key] as? Int){
-//                        if(ep != ""){ep.append(",")}
-//                        ep.append("volume")
-//                        log.w("volume 104:\(e.value)")
-//                    }
-//                case "105":
-//                    if(e.value as? Bool != props[e.key] as? Bool){
-//                        if(ep != ""){ep.append(",")}
-//                        ep.append("forceAlarm")
-//                        log.w("forceAlarm 105:\(e.value)")
-//                    }
-//                case "106":
-//                    if(e.value as? Int != props[e.key] as? Int){
-//                        if(ep != ""){ep.append(",")}
-//                        ep.append("quantity")
-//                        log.w("quantity 106:\(e.value)")
-//                    }
-//                case "1000":
-//                    if(e.value as? Int != props[e.key] as? Int){
-//                        if(ep != ""){ep.append(",")}
-//                        ep.append("powerState")
-//                        log.w("powerState 1000:\(e.value)")
-//                    }
-//                default:
-//                    log.e("unknonw prop \(e.key)")
-//                }
-//            }
+//        devMgr.setDeviceProperty(deviceId:dev.deviceId, properties: dict, result: {
+//            (ec,msg) in
 //            self.dict.removeAll()
-//            self.lock.unlock()
-//            if(ep != ""){
-//                result(ErrCode.XERR_DEVMGR_PROPERTY,"获取设备状态'\(ep)'与设置不一致")
-//            }
-//            else{
-//                result(ErrCode.XOK,"获取设备状态")
-//            }
-        })
+//            result(ec,msg)
+////            guard let props = props else {
+////                result(ErrCode.XERR_DEVMGR_PROPERTY,"查询设备属性失败")
+////                return
+////            }
+////            self.lock.lock()
+////            var ep:String = ""
+////            log.i("dict used \(self) \(self.dict)")
+////            for e in self.dict{
+////                switch e.key{
+////                case "100":
+////                    if(e.value as? Bool != props[e.key] as? Bool){
+////                        if(ep != ""){ep.append(",")}
+////                        ep.append("osdSWitch")
+////                        log.w("osdSwitch 100:\(e.value)")
+////                    }
+////                case "101":
+////                    if(e.value as? Int != props[e.key] as? Int){
+////                        if(ep != ""){ep.append(",")}
+////                        ep.append("nightView")
+////                        log.w("nightView 101:\(e.value)")
+////                    }
+////                case "102":
+////                    if(e.value as? Bool != props[e.key] as? Bool){
+////                        if(ep != ""){ep.append(",")}
+////                        ep.append("motionAlarm")
+////                        log.w("motionAlarm 102:\(e.value)")
+////                    }
+////                case "103":
+////                    if(e.value as? Int != props[e.key] as? Int){
+////                        if(ep != ""){ep.append(",")}
+////                        ep.append("priSwitch")
+////                        log.w("priSwitch 103:\(e.value)")
+////                    }
+////                case "104":
+////                    if(e.value as? Int != props[e.key] as? Int){
+////                        if(ep != ""){ep.append(",")}
+////                        ep.append("volume")
+////                        log.w("volume 104:\(e.value)")
+////                    }
+////                case "105":
+////                    if(e.value as? Bool != props[e.key] as? Bool){
+////                        if(ep != ""){ep.append(",")}
+////                        ep.append("forceAlarm")
+////                        log.w("forceAlarm 105:\(e.value)")
+////                    }
+////                case "106":
+////                    if(e.value as? Int != props[e.key] as? Int){
+////                        if(ep != ""){ep.append(",")}
+////                        ep.append("quantity")
+////                        log.w("quantity 106:\(e.value)")
+////                    }
+////                case "1000":
+////                    if(e.value as? Int != props[e.key] as? Int){
+////                        if(ep != ""){ep.append(",")}
+////                        ep.append("powerState")
+////                        log.w("powerState 1000:\(e.value)")
+////                    }
+////                default:
+////                    log.e("unknonw prop \(e.key)")
+////                }
+////            }
+////            self.dict.removeAll()
+////            self.lock.unlock()
+////            if(ep != ""){
+////                result(ErrCode.XERR_DEVMGR_PROPERTY,"获取设备状态'\(ep)'与设置不一致")
+////            }
+////            else{
+////                result(ErrCode.XOK,"获取设备状态")
+////            }
+//        })
     }
     
     public var osdSWitch:Bool?        //100

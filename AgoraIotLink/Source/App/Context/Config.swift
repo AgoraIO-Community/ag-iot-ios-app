@@ -8,6 +8,15 @@
 import Foundation
 
 class Config {
+    
+    /*
+     2.0新增参数
+     */
+    var masterAppId : String = ""
+    var userId : String = ""
+    var pusherId : String = ""
+    
+    
     private var _appId: String = ""
     var ntfAppKey: String = ""
     var ntfApnsCertName:String = ""//io.agora.iot"//com.agora.iotsdk.demo"

@@ -9,7 +9,7 @@ import UIKit
 
 public enum VideoAlertTipType: Int{
     ///默认
-    //case none = 0
+    case none = 0
     ///加载中
     case loading = 1
     ///加载失败

@@ -154,12 +154,12 @@ class DeviceManager : IDeviceMgr{
         }
     }
     
-    func register(listener: IDeviceStateListener) {
-        DispatchQueue.main.async {
-            self.app.proxy.mqtt.setListener(listener: listener)
-            //self.app.proxy.rtm.setOnDataArrived(onDataArrived: onDataArrived)
-        }
-    }
+//    func register(listener: IDeviceStateListener) {
+//        DispatchQueue.main.async {
+//            self.app.proxy.mqtt.setListener(listener: listener)
+//            //self.app.proxy.rtm.setOnDataArrived(onDataArrived: onDataArrived)
+//        }
+//    }
     
     func queryProductList(query:ProductQueryParam, result:@escaping(Int,String,[ProductInfo])->Void){
         let token = self.app.context.gyiot.session.iotlink_token
@@ -296,17 +296,17 @@ class DeviceManager : IDeviceMgr{
             }
      }
     
-    func setDeviceProperty(deviceId: String, properties: Dictionary<String, Any>, result: @escaping (Int, String) -> Void) {
-        DispatchQueue.main.async {
-            self.app.proxy.mqtt.setDeviceStatus(account: self.app.context.gyiot.session.account, things_name: deviceId, params: properties, result: {ec,msg in self.asyncResult(ec, msg, result)})
-        }
-    }
+//    func setDeviceProperty(deviceId: String, properties: Dictionary<String, Any>, result: @escaping (Int, String) -> Void) {
+//        DispatchQueue.main.async {
+//            self.app.proxy.mqtt.setDeviceStatus(account: self.app.context.gyiot.session.account, things_name: deviceId, params: properties, result: {ec,msg in self.asyncResult(ec, msg, result)})
+//        }
+//    }
     
-    func getDeviceProperty(deviceId:String, result: @escaping (Int, String, Dictionary<String, Any>?,Dictionary<String, Any>?) -> Void) {
-        DispatchQueue.main.async {
-            self.app.proxy.mqtt.getDeviceStatus(things_name: deviceId,result:{ec,msg,d1,d2 in self.asyncResultData2(ec, msg,d1,d2, result)})
-        }
-    }
+//    func getDeviceProperty(deviceId:String, result: @escaping (Int, String, Dictionary<String, Any>?,Dictionary<String, Any>?) -> Void) {
+//        DispatchQueue.main.async {
+//            self.app.proxy.mqtt.getDeviceStatus(things_name: deviceId,result:{ec,msg,d1,d2 in self.asyncResultData2(ec, msg,d1,d2, result)})
+//        }
+//    }
     
     func otaGetInfo(deviceId:String, result: @escaping (Int, String, FirmwareInfo?) -> Void) {
         DispatchQueue.main.async {

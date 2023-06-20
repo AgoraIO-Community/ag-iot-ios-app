@@ -90,20 +90,25 @@ extension AccountSafeVC{
     //退出登陆
     func doLogOut(){
         
-        loginVM.doLogOut{ [weak self] success, msg in
-            
-            if success {
-                AGToolHUD.showInfo(info: "退出登录成功")
-                debugPrint("退出登录成功")
-                TDUserInforManager.shared.userSignOut()
-                self?.tabBarController?.selectedIndex = 0
-                self?.navigationController?.popToRootViewController(animated: true)
-                DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
-            }else{
-                AGToolHUD.showInfo(info: msg)
-            }
-            print("\(msg)")
-        }
+        TDUserInforManager.shared.userSignOut()
+        self.tabBarController?.selectedIndex = 0
+        self.navigationController?.popToRootViewController(animated: true)
+        DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
+        
+//        loginVM.doLogOut{ [weak self] success, msg in
+//
+//            if success {
+//                AGToolHUD.showInfo(info: "退出登录成功")
+//                debugPrint("退出登录成功")
+//                TDUserInforManager.shared.userSignOut()
+//                self?.tabBarController?.selectedIndex = 0
+//                self?.navigationController?.popToRootViewController(animated: true)
+//                DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
+//            }else{
+//                AGToolHUD.showInfo(info: msg)
+//            }
+//            print("\(msg)")
+//        }
         
     }
     

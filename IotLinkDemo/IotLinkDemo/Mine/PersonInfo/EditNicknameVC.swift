@@ -57,21 +57,21 @@ class EditNicknameVC: UIViewController {
     }
 
     @objc private func didClickDoneButton(){
-        let info = UserInfo()
-        if let text = textFiled.text?.trimmingCharacters(in: .whitespacesAndNewlines) {
-            if text.isEmpty {
-                return
-            }
-            info.name = text
-            AgoraIotManager.shared.sdk?.accountMgr.updateAccountInfo(info: info, result: { [weak self] ec, msg in
-                if(ec == ErrCode.XOK){
-                    self?.navigationController?.popViewController(animated: true)
-                    self?.editSuccessAction?(text)
-                }else{
-                    SVProgressHUD.showError(withStatus: "修改昵称失败")
-                }
-            })
-        }
+//        let info = UserInfo()
+//        if let text = textFiled.text?.trimmingCharacters(in: .whitespacesAndNewlines) {
+//            if text.isEmpty {
+//                return
+//            }
+//            info.name = text
+//            AgoraIotManager.shared.sdk?.accountMgr.updateAccountInfo(info: info, result: { [weak self] ec, msg in
+//                if(ec == ErrCode.XOK){
+//                    self?.navigationController?.popViewController(animated: true)
+//                    self?.editSuccessAction?(text)
+//                }else{
+//                    SVProgressHUD.showError(withStatus: "修改昵称失败")
+//                }
+//            })
+//        }
        
     
     }

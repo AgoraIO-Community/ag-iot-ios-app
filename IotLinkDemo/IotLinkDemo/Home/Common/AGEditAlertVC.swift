@@ -27,7 +27,7 @@ class AGEditAlertVC: UIViewController,UITextFieldDelegate {
         let textField = UITextField()
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.clearButtonMode = .always
-        textField.placeholder = "请输入分享账号"
+        textField.placeholder = "请输入设备nodeId"
         textField.delegate = self
         textField.textColor = UIColor.black//修改颜色
         textField.addTarget(self, action: #selector(textDidChangeNotification(textField:)), for: .editingChanged)
@@ -97,6 +97,14 @@ class AGEditAlertVC: UIViewController,UITextFieldDelegate {
         vc.setTitle(title,editText:editText, cancelTitle: cancelTitle, commitTitle: commitTitle, commitAction: commitAction)
         currentViewController().present(vc, animated: false)
     }
+    
+    static func showTitleTop(_ title:String?,editText:String,cancelTitle:String = "取消",commitTitle:String = "确定", alertType :AGEditAlertType = .none, commitAction: ((String)->(Void))?)  {
+        let vc = AGEditAlertVC()
+        vc.modalPresentationStyle = .overCurrentContext
+        vc.alertType = alertType
+        vc.setTitle(title,editText:editText, cancelTitle: cancelTitle, commitTitle: commitTitle, commitAction: commitAction)
+        UIApplication.shared.keyWindow?.rootViewController?.present(vc, animated: false)
+    }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         textField.resignFirstResponder()
@@ -134,7 +142,7 @@ class AGEditAlertVC: UIViewController,UITextFieldDelegate {
             }
             let content : String = ret.replaceSpace()
             //限制长度
-            if content.getToInt() > 20 {
+            if content.getToInt() > 40 {
                 textField.text = hisInputString
                 AGToolHUD.showInfo(info: "最大输入20个字符")
             }else{

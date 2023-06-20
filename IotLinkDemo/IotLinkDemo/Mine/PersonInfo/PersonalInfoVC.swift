@@ -59,14 +59,14 @@ class PersonalInfoVC: UIViewController {
     }
     
     private func loadDataIfNeeded(){
-        if userInfo == nil {
-            AgoraIotManager.shared.sdk?.accountMgr.getAccountInfo(result: { [weak self] _, _, userInfo in
-                self?.userInfo = userInfo
-                self?.refreshData()
-            })
-        }else{
-            refreshData()
-        }
+//        if userInfo == nil {
+//            AgoraIotManager.shared.sdk?.accountMgr.getAccountInfo(result: { [weak self] _, _, userInfo in
+//                self?.userInfo = userInfo
+//                self?.refreshData()
+//            })
+//        }else{
+//            refreshData()
+//        }
     }
 
     // MARK: - lazy
@@ -149,12 +149,12 @@ class PersonalInfoVC: UIViewController {
         if image == nil {
             return
         }
-        AgoraIotManager.shared.sdk?.accountMgr.updateHeadIcon(image: image!, result: { [weak self] ec, msg, url in
-            if(ec == ErrCode.XOK){
-                self?.userInfo?.avatar = url
-                self?.updateHeadImge()
-            }
-        })
+//        AgoraIotManager.shared.sdk?.accountMgr.updateHeadIcon(image: image!, result: { [weak self] ec, msg, url in
+//            if(ec == ErrCode.XOK){
+//                self?.userInfo?.avatar = url
+//                self?.updateHeadImge()
+//            }
+//        })
     }
     
     // 修改头像
@@ -162,13 +162,13 @@ class PersonalInfoVC: UIViewController {
         if userInfo == nil {
             return
         }
-        AgoraIotManager.shared.sdk?.accountMgr.updateAccountInfo(info: userInfo!, result: { ec, msg in
-            if(ec != ErrCode.XOK){
-                SVProgressHUD.showError(withStatus: "修改头像失败")
-            }else{
-                AGToolHUD.showInfo(info: "头像修改成功")
-            }
-        })
+//        AgoraIotManager.shared.sdk?.accountMgr.updateAccountInfo(info: userInfo!, result: { ec, msg in
+//            if(ec != ErrCode.XOK){
+//                SVProgressHUD.showError(withStatus: "修改头像失败")
+//            }else{
+//                AGToolHUD.showInfo(info: "头像修改成功")
+//            }
+//        })
     }
     
     // 点击昵称

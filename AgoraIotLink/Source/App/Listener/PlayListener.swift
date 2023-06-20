@@ -29,7 +29,7 @@ class PlayListener : FsmPlay.IListener{
         rtcSetting.subscribeAudio = setting.subscribeAudio
         rtcSetting.subscribeVideo = setting.subscribeVideo
         
-        app.proxy.rtc.createAndEnter(appId: sess.appId, setting: rtcSetting, uid: uid,name: name, token:token, info: "",
+        app.proxy.rtc.createAndEnter(appId: sess.appId, setting: rtcSetting, uid: uid, peerId: 10,name: name, token:token, info: "",
                                      cb: {ret,msg in
             if(ret == .Fail){
                 log.e("player rtc.createAndEnter failed:\(msg)")

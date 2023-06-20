@@ -21,12 +21,12 @@ let cApplicationWillEnterForegroundNotify = "applicationWillEnterForeground"
 class DeviceInfo{
     var info : FirmwareInfo? = nil
     func reqFirmwareInfo(device: IotDevice,refresh:@escaping()->Void){
-        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(deviceId: device.deviceId) { ec, msg, info in
-            self.info = info
-            if(info != nil){
-                refresh()
-            }
-        }
+//        AgoraIotLink.iotsdk.deviceMgr.otaGetInfo(deviceId: device.deviceId) { ec, msg, info in
+//            self.info = info
+//            if(info != nil){
+//                refresh()
+//            }
+//        }
     }
 }
 
@@ -37,9 +37,9 @@ class DoorbellContainerVC: UIViewController {
     //是否来自被动呼叫
     var isReceiveCall : Bool = false
     
-    private let msgVC = DoorbellMessageVC()
+//    private let msgVC = DoorbellMessageVC()
     private let abilityVC = DoorbellAbilityVC()
-    private let controlVC = DoorbellControlVC()
+//    private let controlVC = DoorbellControlVC()
     
     private var originBarTintColor:UIColor?
     private var originTitleTextAttributes:[NSAttributedString.Key :Any]?
@@ -242,12 +242,12 @@ extension DoorbellContainerVC: JXSegmentedListContainerViewDataSource {
 
     func listContainerView(_ listContainerView: JXSegmentedListContainerView, initListAt index: Int) -> JXSegmentedListContainerViewListDelegate {
         switch index {
-        case 1:
-            msgVC.device = device
-            return msgVC
-        case 2:
-            controlVC.device = device
-            return controlVC
+//        case 1:
+//            msgVC.device = device
+//            return msgVC
+//        case 2:
+//            controlVC.device = device
+//            return controlVC
         default:
             abilityVC.device = device
             abilityVC.containerVC = self

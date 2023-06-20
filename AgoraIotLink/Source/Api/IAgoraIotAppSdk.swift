@@ -25,17 +25,19 @@
  * @brief 初始化参数
  */
 public class InitParam : NSObject{
+  
     @objc public var rtcAppId: String = ""              // appId
     @objc public var logFilePath : String? = ""         // 设置日志路径 ,nil:不保存到文件,"":保存到默认路径
-    @objc public var publishAudio = true                // 通话时是否推流本地音频
-    @objc public var publishVideo = false               // 通话时是否推流本地视频
-    @objc public var subscribeAudio = true              // 通话时是否订阅对端音频
-    @objc public var subscribeVideo = true              // 通话时是否订阅对端视频
-    @objc public var ntfAppKey: String = ""             // 离线推送的appkey
-    @objc public var ntfApnsCertName:String = ""        // 离线推送的AnpsCertName
-    @objc public var masterServerUrl:String = ""        // 主服务器后台地址
-    @objc public var slaveServerUrl:String = ""         // 副服务器后台地址
     @objc public var projectId:String = ""              // 项目Id,作为查询产品列表的过滤条件
+}
+
+public class PrepareParam : NSObject{
+    
+    @objc public var mAppId: String = ""          //2.0 appId
+    @objc public var mUserId: String = ""         //2.0 userId
+    @objc public var mPusherId: String = ""       //2.0 离线推送id
+    @objc public var mClientType: Int = 2         //2.0 终端类型
+    
 }
 
 /*
@@ -56,50 +58,60 @@ public class InitParam : NSObject{
  * @brief SDK引擎接口
  */
 public protocol IAgoraIotAppSdk {
-    /*
-     * @biref 获取sdk版本信息
-     */
-    func getSdkVersion()->String
-    /*
-     * @biref 获取当前mqtt是否连接 连接:true 断开:false
-     */
-    func getMqttIsConnected() -> Bool
+    
     /*
      * @brief 初始化Sdk
-     * @param netStatus:返回当前mqtt网络状态
      * @param callBackFilter：回调函数返回错误码集中回调(可作为返回错误码/错误消息)过滤。所有带有result回调的接口，都会在调用前触发该回调，参数1:ErrCode,参数2:ErrMessage,返回值:新的(ErrCode,ErrMessage)
      */
-    func initialize(initParam: InitParam,sdkStatus:@escaping(SdkStatus,String)->Void,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int
-
+    func initialize(initParam: InitParam,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int
+    
     /*
      * @brief 释放SDK所有资源
      */
     func release()
-
+    
     /*
-     * @brief 获取账号管理接口
+     * @biref 获取sdk版本信息
      */
-    var accountMgr: IAccountMgr{get}
-
+    func getSdkVersion()->String
+    
     /*
-     * @brief 获取呼叫系统接口
+     * @brief 获取设备连接管理接口
      */
-    var callkitMgr: ICallkitMgr{get}
+    var deviceSessionMgr: IDeviceSessionMgr{get}
+    
+    
+    
+    
+    
+//    /*
+//     * @brief 获取账号管理接口
+//     */
+//    var accountMgr: IAccountMgr{get}
 
-    /*
-     * @brief 获取设备管理接口
-     */
-    var deviceMgr: IDeviceMgr{get}
+//    /*
+//     * @brief 获取呼叫系统接口
+//     */
+//    var callkitMgr: ICallkitMgr{get}
 
-    /*
-     * @brief 获取告警信息管理接口
-     */
-    var alarmMgr: IAlarmMgr{get}
+//    /*
+//     * @brief 获取设备管理接口
+//     */
+//    var deviceMgr: IDeviceMgr{get}
 
-    /*
-     * @brief 获取通知信息管理接口
-     */
-    var notificationMgr: INotificationMgr{get}
+//    /*
+//     * @brief 获取告警信息管理接口
+//     */
+//    var alarmMgr: IAlarmMgr{get}
+
+//    /*
+//     * @brief 获取通知信息管理接口
+//     */
+//    var notificationMgr: INotificationMgr{get}
+    
+    
+
+    
 }
 
-public let IAgoraIotSdkVersion = "1.0.1.6"
+public let IAgoraIotSdkVersion = "1.5.1.0"

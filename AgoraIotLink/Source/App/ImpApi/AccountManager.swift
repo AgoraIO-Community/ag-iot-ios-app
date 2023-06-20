@@ -302,8 +302,8 @@ class AccountManager : IAccountMgr{
             self.app.context.aglab.session.reset()
             self.app.context.call.session.reset()
             self.app.context.call.lastSession.reset()
-            self.app.proxy.mqtt.reset()
-            self.app.callkitMgr.reset()
+//            self.app.proxy.mqtt.reset()
+//            self.app.callkitMgr.reset()
             self.rule.trigger.logout_watcher = {result(ErrCode.XOK,"")}
             self.rule.trans(FsmApp.Event.LOGOUT)
         }

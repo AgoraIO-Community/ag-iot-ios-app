@@ -221,22 +221,22 @@ extension SelectWIFIVC {
         TDUserInforManager.shared.currentMatchNetType = 2
         TDUserInforManager.shared.curBluefiSuc = false
         //跳转蓝牙配网
-        let vc = BluefiResultVC()
-        vc.wifiName = wifiName
-        vc.password = password
-        vc.productKey = productKey
-        self.navigationController?.pushViewController(vc, animated: true)
+//        let vc = BluefiResultVC()
+//        vc.wifiName = wifiName
+//        vc.password = password
+//        vc.productKey = productKey
+//        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func gotoQRCodeVC(){
         log.i("选择配网类型 type:二维码")
-        TDUserInforManager.shared.currentMatchNetType = 1
-        //跳转二维码扫描配网
-        let vc = CreateQRCodeVC()
-        vc.wifiName = wifiName
-        vc.password = password
-        vc.productKey = productKey
-        self.navigationController?.pushViewController(vc, animated: true)
+//        TDUserInforManager.shared.currentMatchNetType = 1
+//        //跳转二维码扫描配网
+//        let vc = CreateQRCodeVC()
+//        vc.wifiName = wifiName
+//        vc.password = password
+//        vc.productKey = productKey
+//        self.navigationController?.pushViewController(vc, animated: true)
         
     }
     

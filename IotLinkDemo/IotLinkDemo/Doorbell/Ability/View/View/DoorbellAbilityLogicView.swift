@@ -35,9 +35,7 @@ class DoorbellAbilityLogicView: UIView {
             case .loading:
                 self.isOnCalling = false
                 topControlView.tipsLabel.text = "呼叫中..."
-                topControlView.memberLabel.text = "通话人数:0"
-//            case .none:
-//                topControlView.tipsLabel.text = ""
+                topControlView.memberLabel.text = "人数:0"
             case .loadFail:
                 topControlView.tipsLabel.text = "呼叫失败"
             case .deviceOffLine:
@@ -49,6 +47,9 @@ class DoorbellAbilityLogicView: UIView {
             case .playing:
                 self.isOnCalling = true
                 topControlView.tipsLabel.text = "正在通话中..."
+            case .none:
+                topControlView.tipsLabel.text = ""
+                topControlView.memberLabel.text = "人数:0"
             }
         }
     }
@@ -308,7 +309,7 @@ extension DoorbellAbilityLogicView{
             //请求通话时变声通话置为正常
             changeSoundNormal()
         }
-        DoorBellManager.shared.muteLocalAudio(mute: isPermitAudio) {[weak self] success, msg in
+        DoorBellManager.shared.muteLocalAudio(sessionId:"", mute: isPermitAudio) {[weak self] success, msg in
             if success{
                 debugPrint("请求通话/或者挂断 成功")
                 let isSelect = !btn.isSelected
