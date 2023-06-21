@@ -19,7 +19,7 @@ public class ConnectParam : NSObject {
     @objc public var mRtcToken: String = ""           //要会话的RTC Token
     @objc public var mRtmToken: String = ""           //要会话的 RTM Token
     
-    public init(mUserId:String ,
+    @objc public init(mUserId:String ,
                 mPeerDevId:String,
                 mLocalRtcUid:UInt,
                 mChannelName:String,
@@ -77,13 +77,6 @@ public class ConnectParam : NSObject {
  * @brief 设备连接接口
  */
 public protocol IDeviceSessionMgr {
-    
-    
-    /**
-     * @brief 设备断开连接回调事件，设备断开连接后，所有的预览和控制都不能进行，只能再次重连
-     * @param sessionId : 会话唯一标识
-     */
-    func onSessionDisconnected(sessionId:String)->Void
     
     
     /**

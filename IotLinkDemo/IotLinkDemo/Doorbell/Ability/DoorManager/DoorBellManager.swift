@@ -24,12 +24,6 @@ class DoorBellManager: NSObject {
         super.init()
     }
     
-    
-    //断开连接
-    func sessionDisconnected(sessionId: String){
-        sdk?.deviceSessionMgr.onSessionDisconnected(sessionId: sessionId)
-    }
-    
     func previewStart(sessionId:String,previewListener: @escaping (_ sessionId:String,_ videoWidth:Int,_ videoHeight:Int) -> Void){
         let callkitMgr = getDevSessionMgr(sessionId)
         callkitMgr.previewStart { sessionId, videoWidth, videoHeight in

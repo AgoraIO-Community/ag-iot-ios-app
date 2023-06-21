@@ -19,8 +19,5 @@
 
 -(void)filterResult:(int)errCode errMessage:(NSString*)errMessage;
 
--(void)didLogin;
--(void)queryProperty;
--(void)queryDevice;
 @end
 

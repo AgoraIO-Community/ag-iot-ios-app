@@ -73,7 +73,7 @@ public class RtcNetworkStatus : NSObject{
 /*
  * @brief 呼叫系统接口
  */
-public protocol IDevPreviewMgr {
+@objc public protocol IDevPreviewMgr {
     
     /**
      * @brief 设备端首帧出图
