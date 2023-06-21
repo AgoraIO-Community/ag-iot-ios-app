@@ -54,11 +54,6 @@ class RtcEngine : NSObject{
     
     func create(appId:String,setting:RtcSetting)->Bool{
         
-//        if engine != nil {
-//            log.i("create: has rtc")
-//            return true
-//        }
-        
         _setting = setting
         if(state != RtcEngine.IDLED){
             log.e("rtc state : \(state) error for create()")
@@ -77,7 +72,6 @@ class RtcEngine : NSObject{
             return false
         }
         if(setting.logFilePath != ""){
-//            rtc.setParameters("{\"rtc.enable_debug_log\":true}");
             rtc.setLogFilter(AgoraLogFilter.info.rawValue)
             rtc.setLogFile(setting.logFilePath)
         }
@@ -124,16 +118,16 @@ class RtcEngine : NSObject{
     
         let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
         //todo:4.0.0版本调用
-        option.autoSubscribeAudio = AgoraRtcBoolOptional.of(_setting.subscribeAudio)
-        option.autoSubscribeVideo = AgoraRtcBoolOptional.of(_setting.subscribeVideo)
-        option.publishCameraTrack = AgoraRtcBoolOptional.of(_setting.publishVideo)
-        option.publishMicrophoneTrack = AgoraRtcBoolOptional.of(_setting.publishVideo)
+//        option.autoSubscribeAudio = AgoraRtcBoolOptional.of(_setting.subscribeAudio)
+//        option.autoSubscribeVideo = AgoraRtcBoolOptional.of(_setting.subscribeVideo)
+//        option.publishCameraTrack = AgoraRtcBoolOptional.of(_setting.publishVideo)
+//        option.publishMicrophoneTrack = AgoraRtcBoolOptional.of(_setting.publishVideo)
         
-//        option.autoSubscribeAudio = _setting.subscribeAudio
-//        option.autoSubscribeVideo = _setting.subscribeVideo
-//        option.audiotr = AgoraRtcBoolOptional.of(true)
-//        option.publishCameraTrack = AgoraRtcBoolOptional.of(false)
-//        rtc.setAudioSessionOperationRestriction(.setCategory)//SDK 对AudioSession的操作权限，解决门铃控制中心播放告警消息没有声音的问题
+        option.autoSubscribeAudio = _setting.subscribeAudio
+        option.autoSubscribeVideo = _setting.subscribeVideo
+        option.publishCameraTrack = _setting.publishVideo
+        option.publishMicrophoneTrack = _setting.publishVideo
+        
         rtc.enableAudio()
         rtc.enableVideo()
         rtc.setEnableSpeakerphone(true)
@@ -188,15 +182,7 @@ class RtcEngine : NSObject{
                           remoteAudio: \(String(describing: _peerAudioMute))
                           remoteVideo: \(String(describing: _peerVideoMute))
                  """)
-        
-//        let connection1 = AgoraRtcConnection()
-//        var mediaOptions = AgoraRtcChannelMediaOptions()
-//        mediaOptions.autoSubscribeVideo = .of(true)
-//        mediaOptions.autoSubscribeAudio = .of(true)
-//        connection1.channelId = "123456"
-//        connection1.localUid = UInt.random(in: 1001...2000)
-//        var result = rtc.joinChannelEx(byToken: "your token", connection: connection1, delegate: self, mediaOptions: mediaOptions, joinSuccess: nil)
-        
+
         
         let ret = rtc.joinChannel(byToken: token, channelId: name, uid: uid, mediaOptions: option)
 
@@ -205,7 +191,7 @@ class RtcEngine : NSObject{
             cb(.Fail,"join channel fail")
         }
         log.i("rtc joinchannel peerid: \([NSNumber(value: peerUid)])")
-        rtc.setSubscribeAudioWhitelist([NSNumber(value: peerUid)])
+        rtc.setSubscribeAudioAllowlist([NSNumber(value: peerUid)])
         _onEnterChannel = TimeCallback<(TaskResult,String)>(cb: cb)
         _onEnterChannel?.schedule(time: 20, timeout: {
             log.e("rtc join channel timeout")
@@ -270,9 +256,9 @@ class RtcEngine : NSObject{
         _localVideoMute = mute
         
         let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
-        option.autoSubscribeVideo = AgoraRtcBoolOptional.of(_setting.subscribeVideo)
-        option.publishCameraTrack = AgoraRtcBoolOptional.of(!_localVideoMute)
-        option.publishMicrophoneTrack = AgoraRtcBoolOptional.of(!_localAudioMute)
+        option.autoSubscribeVideo = _setting.subscribeVideo
+        option.publishCameraTrack = !_localVideoMute
+        option.publishMicrophoneTrack = !_localAudioMute
         engine.updateChannel(with: option)
         
         let ret = engine.muteLocalVideoStream(mute)
@@ -301,9 +287,9 @@ class RtcEngine : NSObject{
         _localAudioMute = mute
         
         let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
-        option.autoSubscribeVideo = AgoraRtcBoolOptional.of(_setting.subscribeVideo)
-        option.publishCameraTrack = AgoraRtcBoolOptional.of(!_localVideoMute)
-        option.publishMicrophoneTrack = AgoraRtcBoolOptional.of(!_localAudioMute)
+        option.autoSubscribeVideo = _setting.subscribeVideo
+        option.publishCameraTrack = !_localVideoMute
+        option.publishMicrophoneTrack = !_localAudioMute
         engine.updateChannel(with: option)
         
 //        engine.enableLocalAudio(!mute) //关闭本地音频采集，解决rtc通话中，其他播放器播放视频没有声音问题
@@ -354,9 +340,9 @@ class RtcEngine : NSObject{
         }
         
         if mute == true{
-            engine.setSubscribeAudioWhitelist([])
+            engine.setSubscribeAudioAllowlist([])
         }else{
-            engine.setSubscribeAudioWhitelist([NSNumber(value: peerUid)])
+            engine.setSubscribeAudioAllowlist([NSNumber(value: peerUid)])
             cb(ErrCode.XOK,op + " succ")
             return
         }
@@ -659,7 +645,7 @@ extension RtcEngine: AgoraRtcEngineDelegate{
 
 extension RtcEngine : AgoraVideoFrameDelegate{
 
-    func onCapture(_ videoFrame: AgoraOutputVideoFrame) -> Bool {
+    func onCapture(_ videoFrame: AgoraOutputVideoFrame, sourceType: AgoraVideoSourceType) -> Bool {
         return false
     }
 

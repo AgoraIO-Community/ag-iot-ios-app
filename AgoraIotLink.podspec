@@ -51,7 +51,7 @@ TODO: Add long description of the pod here.
 #  s.dependency 'AWSMobileClient','2.27.6'
 #  s.dependency 'AWSIoT','2.27.6'
   s.dependency 'EMPush'
-  s.dependency 'AgoraRtcEngine_iOS','4.0.0-rc.1'#可解决4.0.1 jpeg视频收不到流问题
+  s.dependency 'AgoraRtcEngine_iOS','4.2.0'     #'4.0.0-rc.1'#可解决4.0.1 jpeg视频收不到流问题
   s.dependency 'AgoraRtm_iOS','1.5.0'
   
 end
