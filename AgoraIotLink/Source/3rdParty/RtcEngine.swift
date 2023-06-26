@@ -28,10 +28,10 @@ struct RtcSetting{
     var audioSampleRate = ""; //16000,8000
     
     var logFilePath = ""
-    var publishAudio = true ///< 通话时是否推流本地音频
-    var publishVideo = true ///< 通话时是否推流本地视频
+    var publishAudio = false ///< 通话时是否推流本地音频
+    var publishVideo = false ///< 通话时是否推流本地视频
     var subscribeAudio = false ///< 通话时是否订阅对端音频
-    var subscribeVideo = true ///< 通话时是否订阅对端视频
+    var subscribeVideo = false ///< 通话时是否订阅对端视频
 }
 
 class RtcEngine : NSObject{
@@ -191,7 +191,7 @@ class RtcEngine : NSObject{
             cb(.Fail,"join channel fail")
         }
         log.i("rtc joinchannel peerid: \([NSNumber(value: peerUid)])")
-        rtc.setSubscribeAudioAllowlist([NSNumber(value: peerUid)])
+//        rtc.setSubscribeAudioAllowlist([NSNumber(value: peerUid)])
         _onEnterChannel = TimeCallback<(TaskResult,String)>(cb: cb)
         _onEnterChannel?.schedule(time: 20, timeout: {
             log.e("rtc join channel timeout")
@@ -348,7 +348,6 @@ class RtcEngine : NSObject{
         }
         
         let ret = engine.muteRemoteAudioStream(peerUid, mute: mute)
-//        let ret = engine.muteAllRemoteAudioStreams(mute)
         if(ret != 0){
             log.w("rtc mutePeerAudio(\(mute)) faile:\(ret)")
         }
@@ -512,11 +511,6 @@ class RtcEngine : NSObject{
     func startRecord(result: @escaping (Int, String) -> Void){
         
         log.i("rtc try capturePeerVideoFrame ...")
-//        if(state != RtcEngine.ENTERED){
-//            log.e("rtc state : \(state) error for capturePeerVideoFrame()")
-//            result(ErrCode.XERR_BAD_STATE,"rtc state error")
-//            return
-//        }
         if(!peerEntered){
             log.i("startRecord: rtc peer not entered for capture")
             result(ErrCode.XERR_BAD_STATE,"rtc peer not joined")
@@ -566,7 +560,6 @@ extension RtcEngine: AgoraRtcEngineDelegate{
             }
         }
     }
-    
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode) {
         log.w("rtc didOccurWarning:\(warningCode.rawValue)")

@@ -18,15 +18,13 @@ open class Application{
         
         Logger.shared.removeAllAsync()
         let tempAppId = initParam.rtcAppId.substring(to: 1) + "*********************" + initParam.rtcAppId.substring(from: initParam.rtcAppId.count - 1)
-        //let tempMaster = initParam.masterServerUrl.substring(to: 10) + "*******" + initParam.masterServerUrl.substring(from: initParam.masterServerUrl.count - 4)
-        //let tempSlave = initParam.slaveServerUrl.substring(to: 10) + "*******" + initParam.slaveServerUrl.substring(from: initParam.slaveServerUrl.count - 4)
         let projectId = initParam.projectId.substring(to: 1) + "*******" + initParam.projectId.substring(from: initParam.projectId.count - 1)
         log.i("=================  AgoraIotSdk  ======================")
         log.i("     version:   \(IAgoraIotSdkVersion)")
         log.i("       built:   \(Utils.dateTime())")
         log.i("       appId:   \(tempAppId)")
         log.i("   projectId:   \(projectId)")
-        log.i("     logFile:   \(initParam.logFilePath)")
+        log.i("     logFile:   \(String(describing: initParam.logFilePath))")
         log.i("======================================================")
 
         

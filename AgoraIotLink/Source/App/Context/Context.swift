@@ -171,9 +171,9 @@ struct CallKitSetting{
     var audioSampleRate = "8000"; //16000,8000
     
     var logFilePath = ""
-    var publishAudio = true ///< 通话时是否推流本地音频
+    var publishAudio = false ///< 通话时是否推流本地音频
     var publishVideo = false ///< 通话时是否推流本地视频
-    var subscribeAudio = true ///< 通话时是否订阅对端音频
+    var subscribeAudio = false ///< 通话时是否订阅对端音频
     var subscribeVideo = true ///< 通话时是否订阅对端视频
 }
 

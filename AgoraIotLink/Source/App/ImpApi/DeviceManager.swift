@@ -389,22 +389,23 @@ class DeviceManager : IDeviceMgr{
     }
     
     private func doStartPlayback(channelName: String, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
-        let appId = self.app.config.appId
-        let agToken = self.app.context.aglab.session.accessToken
-        app.proxy.al.reqPlayerToekn(agToken, appId, channelName) { ec, msg, sess in
-            if(ec != ErrCode.XOK){
-                result(ec,msg)
-                return
-            }
-            guard let sess = sess else{
-                result(ErrCode.XERR_INVALID_PARAM,"param error")
-                return
-            }
-            self.app.rule.trans(FsmPlay.Event.STARTPLAY,
-                                {self.app.rule.playback.start(channelName: sess.channelName,token: sess.token, uid: sess.uid, result: result, stateChanged: stateChanged)},
-                                {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
-            
-        }
+        //todo:
+//        let appId = self.app.config.appId
+//        let agToken = self.app.context.aglab.session.accessToken
+//        app.proxy.al.reqPlayerToekn(agToken, appId, channelName) { ec, msg, sess in
+//            if(ec != ErrCode.XOK){
+//                result(ec,msg)
+//                return
+//            }
+//            guard let sess = sess else{
+//                result(ErrCode.XERR_INVALID_PARAM,"param error")
+//                return
+//            }
+//            self.app.rule.trans(FsmPlay.Event.STARTPLAY,
+//                                {self.app.rule.playback.start(channelName: sess.channelName,token: sess.token, uid: sess.uid, result: result, stateChanged: stateChanged)},
+//                                {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
+//
+//        }
     }
     
     func startPlayback(channelName: String, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
@@ -414,12 +415,15 @@ class DeviceManager : IDeviceMgr{
     }
     
     func setPlaybackView(peerView: UIView?) -> Int {
-        return self.app.rule.playback.setPlaybackView(peerView: peerView)
+        //todo:
+//        return self.app.rule.playback.setPlaybackView(peerView: peerView)
+        return 0
     }
     
     func stopPlayback() {
-        self.app.rule.trans(FsmPlay.Event.RESETRTC,
-                            {self.app.rule.playback.stop()})
+        //todo:
+//        self.app.rule.trans(FsmPlay.Event.RESETRTC,
+//                            {self.app.rule.playback.stop()})
     }
     
     private var app:Application

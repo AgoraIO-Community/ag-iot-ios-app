@@ -1,14 +1,15 @@
 //
-//  PlayListener.swift
+//  PlayStateListener.swift
 //  AgoraIotLink
 //
-//  Created by ADMIN on 2022/9/15.
+//  Created by admin on 2023/6/26.
 //
 
-import Foundation
-class PlayListener : FsmPlay.IListener{
-    func do_CREATEANDENTER(_ srcState: FsmPlay.State) {
-        log.i("player do_CREATEANDENTER(\(srcState)")
+import UIKit
+
+class PlayStateListener: NSObject {
+    func do_CREATEANDENTER() {
+        log.i("player do_CREATEANDENTER")
         let token = sess.token
         let uid = sess.peerUid
         let name = sess.channel
@@ -33,10 +34,10 @@ class PlayListener : FsmPlay.IListener{
                                      cb: {ret,msg in
             if(ret == .Fail){
                 log.e("player rtc.createAndEnter failed:\(msg)")
-                self.app.rule.trans(FsmPlay.Event.ENTER_FAIL)
+//                self.app.rule.trans(FsmPlay.Event.ENTER_FAIL)
             }
             else if(ret == .Succ){
-                self.app.rule.trans(FsmPlay.Event.ENTER_SUCC)
+//                self.app.rule.trans(FsmPlay.Event.ENTER_SUCC)
             }
             else {//Abort
                 log.i("player rtc.createAndEnter aborted:\(msg)")
@@ -45,14 +46,14 @@ class PlayListener : FsmPlay.IListener{
         peerAction: {act,uid in
             if(act == .Enter){
                 self.sess.peerUid = uid
-                self.app.rule.trans(FsmPlay.Event.PEER_JOIN)
+//                self.app.rule.trans(FsmPlay.Event.PEER_JOIN)
             }
             else if(act == .Leave){
                 self.sess.peerUid = 0
-                self.app.rule.trans(FsmPlay.Event.PEER_LEFT)
+//                self.app.rule.trans(FsmPlay.Event.PEER_LEFT)
             }
             else if(act == .VideoReady){
-                self.app.rule.trans(FsmPlay.Event.VIDEOREADY)
+//                self.app.rule.trans(FsmPlay.Event.VIDEOREADY)
             }
         },
         memberState:{s,a in
@@ -60,45 +61,38 @@ class PlayListener : FsmPlay.IListener{
         })
     }
     
-    func do_LEAVEANDDESTROY(_ srcState: FsmPlay.State) {
-        log.i("player do_LEAVEANDDESTROY(\(srcState)")
+    func do_LEAVEANDDESTROY() {
+        log.i("player do_LEAVEANDDESTROY")
         app.proxy.rtc.leaveAndDestroy(cb: {succ in
             if(!succ){
                 log.e("player rtc leaveAndDestroy fail")
             }
         })
-        app.rule.trans(FsmPlay.Event.DESTROY_SUCC)
+//        app.rule.trans(FsmPlay.Event.DESTROY_SUCC)
     }
     
-    func on_startSession(_ srcEvent: FsmPlay.Event) {
-        log.i("player on_startSession(\(srcEvent)")
-    }
     
-    func on_stopSession(_ srcEvent: FsmPlay.Event) {
-        log.i("player on_stopSession(\(srcEvent)")
-    }
-    
-    func on_watcher(_ srcEvent: FsmPlay.Event) {
-        log.i("player on_watcher(\(srcEvent)")
-        if(srcEvent == .REMOTE_JOIN){
-            sess.stateChanged(.RemoteJoin, "设备接入")
-        }
-        else if(srcEvent == .REMOTE_LEFT){
-            sess.stateChanged(.RemoteLeft, "设备退出");
-        }
-        else if(srcEvent == .LOCAL_JOIN_SUCC){
-            sess.stateChanged(.LocalReady,"正在接入设备")
-        }
-        else if(srcEvent == .LOCAL_JOIN_FAIL){
-            sess.stateChanged(.LocalError,"接入设备失败")
-        }
-        else if(srcEvent == .REMOTE_VIDEOREADY){
-            sess.stateChanged(.VideoReady,"收到设备视频")
-        }
-        else{
-            log.e("player unknown event to watch:\(srcEvent.rawValue)")
-        }
-    }
+//    func on_watcher(_ srcEvent: FsmPlay.Event) {
+//        log.i("player on_watcher(\(srcEvent)")
+//        if(srcEvent == .REMOTE_JOIN){
+//            sess.stateChanged(.RemoteJoin, "设备接入")
+//        }
+//        else if(srcEvent == .REMOTE_LEFT){
+//            sess.stateChanged(.RemoteLeft, "设备退出");
+//        }
+//        else if(srcEvent == .LOCAL_JOIN_SUCC){
+//            sess.stateChanged(.LocalReady,"正在接入设备")
+//        }
+//        else if(srcEvent == .LOCAL_JOIN_FAIL){
+//            sess.stateChanged(.LocalError,"接入设备失败")
+//        }
+//        else if(srcEvent == .REMOTE_VIDEOREADY){
+//            sess.stateChanged(.VideoReady,"收到设备视频")
+//        }
+//        else{
+//            log.e("player unknown event to watch:\(srcEvent.rawValue)")
+//        }
+//    }
     
     func setPlaybackView(peerView: UIView?) -> Int {
         app.proxy.rtc.setupRemoteView(peerView: peerView, uid: sess.peerUid)

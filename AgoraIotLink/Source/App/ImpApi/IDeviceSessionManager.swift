@@ -42,7 +42,7 @@ class IDeviceSessionManager : IDeviceSessionMgr{
         sessionInfor.mUserId = app.config.userId
         sessionInfor.mState = CallListenerManager.sharedInstance.getCurrentCallState(sessionId)
         sessionInfor.mType = callSession?.callType.rawValue ?? 0
-        return SessionInfo()
+        return sessionInfor
     }
     
     func getDevPreviewMgr(sessionId: String) -> IDevPreviewMgr? {

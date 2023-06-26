@@ -17,8 +17,6 @@ import SwiftDate
 
 // 网络监测通知
 let cNetChangeNotify = "cNetChangeNotify"
-//添加新设备通知（蓝牙配网）
-let cAddDeviceSuccessNotify = "cAddDeviceSuccessNotify"
 
 private let kCellID = "HomeMainDeviceCell"
 
@@ -32,14 +30,9 @@ class HomePageMainVC: AGBaseVC {
     var mDevicesArray = [MDeviceModel]()
     var members:Int = 0
     
-    var curSessionId:String = ""
-    
     var curIndex : IndexPath?
-    
     var curTraceId : UInt = 0//用来过滤多余的返回数据
-    
-    // 告警消息时间
-    var alarmDates = [String: UInt64]()
+
 
     lazy var topView:MainTopView = {
         let topView = MainTopView()
@@ -101,10 +94,9 @@ class HomePageMainVC: AGBaseVC {
         
     }
     
+    //初始化mqtt
     func loadPreConfig(){
-        
         TDUserInforManager.shared.mqttInit()
-        
     }
     
     func loadData(){
@@ -265,7 +257,7 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
 }
 
 
-extension HomePageMainVC { //呼叫
+extension HomePageMainVC { //呼叫设备
 
     //---------设备控制相关-----------
     //呼叫设备
@@ -301,18 +293,18 @@ extension HomePageMainVC { //呼叫
         curTraceId = 0
         
         let curTimestamp:Int = String.dateTimeRounded()
-        let appId = "d0177a34373b482a9c4eb4dedcfa586a"
+        let appId = keyCenter.AppId
         let headerParam = ["traceId": curTimestamp, "timestamp": curTimestamp, "nodeToken": nodeToken, "method": "user-start-call"] as [String : Any]
         let payloadParam = ["appId": appId, "deviceId": dev.peerNodeId, "extraMsg": "attachMsg"] as [String : Any]
         let paramDic = ["header":headerParam,"payload":payloadParam]
         let jsonString = paramDic.convertDictionaryToJSONString()
         TDUserInforManager.shared.cocoaMqtt?.waitForActionDesired(actionDesired: onMqttDesired)
         TDUserInforManager.shared.cocoaMqtt?.publishCallData(data: jsonString)
-        log.i("---callDial--发起呼叫---")
+        log.i("---callDial--发起呼叫,获取连接设备参数---")
         
     }
     
-    //呼叫设备
+    //连接设备
     func connectDevice(connectParam : ConnectParam){
         
         guard let indexPath = curIndex else {
@@ -347,11 +339,11 @@ extension HomePageMainVC { //呼叫
         cell.handelUserMembers(members)
     }
     
-    //处理呼叫返回
+    //处理连接设备返回
     func handelCallAct(_ sessionId:String,_ act:SessionCallback){
         
         if(act == .onDisconnected){
-            debugPrint("本地挂断")
+            debugPrint("连接断开")
             let cell = getCurrentCellWithTag(sessionId)
             let tempModel = getCurrentDataModel(indexPath: cell.indexPath ?? IndexPath(row: 0, section: 0))
             tempModel.sessionId = ""
@@ -359,11 +351,11 @@ extension HomePageMainVC { //呼叫
             cell.handelCallStateText(false)
             cell.handelStateNone()
         }else if(act == .onError){
-            debugPrint("呼叫超时")
+            debugPrint("连接错误")
             let cell = getCurrentCellWithTag(sessionId)
             cell.handelCallTipType(.loadFail)
             cell.handelCallStateText(false)
-            AGToolHUD.showInfo(info: "呼叫超时,请检查设备状态")
+            AGToolHUD.showInfo(info: "连接超时,请检查设备状态")
         }
         
     }
@@ -393,7 +385,7 @@ extension HomePageMainVC { //呼叫
         }
     }
     
-    func getTagFromSessionId(_ sessionId : String)->Int{
+    func getTagFromSessionId(_ sessionId : String)->Int{//获取tag值
         let strArray = sessionId.split(separator: "&")
         print(strArray)
         guard strArray.count > 0 else {
@@ -403,7 +395,7 @@ extension HomePageMainVC { //呼叫
         return Int(tag) ?? 0
     }
     
-    func getCellWithTag(tag:Int) -> HomeMainDeviceCell {
+    func getCellWithTag(tag:Int) -> HomeMainDeviceCell {//获取cell
         if let cell = tableView.viewWithTag(tag) as? HomeMainDeviceCell{
             return cell
         }
@@ -417,7 +409,7 @@ extension HomePageMainVC { //呼叫
         return cell
     }
     
-    func getCurrentDataModel(indexPath : IndexPath)->MDeviceModel{
+    func getCurrentDataModel(indexPath : IndexPath)->MDeviceModel{//获取索引对应的数据
         
         if mDevicesArray.count == 0 {
             return MDeviceModel()
@@ -429,15 +421,15 @@ extension HomePageMainVC { //呼叫
 
 extension HomePageMainVC{
     
-    func goToFullVC(indexPath : IndexPath){
+    func goToFullVC(indexPath : IndexPath){//跳转全屏页
         
         let device = mDevicesArray[indexPath.row]
         let cell = tableView.cellForRow(at: indexPath) as! HomeMainDeviceCell
         
-//        let sessionInfor = sdk?.deviceSessionMgr.getSessionInfo(sessionId: device.sessionId)
-//        if device.sessionId == "" ||  sessionInfor?.mState != .onCall{//未在通话中，返回
-//            return
-//        }
+        let sessionInfor = sdk?.deviceSessionMgr.getSessionInfo(sessionId: device.sessionId)
+        if device.sessionId == "" ||  sessionInfor?.mState != .onCall{//未在通话中，返回
+            return
+        }
         
         let fullVC = CallFullScreemVC()
         fullVC.sessionId = device.sessionId
@@ -448,7 +440,8 @@ extension HomePageMainVC{
     }
 }
 
-extension HomePageMainVC{ //删除，添加
+
+extension HomePageMainVC{ //设备删除，添加
     
     // 添加设备
     @objc private func addDevice(){

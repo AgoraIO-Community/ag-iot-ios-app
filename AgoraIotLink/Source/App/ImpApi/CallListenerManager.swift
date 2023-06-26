@@ -10,10 +10,7 @@ import UIKit
 class CallListenerManager: NSObject {
 
     static let sharedInstance = CallListenerManager()
-    
-//    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
     var app  = Application.shared
-//    var rtc  = Application.shared.proxy.rtc
 
     var callDict = [String:Any]()
     func startCall(sessionId:String,dialParam: ConnectParam,actionAck:@escaping(SessionCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?){
@@ -32,6 +29,10 @@ class CallListenerManager: NSObject {
     func initOther(_ callListen : CallStateListener,_ sessionId:String){
         let preMgr = IDevPreviewManager(app: self.app,sessionId:sessionId)
         callListen.callSession?.devPreviewMgr = preMgr
+        
+        //初始化其他
+        let setting = app.context.rtm.setting
+        let succ = app.proxy.rtm.create(setting)
     }
     
     func callRequest(_ sessionId:String = ""){
@@ -46,6 +47,10 @@ class CallListenerManager: NSObject {
             log.i(" hangUp 走完了")
         }
         log.i("CallListenerManager hangUp 调用了")
+        
+        //断开其他
+        app.proxy.rtm.destroy();
+        
     }
     
     func clearCurrentCallObj(_ sessionId:String){//清除当前call对象
@@ -58,18 +63,7 @@ class CallListenerManager: NSObject {
         let callListen = getCurrentCallObjet(sessionId)
         callListen?.registerPreViewListener(previewListener: previewListener)
     }
-    
-    func incomeCall(sessionId:String,sess:CallSession?,incoming: @escaping (_ sessionId:String,_ peerNodeId:String, ActionAck) -> Void,memberState:((MemberState,[UInt],String)->Void)?){
-        let callLister = CallStateListener(sess:sess, incoming: incoming,memberState: memberState)
-        callDict[sessionId] = callLister
-        callLister.callSession?.mSessionId = sessionId
-    }
-    
-    func acceptCall(_ sessionId:String){
-        let callListen = getCurrentCallObjet(sessionId)
-        callListen?.inComeDealTime()
-    }
-    
+
     func isTaking(_ peerNodeId : String)->Bool{
         
         if callDict.count == 1{
@@ -92,19 +86,13 @@ class CallListenerManager: NSObject {
         }
         return false
     }
-    
-    func updateCallSession(_ sessionId:String, _ sess : CallSession){
-        let callListen = getCurrentCallObjet(sessionId)
-        callListen?.updateCallSession(sess)
-    }
-    
+
     func getCurrentCallSession(_ sessionId:String) -> CallSession?{
         let callListen = getCurrentCallObjet(sessionId)
         return callListen?.callSession
     }
     
     func getCurrentCallState(_ sessionId:String) -> CallState{
-        
         guard let callListen = getCurrentCallObjet(sessionId),let callMachine = callListen.callMachine else {
             log.i("getCurrentCallState not found sessionId :\(sessionId), return idle ")
             return .idle
@@ -122,6 +110,27 @@ class CallListenerManager: NSObject {
             log.i("getCurrentCallObjet not found sessionId :\(sessionId) ")
             return nil
         }
+    }
+    
+    
+    
+    
+    //-------来电单独处理，暂时不用-------
+    
+    func updateCallSession(_ sessionId:String, _ sess : CallSession){
+        let callListen = getCurrentCallObjet(sessionId)
+        callListen?.updateCallSession(sess)
+    }
+    
+    func incomeCall(sessionId:String,sess:CallSession?,incoming: @escaping (_ sessionId:String,_ peerNodeId:String, ActionAck) -> Void,memberState:((MemberState,[UInt],String)->Void)?){
+        let callLister = CallStateListener(sess:sess, incoming: incoming,memberState: memberState)
+        callDict[sessionId] = callLister
+        callLister.callSession?.mSessionId = sessionId
+    }
+    
+    func acceptCall(_ sessionId:String){
+        let callListen = getCurrentCallObjet(sessionId)
+        callListen?.inComeDealTime()
     }
     
 }

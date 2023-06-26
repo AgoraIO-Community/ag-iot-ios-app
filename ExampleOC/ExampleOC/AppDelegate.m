@@ -34,10 +34,22 @@
 
 -(void)connectDevice{
     ConnectParam *connectParam = [[ConnectParam alloc] initWithMUserId:@"" mPeerDevId:@"" mLocalRtcUid:123456 mChannelName:@"" mRtcToken:@"" mRtmToken:@""];
-    [[IotSdk.shared getDeviceSessionMgr] connectWithConnectParam:connectParam sessionCallback:^(enum SessionCallback, NSString * _Nonnull, NSInteger) {
+    [[IotSdk.shared getDeviceSessionMgr] connectWithConnectParam:connectParam sessionCallback:^(SessionCallback sCallback, NSString * sessionId, NSInteger errCode) {
         
-    } memberState:^(enum MemberState, NSArray<NSNumber *> * _Nonnull, NSString * _Nonnull) {
+        if (sCallback == SessionCallbackOnConnectDone){
+            
+        }else if (sCallback == SessionCallbackOnDisconnected){
+            
+        }else{
+            
+        }
         
+    } memberState:^(MemberState mState, NSArray<NSNumber *> * uidList, NSString * sessionId) {
+        if (mState == MemberStateEnter){
+            
+        }else if(mState == MemberStateLeave){
+            
+        }
     }] ;
     
     IDevPreviewManager *preDevMgr = [[IotSdk.shared getDeviceSessionMgr] getDevPreviewMgrWithSessionId:@""];

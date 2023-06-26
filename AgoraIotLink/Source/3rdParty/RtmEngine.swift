@@ -22,6 +22,7 @@ class RtmEngine : NSObject{
         self.state = RtmEngine.IDLED
     }
     
+    //rtm 初始化
     func create(_ setting:RtmSetting)->Bool{
         let version = AgoraRtmKit.getSDKVersion()
         log.i("rtm is creating,version:\(version)")

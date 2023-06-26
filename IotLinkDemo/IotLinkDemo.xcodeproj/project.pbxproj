@@ -39,6 +39,7 @@
 		84DF99DB2A3DAA1B00F9BA3E /* CallFullScreemVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DF99D92A3DAA1B00F9BA3E /* CallFullScreemVC.swift */; };
 		84DF99F32A40818100F9BA3E /* CocoaMqttMgr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DF99F12A40818000F9BA3E /* CocoaMqttMgr.swift */; };
 		84DF99F42A40818100F9BA3E /* CocoaMqtt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DF99F22A40818000F9BA3E /* CocoaMqtt.swift */; };
+		84DF99F82A49863E00F9BA3E /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DF99F72A49863E00F9BA3E /* KeyCenter.swift */; };
 		84F7453B289BBDEA00702944 /* DeviceFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */; };
 		84F7453D289BC14A00702944 /* DeviceFirmwareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */; };
 		84F7453F289BEE0500702944 /* AGFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453E289BEE0500702944 /* AGFirmwareVC.swift */; };
@@ -260,6 +261,7 @@
 		84DF99D92A3DAA1B00F9BA3E /* CallFullScreemVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallFullScreemVC.swift; sourceTree = "<group>"; };
 		84DF99F12A40818000F9BA3E /* CocoaMqttMgr.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CocoaMqttMgr.swift; sourceTree = "<group>"; };
 		84DF99F22A40818000F9BA3E /* CocoaMqtt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CocoaMqtt.swift; sourceTree = "<group>"; };
+		84DF99F72A49863E00F9BA3E /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
 		84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareVC.swift; sourceTree = "<group>"; };
 		84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareView.swift; sourceTree = "<group>"; };
 		84F7453E289BEE0500702944 /* AGFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGFirmwareVC.swift; sourceTree = "<group>"; };
@@ -1075,6 +1077,7 @@
 			children = (
 				9697BE5C2811390B00447DF9 /* AgoraIotManager.swift */,
 				9697BE6028113BF500447DF9 /* AgoraIotConfig.swift */,
+				84DF99F72A49863E00F9BA3E /* KeyCenter.swift */,
 			);
 			path = AgoraIotTools;
 			sourceTree = "<group>";
@@ -1790,6 +1793,7 @@
 				84DF99D32A3DA74B00F9BA3E /* TopControTooBarSimpleView.swift in Sources */,
 				963956E828DDBA2B0049B9C8 /* BlufiFrameCtrlData.m in Sources */,
 				A805ADC32816A17500E6C6DF /* ConnectResultView.swift in Sources */,
+				84DF99F82A49863E00F9BA3E /* KeyCenter.swift in Sources */,
 				A89E3DE52823E1AA002FFED9 /* DoorbellMessageVC.swift in Sources */,
 				963956E528DDBA2B0049B9C8 /* ESPPeripheral.m in Sources */,
 				84CE395C28FECBAF007A749C /* SetPasswordVC.swift in Sources */,

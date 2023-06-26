@@ -82,7 +82,7 @@ public protocol IDeviceSessionMgr {
     /**
      * @brief 连接设备，每次连接设备会产生一个会话，并且自动分配sessionId，作为连接的唯一标识
      * @param connectParam : 设备连接参数
-     * @param sessionCallback  : 设备回调
+     * @param sessionCallback  : 设备回调, SessionCallback:与对端通话时的产生的行为/事件,sessionId:设备连接会话Id,errCode:错误码
      * @param memberState: 多人通话时他人的状态，uid:成员uid ,sessionId
      */
     func connect(
