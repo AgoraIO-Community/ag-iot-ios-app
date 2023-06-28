@@ -31,16 +31,24 @@ public class IDeviceSessionManager : NSObject,IDeviceSessionMgr{
         return mgr.getDevPreviewMgr(sessionId: sessionId)
     }
     
+    public func getDevController(sessionId: String) -> AgoraIotLink.IDevControllerMgr? {
+        return mgr.getDevController(sessionId: sessionId)
+    }
+    
+    public func getDevMediaMgr(sessionId: String) -> AgoraIotLink.IDevMediaMgr? {
+        return mgr.getDevMediaMgr(sessionId: sessionId)
+    }
+    
     public init(mgr:IDeviceSessionMgr) {
         self.mgr = mgr
     }
-    
+
     let mgr:IDeviceSessionMgr
     
 }
 
 public class IDevPreviewManager : NSObject,IDevPreviewMgr{
-    
+
     @objc public func previewStart(previewListener: @escaping (String, Int, Int) -> Void) {
         return mgr.previewStart(previewListener: previewListener)
     }
@@ -73,8 +81,8 @@ public class IDevPreviewManager : NSObject,IDevPreviewMgr{
         return mgr.setAudioEffect(effectId: effectId, result: result)
     }
     
-    @objc public func recordingStart(result: @escaping (Int, String) -> Void) {
-        return mgr.recordingStart(result: result)
+    @objc public func recordingStart(outFilePath: String,result: @escaping (Int, String) -> Void) {
+        return mgr.recordingStart(outFilePath:outFilePath,result: result)
     }
     
     @objc public func recordingStop(result: @escaping (Int, String) -> Void) {
