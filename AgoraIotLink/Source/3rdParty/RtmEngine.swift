@@ -17,9 +17,16 @@ class RtmEngine : NSObject{
     private var config:Config
     private var state:Int = IDLED
     
+    var timer: Timer?
+    var curSession: RtmSession?
+    
     init(cfg:Config) {
         self.config = cfg
         self.state = RtmEngine.IDLED
+    }
+    
+    deinit {
+        log.i("RtmEngine 销毁了")
     }
     
     //rtm 初始化
@@ -35,7 +42,7 @@ class RtmEngine : NSObject{
         log.i("rtm created")
         return true
     }
-    private func sendLoginCallback(_ e:AgoraRtmLoginErrorCode,_ statusUpdated:@escaping(MessageChannelStatus,String,Data?)->Void,_ cb:@escaping(TaskResult,String)->Void){
+    private func sendLoginCallback(_ e:AgoraRtmLoginErrorCode,_ cb:@escaping(TaskResult,String)->Void){
         var msg = "unknown error"
         var ec:Int = ErrCode.XERR_API_RET_FAIL
         switch(e){
@@ -75,23 +82,30 @@ class RtmEngine : NSObject{
         }
         else{
             log.i("rtm login status:\(msg)(\(e.rawValue)) ...")
-            self._statusUpdated = statusUpdated
             self._enterCallback = cb
         }
     }
 
-    private var _statusUpdated:((MessageChannelStatus,String,Data?)->Void)?  = nil
+    private var _statusUpdated:((MessageChannelStatus,String,AgoraRtmMessage?)->Void)?  = nil
     private var _enterCallback:((TaskResult,String)->Void)? = nil
-    func enter(_ sess:RtmSession,_ uid:String,_ statusUpdated:@escaping(MessageChannelStatus,String,Data?)->Void, _ cb:@escaping (TaskResult,String)->Void){
+    
+    public func waitForStatusUpdated(statusUpdated:@escaping(MessageChannelStatus,String,AgoraRtmMessage?)->Void){
+        _statusUpdated = statusUpdated
+    }
+    
+    func enter(_ sess:RtmSession,_ uid:String,_ cb:@escaping (TaskResult,String)->Void){
         log.i("rtm try enter with token:\(sess.token),local:\(uid)")
+        curSession = sess
         if(self._statusUpdated != nil){
             log.w("rtm _statusChanged is not nil,should call sendMessageEnd() before sendMessageBegin()")
         }
         let ret = kit?.login(byToken: sess.token, user: uid) { err in
-            self.sendLoginCallback(err,statusUpdated,{tr,msg in
+            self.sendLoginCallback(err,{tr,msg in
                 if(tr == TaskResult.Succ){
                     self.state = RtmEngine.ENTERED
                 }
+                //todo:
+//                self.heartbeatTimer()
                 cb(tr,msg)
             })
         }
@@ -113,25 +127,32 @@ class RtmEngine : NSObject{
     }
     func leave(cb:@escaping (Bool)->Void){
         log.i("rtm try leaveChannel ...")
+        
+        kit?.agoraRtmDelegate = nil
         self._statusUpdated = nil
+        stopTimer()
         if(self._enterCallback != nil){
             self._enterCallback?(.Abort,"abort login")
             self._enterCallback = nil
         }
+        
         if(state != RtmEngine.ENTERED){
             log.e("rtm state : \(state) error for leave()")
+            kit = nil
             cb(false)
             return
         }
+        
         guard let kit = kit else{
             log.e("rtm engine is nil")
             cb(false)
             return
         }
-        kit.logout { err in
-            self.state = RtmEngine.IDLED
+        kit.logout {[weak self] err in
+            self?.state = RtmEngine.IDLED
+            self?.kit = nil
             DispatchQueue.main.async {
-                self.sendLogoutCallback(err, cb)
+                self?.sendLogoutCallback(err, cb)
             }
         }
     }
@@ -215,7 +236,7 @@ class RtmEngine : NSObject{
         }
     }
     func destroy(){
-        log.i("rt=m is destroying()")
+        log.i("rtm is destroying()")
         if(kit == nil){
             log.e("rtc engine is nil")
             return
@@ -227,14 +248,14 @@ class RtmEngine : NSObject{
         
         state = RtmEngine.IDLED
     }
-    func createThenEnter(_ setting:RtmSetting,_ sess:RtmSession,_ uid:String,_ statusUpdated:@escaping(MessageChannelStatus,String,Data?)->Void,cb:@escaping (TaskResult,String)->Void){
+    func createThenEnter(_ setting:RtmSetting,_ sess:RtmSession,_ uid:String,cb:@escaping (TaskResult,String)->Void){
         log.i("rtm createThenEnter when state:\(state)")
         if(!create(setting)){
             log.w("rtm create kit error when createAndEnter")
             cb(.Fail,"create rtm fail")
             return
         }
-        enter(sess,uid,statusUpdated, cb)
+        enter(sess,uid, cb)
     }
     
     func leaveThenDestroy(cb:@escaping (Bool)->Void){
@@ -262,19 +283,25 @@ class RtmEngine : NSObject{
 extension RtmEngine : AgoraRtmDelegate{
     func rtmKit(_ kit: AgoraRtmKit, messageReceived message: AgoraRtmMessage, fromPeer peerId: String) {
         log.i("rtm messageReceived from \(peerId) type:\(message.type) ts:\(message.serverReceivedTs) offline:\(message.isOfflineMessage)")
-        if(message.type == .raw){
-            if let raw = message as? AgoraRtmRawMessage{
-                DispatchQueue.main.async {
-                    self._statusUpdated?(.DataArrived,peerId,raw.rawData)
-                }
-            }
-            else{
-                log.e("rtm message type cast error")
-            }
-        }
-        else{
-            log.w("rtm unhandled messate type \(message.type)")
-        }
+        self._statusUpdated?(.DataArrived,peerId,message)
+        
+//        if(message.type == .raw){
+//            if let raw = message as? AgoraRtmRawMessage{
+//                DispatchQueue.main.async {
+//                    self._statusUpdated?(.DataArrived,peerId,raw.rawData)
+//                }
+//            }
+//            else{
+//                log.e("rtm message type cast error")
+//            }
+//        }else if(message.type == .text){
+//            DispatchQueue.main.async {
+//                self._statusUpdated?(.DataArrived,peerId,message.text)
+//            }
+//        }
+//        else{
+//            log.w("rtm unhandled messate type \(message.type)")
+//        }
     }
     private func sendStateUpdated(_ state: AgoraRtmConnectionState, _ reason: AgoraRtmConnectionChangeReason){
         switch(state){
@@ -323,4 +350,36 @@ extension RtmEngine : AgoraRtmDelegate{
             self._statusUpdated?(.TokenWillExpire,"",nil)
         }
     }
+}
+
+extension RtmEngine{
+    
+    func  heartbeatTimer(){
+        timer = Timer()
+        startTimer()
+    }
+    
+    func startTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(sendMessage), userInfo: nil, repeats: true)
+    }
+    
+    @objc func sendMessage() {
+        // 在这里实现发送消息的逻辑
+        log.i("send empty msg")
+        guard let peer =  curSession?.peerVirtualNumber else{
+            log.i("peerVirtualNumber is nil")
+            return
+        }
+        sendStringMessage(toPeer:peer, message: "empty msg") { code, msg in
+            log.i("RtmEnginesendStringMessage")
+        }
+    }
+    
+    func stopTimer() {
+        log.i("RtmEngine timer is nil")
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    
 }

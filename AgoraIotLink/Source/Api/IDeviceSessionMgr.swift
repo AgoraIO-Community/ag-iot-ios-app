@@ -121,4 +121,18 @@ public protocol IDeviceSessionMgr {
      */
     func getDevPreviewMgr(sessionId:String)->IDevPreviewMgr?
     
+    /**
+     * @brief 获取设备控制器组件接口
+     * @param sessionId : 会话唯一标识
+     * @return 返回该会话的设备控制器组件接口
+     */
+    func getDevController(sessionId:String)->IDevControllerMgr?
+    
+    /**
+     * @brief 获取设备媒体文件管理器组件接口
+     * @param sessionId : 会话唯一标识
+     * @return 返回该会话的媒体文件管理器组件接口
+     */
+    func getDevMediaMgr(sessionId:String)->IDevMediaMgr?
+    
 }

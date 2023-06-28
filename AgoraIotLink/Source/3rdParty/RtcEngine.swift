@@ -508,7 +508,7 @@ class RtcEngine : NSObject{
         isSnapShoting.setValue(true)
     }
     
-    func startRecord(result: @escaping (Int, String) -> Void){
+    func startRecord(outFilePath:String, result: @escaping (Int, String) -> Void){
         
         log.i("rtc try capturePeerVideoFrame ...")
         if(!peerEntered){
@@ -517,6 +517,7 @@ class RtcEngine : NSObject{
             return
         }
     
+        videoRecordM.outFilePath = outFilePath
         videoRecoredHanle(true)
         isRecording.setValue(true)
         result(ErrCode.XOK,"已开始")
@@ -658,7 +659,7 @@ extension RtcEngine : AgoraVideoFrameDelegate{
             
             if(videoFrame.type == 12){//CVPixelBufferRef
                 
-                log.i("rtc capture frame is CVPixelBufferRef")
+//                log.i("rtc capture frame is CVPixelBufferRef")
                 
                 if let buffer = videoFrame.pixelBuffer{
                     videoRecordM.videoWithSampleBuffer(buffer)

@@ -69,6 +69,7 @@ class CallStateListener: NSObject {
         callSession = CallSession()
         callSession?.callType = .DIAL
         callSession?.peerNodeId = dialParam.mPeerDevId
+        callSession?.mUserId = dialParam.mUserId
         
         //RTC需要的参数
         callSession?.token = dialParam.mRtcToken
@@ -292,3 +293,32 @@ extension CallStateListener : CallStateMachineListener{
     }
   
 }
+
+extension CallStateListener{//rtm
+    
+    func creatAndEnterRtm(){
+        
+        let rtm = callSession?.rtm
+        //初始化其他
+        let setting = app.context.rtm.setting
+        let succ = rtm?.create(setting)
+        
+        if succ == true{
+            let rtmSession = RtmSession()
+            rtmSession.token = callSession?.mRtmToken ?? ""
+            rtmSession.peerVirtualNumber = callSession?.peerNodeId ?? ""
+            
+            let uid = callSession?.mUserId ?? ""
+            rtm?.enter(rtmSession, "\(uid)") { [weak self] ret, msg in
+                if ret == .Fail{
+                    self?.callAct(.onDisconnected,self?.callSession?.mSessionId ?? "",ErrCode.XOK)
+                    //todo:
+//                    self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
+                }
+            }
+
+        }
+
+    }
+}
+

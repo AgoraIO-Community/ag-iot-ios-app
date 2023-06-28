@@ -30,9 +30,18 @@ class CallListenerManager: NSObject {
         let preMgr = IDevPreviewManager(app: self.app,sessionId:sessionId)
         callListen.callSession?.devPreviewMgr = preMgr
         
-        //初始化其他
-        let setting = app.context.rtm.setting
-        let succ = app.proxy.rtm.create(setting)
+        initRtm(callListen, sessionId)
+    }
+    
+    func initRtm(_ callListen : CallStateListener,_ sessionId:String){//初始化其他
+        let rtm = RtmEngine(cfg: app.config)
+        callListen.callSession?.rtm = rtm
+        
+        callListen.creatAndEnterRtm()
+        
+        let controlMgr = IDevControllerManager(app: self.app, rtm: rtm, sessionId: sessionId)
+        callListen.callSession?.devControlMgr = controlMgr
+   
     }
     
     func callRequest(_ sessionId:String = ""){
@@ -49,7 +58,12 @@ class CallListenerManager: NSObject {
         log.i("CallListenerManager hangUp 调用了")
         
         //断开其他
-        app.proxy.rtm.destroy();
+        callListen?.callSession?.rtm?.leave(cb: { succ in
+            if(!succ){
+                log.w("rtm leave fail")
+            }
+        })
+        callListen?.callSession?.rtm?.destroy();
         
     }
     

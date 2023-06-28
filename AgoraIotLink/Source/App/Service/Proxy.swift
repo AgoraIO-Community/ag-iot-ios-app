@@ -11,7 +11,7 @@ internal class Proxy{
     private var _gw : IotLink!
     private var _al : AgoraLab!
     private var _rtc: RtcEngine?
-    private var _rtm: RtmEngine?
+//    private var _rtm: RtmEngine?
     private var _ntf: PushNotifier!
 //    private var _mqtt:AWSMqtt!
     
@@ -20,11 +20,11 @@ internal class Proxy{
     var ntf:PushNotifier{get{return _ntf!}}
     var rtc:RtcEngine{get{return _rtc!}}
 //    var mqtt:AWSMqtt{get{return _mqtt}}
-    var rtm:RtmEngine{get{return _rtm!}}
+//    var rtm:RtmEngine{get{return _rtm!}}
     
     init(event:StateListener, rule:RuleManager,cfg:Config,ctx:Context){
         self._rtc = RtcEngine()
-        self._rtm = RtmEngine(cfg:cfg)
+//        self._rtm = RtmEngine(cfg:cfg)
         self._ntf = PushNotifier(cfg: cfg)
 //        self._mqtt = AWSMqtt(cfg: cfg)
 //        self._mqtt.onStatusChanged = event.onMqttStatusChanged

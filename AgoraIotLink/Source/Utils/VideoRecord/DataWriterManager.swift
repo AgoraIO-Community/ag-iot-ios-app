@@ -43,6 +43,8 @@ public class DataWriterManager: NSObject {
     var videoW : CGFloat = 0
     var videoH : CGFloat = 0
     
+    var outFilePath : String = ""
+    
 	private var timer: Timer?
 	private var recordTime: CGFloat = 0
 	private var isCanWrite: Bool = false
@@ -272,7 +274,12 @@ public class DataWriterManager: NSObject {
 	}
 	private func setUpWriter() {
 		
-        videoUrl = getTempVideoUrl()
+        if outFilePath == ""{
+            videoUrl = getTempVideoUrl()
+        }else{
+            videoUrl = URL.init(fileURLWithPath: outFilePath)
+        }
+        
         outputSize = CGSize.init(width: videoW, height: videoH)
         debugPrint("--outputSize--%@---%@",videoW,videoH)
         
@@ -280,6 +287,15 @@ public class DataWriterManager: NSObject {
         // 获取当前屏幕的最佳分辨率
         guard let screenSize = UIScreen.main.currentMode?.size else{
             return
+        }
+        
+        if outputSize.width == 0 {
+            debugPrint("---outputSize.width---%@",outputSize.height)
+            outputSize.width = 1
+        }
+        if outputSize.height == 0 {
+            debugPrint("---outputSize.height---%@",outputSize.height)
+            outputSize.height = 1
         }
           
         let wScale = screenSize.width / (outputSize.width)

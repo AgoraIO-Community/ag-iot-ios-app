@@ -44,11 +44,9 @@ class RtmSetting{
 
 class RtmSession{
     var token:String = ""
-    //var loginId:String = ""
     var peerVirtualNumber:String = ""
     func reset(){
         self.token = ""
-        //self.loginId = ""
         self.peerVirtualNumber = ""
     }
 }

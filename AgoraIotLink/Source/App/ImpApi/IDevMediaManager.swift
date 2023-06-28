@@ -10,6 +10,18 @@ import Foundation
 
 class IDevMediaManager : IDevMediaMgr{
     
+    private var app:Application
+    private var curSessionId:String //当前sessionId
+    
+    init(app:Application,sessionId:String){
+        self.app = app
+        self.curSessionId = sessionId
+    }
+    
+    deinit {
+        log.i("IDevMediaManager 销毁了")
+    }
+    
     func queryMediaList(queryParam: QueryParam, queryListener: @escaping (Int, [DevMediaItem]) -> Void) {
         
     }

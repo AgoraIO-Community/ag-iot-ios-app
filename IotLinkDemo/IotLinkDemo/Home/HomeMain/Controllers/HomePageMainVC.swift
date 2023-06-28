@@ -317,10 +317,12 @@ extension HomePageMainVC { //呼叫设备
         log.i("connectDevice \(device.peerNodeId)")
         
         doorbellVM.connectDevice(connectParam) { [weak self] sessionId, act in
+            
             cell?.handelCallStateText(true)
+            device.sessionId = sessionId
+            cell?.tag = (self?.getTagFromSessionId(sessionId))!
+            
             if(act == .onConnectDone){
-                device.sessionId = sessionId
-                cell?.tag = (self?.getTagFromSessionId(sessionId))!
                 self?.handelUserMembers(1,sessionId)
                 self?.previewStart(sessionId: sessionId)
             }else{

@@ -79,10 +79,10 @@ class DoorBellManager: NSObject {
     }
     
     //开始录制当前通话（包括音视频流），仅在通话状态下才能调用
-    func talkingRecordStart(sessionId:String = "",cb:@escaping(Bool,String)->Void){
+    func talkingRecordStart(outFilePath:String = "", sessionId:String = "",cb:@escaping(Bool,String)->Void){
         //todo:
         let callkitMgr = getDevSessionMgr(sessionId)
-        callkitMgr.recordingStart(result: { ec, msg in
+        callkitMgr.recordingStart(outFilePath: outFilePath, result: { ec, msg in
             cb(ec == ErrCode.XOK ? true : false , msg)
             debugPrint("\(msg)")
         })

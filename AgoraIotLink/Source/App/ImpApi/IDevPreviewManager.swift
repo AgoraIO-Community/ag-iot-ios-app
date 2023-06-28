@@ -22,8 +22,8 @@
 
 
 public class CallSession : NSObject{
-    var token = ""
-    var cname = ""    //对端nodeId
+    var token:String = ""
+    var cname:String = ""               //对端nodeId
     var uid:UInt = 0
 
     var version:UInt = 0
@@ -31,12 +31,17 @@ public class CallSession : NSObject{
     var peerUid:UInt = 0                //对端id
     
     var callType:CallType = .UNKNOWN    //通话类型
-    var mSessionId = ""                 //通话Id
+    var mSessionId:String = ""          //通话Id
     var traceId:UInt = 0                //追踪ID
-    var peerNodeId = ""                 //对端nodeId
+    var peerNodeId:String = ""          //对端nodeId
     
-    var devPreviewMgr : IDevPreviewMgr?    //设备预览接口对象
+    var devPreviewMgr : IDevPreviewMgr?       //设备预览接口对象
+    var devControlMgr : IDevControllerMgr?    //设备控制接口对象
+    var devMediaMgr : IDevMediaMgr?           //设备媒体文件管理器接口对象
     
+    
+    var mUserId: String = ""             //本地用户的 UserId
+    var rtm : RtmEngine?                 //当前连接对应的Rtm对象
     var mRtmToken: String = ""           //要会话的 RTM Token
     
 }
@@ -83,6 +88,10 @@ class IDevPreviewManager : IDevPreviewMgr{
         mutePeerVideo(mute: true) { ec, msg in }
         result(ErrCode.XOK,"success")
         
+    }
+    
+    deinit {
+        log.i("IDevPreviewManager 销毁了")
     }
     
 }
@@ -137,9 +146,9 @@ extension IDevPreviewManager{
         }
     }
     
-    func recordingStart(result: @escaping (Int, String) -> Void) {
+    func recordingStart(outFilePath:String, result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
-            self.rtc.startRecord(result: {ec,msg in self.asyncResult(ec, msg,result)})
+            self.rtc.startRecord(outFilePath:outFilePath, result: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     

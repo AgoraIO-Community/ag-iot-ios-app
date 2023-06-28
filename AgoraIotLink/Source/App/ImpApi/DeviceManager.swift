@@ -348,44 +348,44 @@ class DeviceManager : IDeviceMgr{
             let local = self.app.context.virtualNumber
             let peer = deviceId
 
-            self.app.proxy.al.reqControlInfo(agToken, local, peer) { ec, msg, sess in
-                if(ErrCode.XOK == ec){
-                    guard let sess = sess else{
-                        log.e("rtm sess is nil")
-                        self.asyncResult(ErrCode.XERR_UNKNOWN,msg,result)
-                        return
-                    }
-                    self.app.context.rtm.session.token = sess.token
-                    self.app.context.rtm.session.peerVirtualNumber = peer
-                    let uid = self.app.context.virtualNumber
-                    self.app.proxy.rtm.enter(self.app.context.rtm.session,uid,statusUpdated) { tr, msg in
-                        if(tr != .Succ){
-                            log.e("rtm enter not succ,reset session")
-                            self.app.context.rtm.session.reset()
-                        }
-                        self.asyncResult(tr == .Succ ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,msg,result)
-                    }
-                }
-                else{
-                    self.asyncResult(ec,msg,result)
-                }
-            }
+//            self.app.proxy.al.reqControlInfo(agToken, local, peer) { ec, msg, sess in
+//                if(ErrCode.XOK == ec){
+//                    guard let sess = sess else{
+//                        log.e("rtm sess is nil")
+//                        self.asyncResult(ErrCode.XERR_UNKNOWN,msg,result)
+//                        return
+//                    }
+//                    self.app.context.rtm.session.token = sess.token
+//                    self.app.context.rtm.session.peerVirtualNumber = peer
+//                    let uid = self.app.context.virtualNumber
+//                    self.app.proxy.rtm.enter(self.app.context.rtm.session,uid,statusUpdated) { tr, msg in
+//                        if(tr != .Succ){
+//                            log.e("rtm enter not succ,reset session")
+//                            self.app.context.rtm.session.reset()
+//                        }
+//                        self.asyncResult(tr == .Succ ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,msg,result)
+//                    }
+//                }
+//                else{
+//                    self.asyncResult(ec,msg,result)
+//                }
+//            }
         }
     }
     
     func sendMessageEnd() {
-        self.app.proxy.rtm.leave { succ in
-            if(!succ){
-                log.w("rtm leave fail")
-            }
-        }
+//        self.app.proxy.rtm.leave { succ in
+//            if(!succ){
+//                log.w("rtm leave fail")
+//            }
+//        }
     }
     
     func sendMessage(data: Data, description: String, result: @escaping (Int, String) -> Void) {
-        DispatchQueue.main.async {
-            let peerVirtualNumber = self.app.context.rtm.session.peerVirtualNumber
-            self.app.proxy.rtm.sendRawMessage(toPeer: peerVirtualNumber, data: data, description: description, cb: {ec,msg in self.asyncResult(ec,msg,result)})
-        }
+//        DispatchQueue.main.async {
+//            let peerVirtualNumber = self.app.context.rtm.session.peerVirtualNumber
+//            self.app.proxy.rtm.sendRawMessage(toPeer: peerVirtualNumber, data: data, description: description, cb: {ec,msg in self.asyncResult(ec,msg,result)})
+//        }
     }
     
     private func doStartPlayback(channelName: String, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){

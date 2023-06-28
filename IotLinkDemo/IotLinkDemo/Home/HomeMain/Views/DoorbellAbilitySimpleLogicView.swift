@@ -346,7 +346,9 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         guard let device = device, device.sessionId != "" else { return }
         
         if startRecord == false {
-            DoorBellManager.shared.talkingRecordStart(sessionId: device.sessionId) {[weak self] success, msg in
+            let videoPath = getTempVideoUrl()
+            print("videoPath:\(videoPath)")
+            DoorBellManager.shared.talkingRecordStart(outFilePath:videoPath,sessionId: device.sessionId) {[weak self] success, msg in
                 if success{
                     self?.toolBarView.callBtn.isSelected = true
                     self?.startRecord = true
@@ -365,6 +367,23 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         }
     }
     
+    func getTempVideoUrl() -> String {
+        let videoName = String.init(format: "out_test%@.mp4", UUID().uuidString)
+        let videoPath = NSString(string: recordVideoFolder).appendingPathComponent(videoName) as String
+
+        return videoPath
+    }
+    //MARK: ----- property
+    var recordVideoFolder: String {//NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory
+        if let path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first {
+            let direc = NSString(string: path).appendingPathComponent("VideoFile") as String
+            if !FileManager.default.fileExists(atPath: direc) {
+                try? FileManager.default.createDirectory(atPath: direc, withIntermediateDirectories: true, attributes: [:])
+            }
+            return direc
+        }
+        return ""
+    }
     
     func fetchPHAuthorization()->Bool{
         

@@ -7,7 +7,7 @@
 
 
 class IDeviceSessionManager : IDeviceSessionMgr{
-    
+
     func connect(connectParam: ConnectParam, sessionCallback: @escaping (SessionCallback, String, Int) -> Void, memberState: ((MemberState, [UInt], String) -> Void)?) {
         
         if CallListenerManager.sharedInstance.isCallTaking(connectParam.mPeerDevId) == true{
@@ -48,8 +48,18 @@ class IDeviceSessionManager : IDeviceSessionMgr{
     func getDevPreviewMgr(sessionId: String) -> IDevPreviewMgr? {
         
         let callSession = CallListenerManager.sharedInstance.getCurrentCallSession(sessionId)
-        
         return callSession?.devPreviewMgr!
+    }
+    
+    func getDevController(sessionId: String) -> IDevControllerMgr? {
+        
+        let callSession = CallListenerManager.sharedInstance.getCurrentCallSession(sessionId)
+        return callSession?.devControlMgr!
+    }
+    
+    func getDevMediaMgr(sessionId: String) -> IDevMediaMgr? {
+        let callSession = CallListenerManager.sharedInstance.getCurrentCallSession(sessionId)
+        return callSession?.devMediaMgr!
     }
     
     
@@ -61,12 +71,5 @@ class IDeviceSessionManager : IDeviceSessionMgr{
         self.app = app
         self.rtc = app.proxy.rtc
     }
-    
-    func onSessionDisconnected(sessionId: String) {
-        log.i("onSessionDisconnected:\(sessionId)")
-        
-    }
-    
-    
     
 }
