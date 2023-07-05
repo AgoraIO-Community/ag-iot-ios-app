@@ -40,4 +40,6 @@ class Config {
     var projectId:String = ""    //vender Id
     
     var maxRtmPackage = 1024*1
+    
+    var curSequenceId : UInt32 = 2
 }

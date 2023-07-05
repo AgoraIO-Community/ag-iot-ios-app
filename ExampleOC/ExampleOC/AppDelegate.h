@@ -9,7 +9,9 @@
 #import "AgoraIotLink-Swift.h"
 #import "IotStateDelegate.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate,IotStateDelegate,IotCallbackDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate,IotStateDelegate,IotCallbackDelegate,IPlayingCallbackListener>
+
+@property (nonatomic , strong) UIWindow *window;
 
 -(void)DeviceStateUpdate:(BOOL)onoff deviceId:(NSString*)deviceId productId:(NSString*)productId;
 

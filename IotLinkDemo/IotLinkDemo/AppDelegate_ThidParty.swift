@@ -18,7 +18,7 @@ extension AppDelegate{
         
         let param:InitParam = InitParam()
         
-        param.rtcAppId = AgoraIotConfig.appId
+        param.rtcAppId = "aab8b8f5a8cd4469a63042fcfafe7063" //AgoraIotConfig.appId
         param.projectId = AgoraIotConfig.projectId
         
         if(ErrCode.XOK != iotsdk.initialize(initParam: param,callbackFilter:{ [weak self] ec, msg in
@@ -30,6 +30,9 @@ extension AppDelegate{
         })){
             log.e("initialize failed")
         }
+        
+        
+        
         
 //        AgoraIotSdk.iotsdk.callkitMgr.register(incoming: {peerId,msg,action in})
 //        sdk?.callkitMgr.register(incoming: {[weak self] sessionId,peerNodeId,callin  in

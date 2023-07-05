@@ -10,6 +10,7 @@
 		241E9514AF5C21D05B21E03E /* Pods_IotLinkDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB6EBD13EF6155EB7EC65C6A /* Pods_IotLinkDemo.framework */; };
 		8429E9412949FC700064B604 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429E9402949FC700064B604 /* NSString+Extension.m */; };
 		8429E943295003180064B604 /* ResetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8429E942295003170064B604 /* ResetPasswordVC.swift */; };
+		84A963E32A544B3800DEC70E /* DeviceDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A963E22A544B3800DEC70E /* DeviceDetailVC.swift */; };
 		84B3254928A394CA0054B369 /* ThirdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254828A394CA0054B369 /* ThirdManager.swift */; };
 		84B3254F28A50AA60054B369 /* DoorbellControlVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254E28A50AA60054B369 /* DoorbellControlVC.swift */; };
 		84B3255128A5ED190054B369 /* TextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3255028A5ED190054B369 /* TextInputView.swift */; };
@@ -232,6 +233,7 @@
 		8429E93F2949FC700064B604 /* NSString+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		8429E9402949FC700064B604 /* NSString+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		8429E942295003170064B604 /* ResetPasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetPasswordVC.swift; sourceTree = "<group>"; };
+		84A963E22A544B3800DEC70E /* DeviceDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailVC.swift; sourceTree = "<group>"; };
 		84B3254828A394CA0054B369 /* ThirdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdManager.swift; sourceTree = "<group>"; };
 		84B3254E28A50AA60054B369 /* DoorbellControlVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellControlVC.swift; sourceTree = "<group>"; };
 		84B3255028A5ED190054B369 /* TextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
@@ -622,6 +624,22 @@
 				D4C3B17B7C6B1173874ED316 /* Pods-AgoraIotLinkDemo.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		84A963E02A54488900DEC70E /* DeviceAblity */ = {
+			isa = PBXGroup;
+			children = (
+				84A963E12A544AC800DEC70E /* Controllers */,
+			);
+			path = DeviceAblity;
+			sourceTree = "<group>";
+		};
+		84A963E12A544AC800DEC70E /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				84A963E22A544B3800DEC70E /* DeviceDetailVC.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 		84B3254728A394AC0054B369 /* thirdParty */ = {
@@ -1186,6 +1204,7 @@
 				A89E3DDD2823DBCB002FFED9 /* Doorbell */,
 				96E4C1172807FB4F00A53A49 /* Base */,
 				96E4C11D2807FF6500A53A49 /* SwiftTools */,
+				84A963E02A54488900DEC70E /* DeviceAblity */,
 				96E4C121280D437C00A53A49 /* Home */,
 				96E4C122280D438C00A53A49 /* Mine */,
 				9601C308280D68FF00D3CA49 /* Login */,
@@ -1764,6 +1783,7 @@
 				9697BE962812B25F00447DF9 /* EXT-CutOutStr.swift in Sources */,
 				9697BE992812B25F00447DF9 /* EXT-GraphicsImage.swift in Sources */,
 				9697BE7628128A0D00447DF9 /* RegisterView.swift in Sources */,
+				84A963E32A544B3800DEC70E /* DeviceDetailVC.swift in Sources */,
 				9618253E2818356600053691 /* VerficaCodeView.swift in Sources */,
 				A89E3DDF2823DD28002FFED9 /* DoorbellContainerVC.swift in Sources */,
 				A89E3DEC2825FEC1002FFED9 /* DoorbellPlayerBottomView.swift in Sources */,

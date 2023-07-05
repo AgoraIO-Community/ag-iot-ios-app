@@ -1,8 +1,8 @@
 //
-//  HomePageMainVC.swift
-//  AgoraIoT
+//  DeviceDetailVC.swift
+//  IotLinkDemo
 //
-//  Created by wanghaipeng on 2022/4/18.
+//  Created by admin on 2023/7/4.
 //
 
 import UIKit
@@ -15,16 +15,11 @@ import SVProgressHUD
 import SwiftDate
 
 
-// 网络监测通知
-let cNetChangeNotify = "cNetChangeNotify"
-
 private let kCellID = "HomeMainDeviceCell"
 
-//var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
+var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
 
-
-
-class HomePageMainVC: AGBaseVC {
+class DeviceDetailVC: AGBaseVC {
     
     fileprivate var  doorbellVM = DoorBellManager.shared
     var mDevicesArray = [MDeviceModel]()
@@ -32,7 +27,7 @@ class HomePageMainVC: AGBaseVC {
     
     var curIndex : IndexPath?
     var curTraceId : UInt = 0//用来过滤多余的返回数据
-
+    var curSessionId : String = ""
 
     lazy var topView:MainTopView = {
         let topView = MainTopView()
@@ -50,6 +45,13 @@ class HomePageMainVC: AGBaseVC {
         vodView.backgroundColor = UIColor.cyan
         
         return vodView
+    }()
+    
+    lazy var simplePeerView:UIView = {
+        let peerView = UIView()
+        peerView.backgroundColor = UIColor.black
+        
+        return peerView
     }()
 
     lazy var tipsView:NetworkTipsView = {
@@ -90,18 +92,24 @@ class HomePageMainVC: AGBaseVC {
     }()
     
 
+    deinit {
+        log.i("DeviceDetailVC 销毁了")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        checkLoginState()
+//        checkLoginState()
         addObserver()
         setUpUI()
+        initAgoraIot()
+//        loadData()
         // 监听网络状态
         startListeningNetStatus()
         loadPreConfig()
         
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-//            sdk?.release()
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.requestConDeviceParam()
+        }
     }
     
     //初始化mqtt
@@ -121,28 +129,16 @@ class HomePageMainVC: AGBaseVC {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // 隐藏导航栏
-        navigationController?.navigationBar.isHidden = true
-//        let callkitMgr = getDevSessionMgr("")
-//        if((callkitMgr?.getNetworkStatus().isBusy) != nil){
-//           callkitMgr?.mutePeerAudio(mute: false, result: {ec,msg in})
-//        }
         
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        // 显示导航栏
-        navigationController?.navigationBar.isHidden = false
+        sdk?.deviceSessionMgr.disconnect(sessionId: curSessionId)
+        sdk?.release()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-//        let callkitMgr = getDevSessionMgr("")
-//        if((callkitMgr?.getNetworkStatus().isBusy) != nil){
-//            callkitMgr?.mutePeerAudio(mute: true, result: {ec,msg in
-//                print("\(ec)---\(msg)")
-//            })
-//        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -190,6 +186,13 @@ class HomePageMainVC: AGBaseVC {
             make.left.right.bottom.equalToSuperview()
             make.top.equalTo(tipsView.snp.bottom)
         }
+        
+        view.addSubview(simplePeerView)
+        simplePeerView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(100)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(220)
+        }
     }
     
     // 监听网络状态
@@ -218,7 +221,7 @@ class HomePageMainVC: AGBaseVC {
 }
 
 
-extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
+extension DeviceDetailVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 230
@@ -249,8 +252,7 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
             self.callDevice(indexPath: index)
         }
         cell.fullScreenBlock = { index in
-            self.goToDeciceDetailVC(indexPath:indexPath)
-//            self.goToFullVC(indexPath:indexPath)
+            self.goToFullVC(indexPath:indexPath)
         }
         return cell
     }
@@ -267,7 +269,7 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension HomePageMainVC { //vodPlayer
+extension DeviceDetailVC { //vodPlayer
     
     func openVodPlayer(){
         sdk?.vodPlayerMgr.open(mediaUrl: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8", callback: { [weak self] errCode, displayView in
@@ -296,7 +298,7 @@ extension HomePageMainVC { //vodPlayer
 
 
 
-extension HomePageMainVC { //呼叫设备
+extension DeviceDetailVC { //呼叫设备
 
     //---------设备控制相关-----------
     //呼叫设备
@@ -367,32 +369,39 @@ extension HomePageMainVC { //呼叫设备
     //连接设备
     func connectDevice(connectParam : ConnectParam){
         
-        guard let indexPath = curIndex else {
-            return
-        }
+//        guard let indexPath = curIndex else {
+//            return
+//        }
+//
+//        let cell = tableView.cellForRow(at: indexPath) as? HomeMainDeviceCell
+//        let device = mDevicesArray[indexPath.row]
+//
+//        log.i("connectDevice \(device.peerNodeId)")
         
-        let cell = tableView.cellForRow(at: indexPath) as? HomeMainDeviceCell
-        let device = mDevicesArray[indexPath.row]
-        
-        log.i("connectDevice \(device.peerNodeId)")
-        
-        doorbellVM.connectDevice(connectParam) { [weak self] sessionId, act in
-            
-            cell?.handelCallStateText(true)
-            device.sessionId = sessionId
-            cell?.tag = (self?.getTagFromSessionId(sessionId))!
-            
+        let conResult = doorbellVM.connectDevice(connectParam) { [weak self] sessionId, act in
+
             if(act == .onConnectDone){
-                self?.handelUserMembers(1,sessionId)
                 self?.previewStart(sessionId: sessionId)
-            }else{
-                self?.handelCallAct(sessionId,act)
             }
             
+//            cell?.handelCallStateText(true)
+//            device.sessionId = sessionId
+//            cell?.tag = (self?.getTagFromSessionId(sessionId))!
+//
+//            if(act == .onConnectDone){
+//                self?.handelUserMembers(1,sessionId)
+//                self?.previewStart(sessionId: sessionId)
+//            }else{
+//                self?.handelCallAct(sessionId,act)
+//            }
+            
         } _: { [weak self] members,sessionId in
-            self?.handelUserMembers(members,sessionId)
+//            self?.handelUserMembers(members,sessionId)
         }
         
+        if conResult.mErrCode == 0, conResult.mSessionId != ""{
+            curSessionId = conResult.mSessionId
+        }
     }
     
     func handelUserMembers(_ members:Int,_ sessionId:String){
@@ -435,14 +444,19 @@ extension HomePageMainVC { //呼叫设备
         
         DoorBellManager.shared.previewStart(sessionId: sessionId) {[weak self] sessionId, videoWidth, videoHeight in
             
-            debugPrint("获取到首帧")
-            let cell = self?.getCurrentCellWithTag(sessionId)
-            cell?.configPeerView(sessionId)
-            cell?.handelCallTipType(.playing)
-            if self?.isFullScreemVisible() == true{
-                //首帧如果是详情页，则发送通知
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: ReceiveFirstVideoFrameNotify), object: nil, userInfo: nil)
-            }
+            
+            let  callkitMgr = (sdk?.deviceSessionMgr.getDevPreviewMgr(sessionId: sessionId))!
+            callkitMgr.setPeerVideoView(peerView: self?.simplePeerView)
+            
+            
+//            debugPrint("获取到首帧")
+//            let cell = self?.getCurrentCellWithTag(sessionId)
+//            cell?.configPeerView(sessionId)
+//            cell?.handelCallTipType(.playing)
+//            if self?.isFullScreemVisible() == true{
+//                //首帧如果是详情页，则发送通知
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: ReceiveFirstVideoFrameNotify), object: nil, userInfo: nil)
+//            }
             
         }
     }
@@ -481,24 +495,27 @@ extension HomePageMainVC { //呼叫设备
 }
 
 
-extension HomePageMainVC{
+extension DeviceDetailVC{
     
     func goToFullVC(indexPath : IndexPath){//跳转全屏页
-
-        let device = mDevicesArray[indexPath.row]
-        let cell = tableView.cellForRow(at: indexPath) as! HomeMainDeviceCell
         
-        let sessionInfor = sdk?.deviceSessionMgr.getSessionInfo(sessionId: device.sessionId)
-        if device.sessionId == "" ||  sessionInfor?.mState != .onCall{//未在通话中，返回
-            return
-        }
-
-        let fullVC = CallFullScreemVC()
-        fullVC.sessionId = device.sessionId
-        fullVC.CallFullScreemBlock = { sessionId in
-            cell.configPeerView(sessionId)
-        }
-        self.navigationController?.pushViewController(fullVC, animated: false)
+        initAgoraIot()
+        return
+        
+//        let device = mDevicesArray[indexPath.row]
+//        let cell = tableView.cellForRow(at: indexPath) as! HomeMainDeviceCell
+//
+//        let sessionInfor = sdk?.deviceSessionMgr.getSessionInfo(sessionId: device.sessionId)
+//        if device.sessionId == "" ||  sessionInfor?.mState != .onCall{//未在通话中，返回
+//            return
+//        }
+//
+//        let fullVC = CallFullScreemVC()
+//        fullVC.sessionId = device.sessionId
+//        fullVC.CallFullScreemBlock = { sessionId in
+//            cell.configPeerView(sessionId)
+//        }
+//        self.navigationController?.pushViewController(fullVC, animated: false)
     }
     
     func initAgoraIot(){
@@ -518,16 +535,10 @@ extension HomePageMainVC{
             log.e("initialize failed")
         }
     }
-    
-    func goToDeciceDetailVC(indexPath : IndexPath){//跳转全屏页
-
-        let deviceDetailVC = DeviceDetailVC()
-        self.navigationController?.pushViewController(deviceDetailVC, animated: false)
-    }
 }
 
 
-extension HomePageMainVC{ //设备删除，添加
+extension DeviceDetailVC{ //设备删除，添加
     
     // 添加设备
     @objc private func addDevice(){
@@ -669,7 +680,7 @@ extension HomePageMainVC{ //设备删除，添加
 }
                                 
 
-extension HomePageMainVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
+extension DeviceDetailVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
 
     func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
         let customView = UIView()
@@ -707,7 +718,7 @@ extension HomePageMainVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
     }
     
     func emptyDataSetDidTap(_ scrollView: UIScrollView!) {
+        initAgoraIot()
 //        getDevicesArray()
     }
 }
-

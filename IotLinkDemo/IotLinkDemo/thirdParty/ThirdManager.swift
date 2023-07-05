@@ -11,6 +11,25 @@ import AgoraIotLink
 import SwiftyRSA
 import Kingfisher
 
+class ConnectDeviceNode{
+    
+    struct Data : Decodable{
+        let cname:String
+        let uid:UInt
+        let rtcToken:String
+        let rtmToken:String
+        let userId:String
+    }
+    struct Rsp : Decodable{
+        let code:Int
+        let msg:String
+        let timestamp:UInt64
+        let success:Bool
+        let traceId:String
+        let data:Data?
+    }
+}
+
 class ActivateNode{
     
     struct Data : Decodable{
@@ -55,6 +74,8 @@ class ThirdAccountManager{
         //激活用户node
         static let  nodeActivate = "/iot-core/v2/secret-node/user/activate"
         
+        //获取连接设备参数
+        static let  connectDevice = "/open-api/v2/iot-core/connect-device"
         
         
         struct Rsp:Decodable{
@@ -419,6 +440,48 @@ class ThirdAccountManager{
         }
     }
     
+    class func getConnectDeviceParam( _ rsp:@escaping(Int,String, ConnectDeviceNode.Rsp?)->Void){
+        
+        let username = "8620fd479140455388f99420fd307363"
+        let password = "492c18dcdb0a43c5bb10cc1cd217e802"
+        
+        let loginString = "\(username):\(password)"
+        let base64LoginString = loginString.data(using: String.Encoding.utf8)?.base64EncodedString()
+        
+        guard let base64LoginString = base64LoginString else{
+            return
+        }
+        let header:HTTPHeaders = ["Authorization":"Basic \(base64LoginString)","Content-Type":"application/json;charset=utf-8"]
+        let paramsDic = ["appId":"cbe3df7bf11e4cf4a4ed4bf755d91013","deviceNo":"IVFDMNJVJM2VG3KLKNFTMLKEINCDQN2DGFAUCQZQGI","userId":"14E2E42E035C6DD2B81629A75C127D99"]
+        let url = "https://api-test.sd-rtn.com/iot/cn" + api.connectDevice
+        
+//        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in
+//
+//            guard  reData != nil else{
+//                return
+//            }
+//
+//
+//            print("123456")
+//
+//        }
+
+        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
+            .validate()
+            .responseDecodable(of:ConnectDeviceNode.Rsp.self){(dataRsp:AFDataResponse<ConnectDeviceNode.Rsp>) in
+            URLCache.shared.removeAllCachedResponses()
+            switch dataRsp.result{
+            case .success(let ret):
+                if(ret.code != 0){
+                    log.e("3rd resetPassword fail \(ret.msg)(\(ret.code))")
+                }
+                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret)
+            case .failure(let error):
+                log.e("3rd resetPassword \(url) , detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
+            }
+        }
+    }
     
 }
 

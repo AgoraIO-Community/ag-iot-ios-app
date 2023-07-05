@@ -11,7 +11,7 @@ import Foundation
 /*
  * @brief 设备控制接口
  */
-public protocol IDevControllerMgr {
+@objc public protocol IDevControllerMgr {
     
     /**
      * @brief 发送云台控制命令

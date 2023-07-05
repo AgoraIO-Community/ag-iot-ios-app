@@ -39,17 +39,33 @@ public class ConnectParam : NSObject {
  */
 @objc public class SessionInfo : NSObject{
     
-    public var mSessionId:String = ""                 //会话的唯一标识
-    public var mUserId:String = ""                    //当前用户的 UserId
-    public var mPeerDevId:String = ""                 //对端设备的 DeviceId
-    @objc public var mLocalRtcUid: Int = 0            //本地 RTC uid
-    @objc public var mChannelName: String = ""        //要会话的RTC频道名
-    @objc public var mRtcToken: String = ""           //要会话的RTC Token
-    @objc public var mRtmToken: String = ""           //要会话的 RTM Token
-    public var mState:CallState = .idle               //会话的状态机
+    @objc public var mSessionId:String = ""                 //会话的唯一标识
+    @objc public var mUserId:String = ""                    //当前用户的 UserId
+    @objc public var mPeerDevId:String = ""                 //对端设备的 DeviceId
+    @objc public var mLocalRtcUid: Int = 0                  //本地 RTC uid
+    @objc public var mChannelName: String = ""              //要会话的RTC频道名
+    @objc public var mRtcToken: String = ""                 //要会话的RTC Token
+    @objc public var mRtmToken: String = ""                 //要会话的 RTM Token
+    @objc public var mState:CallState = .idle               //会话的状态机
     
-    public var mAttachMsg:String = ""                 // 呼叫或者来电时的附带消息
-    public var mType: Int = 0                         // 会话类型 1主叫，2被叫
+    @objc public var mAttachMsg:String = ""                 // 呼叫或者来电时的附带消息
+    @objc public var mType: Int = 0                         // 会话类型 1主叫，2被叫
+     
+}
+
+/*
+ * @brief 连接返回
+ */
+@objc public class ConnectResult : NSObject{
+    
+    @objc public var mSessionId: String = ""            //连接时，分配的唯一的 sessionId
+    @objc public var   mErrCode: Int = 0                //处理结果错误码
+    
+    @objc public init(mSessionId:String ,
+                      mErrCode:Int){
+        self.mSessionId = mSessionId
+        self.mErrCode = mErrCode
+    }
      
 }
 
@@ -88,7 +104,7 @@ public protocol IDeviceSessionMgr {
     func connect(
         connectParam: ConnectParam,
         sessionCallback:@escaping(SessionCallback,_ sessionId:String,_ errCode:Int)->Void,
-        memberState:((_ state:MemberState,_ uid:[UInt],String)->Void)?)
+        memberState:((_ state:MemberState,_ uid:[UInt],String)->Void)?)->ConnectResult
   
     
     /**

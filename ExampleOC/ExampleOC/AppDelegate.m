@@ -7,6 +7,7 @@
 
 #import "AppDelegate.h"
 #import "ExampleOC-Swift.h"
+#import "ViewController.h"
 @interface AppDelegate ()
 
 @end
@@ -32,9 +33,9 @@
     }
 }
 
--(void)connectDevice{
-    ConnectParam *connectParam = [[ConnectParam alloc] initWithMUserId:@"" mPeerDevId:@"" mLocalRtcUid:123456 mChannelName:@"" mRtcToken:@"" mRtmToken:@""];
-    [[IotSdk.shared getDeviceSessionMgr] connectWithConnectParam:connectParam sessionCallback:^(SessionCallback sCallback, NSString * sessionId, NSInteger errCode) {
+-(ConnectResult *)connectDevice{
+    ConnectParam *connectParam = [[ConnectParam alloc] initWithMUserId:@"123456" mPeerDevId:@"123456" mLocalRtcUid:123456 mChannelName:@"123456" mRtcToken:@"123456" mRtmToken:@"123456"];
+    ConnectResult *conResult = [[IotSdk.shared getDeviceSessionMgr] connectWithConnectParam:connectParam sessionCallback:^(SessionCallback sCallback, NSString * sessionId, NSInteger errCode) {
         
         if (sCallback == SessionCallbackOnConnectDone){
             
@@ -51,16 +52,61 @@
             
         }
     }] ;
+ 
+    return  conResult;
+}
+
+-(void)usePreDevMgr{
     
-    IDevPreviewManager *preDevMgr = [[IotSdk.shared getDeviceSessionMgr] getDevPreviewMgrWithSessionId:@""];
+    ConnectResult *conResult = [self connectDevice];
+    IDevPreviewManager *preDevMgr = [[IotSdk.shared getDeviceSessionMgr] getDevPreviewMgrWithSessionId:conResult.mSessionId];
     [preDevMgr previewStartWithPreviewListener:^(NSString * _Nonnull, NSInteger, NSInteger) {
-            
+        
     }];
     UIView *peerView = [[UIView alloc] init];
     [preDevMgr setPeerVideoViewWithPeerView:peerView];
     
     
+    
+    
+    
+    [[IotSdk.shared getVodPlayerMgr] openWithMediaUrl:@"" callback:^(NSInteger, UIView * _Nonnull) {
+        
+    }];
 }
+
+-(void)sendControlCommand{//发送控制命令
+    
+    ConnectResult *conResult = [self connectDevice];
+    IDevControllerManager *devControlMgr = [[IotSdk.shared getDeviceSessionMgr] getDevControllerWithSessionId:conResult.mSessionId];
+    [devControlMgr sendCmdPtzCtrlWithAction:0 direction:1 speed:1 cmdListener:^(NSInteger, NSString * _Nonnull) {
+        
+    }];
+    [devControlMgr sendCmdPtzResetWithCmdListener:^(NSInteger, NSString * _Nonnull) {
+        
+    }];
+}
+
+-(void)sendSDKPlayerControlCommand{//sd卡回看命令
+    
+    ConnectResult *conResult = [self connectDevice];
+    IDevMediaManager *devMediaMgr = [[IotSdk.shared getDeviceSessionMgr] getDevMediaMgrWithSessionId:conResult.mSessionId];
+    QueryParam *param = [[QueryParam alloc] initWithMFileId:0 mBeginTimestamp:0 mEndTimestamp:0 mPageIndex:0 mPageSize:10];
+    [devMediaMgr queryMediaListWithQueryParam:param queryListener:^(NSInteger, NSArray<DevMediaItem *> * _Nonnull) {
+        
+    }];
+    [devMediaMgr playWithGlobalStartTime:0 playingCallListener:self];
+}
+
+//-------IPlayingCallbackListener---------
+- (void)onDevPlayingStateChangedWithMediaUrl:(NSString *)mediaUrl newState:(NSInteger)newState{
+    
+}
+- (void)onDevMediaOpenDoneWithMediaUrl:(NSString *)mediaUrl errCode:(NSInteger)errCode{
+    NSLog(@"onDevMediaOpenDoneWithMediaUrl:%@",mediaUrl);
+}
+//-------IPlayingCallbackListener---------
+
 
 -(void)didLogin{
     NSLog(@"💙💜登录成功");
@@ -73,9 +119,16 @@
     InitParam* initParam = [[InitParam alloc] init];
     initParam.rtcAppId = @"67f4672937984023bf378863a6c1450e";
     initParam.projectId =@"4OJG85tCF";
-     
     [IotSdk.shared initializeWithInitParam:initParam callback:(self)];
 
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    self.window.backgroundColor = UIColor.whiteColor;
+    
+    ViewController *vc = [[ViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    self.window.rootViewController =  nav;
+    [self.window makeKeyAndVisible];
+    
     return YES;
 }
 

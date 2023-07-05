@@ -6,31 +6,31 @@
 //
 
 
-public class RtcNetworkStatus : NSObject{
-    public var isBusy : Bool             = false //是否在工作中（从开始呼叫到结束呼叫）
-    public var totalDuration : UInt      = 0
-    public var txBytes : UInt            = 0
-    public var rxBytes : UInt            = 0
-    public var txKBitRate : UInt         = 0
-    public var txAudioBytes : UInt       = 0
-    public var rxAudioBytes : UInt       = 0
-    public var txVideoBytes : UInt       = 0
-    public var rxVideoBytes : UInt       = 0
-    public var rxKBitRate : UInt         = 0
-    public var txAudioKBitRate : UInt    = 0
-    public var rxAudioKBitRate : UInt    = 0
-    public var txVideoKBitRate : UInt    = 0
-    public var rxVideoKBitRate : UInt    = 0
-    public var lastmileDelay : UInt      = 0
-    public var cpuTotalUsage : Double    = 0
-    public var cpuAppUsage : Double      = 0
-    public var users : UInt              = 0
-    public var connectTimeMs : Int       = 0
-    public var txPacketLossRate : Int    = 0
-    public var rxPacketLossRate : Int    = 0
-    public var memoryAppUsageRatio : Double = 0
-    public var memoryTotalUsageRatio : Double = 0
-    public var memoryAppUsageInKbytes : Int = 0
+@objc public class RtcNetworkStatus : NSObject{
+    @objc public var isBusy : Bool             = false //是否在工作中（从开始呼叫到结束呼叫）
+    @objc public var totalDuration : UInt      = 0
+    @objc public var txBytes : UInt            = 0
+    @objc public var rxBytes : UInt            = 0
+    @objc public var txKBitRate : UInt         = 0
+    @objc public var txAudioBytes : UInt       = 0
+    @objc public var rxAudioBytes : UInt       = 0
+    @objc public var txVideoBytes : UInt       = 0
+    @objc public var rxVideoBytes : UInt       = 0
+    @objc public var rxKBitRate : UInt         = 0
+    @objc public var txAudioKBitRate : UInt    = 0
+    @objc public var rxAudioKBitRate : UInt    = 0
+    @objc public var txVideoKBitRate : UInt    = 0
+    @objc public var rxVideoKBitRate : UInt    = 0
+    @objc public var lastmileDelay : UInt      = 0
+    @objc public var cpuTotalUsage : Double    = 0
+    @objc public var cpuAppUsage : Double      = 0
+    @objc public var users : UInt              = 0
+    @objc public var connectTimeMs : Int       = 0
+    @objc public var txPacketLossRate : Int    = 0
+    @objc public var rxPacketLossRate : Int    = 0
+    @objc public var memoryAppUsageRatio : Double = 0
+    @objc public var memoryTotalUsageRatio : Double = 0
+    @objc public var memoryAppUsageInKbytes : Int = 0
 }
 
 /*

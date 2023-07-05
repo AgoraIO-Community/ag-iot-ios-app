@@ -11,14 +11,14 @@ import Foundation
 /*
  * @brief 分页查询文件参数，可以进行查询组合
  */
-public class QueryParam : NSObject {
+@objc public class QueryParam : NSObject {
     @objc public var mFileId: UInt64 = 0             //文件Id, 0表示则返回根目录文件夹目录
     @objc public var mBeginTimestamp: UInt64 = 0     //查询时间段的开始时间戳，单位秒
     @objc public var mEndTimestamp: UInt64 = 0       //查询时间段的结束时间戳，单位秒
     @objc public var mPageIndex: Int = 0             //查询开始的页索引，从1开始
     @objc public var mPageSize: Int = 0              //一页文件数量
     
-    public init(mFileId:UInt64 ,
+    @objc public init(mFileId:UInt64 ,
                 mBeginTimestamp:UInt64,
                 mEndTimestamp:UInt64,
                 mPageIndex:Int,
@@ -34,7 +34,7 @@ public class QueryParam : NSObject {
 /*
  * @brief 查询到的 设备媒体项
  */
-public class DevMediaItem : NSObject {
+@objc public class DevMediaItem : NSObject {
     @objc public var mFileId: UInt64 = 0              //媒体文件Id，是文件唯一标识
     @objc public var mStartTimestamp: UInt64 = 0      //录制开始时间，单位秒
     @objc public var mStopTimestamp: UInt64 = 0       //录制结束时间，单位秒
@@ -43,7 +43,7 @@ public class DevMediaItem : NSObject {
     @objc public var mImgUrl : String = ""            //录像封面图片URL地址
     @objc public var mVideoUrl : String = ""          //录像下载的URL地址
     
-    public init(mFileId:UInt64 ,
+    @objc public init(mFileId:UInt64 ,
                 mStartTimestamp:UInt64,
                 mStopTimestamp:UInt64,
                 mType:Int,
@@ -63,13 +63,13 @@ public class DevMediaItem : NSObject {
 /*
  * @brief 设备端单个文件媒体信息
  */
-public class DevMediaInfo : NSObject {
+@objc public class DevMediaInfo : NSObject {
     @objc public var mMediaUrl: String = ""              //媒体文件Url
     @objc public var mDuration: UInt64 = 0               //播放时长，单位ms
     @objc public var mVideoWidth: Int = 0                //视频帧宽度
     @objc public var mVideoHeight: Int = 0               //视频帧高度
     
-    public init(mMediaUrl:String ,
+    @objc public init(mMediaUrl:String ,
                 mDuration:UInt64,
                 mVideoWidth:Int,
                 mVideoHeight:Int){
@@ -84,7 +84,7 @@ public class DevMediaInfo : NSObject {
 /*
  * @brief 设备信息，(productKey+mDeviceId) 构成设备唯一标识
  */
-public class DevMediaDelResult : NSObject {
+@objc public class DevMediaDelResult : NSObject {
     @objc public var mFileId: UInt64 = 0             //本地用户的 UserId
     @objc public var mErrCode: Int = 0               //要连接设备的 DeviceId
 }
@@ -100,9 +100,53 @@ public class DevMediaDelResult : NSObject {
 }
 
 /*
+ *@brief 设备媒体文件 播放回调接口
+ */
+@objc public protocol IPlayingCallbackListener{
+    
+    /**
+     * @brief 当前播放状态变化事件
+     * @param mediaUrl : 媒体文件Url
+     * @param newState : 切换后的新状态
+     */
+    func onDevPlayingStateChanged(mediaUrl:String,newState:Int)
+    
+    /**
+     * @brief 设备媒体文件打开完成事件
+     * @param mediaUrl : 媒体文件Url
+     * @param errCode : 错误码，0表示打开成功
+     */
+    func onDevMediaOpenDone(mediaUrl:String,errCode:Int)
+    
+    /**
+     * @brief 设备媒体文件Seek完成事件
+     * @param mediaUrl : 媒体文件Url
+     * @param errCode : 错误码，0表示Seek成功
+     * @param targetPos : 要seek到的时间戳
+     * @param seekedPos : 实际跳转到的时间戳
+     */
+    func onDevMediaSeekDone(mediaUrl:String,errCode:Int,targetPos:UInt64,seekedPos:UInt64)
+    
+    /**
+     * @brief 当前媒体文件播放完成事件，通常此时可以调用 stop()回到开始重新play()，或者close()关闭播放器
+     * @param mediaUrl : 媒体文件Url
+     * @param duration : 整个播放时长
+     */
+    func onDevMediaPlayingDone(mediaUrl:String,duration:UInt64)
+    
+    /**
+     * @brief 播放过程中遇到错误，并且不能恢复，此时上层只能调用 close()关闭播放器
+     * @param mediaUrl : 媒体文件Url
+     * @param errCode : 错误码
+     */
+    func onDevPlayingError(mediaUrl:String,errCode:Int)
+    
+}
+
+/*
  * @brief 设备端媒体文件管理器
  */
-public protocol IDevMediaMgr {
+@objc public protocol IDevMediaMgr {
     
     
     /**
@@ -120,7 +164,14 @@ public protocol IDevMediaMgr {
      * @param deleteListener : 删除结果回调监听器
      * @return 返回错误码
      */
-    func deleteMediaList(deletingList:[UInt64],deleteListener: @escaping (_ errCode:Int,_ undeletedList:[DevMediaDelResult]) -> Void)
+    func deleteMediaList(deletingList:[String],deleteListener: @escaping (_ errCode:Int,_ undeletedList:[DevMediaDelResult]) -> Void)
+    
+    /**
+     * @brief 根据图片路径查询图片内容（新增）
+     * @param cmdListener: 命令完成回调
+     * @return 返回错误码
+     */
+    func queryMediaCoverImage(imgUrl:String,cmdListener: @escaping (_ errCode:Int,_ result:Data) -> Void)
     
     
     /**
@@ -130,10 +181,24 @@ public protocol IDevMediaMgr {
      */
     func setDisplayView(peerView: UIView?)
     
-    //todo:
-    //play
+    /**
+     * @brief 开始播放，成功后切换到 DEVPLAYER_STATE_PLAYING 状态
+     * @param globalStartTime: 全局开始时间
+     * @param playingCallback : 播放回调接口
+     * @return 返回错误码
+     */
+    func play(globalStartTime:UInt64,playingCallListener:IPlayingCallbackListener)
     
-    
+    /**
+     * @brief 开始播放，成功后切换到 DEVPLAYER_STATE_PLAYING 状态
+     * @param fileId: 要播放的媒体文件Id
+     * @param startPos: 开始播放的开始时间点
+     * @param playSpeed: 播放倍速
+     * @param playingCallback : 播放回调接口
+     * @return 返回错误码
+     */
+    func play(fileId:UInt64,startPos:UInt64,playSpeed:Int,playingCallListener:IPlayingCallbackListener)
+     
     /**
      * @brief 停止当前播放，成功后切换到 DEVPLAYER_STATE_STOPPED 状态
      * @return 错误码

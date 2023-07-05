@@ -80,7 +80,10 @@ public protocol IAgoraIotAppSdk {
      */
     var deviceSessionMgr: IDeviceSessionMgr{get}
     
-    
+    /*
+     * @brief 获取云录播放器管理接口
+     */
+    var vodPlayerMgr: IVodPlayerMgr{get}
     
     
     

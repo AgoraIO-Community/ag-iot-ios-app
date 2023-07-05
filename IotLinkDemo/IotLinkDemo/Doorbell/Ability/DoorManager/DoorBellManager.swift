@@ -210,4 +210,28 @@ class DoorBellManager: NSObject {
         }
     }
     
+    func disConnectDevice(sessionId:String = "")->Void{
+        let devSessionMgr = sdk?.deviceSessionMgr.disconnect(sessionId: sessionId)
+    }
+        
+    //-------------------------------设备控制----------------------------------
+    
+    func getDevControlMgr(_ sessionId:String)->IDevControllerMgr{
+        return (sdk?.deviceSessionMgr.getDevController(sessionId: sessionId))!
+    }
+                
+    //云台命令 仅在通话状态下才能调用
+    func sendCmdPtzCtrl(sessionId:String = "", cb:@escaping(Int,String)->Void){
+        let controlMgr = getDevControlMgr(sessionId)
+        controlMgr.sendCmdPtzCtrl(action: 0, direction: 1, speed: 1) { errCode, msg in
+            print("sendCmdPtzCtrl---:\(errCode)")
+            cb(errCode,msg as! String)
+        }
+        controlMgr.sendCmdPtzReset(cmdListener: cb)
+        controlMgr.sendCmdPtzCtrl(cmdListener: cb)
+    }
+    
+    
+    
+   //-------------------------------设备控制----------------------------------
 }

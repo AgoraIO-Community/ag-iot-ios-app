@@ -50,7 +50,10 @@ open class Application{
     }
     
     func release() {
-        
+        _proxy?.rtc.destroy()
+        _rule?.trans(FsmApp.Event.LOGOUT)
+        _proxy = nil
+  
     }
     
     public static let shared = Application()

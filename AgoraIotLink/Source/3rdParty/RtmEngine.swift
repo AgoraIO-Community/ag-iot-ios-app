@@ -13,6 +13,8 @@ class RtmEngine : NSObject{
     static private let CREATED = 1
     static private let ENTERED = 2
     
+    var app  = Application.shared
+    
     private var kit:AgoraRtmKit? = nil
     private var config:Config
     private var state:Int = IDLED
@@ -88,6 +90,7 @@ class RtmEngine : NSObject{
 
     private var _statusUpdated:((MessageChannelStatus,String,AgoraRtmMessage?)->Void)?  = nil
     private var _enterCallback:((TaskResult,String)->Void)? = nil
+    private var _completionBlocks: [String: ((Int, String) -> Void)] = [:]
     
     public func waitForStatusUpdated(statusUpdated:@escaping(MessageChannelStatus,String,AgoraRtmMessage?)->Void){
         _statusUpdated = statusUpdated
@@ -105,7 +108,7 @@ class RtmEngine : NSObject{
                     self.state = RtmEngine.ENTERED
                 }
                 //todo:
-//                self.heartbeatTimer()
+                self.heartbeatTimer()
                 cb(tr,msg)
             })
         }
@@ -156,7 +159,7 @@ class RtmEngine : NSObject{
             }
         }
     }
-    private func sendCallback(_ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,String)->Void){
+    private func sendCallback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,String)->Void){
         var msg = "unknown error"
         var ec:Int = ErrCode.XERR_API_RET_FAIL
         switch(e){
@@ -190,10 +193,13 @@ class RtmEngine : NSObject{
         }
         if(ec != ErrCode.XOK){
             log.e("rtm send message result:\(msg)(\(e))")
+            cb(ec,msg)
+        }else{
+            _completionBlocks[sequenceId] = cb
         }
-        cb(ec,msg)
+       
     }
-    func sendStringMessage(toPeer:String,message:String,cb:@escaping(Int,String)->Void){
+    func sendStringMessage(sequenceId:String, toPeer:String,message:String,cb:@escaping(Int,String)->Void){
         guard let kit = kit else{
             log.e("rtm engine is nil")
             cb(ErrCode.XERR_BAD_STATE,"rtm not initialized")
@@ -210,11 +216,11 @@ class RtmEngine : NSObject{
         option.enableHistoricalMessaging = false
         kit.send(package, toPeer: toPeer, sendMessageOptions: option) { ec in
             DispatchQueue.main.async {
-                self.sendCallback(ec,cb)
+                self.sendCallback(sequenceId,ec,cb)
             }
         }
     }
-    func sendRawMessage(toPeer:String,data:Data,description:String,cb:@escaping(Int,String)->Void){
+    func sendRawMessage(sequenceId:String, toPeer:String,data:Data,description:String,cb:@escaping(Int,String)->Void){
         guard let kit = kit else{
             log.e("rtm engine is nil")
             cb(ErrCode.XERR_BAD_STATE,"rtm not initialized")
@@ -231,7 +237,7 @@ class RtmEngine : NSObject{
         option.enableHistoricalMessaging = false
         kit.send(package, toPeer: toPeer, sendMessageOptions: option) { ec in
             DispatchQueue.main.async {
-                self.sendCallback(ec,cb)
+                self.sendCallback(sequenceId,ec,cb)
             }
         }
     }
@@ -278,12 +284,84 @@ class RtmEngine : NSObject{
             cb(true)
         }
     }
+    
+    func handelReceivedData(message: AgoraRtmMessage, fromPeer peerId: String) -> Void {
+        
+        if(message.type == .raw){
+            if let msg = message as? AgoraRtmRawMessage{
+                let dict = String.getDictionaryFromData(data: msg.rawData)
+                log.i("handelReceivedData dict: \(dict)")
+                guard let sequenceId = dict["sequenceId"] as? UInt else {
+                    log.e("handelReceivedData: dict:\(dict))")
+                    return
+                }
+                // 根据sequenceId获取对应的闭包
+                let completionBlock = _completionBlocks["\(sequenceId)"]
+                
+                guard let code = dict["code"] as? Int, code == 0 else{
+                    log.e("handelReceivedData: dict:\(dict))")
+                    completionBlock?(ErrCode.XERR_UNKNOWN, "")
+                    return
+                }
+                
+                if let data = dict["data"] as? [String:Any] {
+                    //todo:
+                    DispatchQueue.main.async {
+//                        completionBlock?(ErrCode.XOK, data)
+                    }
+                }else{
+                    DispatchQueue.main.async {
+                        completionBlock?(ErrCode.XOK, "success")
+                    }
+                }
+            }
+            else{
+                log.e("rtm message type cast error")
+            }
+        }else if (message.type == .text){
+            
+            let dict = String.getDictionaryFromJSONString(jsonString: message.text)
+            
+            guard let sequenceId = dict["sequenceId"] as? UInt else {
+                log.e("handelReceivedData: dict:\(dict))")
+                return
+            }
+            // 根据sequenceId获取对应的闭包
+            let completionBlock = _completionBlocks["\(sequenceId)"]
+            
+            guard let code = dict["code"] as? Int, code == 0 else{
+                log.e("handelReceivedData: dict:\(dict))")
+                completionBlock?(ErrCode.XERR_UNKNOWN, "")
+                return
+            }
+            
+            if let data = dict["data"] as? [String:Any] {
+                //todo:
+                DispatchQueue.main.async {
+//                    completionBlock?(ErrCode.XOK, data)
+                }
+            }else{
+                DispatchQueue.main.async {
+                    completionBlock?(ErrCode.XOK, "success")
+                }
+            }
+            
+            _completionBlocks["\(sequenceId)"] = nil
+        }
+        else{
+            log.w("rtm unhandled messate type \(message.type)")
+        }
+        
+    }
 }
 
 extension RtmEngine : AgoraRtmDelegate{
     func rtmKit(_ kit: AgoraRtmKit, messageReceived message: AgoraRtmMessage, fromPeer peerId: String) {
         log.i("rtm messageReceived from \(peerId) type:\(message.type) ts:\(message.serverReceivedTs) offline:\(message.isOfflineMessage)")
-        self._statusUpdated?(.DataArrived,peerId,message)
+        
+        handelReceivedData(message: message, fromPeer: peerId)
+        
+        
         
 //        if(message.type == .raw){
 //            if let raw = message as? AgoraRtmRawMessage{
@@ -360,17 +438,26 @@ extension RtmEngine{
     }
     
     func startTimer() {
-        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(sendMessage), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: #selector(sendMessage), userInfo: nil, repeats: true)
     }
     
     @objc func sendMessage() {
         // 在这里实现发送消息的逻辑
-        log.i("send empty msg")
+        log.i("send heartbeat msg")
         guard let peer =  curSession?.peerVirtualNumber else{
             log.i("peerVirtualNumber is nil")
             return
         }
-        sendStringMessage(toPeer:peer, message: "empty msg") { code, msg in
+        
+        let curSequenceId : UInt32 = 1
+        
+        let paramDic = [:] as [String : Any]
+        let jsonString = paramDic.convertDictionaryToJSONString()
+        let data:Data = jsonString.data(using: .utf8) ?? Data()
+//        sendStringMessage(sequenceId: "\(curTimestamp)", toPeer: peer, message: jsonString) { code, msg in
+//            log.i("RtmEnginesendStringMessage")
+//        }
+        sendRawMessage(sequenceId: "\(curSequenceId)", toPeer: peer, data: data, description: "") { code, msg in
             log.i("RtmEnginesendStringMessage")
         }
     }

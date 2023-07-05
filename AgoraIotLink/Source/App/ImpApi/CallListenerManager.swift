@@ -7,11 +7,31 @@
 
 import UIKit
 
-class CallListenerManager: NSObject {
+class CallListenerManager {
 
-    static let sharedInstance = CallListenerManager()
+    static var sharedInstance = CallListenerManager()
     var app  = Application.shared
 
+    
+//    struct Static
+//    {
+//        static var instance: CallListenerManager?
+//    }
+//
+//    class var sharedInstance: CallListenerManager
+//    {
+//        if Static.instance == nil
+//        {
+//            Static.instance = CallListenerManager()
+//        }
+//
+//        return Static.instance!
+//    }
+//
+    static func destroy() {
+//        CallListenerManager.Static.instance = nil
+     }
+    
     var callDict = [String:Any]()
     func startCall(sessionId:String,dialParam: ConnectParam,actionAck:@escaping(SessionCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?){
 
@@ -41,6 +61,9 @@ class CallListenerManager: NSObject {
         
         let controlMgr = IDevControllerManager(app: self.app, rtm: rtm, sessionId: sessionId)
         callListen.callSession?.devControlMgr = controlMgr
+        
+        let mediaMgr = IDevMediaManager(app: self.app , rtm: rtm,sessionId: sessionId)
+        callListen.callSession?.devMediaMgr = mediaMgr
    
     }
     
@@ -69,6 +92,7 @@ class CallListenerManager: NSObject {
     
     func clearCurrentCallObj(_ sessionId:String){//清除当前call对象
         callDict.removeAll()
+//        CallListenerManager.destroy()
         log.i("clearCurrentCallObj:\(callDict.count)")
 //        callDict.removeValue(forKey: sessionId)
     }

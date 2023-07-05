@@ -308,12 +308,11 @@ extension CallStateListener{//rtm
             rtmSession.token = callSession?.mRtmToken ?? ""
             rtmSession.peerVirtualNumber = callSession?.peerNodeId ?? ""
             
-            let uid = callSession?.mUserId ?? ""
+            let uid = callSession?.mUserId ?? "" //01GW488RS7MXFXX883VTV0EZV7
             rtm?.enter(rtmSession, "\(uid)") { [weak self] ret, msg in
                 if ret == .Fail{
                     self?.callAct(.onDisconnected,self?.callSession?.mSessionId ?? "",ErrCode.XOK)
-                    //todo:
-//                    self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
+                    self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
                 }
             }
 

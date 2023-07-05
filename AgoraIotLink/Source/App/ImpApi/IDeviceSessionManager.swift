@@ -8,12 +8,13 @@
 
 class IDeviceSessionManager : IDeviceSessionMgr{
 
-    func connect(connectParam: ConnectParam, sessionCallback: @escaping (SessionCallback, String, Int) -> Void, memberState: ((MemberState, [UInt], String) -> Void)?) {
+    func connect(connectParam: ConnectParam, sessionCallback: @escaping (SessionCallback, String, Int) -> Void, memberState: ((MemberState, [UInt], String) -> Void)?)->ConnectResult {
         
         if CallListenerManager.sharedInstance.isCallTaking(connectParam.mPeerDevId) == true{
             log.i("---connect--device is already---:\(connectParam.mPeerDevId)")
-            sessionCallback(.onError,"",ErrCode.XERR_CALLKIT_LOCAL_BUSY)
-            return
+//            sessionCallback(.onError,"",ErrCode.XERR_CALLKIT_LOCAL_BUSY)
+            let result = ConnectResult(mSessionId: "", mErrCode:ErrCode.XERR_CALLKIT_LOCAL_BUSY)
+            return result
         }
         
         let curTimestamp:Int = String.dateTimeRounded()
@@ -22,10 +23,13 @@ class IDeviceSessionManager : IDeviceSessionMgr{
         CallListenerManager.sharedInstance.startCall(sessionId:mSessionId, dialParam:connectParam,actionAck: sessionCallback, memberState: memberState)
         CallListenerManager.sharedInstance.callRequest(mSessionId)
         
+        let result = ConnectResult(mSessionId: mSessionId, mErrCode:ErrCode.XOK)
+        return result
     }
     
     func disconnect(sessionId: String) -> Int {
         CallListenerManager.sharedInstance.hangUp(sessionId)
+        CallListenerManager.destroy()
         return ErrCode.XOK
     }
     

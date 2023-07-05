@@ -408,21 +408,34 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
     
     func shotScreen(){
         
+//        DoorBellManager.shared.disConnectDevice(sessionId:device?.sessionId ?? "")
+//        sdk?.release()
+//        return
+        
+        
         guard let device = device, device.sessionId != "" else { return }
         
-        startRecord = !startRecord
+        //-------------- 测试发送命令----------------
+        DoorBellManager.shared.sendCmdPtzCtrl(sessionId: device.sessionId,  cb: { code, msg in
+            debugPrint("sendCmdPtzCtrl成功 : \(msg)")
+        })
+
+        return
         
-        DoorBellManager.shared.capturePeerVideoFrame(sessionId:device.sessionId) { [weak self] success, msg, shotImg in
-            if success{
-                debugPrint("截屏成功")
-                guard let shotImg = shotImg else {
-                    AGToolHUD.showInfo(info: "图片截屏失败！")
-                    return
-                }
-                self?.saveImgToAlbum(shotImg)
-                self?.handelSaveImgAlert(shotImg)
-            }
-        }
+        
+//        startRecord = !startRecord
+//
+//        DoorBellManager.shared.capturePeerVideoFrame(sessionId:device.sessionId) { [weak self] success, msg, shotImg in
+//            if success{
+//                debugPrint("截屏成功")
+//                guard let shotImg = shotImg else {
+//                    AGToolHUD.showInfo(info: "图片截屏失败！")
+//                    return
+//                }
+//                self?.saveImgToAlbum(shotImg)
+//                self?.handelSaveImgAlert(shotImg)
+//            }
+//        }
         
     }
     

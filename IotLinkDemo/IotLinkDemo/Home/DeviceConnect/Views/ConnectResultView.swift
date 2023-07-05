@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum ConnectResult {
+enum AddDeviceResult {
     case success
     case fail
 }
@@ -52,7 +52,7 @@ class ConnectResultView: UIView {
         return button
     }()
     
-    var result:ConnectResult?{
+    var result:AddDeviceResult?{
         didSet{
             if result == .success {
                 iconImageView.image = UIImage(named: "add_success")

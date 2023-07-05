@@ -17,13 +17,14 @@ extension DoorBellManager{
 //    public static let shared = DoorbellAbilityViewModel()
     
     //连接设备
-    func connectDevice(_ param:ConnectParam,_ action:@escaping(String,SessionCallback)->Void,_ memberState:@escaping(Int,String)->Void){
+    func connectDevice(_ param:ConnectParam,_ action:@escaping(String,SessionCallback)->Void,_ memberState:@escaping(Int,String)->Void)->ConnectResult{
         guard let callMgr = sdk?.deviceSessionMgr else{
             log.i("sdk.callkitMgr not init")
-            return
+            let ret = ConnectResult(mSessionId: "", mErrCode: -1)
+            return ret
         }
         log.i("wakeupDevice :\(param)")
-        callMgr.connect(connectParam: param, sessionCallback:{ sback, sessionId, errCode in
+        let ret = callMgr.connect(connectParam: param, sessionCallback:{ sback, sessionId, errCode in
             
             if(sback == .onDisconnected){
                 
@@ -36,6 +37,8 @@ extension DoorBellManager{
             log.i("demo app member count \(self.members):\(s.rawValue) \(uid)")
             memberState(self.members,sessionId)
         })
+        
+        return ret
 
     }
     

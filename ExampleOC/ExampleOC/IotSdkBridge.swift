@@ -10,8 +10,7 @@ import AgoraIotLink
 
 
 public class IDeviceSessionManager : NSObject,IDeviceSessionMgr{
-    
-    @objc public func connect(connectParam: AgoraIotLink.ConnectParam, sessionCallback: @escaping (AgoraIotLink.SessionCallback, String, Int) -> Void, memberState: ((AgoraIotLink.MemberState, [UInt], String) -> Void)?) {
+    @objc public func connect(connectParam: AgoraIotLink.ConnectParam, sessionCallback: @escaping (AgoraIotLink.SessionCallback, String, Int) -> Void, memberState: ((AgoraIotLink.MemberState, [UInt], String) -> Void)?) -> AgoraIotLink.ConnectResult {
         return mgr.connect(connectParam: connectParam, sessionCallback: sessionCallback, memberState: memberState)
     }
     
@@ -31,11 +30,11 @@ public class IDeviceSessionManager : NSObject,IDeviceSessionMgr{
         return mgr.getDevPreviewMgr(sessionId: sessionId)
     }
     
-    public func getDevController(sessionId: String) -> AgoraIotLink.IDevControllerMgr? {
+    @objc public func getDevController(sessionId: String) -> AgoraIotLink.IDevControllerMgr? {
         return mgr.getDevController(sessionId: sessionId)
     }
     
-    public func getDevMediaMgr(sessionId: String) -> AgoraIotLink.IDevMediaMgr? {
+    @objc public func getDevMediaMgr(sessionId: String) -> AgoraIotLink.IDevMediaMgr? {
         return mgr.getDevMediaMgr(sessionId: sessionId)
     }
     
@@ -109,6 +108,132 @@ public class IDevPreviewManager : NSObject,IDevPreviewMgr{
     
 }
 
+public class IDevControllerManager : NSObject,IDevControllerMgr{
+    
+    @objc public func sendCmdPtzCtrl(action: Int, direction: Int, speed: Int, cmdListener: @escaping (Int, String) -> Void) {
+        return mgr.sendCmdPtzCtrl(action: action, direction: direction, speed: speed, cmdListener: cmdListener)
+    }
+    
+    @objc public func sendCmdPtzReset(cmdListener: @escaping (Int, String) -> Void) {
+        return mgr.sendCmdPtzReset(cmdListener: cmdListener)
+    }
+    
+    @objc public func sendCmdPtzCtrl(cmdListener: @escaping (Int, String) -> Void) {
+        return mgr.sendCmdPtzCtrl(cmdListener: cmdListener)
+    }
+    
+    public init(mgr:IDevControllerMgr) {
+        self.mgr = mgr
+    }
+    
+    let mgr:IDevControllerMgr
+ 
+}
+
+public class IDevMediaManager : NSObject,IDevMediaMgr{
+    
+    @objc public func queryMediaList(queryParam: AgoraIotLink.QueryParam, queryListener: @escaping (Int, [AgoraIotLink.DevMediaItem]) -> Void) {
+        return mgr.queryMediaList(queryParam: queryParam, queryListener: queryListener)
+    }
+    
+    @objc public func deleteMediaList(deletingList: [String], deleteListener: @escaping (Int, [AgoraIotLink.DevMediaDelResult]) -> Void) {
+        return mgr.deleteMediaList(deletingList: deletingList, deleteListener: deleteListener)
+    }
+    
+    @objc public func queryMediaCoverImage(imgUrl: String, cmdListener: @escaping (Int, Data) -> Void) {
+        return mgr.queryMediaCoverImage(imgUrl: imgUrl, cmdListener: cmdListener)
+    }
+    
+    @objc public func setDisplayView(peerView: UIView?) {
+        return mgr.setDisplayView(peerView: peerView)
+    }
+    
+    @objc public func play(globalStartTime: UInt64, playingCallListener: AgoraIotLink.IPlayingCallbackListener) {
+        return mgr.play(globalStartTime: globalStartTime, playingCallListener: playingCallListener)
+    }
+    
+    @objc public func play(fileId: UInt64, startPos: UInt64, playSpeed: Int, playingCallListener: AgoraIotLink.IPlayingCallbackListener) {
+        return mgr.play(fileId: fileId, startPos: startPos, playSpeed: playSpeed, playingCallListener: playingCallListener)
+    }
+    
+    @objc public func stop() -> Int {
+        return mgr.stop()
+    }
+    
+    @objc public func pause() -> Int {
+        return mgr.pause()
+    }
+    
+    @objc public func resume() -> Int {
+        return mgr.resume()
+    }
+    
+    @objc public func seek(seekPos: UInt64) -> Int {
+        return mgr.seek(seekPos: seekPos)
+    }
+    
+    @objc public func setPlayingSpeed(speed: Int) -> Int {
+        return mgr.setPlayingSpeed(speed: speed)
+    }
+    
+    @objc public func getPlayingProgress() -> UInt64 {
+        return mgr.getPlayingProgress()
+    }
+    
+    @objc public func getPlayingState() -> Int {
+        return mgr.getPlayingState()
+    }
+    
+    public init(mgr:IDevMediaMgr) {
+        self.mgr = mgr
+    }
+    
+    let mgr:IDevMediaMgr
+    
+}
+
+public class IVodPlayerManager : NSObject,IVodPlayerMgr{
+    
+    @objc public func open(mediaUrl: String, callback: @escaping (Int, UIView) -> Void) {
+        return mgr.open(mediaUrl: mediaUrl, callback: callback)
+    }
+    
+    @objc public func close() {
+        return mgr.close()
+    }
+    
+    @objc public func getPlayingProgress() -> UInt64 {
+        return mgr.getPlayingProgress()
+    }
+    
+    @objc public func setDisplayView(_ displayView: UIView, _ frame: CGRect) -> Int {
+        return mgr.setDisplayView(displayView, frame)
+    }
+    
+    @objc public func play() {
+        return mgr.play()
+    }
+    
+    @objc public func pause() {
+        return mgr.pause()
+    }
+    
+    @objc public func stop() {
+        return mgr.stop()
+    }
+    
+    @objc public func seek(seekPos: UInt64) -> UInt64 {
+        return mgr.seek(seekPos: seekPos)
+    }
+    
+    public init(mgr:IVodPlayerMgr) {
+        self.mgr = mgr
+    }
+    
+    let mgr:IVodPlayerMgr
+    
+}
+
 public class IotSdk: NSObject {
     
     private static var sdk = IotSdk()
@@ -136,6 +261,10 @@ public class IotSdk: NSObject {
 
     @objc public func getDeviceSessionMgr()->IDeviceSessionManager{
         return IDeviceSessionManager(mgr:iotsdk.deviceSessionMgr)
+    }
+    
+    @objc public func getVodPlayerMgr()->IVodPlayerManager{
+        return IVodPlayerManager(mgr:iotsdk.vodPlayerMgr)
     }
 
 }

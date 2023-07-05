@@ -56,4 +56,18 @@ TODO: Add long description of the pod here.
   s.dependency 'AgoraRtcEngine_iOS', '4.2.0'
   s.dependency 'AgoraRtm_iOS','1.5.0'
   
+#  s.dependency  'SJBaseVideoPlayer'
+#  s.dependency  'SJVideoPlayer'
+  
+#  s.subspec 'SJBaseVideoPlayer'do | ss |
+#     ss.source_files = '../libs/SJBaseVideoPlayer/**/*.{swift,h,m}'
+#  end
+  
+#  s.subspec 'SJVideoPlayer'do | ss |
+#     ss.source_files = '../libs/SJVideoPlayer'
+#  end
+  
+ #  pod 'SJVideoPlayer', :path => '../libs/SJVideoPlayer'
+ # s.dependency 'SJBaseVideoPlayer', :path => '../libs/SJBaseVideoPlayer'
+  
 end

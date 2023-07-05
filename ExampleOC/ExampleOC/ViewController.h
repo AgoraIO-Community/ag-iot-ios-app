@@ -6,6 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AgoraIotLink-Swift.h"
 
 @interface ViewController : UIViewController
 
