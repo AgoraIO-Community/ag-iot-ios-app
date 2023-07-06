@@ -9,7 +9,7 @@ import UIKit
 import AgoraIotLink
 
 class DoorBellManager: NSObject {
-
+    
     public static let shared = DoorBellManager()
     
     var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
@@ -232,6 +232,64 @@ class DoorBellManager: NSObject {
     }
     
     
+    func getDevMediaMgr(_ sessionId:String)->IDevMediaMgr{
+        return (sdk?.deviceSessionMgr.getDevMediaMgr(sessionId: sessionId))!
+    }
+    
+    //SD卡回看命令 仅在通话状态下才能调用
+    func sendCmdSDCtrl(sessionId:String = "", cb:@escaping(Int,String)->Void){
+        
+        let mediaMgr = getDevMediaMgr(sessionId)
+        
+//        let param = QueryParam(mFileId: 0, mBeginTimestamp: 12, mEndTimestamp: 20, mPageIndex: 0, mPageSize: 10)
+//        mediaMgr.queryMediaList(queryParam: param) { errCode, mediaList in
+//            print("sendCmdSDCtrl---:\(errCode) mediaList:\(mediaList)")
+//            cb(errCode,"success")
+//        }
+        
+//        mediaMgr.deleteMediaList(deletingList: ["1","2","3"]) { errCode, undeletedList in
+//            print("sendCmdSDCtrl---:\(errCode) mediaList:\(undeletedList)")
+//            cb(errCode,"success")
+//        }
+        
+//        mediaMgr.queryMediaCoverImage(imgUrl: "http://jd.com/image1.jpg") { errCode, result in
+//            print("sendCmdSDCtrl---:\(errCode) mediaList:\(result)")
+//            cb(errCode,"success")
+//        }
+        
+         mediaMgr.play(globalStartTime: 0, playingCallListener: self)
+        
+//          mediaMgr.play(fileId: "1", startPos: 989898989, playSpeed: 1, playingCallListener: self)
+        
+//        mediaMgr.stop()
+        
+//          mediaMgr.setPlayingSpeed(speed: 2)
+        
+    }
+    
     
    //-------------------------------设备控制----------------------------------
+}
+
+extension DoorBellManager:IPlayingCallbackListener{
+    
+    func onDevPlayingStateChanged(mediaUrl: String, newState: Int) {
+        
+    }
+    
+    func onDevMediaOpenDone(mediaUrl: String, errCode: Int) {
+        
+    }
+    
+    func onDevMediaSeekDone(mediaUrl: String, errCode: Int, targetPos: UInt64, seekedPos: UInt64) {
+        
+    }
+    
+    func onDevMediaPlayingDone(mediaUrl: String, duration: UInt64) {
+        
+    }
+    
+    func onDevPlayingError(mediaUrl: String, errCode: Int) {
+        
+    }
 }

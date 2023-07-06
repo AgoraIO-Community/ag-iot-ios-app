@@ -415,10 +415,18 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         
         guard let device = device, device.sessionId != "" else { return }
         
-        //-------------- 测试发送命令----------------
-        DoorBellManager.shared.sendCmdPtzCtrl(sessionId: device.sessionId,  cb: { code, msg in
-            debugPrint("sendCmdPtzCtrl成功 : \(msg)")
+        
+        //-------------- 测试发送SD卡回看命令----------------
+        DoorBellManager.shared.sendCmdSDCtrl(sessionId: device.sessionId,  cb: { code, msg in
+            debugPrint("sendCmdSDCtrl成功 : \(msg)")
         })
+
+        return
+        
+        //-------------- 测试发送控制命令----------------
+//        DoorBellManager.shared.sendCmdPtzCtrl(sessionId: device.sessionId,  cb: { code, msg in
+//            debugPrint("sendCmdPtzCtrl成功 : \(msg)")
+//        })
 
         return
         

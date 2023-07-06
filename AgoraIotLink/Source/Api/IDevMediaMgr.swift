@@ -35,7 +35,7 @@ import Foundation
  * @brief 查询到的 设备媒体项
  */
 @objc public class DevMediaItem : NSObject {
-    @objc public var mFileId: UInt64 = 0              //媒体文件Id，是文件唯一标识
+    @objc public var mFileId: String = ""             //媒体文件Id，是文件唯一标识
     @objc public var mStartTimestamp: UInt64 = 0      //录制开始时间，单位秒
     @objc public var mStopTimestamp: UInt64 = 0       //录制结束时间，单位秒
     @objc public var mType: Int = 0                   //文件类型：0--媒体文件；1--目录
@@ -43,7 +43,7 @@ import Foundation
     @objc public var mImgUrl : String = ""            //录像封面图片URL地址
     @objc public var mVideoUrl : String = ""          //录像下载的URL地址
     
-    @objc public init(mFileId:UInt64 ,
+    @objc public init(mFileId:String ,
                 mStartTimestamp:UInt64,
                 mStopTimestamp:UInt64,
                 mType:Int,
@@ -85,8 +85,14 @@ import Foundation
  * @brief 设备信息，(productKey+mDeviceId) 构成设备唯一标识
  */
 @objc public class DevMediaDelResult : NSObject {
-    @objc public var mFileId: UInt64 = 0             //本地用户的 UserId
-    @objc public var mErrCode: Int = 0               //要连接设备的 DeviceId
+    @objc public var mFileId: String = ""            //媒体文件Id，是文件唯一标识
+    @objc public var mErrCode: Int = 0               //错误码
+    
+    @objc public init(mFileId:String ,
+                      mErrCode:Int){
+        self.mFileId = mFileId
+        self.mErrCode = mErrCode
+    }
 }
 
 /*
@@ -179,7 +185,7 @@ import Foundation
      * @param displayView: 视频帧显示控件
      * @return 返回错误码
      */
-    func setDisplayView(peerView: UIView?)
+    func setDisplayView(peerView: UIView?)->Int
     
     /**
      * @brief 开始播放，成功后切换到 DEVPLAYER_STATE_PLAYING 状态
@@ -187,7 +193,7 @@ import Foundation
      * @param playingCallback : 播放回调接口
      * @return 返回错误码
      */
-    func play(globalStartTime:UInt64,playingCallListener:IPlayingCallbackListener)
+    func play(globalStartTime:UInt64,playingCallListener:IPlayingCallbackListener)->Int
     
     /**
      * @brief 开始播放，成功后切换到 DEVPLAYER_STATE_PLAYING 状态
@@ -197,7 +203,7 @@ import Foundation
      * @param playingCallback : 播放回调接口
      * @return 返回错误码
      */
-    func play(fileId:UInt64,startPos:UInt64,playSpeed:Int,playingCallListener:IPlayingCallbackListener)
+    func play(fileId:String,startPos:UInt64,playSpeed:Int,playingCallListener:IPlayingCallbackListener)->Int
      
     /**
      * @brief 停止当前播放，成功后切换到 DEVPLAYER_STATE_STOPPED 状态

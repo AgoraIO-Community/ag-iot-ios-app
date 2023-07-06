@@ -91,6 +91,7 @@ class RtmEngine : NSObject{
     private var _statusUpdated:((MessageChannelStatus,String,AgoraRtmMessage?)->Void)?  = nil
     private var _enterCallback:((TaskResult,String)->Void)? = nil
     private var _completionBlocks: [String: ((Int, String) -> Void)] = [:]
+    private var _completionDicBlocks: [String: ((Int, Dictionary<String, Any>) -> Void)] = [:]
     
     public func waitForStatusUpdated(statusUpdated:@escaping(MessageChannelStatus,String,AgoraRtmMessage?)->Void){
         _statusUpdated = statusUpdated
@@ -160,6 +161,28 @@ class RtmEngine : NSObject{
         }
     }
     private func sendCallback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,String)->Void){
+        let reMsg = getRtmSendMsg(e)
+        if(reMsg.errCode != ErrCode.XOK){
+            log.e("rtm send message result:\(reMsg.msg)(\(reMsg))")
+            cb(reMsg.errCode,reMsg.msg)
+        }else{
+            _completionBlocks[sequenceId] = cb
+        }
+       
+    }
+    
+    private func sendCallback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,Dictionary<String, Any>)->Void){
+        let reMsg = getRtmSendMsg(e)
+        if(reMsg.errCode != ErrCode.XOK){
+            log.e("rtm send message result:\(reMsg.msg)(\(reMsg.errCode))")
+            cb(reMsg.errCode,[:])
+        }else{
+            _completionDicBlocks[sequenceId] = cb
+        }
+    }
+    
+    func getRtmSendMsg(_ e:AgoraRtmSendPeerMessageErrorCode)->(errCode:Int,msg:String){
+        
         var msg = "unknown error"
         var ec:Int = ErrCode.XERR_API_RET_FAIL
         switch(e){
@@ -191,14 +214,10 @@ class RtmEngine : NSObject{
             msg = "unknown error"
             ec = ErrCode.XERR_UNKNOWN
         }
-        if(ec != ErrCode.XOK){
-            log.e("rtm send message result:\(msg)(\(e))")
-            cb(ec,msg)
-        }else{
-            _completionBlocks[sequenceId] = cb
-        }
-       
+        return (ec,msg)
     }
+    
+    
     func sendStringMessage(sequenceId:String, toPeer:String,message:String,cb:@escaping(Int,String)->Void){
         guard let kit = kit else{
             log.e("rtm engine is nil")
@@ -241,6 +260,29 @@ class RtmEngine : NSObject{
             }
         }
     }
+    
+    func sendRawMessageDic(sequenceId:String, toPeer:String,data:Data,description:String,cb:@escaping(Int,Dictionary<String, Any>)->Void){
+        guard let kit = kit else{
+            log.e("rtm engine is nil")
+            cb(ErrCode.XERR_BAD_STATE,[:])
+            return
+        }
+        if(data.count >= config.maxRtmPackage){
+            log.e("rtm package size(\(data.count) exceeds limit(\(config.maxRtmPackage)")
+            cb(ErrCode.XERR_BUFFER_OVERFLOW,[:])
+            return
+        }
+        let package = AgoraRtmRawMessage(rawData: data, description: description)
+        let option = AgoraRtmSendMessageOptions()
+        option.enableOfflineMessaging = false
+        option.enableHistoricalMessaging = false
+        kit.send(package, toPeer: toPeer, sendMessageOptions: option) { ec in
+            DispatchQueue.main.async {
+                self.sendCallback(sequenceId,ec,cb)
+            }
+        }
+    }
+    
     func destroy(){
         log.i("rtm is destroying()")
         if(kit == nil){
@@ -297,19 +339,19 @@ class RtmEngine : NSObject{
                 }
                 // 根据sequenceId获取对应的闭包
                 let completionBlock = _completionBlocks["\(sequenceId)"]
-                
-                guard let code = dict["code"] as? Int, code == 0 else{
-                    log.e("handelReceivedData: dict:\(dict))")
-                    completionBlock?(ErrCode.XERR_UNKNOWN, "")
-                    return
-                }
-                
-                if let data = dict["data"] as? [String:Any] {
-                    //todo:
+                let completionDicBlock = _completionDicBlocks["\(sequenceId)"]
+   
+                if let resultDic = dict["data"] as? [String:Any] {
+                    let code = dict["code"] as? Int ?? -9999
                     DispatchQueue.main.async {
-//                        completionBlock?(ErrCode.XOK, data)
+                        completionDicBlock?(code, resultDic)
                     }
                 }else{
+                    guard let code = dict["code"] as? Int else{
+                        log.e("handelReceivedData: dict:\(dict))")
+                        completionBlock?(ErrCode.XERR_UNKNOWN, "")
+                        return
+                    }
                     DispatchQueue.main.async {
                         completionBlock?(ErrCode.XOK, "success")
                     }
@@ -328,6 +370,7 @@ class RtmEngine : NSObject{
             }
             // 根据sequenceId获取对应的闭包
             let completionBlock = _completionBlocks["\(sequenceId)"]
+            let completionDicBlock = _completionDicBlocks["\(sequenceId)"]
             
             guard let code = dict["code"] as? Int, code == 0 else{
                 log.e("handelReceivedData: dict:\(dict))")
@@ -335,10 +378,9 @@ class RtmEngine : NSObject{
                 return
             }
             
-            if let data = dict["data"] as? [String:Any] {
-                //todo:
+            if let resultDic = dict["data"] as? [String:Any] {
                 DispatchQueue.main.async {
-//                    completionBlock?(ErrCode.XOK, data)
+                    completionDicBlock?(ErrCode.XOK,resultDic)
                 }
             }else{
                 DispatchQueue.main.async {
@@ -347,6 +389,8 @@ class RtmEngine : NSObject{
             }
             
             _completionBlocks["\(sequenceId)"] = nil
+            _completionDicBlocks["\(sequenceId)"] = nil
+            
         }
         else{
             log.w("rtm unhandled messate type \(message.type)")
