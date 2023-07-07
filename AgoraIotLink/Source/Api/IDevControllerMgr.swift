@@ -38,5 +38,10 @@ import Foundation
      */
     func sendCmdPtzCtrl(cmdListener: @escaping (_ errCode:Int,_ result:String) -> Void)
     
-    
+    /**
+     * @brief 发送设备重启命令
+     * @param cmdListener: 命令完成回调
+     * @return 返回错误码
+     */
+    func sendCmdDevReset(cmdListener: @escaping (_ errCode:Int,_ result:String) -> Void)
 }

@@ -9,7 +9,7 @@ import Foundation
 
 
 class IDevControllerManager : IDevControllerMgr{
-    
+
     private var app:Application
     private var curSessionId:String //当前sessionId
     private var rtm:RtmEngine
@@ -29,7 +29,6 @@ class IDevControllerManager : IDevControllerMgr{
         let curSequenceId : UInt32 = app.config.curSequenceId
         app.config.curSequenceId = app.config.curSequenceId+1
         
-//        let curTimestamp:Int = String.dateTimeRounded()
         let commanId:Int = 1001
         let payloadParam = ["action": action, "direction": direction, "speed": speed] as [String : Any]
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId, "param": payloadParam] as [String : Any]
@@ -42,7 +41,6 @@ class IDevControllerManager : IDevControllerMgr{
         let curSequenceId : UInt32 = app.config.curSequenceId
         app.config.curSequenceId = app.config.curSequenceId+1
         
-//        let curTimestamp:Int = String.dateTimeRounded()
         let commanId:Int = 1002
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
         sendGeneralData(paramDic, curSequenceId,cmdListener)
@@ -54,12 +52,20 @@ class IDevControllerManager : IDevControllerMgr{
         let curSequenceId : UInt32 = app.config.curSequenceId
         app.config.curSequenceId = app.config.curSequenceId+1
         
-//        let curTimestamp:Int = String.dateTimeRounded()
         let commanId:Int = 2001
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
         sendGeneralData(paramDic, curSequenceId,cmdListener)
  
         
+    }
+    
+    func sendCmdDevReset(cmdListener: @escaping (Int, String) -> Void) {
+        let curSequenceId : UInt32 = app.config.curSequenceId
+        app.config.curSequenceId = app.config.curSequenceId+1
+        
+        let commanId:Int = 3002
+        let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
+        sendGeneralData(paramDic, curSequenceId,cmdListener)
     }
     
     func sendGeneralData(_ paramDic:[String:Any],_ sequenceId:UInt32,_ cmdListener: @escaping (Int, String) -> Void){
