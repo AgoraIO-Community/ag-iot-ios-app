@@ -41,5 +41,6 @@ class Config {
     
     var maxRtmPackage = 1024*1
     
-    var curSequenceId : UInt32 = 2
+//    var curSequenceId : UInt32 = 2
+    let counter = ThreadSafeCounter()
 }

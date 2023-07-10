@@ -11,7 +11,7 @@ class AppListener : FsmApp.IListener{
     
     func on_logout_watcher(_ srcEvent: FsmApp.Event) {
         log.i("listener app.on_logout_watcher \(srcEvent)")
-        app.rule.trigger.logout_watcher()
+//        app.rule.trigger.logout_watcher()
     }
     
     var app:Application

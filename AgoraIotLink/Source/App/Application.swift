@@ -28,15 +28,18 @@ open class Application{
         log.i("======================================================")
 
         
-        _config.appId = initParam.rtcAppId
-        _config.logFilePath = initParam.logFilePath
-        _config.projectId = initParam.projectId
-        _context.callbackFilter = callbackFilter
+        _config = Config()
+        _config!.appId = initParam.rtcAppId
+        _config!.logFilePath = initParam.logFilePath
+        _config!.projectId = initParam.projectId
         
-        _context.call.setting.logFilePath = initParam.logFilePath ?? ""
-        _context.rtm.setting.appId = initParam.rtcAppId
+
+        _context = Context()
+        _context!.call.setting.logFilePath = initParam.logFilePath ?? ""
+        _context!.rtm.setting.appId = initParam.rtcAppId
+        _context!.callbackFilter = callbackFilter
         
-        self._proxy = Proxy(event:self.status, rule:self.rule, cfg: self.config, ctx: self.context)
+        self._proxy = Proxy( cfg: self.config, ctx: self.context)
 
         
         if(initParam.rtcAppId == ""){
@@ -44,14 +47,16 @@ open class Application{
             return ErrCode.XERR_INVALID_PARAM
         }
         
-        _rule!.start(queue:DispatchQueue.main)
+//        _rule!.start(queue:DispatchQueue.main)
 
         return ErrCode.XOK
     }
     
     func release() {
         _proxy?.rtc.destroy()
-        _rule?.trans(FsmApp.Event.LOGOUT)
+        _config = nil
+        _context = nil
+//        _rule?.trans(FsmApp.Event.LOGOUT)
         _proxy = nil
   
     }
@@ -59,18 +64,16 @@ open class Application{
     public static let shared = Application()
     
     var sdk:IotAppSdk{get{return _sdk}}
-    var rule:RuleManager{get{return _rule!}}
-    var config:Config{get{return _config}}
-    var status:StateListener{get{return _status!}}
+//    var rule:RuleManager{get{return _rule!}}
+    var config:Config{get{return _config!}}
+//    var status:StateListener{get{return _status!}}
     var proxy:Proxy{get{return _proxy!}}
-    var context:Context{get{return _context}}
+    var context:Context{get{return _context!}}
     
-//    var callkitMgr:CallkitManager{get{return _sdk.callkitMgr as! CallkitManager}}
-    
-    private var _config = Config()
-    private var _context = Context()
-    private var _rule:RuleManager?
-    private var _status:StateListener?
+    private var _config : Config?
+    private var _context : Context?
+//    private var _rule:RuleManager?
+//    private var _status:StateListener?
     private var _sdk:IotAppSdk = IotAppSdk()
     
     private var _proxy:Proxy?
@@ -78,22 +81,24 @@ open class Application{
     init(){
         log.level = .verb
         self._sdk.application = self
-        self._status = StateListener(self)
-        self._rule = RuleManager(self,postFun)
+//        self._status = StateListener(self)
+//        _context = Context()
+//        self._rule = RuleManager(self,postFun)
         
     }
     
-    let queue = DispatchQueue(label: "myQueue",qos: DispatchQoS.default,attributes: DispatchQueue.Attributes.concurrent,autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit,target: nil)
-    //let queue = DispatchQueue.main
-    func postFun(act: @escaping ()->Void){
-        queue.sync{
-            act()
-        }
-    }
+//    let queue = DispatchQueue(label: "myQueue",qos: DispatchQoS.default,attributes: DispatchQueue.Attributes.concurrent,autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit,target: nil)
+//    func postFun(act: @escaping ()->Void){
+//        queue.sync{
+//            act()
+//        }
+//    }
     
-    static func Instance()->Application{
-        return Application.shared;
-    }
+//    static func Instance()->Application{
+//        return Application.shared;
+//    }
+    
+    
 }
 
 

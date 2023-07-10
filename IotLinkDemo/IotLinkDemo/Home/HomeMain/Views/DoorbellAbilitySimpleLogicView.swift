@@ -345,6 +345,12 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         
         guard let device = device, device.sessionId != "" else { return }
         
+        DoorBellManager.shared.sendCmdSDCtrl(sessionId: device.sessionId,  cb: { code, msg in
+            debugPrint("sendCmdSDCtrl成功 : \(msg)")
+        })
+        
+        return
+        
         if startRecord == false {
             let videoPath = getTempVideoUrl()
             print("videoPath:\(videoPath)")
@@ -417,16 +423,16 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         
         
         //-------------- 测试发送SD卡回看命令----------------
-        DoorBellManager.shared.sendCmdSDCtrl(sessionId: device.sessionId,  cb: { code, msg in
-            debugPrint("sendCmdSDCtrl成功 : \(msg)")
-        })
-
-        return
+//        DoorBellManager.shared.sendCmdSDCtrl(sessionId: device.sessionId,  cb: { code, msg in
+//            debugPrint("sendCmdSDCtrl成功 : \(msg)")
+//        })
+//
+//        return
         
         //-------------- 测试发送控制命令----------------
-//        DoorBellManager.shared.sendCmdPtzCtrl(sessionId: device.sessionId,  cb: { code, msg in
-//            debugPrint("sendCmdPtzCtrl成功 : \(msg)")
-//        })
+        DoorBellManager.shared.sendCmdPtzCtrl(sessionId: device.sessionId,  cb: { code, msg in
+            debugPrint("sendCmdPtzCtrl成功 : \(msg)")
+        })
 
         return
         

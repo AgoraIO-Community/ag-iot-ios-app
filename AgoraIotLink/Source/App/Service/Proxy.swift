@@ -22,7 +22,7 @@ internal class Proxy{
 //    var mqtt:AWSMqtt{get{return _mqtt}}
 //    var rtm:RtmEngine{get{return _rtm!}}
     
-    init(event:StateListener, rule:RuleManager,cfg:Config,ctx:Context){
+    init(cfg:Config,ctx:Context){
         self._rtc = RtcEngine()
 //        self._rtm = RtmEngine(cfg:cfg)
         self._ntf = PushNotifier(cfg: cfg)

@@ -26,8 +26,7 @@ class IDevControllerManager : IDevControllerMgr{
     
     func sendCmdPtzCtrl(action: Int, direction: Int, speed: Int, cmdListener: @escaping (Int, String) -> Void) {//云台控制
         
-        let curSequenceId : UInt32 = app.config.curSequenceId
-        app.config.curSequenceId = app.config.curSequenceId+1
+        let curSequenceId : UInt32 = getSequenceId()
         
         let commanId:Int = 1001
         let payloadParam = ["action": action, "direction": direction, "speed": speed] as [String : Any]
@@ -38,8 +37,7 @@ class IDevControllerManager : IDevControllerMgr{
     
     func sendCmdPtzReset(cmdListener: @escaping (Int, String) -> Void) {//云台校准
         
-        let curSequenceId : UInt32 = app.config.curSequenceId
-        app.config.curSequenceId = app.config.curSequenceId+1
+        let curSequenceId : UInt32 = getSequenceId()
         
         let commanId:Int = 1002
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
@@ -49,8 +47,7 @@ class IDevControllerManager : IDevControllerMgr{
     
     func sendCmdPtzCtrl(cmdListener: @escaping (Int, String) -> Void) {//SD卡格式化
         
-        let curSequenceId : UInt32 = app.config.curSequenceId
-        app.config.curSequenceId = app.config.curSequenceId+1
+        let curSequenceId : UInt32 = getSequenceId()
         
         let commanId:Int = 2001
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
@@ -60,8 +57,7 @@ class IDevControllerManager : IDevControllerMgr{
     }
     
     func sendCmdDevReset(cmdListener: @escaping (Int, String) -> Void) {
-        let curSequenceId : UInt32 = app.config.curSequenceId
-        app.config.curSequenceId = app.config.curSequenceId+1
+        let curSequenceId : UInt32 = getSequenceId()
         
         let commanId:Int = 3002
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
@@ -81,4 +77,9 @@ class IDevControllerManager : IDevControllerMgr{
         rtm.sendRawMessage(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
     }
   
+    func getSequenceId()->UInt32{
+        
+        let curSequenceId : UInt32 = app.config.counter.increment()
+        return curSequenceId
+    }
 }

@@ -195,8 +195,7 @@ extension IDevMediaManager{
     
     func getSequenceId()->UInt32{
         
-        let curSequenceId : UInt32 = app.config.curSequenceId
-        app.config.curSequenceId = app.config.curSequenceId+1
+        let curSequenceId : UInt32 = app.config.counter.increment()
         return curSequenceId
     }
 }

@@ -66,10 +66,10 @@ class NotificationManager : INotificationMgr{
     }
 
     private var app:Application
-    private var rule:RuleManager
+//    private var rule:RuleManager
     
     init(app:Application){
         self.app = app
-        self.rule = app.rule
+//        self.rule = app.rule
     }
 }

@@ -9,11 +9,11 @@ import Foundation
 
 class AccountManager : IAccountMgr{
     private var app:Application
-    private var rule:RuleManager
+//    private var rule:RuleManager
     
     init(app:Application){
         self.app = app
-        self.rule = app.rule
+//        self.rule = app.rule
     }
     
     private func asyncResult(_ ec:Int,_ msg:String,_ result:@escaping(Int,String)->Void) {
@@ -49,14 +49,14 @@ class AccountManager : IAccountMgr{
 //    }
     
     func login(param: LoginParam, result: @escaping (Int, String) -> Void) {
-        app.rule.trans(FsmApp.Event.LOGIN,
-                       {self.doLogin(param,{ec,msg in
-            
-                        self.asyncResult(ec,msg,result)
-            
-                        }//{self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
-                       )}
-                )
+//        app.rule.trans(FsmApp.Event.LOGIN,
+//                       {self.doLogin(param,{ec,msg in
+//
+//                        self.asyncResult(ec,msg,result)
+//
+//                        }//{self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
+//                       )}
+//                )
     }
     
     func getUserId() -> String {
@@ -114,26 +114,26 @@ class AccountManager : IAccountMgr{
                         //self.app.context.account = account
                         if let cert = cert {
                             self.app.context.gyiot.session.cert = cert
-                            self.rule.trans(succ ? .LOGIN_SUCC : .LOGIN_FAIL,
-                                            {result(succ ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,msg)},
-                                            {result(ErrCode.XERR_BAD_STATE,"state error")})
+//                            self.rule.trans(succ ? .LOGIN_SUCC : .LOGIN_FAIL,
+//                                            {result(succ ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,msg)},
+//                                            {result(ErrCode.XERR_BAD_STATE,"state error")})
                         }
                         else{
                             log.e("iotlink reqSessCert cert is nil:\(msg)(\(ec))")
-                            self.rule.trans(.LOGIN_FAIL)
+//                            self.rule.trans(.LOGIN_FAIL)
                             self.app.context.gyiot.session.reset()
                         }
                     }
                     else{
                         log.e("iotlink reqSessCert result error:\(msg)(\(ec))")
-                        self.rule.trans(.LOGIN_FAIL)
+//                        self.rule.trans(.LOGIN_FAIL)
                         self.app.context.gyiot.session.reset()
                     }
                 })
             }
             else{
                 log.e("iotlink reqLogin result error:\(msg)(\(ec))")
-                self.rule.trans(.LOGIN_FAIL)
+//                self.rule.trans(.LOGIN_FAIL)
                 self.app.context.gyiot.session.reset()
                 result(ec,msg)
             }
@@ -261,9 +261,9 @@ class AccountManager : IAccountMgr{
         self.app.context.virtualNumber = thingName
         self.app.context.gyiot.session.cert.thingName = thingName
         log.i("---doLogin--thingName:\(thingName)")
-        self.rule.trans(.LOGIN_SUCC,
-                        {result(ErrCode.XOK,"succ")}
-                        )//{result(ErrCode.XERR_BAD_STATE,"state error")}
+//        self.rule.trans(.LOGIN_SUCC,
+//                        {result(ErrCode.XOK,"succ")}
+//                        )//{result(ErrCode.XERR_BAD_STATE,"state error")}
         
 //        resetDevice()
         
@@ -304,8 +304,8 @@ class AccountManager : IAccountMgr{
             self.app.context.call.lastSession.reset()
 //            self.app.proxy.mqtt.reset()
 //            self.app.callkitMgr.reset()
-            self.rule.trigger.logout_watcher = {result(ErrCode.XOK,"")}
-            self.rule.trans(FsmApp.Event.LOGOUT)
+//            self.rule.trigger.logout_watcher = {result(ErrCode.XOK,"")}
+//            self.rule.trans(FsmApp.Event.LOGOUT)
         }
         
         let cbHttp = {(ec:Int,msg:String) in
@@ -416,9 +416,9 @@ class AccountManager : IAccountMgr{
 #endif
     func logoutAccount(_ isSourceOut:Bool, result:@escaping (Int,String)->Void){
         log.i("logoutAccount_isInter:\(isSourceOut)")
-        app.rule.trans(FsmApp.Event.LOGOUT,
-                       {self.doLogoutNew({ec,msg in self.asyncResult(ec,msg,result)})},
-                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
+//        app.rule.trans(FsmApp.Event.LOGOUT,
+//                       {self.doLogoutNew({ec,msg in self.asyncResult(ec,msg,result)})},
+//                       {self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
     }
     
     private func doChangePassword(account:String,oldPwd:String,newPwd:String,result:@escaping(Int,String)->Void){

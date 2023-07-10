@@ -121,6 +121,7 @@ class HomePageMainVC: AGBaseVC {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        initAgoraIot()
         // 隐藏导航栏
         navigationController?.navigationBar.isHidden = true
 //        let callkitMgr = getDevSessionMgr("")
@@ -270,6 +271,7 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
 extension HomePageMainVC { //vodPlayer
     
     func openVodPlayer(){
+      
         sdk?.vodPlayerMgr.open(mediaUrl: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8", callback: { [weak self] errCode, displayView in
             self?.setDisPlayView(displayView)
         })
@@ -302,7 +304,7 @@ extension HomePageMainVC { //呼叫设备
     //呼叫设备
     func callDevice(indexPath : IndexPath){
         
-//        openVodPlayer()
+//         openVodPlayer()
         
         curIndex = indexPath
         requestConDeviceParam()
@@ -337,11 +339,11 @@ extension HomePageMainVC { //呼叫设备
             print("过滤mqtt多余的返回数据")
             return
         }
-        guard let nodeToken = TDUserInforManager.shared.nodeData?.nodeId else{ return }
+        guard let nodeId = TDUserInforManager.shared.nodeData?.nodeId else{ return }
         
         curTraceId = sess.traceId
         let accountInfor = TDUserInforManager.shared.readKeyChainAccountAndPwd()
-        let userId = nodeToken //accountInfor.acc
+        let userId = nodeId //accountInfor.acc
         let connectParam = ConnectParam(mUserId: userId, mPeerDevId: sess.peerNodeId, mLocalRtcUid: sess.uid, mChannelName: sess.cname, mRtcToken: sess.token, mRtmToken: "")
         connectDevice(connectParam: connectParam)
     }

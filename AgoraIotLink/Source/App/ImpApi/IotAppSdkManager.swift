@@ -32,7 +32,7 @@ public class LocalNode : NSObject {
 public class IotAppSdkManager: NSObject {
 
     private var app:Application
-    private var rule:RuleManager
+//    private var rule:RuleManager
     
     private var _onPrepareListener:(SdkStatus,String)->Void = {s,msg in log.w("mqtt _onActionAck not inited")}
     
@@ -40,7 +40,7 @@ public class IotAppSdkManager: NSObject {
     
     init(app:Application){
         self.app = app
-        self.rule = app.rule
+//        self.rule = app.rule
     }
     
 //    func activeNode(){

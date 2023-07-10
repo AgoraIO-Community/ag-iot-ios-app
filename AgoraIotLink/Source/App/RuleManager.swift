@@ -20,7 +20,7 @@ class RuleManager{
         _fsmApp = FsmApp(onPost)
         _trigger = TriggerListener()
         _fsmApp.listener = AppListener(app: app)
-        _fsmApp.getFsmState().listener = app.status
+//        _fsmApp.getFsmState().listener = app.status
         _fsmApp.getFsmPush().listener = PushListener(app:app)
         
     }

@@ -9,9 +9,9 @@ import Foundation
 class PushListener : FsmPush.IListener{
     func on_destroy(_ srcEvent: FsmPush.Event) {
         log.i("listener push.on_destroy")
-        app.proxy.ntf.logoutAndDestroy { succ in
-            self.app.rule.trans(FsmPush.Event.DESTROYED)
-        }
+//        app.proxy.ntf.logoutAndDestroy { succ in
+//            self.app.rule.trans(FsmPush.Event.DESTROYED)
+//        }
     }
     
     func do_LOGIN(_ srcState: FsmPush.State) {
@@ -20,7 +20,7 @@ class PushListener : FsmPush.IListener{
 //        app.proxy.ntf.login(userName: setting.name, password: setting.password) { succ,eid in
 //            self.app.rule.trans(succ ? FsmPush.Event.LOGINSUCC : FsmPush.Event.LOGINFAIL)
 //        }
-        app.rule.trans(FsmPush.Event.LOGINSUCC)
+//        app.rule.trans(FsmPush.Event.LOGINSUCC)
     }
     
     func on_initialize(_ srcEvent: FsmPush.Event) {
@@ -29,7 +29,7 @@ class PushListener : FsmPush.IListener{
             if(succ != .Abort){
                 log.i("listener push :\(succ)")
                 self.app.context.push.session.eid = succ == .Succ ? eid : ""
-                self.app.rule.trans(succ == .Succ ? FsmPush.Event.INITSUCC : FsmPush.Event.INITFAIL)
+//                self.app.rule.trans(succ == .Succ ? FsmPush.Event.INITSUCC : FsmPush.Event.INITFAIL)
             }
         })
         
