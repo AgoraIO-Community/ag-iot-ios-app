@@ -44,13 +44,6 @@ class HomePageMainVC: AGBaseVC {
         }
         return topView
     }()
-    
-    lazy var vodDisplayView:UIView = {
-        let vodView = UIView()
-        vodView.backgroundColor = UIColor.cyan
-        
-        return vodView
-    }()
 
     lazy var tipsView:NetworkTipsView = {
         let tips = NetworkTipsView()
@@ -97,7 +90,7 @@ class HomePageMainVC: AGBaseVC {
         setUpUI()
         // 监听网络状态
         startListeningNetStatus()
-        loadPreConfig()
+//        loadPreConfig()
         
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
 //            sdk?.release()
@@ -121,7 +114,7 @@ class HomePageMainVC: AGBaseVC {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        initAgoraIot()
+//        initAgoraIot()
         // 隐藏导航栏
         navigationController?.navigationBar.isHidden = true
 //        let callkitMgr = getDevSessionMgr("")
@@ -268,43 +261,12 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension HomePageMainVC { //vodPlayer
-    
-    func openVodPlayer(){
-      
-        sdk?.vodPlayerMgr.open(mediaUrl: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8", callback: { [weak self] errCode, displayView in
-            self?.setDisPlayView(displayView)
-        })
-        
-//        view.addSubview(vodDisplayView)
-//        vodDisplayView.snp.makeConstraints { make in
-//            make.left.bottom.right.equalTo(view)
-//            make.height.equalTo(200)
-//        }
-//        let vFrame = CGRect(x: 0, y: 0, width: ScreenWidth, height: 200)
-//        sdk?.vodPlayerMgr.setDisplayView(vodDisplayView, vFrame)
-        
-    }
-    
-    func setDisPlayView(_ displayView:UIView){
-        view.addSubview(displayView)
-        displayView.snp.makeConstraints { make in
-            make.left.bottom.right.equalTo(view)
-            make.height.equalTo(300)
-        }
-    }
-   
-}
-
-
 
 extension HomePageMainVC { //呼叫设备
 
     //---------设备控制相关-----------
     //呼叫设备
     func callDevice(indexPath : IndexPath){
-        
-//         openVodPlayer()
         
         curIndex = indexPath
         requestConDeviceParam()
@@ -382,6 +344,7 @@ extension HomePageMainVC { //呼叫设备
             
             cell?.handelCallStateText(true)
             device.sessionId = sessionId
+            TDUserInforManager.shared.curSessionId = sessionId
             cell?.tag = (self?.getTagFromSessionId(sessionId))!
             
             if(act == .onConnectDone){

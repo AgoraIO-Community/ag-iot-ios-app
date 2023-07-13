@@ -11,7 +11,11 @@ class CallListenerManager {
 
     static var sharedInstance = CallListenerManager()
     var app  = Application.shared
-
+    var mediaLister : MediaStateListener?
+    
+    //todo:
+    var startTime : TimeInterval = 0
+    var endTime   : TimeInterval = 0
     
 //    struct Static
 //    {
@@ -88,6 +92,8 @@ class CallListenerManager {
         })
         callListen?.callSession?.rtm?.destroy();
         
+        hunUpSDCard()
+        
     }
     
     func clearCurrentCallObj(_ sessionId:String){//清除当前call对象
@@ -150,7 +156,50 @@ class CallListenerManager {
         }
     }
     
+    func getCurrentTalkingEngine(_ sessionId:String)->AgoraTalkingEngine?{
+        
+        guard let callObjet = getCurrentCallObjet(sessionId) else{
+            log.i("getCurrentTalkingEngine not found sessionId :\(sessionId) ")
+            return nil
+        }
+        return callObjet.talkingEngine
+    }
     
+    
+    //-----------sdk回看----------
+    func startSDCardCall(dialParam: CallSession,actionAck:@escaping(MediaCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?){
+
+        let callLister = MediaStateListener(dialParam:dialParam, actionAck: actionAck, memberState: memberState)
+        mediaLister = callLister
+        callLister.interCallAct = { [weak self] ack,sessionId,peerNodeId in
+            if (ack == .RemoteHangup){
+                self?.hunUpSDCard()
+            }
+        }
+    }
+    
+    func hunUpSDCard(){
+        mediaLister?.hangUp(hangUpResult: { [weak self] isSuc, msg in
+            self?.mediaLister = nil
+        })
+    }
+    
+    func getCurrentSDcardTalkingEngine()->AgoraTalkingEngine?{
+        
+        guard let callObjet = mediaLister else{
+            log.i("getCurrentSDcardTalkingEngine not found ")
+            return nil
+        }
+        return callObjet.talkingEngine
+    }
+    
+    func getCurrentSDCardCallSession() -> CallSession?{
+        guard let callObjet = mediaLister else{
+            log.i("getCurrentSDcardTalkingEngine not found ")
+            return nil
+        }
+        return callObjet.callSession
+    }
     
     
     //-------来电单独处理，暂时不用-------

@@ -6,28 +6,140 @@
 //
 
 import Foundation
-//import IJKMediaFramework
+import IJKMediaFramework
 //import SJBaseVideoPlayer
 //import SJVideoPlayer
 
 
+class IVodPlayerManager : IVodPlayerMgr{
+    
+    public var url:URL?
+    var player:IJKFFMoviePlayerController?
+    
+    typealias callActionAck = (_ errCode:Int,_ disPlayView:UIView)->Void
+    private var callAct:callActionAck = {errCode,disPlayView in log.w("IVodPlayerManager callAct callActionAck not inited")}
+    
+    
+    private lazy var playerContainerView:UIView = {
+        return UIView()
+    }()
+    
+    func open(mediaUrl: String, callback: @escaping (Int, UIView) -> Void) {
+        
+        callAct = callback
+        installObserver()
+        
+        guard let options = IJKFFOptions.byDefault() else {
+            return
+        }
+        self.player = IJKFFMoviePlayerController.init(contentURL: url, with: options)
+        
+        self.player?.view.autoresizingMask = [.flexibleWidth,.flexibleHeight]
+        
+        guard let url = URL(string: mediaUrl) else {
+            callAct(ErrCode.XERR_INVALID_PARAM, self.player?.view ?? UIView())
+            return
+        }
+        
+        self.player = IJKFFMoviePlayerController.init(contentURL: url, with: options)
+        self.player?.view.autoresizingMask = [.flexibleWidth,.flexibleHeight]
+        self.player?.scalingMode = .aspectFit
+        self.player?.shouldAutoplay = false;
+        
+        prepareToPlay()
+         
+    }
+
+    func close() {
+        destory()
+        self.player?.shutdown()
+    }
+    
+    func setDisplayView(_ displayView:UIView)->Int{
+        displayView.addSubview(self.player?.view ?? UIView())
+        self.player?.view.frame = displayView.bounds
+        return ErrCode.XOK
+    }
+    
+    func getPlayingProgress() -> Double {
+        let currentTime = self.player?.currentPlaybackTime ?? 0
+        let duration = self.player?.duration ?? 0
+        let progress = Double(currentTime/duration)
+        return progress
+    }
+    
+    func getPlayDuration() -> Double {
+        return self.player?.duration ?? 0
+    }
+    
+    func getCurrentPlaybackTime() -> Double {
+        return self.player?.currentPlaybackTime ?? 0
+    }
+    
+    func getPlayer()-> IJKFFMoviePlayerController?{
+        return self.player
+    }
+    
+    func prepareToPlay() {
+        self.player?.prepareToPlay()
+    }
+    
+    func play() {
+        self.player?.play()
+    }
+    
+    func pause() {
+        self.player?.pause()
+    }
+    
+    func stop() {
+        self.player?.stop()
+    }
+    
+    func seek(seekPos: Double){
+        self.player?.currentPlaybackTime = seekPos
+    }
+    
+    func installObserver(){
+        NotificationCenter.default.addObserver(self, selector: #selector(mediaIsPreparedToPlayDidChange), name: NSNotification.Name.IJKMPMediaPlaybackIsPreparedToPlayDidChange, object: nil)
+    }
+    
+    @objc func mediaIsPreparedToPlayDidChange(notification:NSNotification){
+        log.i("ijk mediaIsPreparedToPlayDidChange")
+        callAct(ErrCode.XOK, self.player?.view ?? UIView())
+    }
+    
+    func destory(){
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.IJKMPMediaPlaybackIsPreparedToPlayDidChange, object: nil)
+    }
+  
+}
+
+
+
 //class IVodPlayerManager : IVodPlayerMgr{
 //
-//    public var url:URL?
-//    var player:IJKFFMoviePlayerController?
 //
 //    typealias callActionAck = (_ errCode:Int,_ disPlayView:UIView)->Void
+//
 //    private var callAct:callActionAck = {errCode,disPlayView in log.w("IVodPlayerManager callAct callActionAck not inited")}
 //
 //
-////    lazy var player:SJVideoPlayer = {
-////        let player = SJVideoPlayer()
-////        player.defaultEdgeControlLayer.bottomAdapter .removeItem(forTag:SJEdgeControlLayerBottomItem_Full)
-////        player.defaultEdgeControlLayer.bottomAdapter.removeAllItems()
-////        player.defaultEdgeControlLayer.topAdapter.removeAllItems()
-////
-////        return player
-////    }()
+//    lazy var player:SJVideoPlayer = {
+//        let player = SJVideoPlayer()
+//        player.defaultEdgeControlLayer.bottomAdapter .removeItem(forTag:SJEdgeControlLayerBottomItem_Full)
+//        player.defaultEdgeControlLayer.bottomAdapter.removeAllItems()
+//        player.defaultEdgeControlLayer.topAdapter.removeAllItems()
+//        player.defaultEdgeControlLayer.centerAdapter.removeAllItems()
+//        player.defaultEdgeControlLayer.leftAdapter.removeAllItems()
+//        player.defaultEdgeControlLayer.rightAdapter.removeAllItems()
+//        // 禁用手势
+//        player.gestureRecognizerShouldTrigger = { player,type,location in
+//            return false
+//        }
+//
+//        return player
+//    }()
 //
 //    private lazy var playerContainerView:UIView = {
 //        return UIView()
@@ -36,109 +148,6 @@ import Foundation
 //    func open(mediaUrl: String, callback: @escaping (Int, UIView) -> Void) {
 //        callAct = callback
 //
-//        guard let options = IJKFFOptions.byDefault() else {
-//            return
-//        }
-//        self.player = IJKFFMoviePlayerController.init(contentURL: url, with: options)
-//
-//        self.player?.view.autoresizingMask = [.flexibleWidth,.flexibleHeight]
-//
-//        guard let url = URL(string: mediaUrl) else {
-//            callAct(ErrCode.XERR_INVALID_PARAM, self.player?.view ?? UIView())
-//            return
-//        }
-//
-//        self.player = IJKFFMoviePlayerController.init(contentURL: url, with: options)
-//        self.player?.view.autoresizingMask = [.flexibleWidth,.flexibleHeight]
-//
-//        callAct(ErrCode.XOK, self.player?.view ?? UIView())
-//
-//        self.player?.scalingMode = .aspectFit
-//        self.player?.shouldAutoplay = true;
-//
-//        prepareToPlay()
-//
-////        self.player?.prepareToPlay()
-////        self.player?.play()
-//
-////        let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
-////        let options = IJKFFOptions.byDefault()
-////        ijkVC.options = options
-////        player.playbackController = ijkVC
-////
-////        guard let url = URL(string: mediaUrl) else {
-////            callAct(ErrCode.XERR_INVALID_PARAM, player.view)
-////            return
-////        }
-////        player.urlAsset = SJVideoPlayerURLAsset(url: url)
-////        callAct(ErrCode.XOK, player.view)
-//
-//    }
-//
-//    func close() {
-//        self.player?.shutdown()
-//    }
-//
-//    func setDisplayView(_ displayView:UIView, _ frame:CGRect)->Int{
-////        displayView.addSubview(player.view)
-////        player.view.frame = frame
-//        return ErrCode.XOK
-//    }
-//
-//    func getPlayingProgress() -> UInt64 {
-//        return UInt64(self.player?.duration ?? 0)
-//    }
-//
-//    func prepareToPlay() {
-//        self.player?.prepareToPlay()
-//    }
-//
-//    func play() {
-//        self.player?.play()
-//    }
-//
-//    func pause() {
-//        self.player?.pause()
-//    }
-//
-//    func stop() {
-//        self.player?.stop()
-//        self.player?.shutdown()
-//    }
-//
-//    func seek(seekPos: UInt64) -> UInt64 {
-//        self.player?.currentPlaybackTime = Double(seekPos)
-//        return 0
-//    }
-//
-//
-//
-//}
-
-class IVodPlayerManager : IVodPlayerMgr{
-
-
-    typealias callActionAck = (_ errCode:Int,_ disPlayView:UIView)->Void
-
-    private var callAct:callActionAck = {errCode,disPlayView in log.w("IVodPlayerManager callAct callActionAck not inited")}
-
-
-//    lazy var player:SJVideoPlayer = {
-//        let player = SJVideoPlayer()
-//        player.defaultEdgeControlLayer.bottomAdapter .removeItem(forTag:SJEdgeControlLayerBottomItem_Full)
-//        player.defaultEdgeControlLayer.bottomAdapter.removeAllItems()
-//        player.defaultEdgeControlLayer.topAdapter.removeAllItems()
-//
-//        return player
-//    }()
-
-    private lazy var playerContainerView:UIView = {
-        return UIView()
-    }()
-
-    func open(mediaUrl: String, callback: @escaping (Int, UIView) -> Void) {
-        callAct = callback
-
 //        let ijkVC : SJIJKMediaPlaybackController = SJIJKMediaPlaybackController()
 //        let options = IJKFFOptions.byDefault()
 //        ijkVC.options = options
@@ -149,40 +158,57 @@ class IVodPlayerManager : IVodPlayerMgr{
 //            return
 //        }
 //        player.urlAsset = SJVideoPlayerURLAsset(url: url)
+//
+//        player.autoplayWhenSetNewAsset = true
+//        player.pause()
+//
 //        callAct(ErrCode.XOK, player.view)
-
-    }
-
-    func close() {
-
-    }
-
-    func setDisplayView(_ displayView:UIView, _ frame:CGRect)->Int{
+//
+//    }
+//
+//    func close() {
+//        player.stop()
+//    }
+//
+//    func setDisplayView(_ displayView:UIView, _ frame:CGRect)->Int{
 //        displayView.addSubview(player.view)
 //        player.view.frame = frame
-        return ErrCode.XOK
-    }
-
-    func getPlayingProgress() -> UInt64 {
-        return 0
-    }
-
-    func play() {
+//        return ErrCode.XOK
+//    }
+//
+//    func getPlayingProgress() -> Double {
+//        let currentTime = player.currentTime
+//        let duration = player.duration
+//        let progress = currentTime/duration
+//        print("currentTime:\(currentTime),duration:\(duration)")
+//        return progress
+//    }
+//
+//    func getPlayDuration() -> Double{
+//        return player.duration
+//    }
+//
+//    func play() {
 //        player.play()
-    }
-
-    func pause() {
+//    }
+//
+//    func pause() {
 //        player.pauseForUser()
-    }
-
-    func stop() {
+//    }
+//
+//    func stop() {
 //        player.stop()
-    }
-
-    func seek(seekPos: UInt64) -> UInt64 {
-        return 0
-    }
-
-
-
-}
+//    }
+//
+//    func seek(seekPos:Double)->Double {
+//        player.seek(toTime: TimeInterval(seekPos))
+//        return 0
+//    }
+//
+//    func setRate(rate:Float){
+//        player.rate = rate
+//    }
+//
+//
+//
+//}

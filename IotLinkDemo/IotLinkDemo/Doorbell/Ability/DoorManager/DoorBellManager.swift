@@ -236,6 +236,14 @@ class DoorBellManager: NSObject {
         return (sdk?.deviceSessionMgr.getDevMediaMgr(sessionId: sessionId))!
     }
     
+    //拉取音视频流
+    func reStartPlay(){
+        let devPreMgr = getDevSessionMgr("")
+        devPreMgr.mutePeerAudio(mute: true) { ec, msg in }
+        devPreMgr.mutePeerVideo(mute: true) { ec, msg in }
+    }
+    
+    
     //SD卡回看命令 仅在通话状态下才能调用
     func sendCmdSDCtrl(sessionId:String = "", cb:@escaping(Int,String)->Void){
         

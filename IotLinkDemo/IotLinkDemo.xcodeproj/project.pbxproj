@@ -11,6 +11,7 @@
 		8429E9412949FC700064B604 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429E9402949FC700064B604 /* NSString+Extension.m */; };
 		8429E943295003180064B604 /* ResetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8429E942295003170064B604 /* ResetPasswordVC.swift */; };
 		84A963E32A544B3800DEC70E /* DeviceDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A963E22A544B3800DEC70E /* DeviceDetailVC.swift */; };
+		84A964072A5C0AFF00DEC70E /* VodPlayerMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A964062A5C0AFF00DEC70E /* VodPlayerMainVC.swift */; };
 		84B3254928A394CA0054B369 /* ThirdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254828A394CA0054B369 /* ThirdManager.swift */; };
 		84B3254F28A50AA60054B369 /* DoorbellControlVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254E28A50AA60054B369 /* DoorbellControlVC.swift */; };
 		84B3255128A5ED190054B369 /* TextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3255028A5ED190054B369 /* TextInputView.swift */; };
@@ -27,6 +28,8 @@
 		84B3ECB728B470B60047EE1A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB628B470B60047EE1A /* libz.tbd */; };
 		84B3ECB928B470BD0047EE1A /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECB828B470BD0047EE1A /* libbz2.tbd */; };
 		84B3ECBB28B4715B0047EE1A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECBA28B4715B0047EE1A /* UIKit.framework */; };
+		84B616B32A5EAB4000E2F57D /* SDCardPlayerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B616B22A5EAB4000E2F57D /* SDCardPlayerVC.swift */; };
+		84B616B62A5FA89B00E2F57D /* SDCardMediaViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B616B52A5FA89B00E2F57D /* SDCardMediaViewCell.swift */; };
 		84CE395828FECA8C007A749C /* RegisterMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395728FECA8C007A749C /* RegisterMainVC.swift */; };
 		84CE395A28FECB48007A749C /* VerifyInputCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */; };
 		84CE395C28FECBAF007A749C /* SetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395B28FECBAF007A749C /* SetPasswordVC.swift */; };
@@ -234,6 +237,7 @@
 		8429E9402949FC700064B604 /* NSString+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		8429E942295003170064B604 /* ResetPasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetPasswordVC.swift; sourceTree = "<group>"; };
 		84A963E22A544B3800DEC70E /* DeviceDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailVC.swift; sourceTree = "<group>"; };
+		84A964062A5C0AFF00DEC70E /* VodPlayerMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VodPlayerMainVC.swift; sourceTree = "<group>"; };
 		84B3254828A394CA0054B369 /* ThirdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdManager.swift; sourceTree = "<group>"; };
 		84B3254E28A50AA60054B369 /* DoorbellControlVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellControlVC.swift; sourceTree = "<group>"; };
 		84B3255028A5ED190054B369 /* TextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
@@ -250,6 +254,8 @@
 		84B3ECB628B470B60047EE1A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		84B3ECB828B470BD0047EE1A /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		84B3ECBA28B4715B0047EE1A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		84B616B22A5EAB4000E2F57D /* SDCardPlayerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDCardPlayerVC.swift; sourceTree = "<group>"; };
+		84B616B52A5FA89B00E2F57D /* SDCardMediaViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDCardMediaViewCell.swift; sourceTree = "<group>"; };
 		84CE395728FECA8C007A749C /* RegisterMainVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterMainVC.swift; sourceTree = "<group>"; };
 		84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyInputCodeVC.swift; sourceTree = "<group>"; };
 		84CE395B28FECBAF007A749C /* SetPasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetPasswordVC.swift; sourceTree = "<group>"; };
@@ -642,6 +648,22 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		84A964042A5C0A7A00DEC70E /* VodPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				84A964052A5C0ABD00DEC70E /* Controllers */,
+			);
+			path = VodPlayer;
+			sourceTree = "<group>";
+		};
+		84A964052A5C0ABD00DEC70E /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				84A964062A5C0AFF00DEC70E /* VodPlayerMainVC.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
 		84B3254728A394AC0054B369 /* thirdParty */ = {
 			isa = PBXGroup;
 			children = (
@@ -658,6 +680,31 @@
 				84B3255028A5ED190054B369 /* TextInputView.swift */,
 			);
 			path = Control;
+			sourceTree = "<group>";
+		};
+		84B616B02A5EAADD00E2F57D /* SDCardPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				84B616B42A5FA83300E2F57D /* View */,
+				84B616B12A5EAAFE00E2F57D /* Controllers */,
+			);
+			path = SDCardPlayer;
+			sourceTree = "<group>";
+		};
+		84B616B12A5EAAFE00E2F57D /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				84B616B22A5EAB4000E2F57D /* SDCardPlayerVC.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		84B616B42A5FA83300E2F57D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				84B616B52A5FA89B00E2F57D /* SDCardMediaViewCell.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		84DF99CB2A3DA6AA00F9BA3E /* ViewModel */ = {
@@ -1198,13 +1245,15 @@
 		96E4C1022807CA5500A53A49 /* IotLinkDemo */ = {
 			isa = PBXGroup;
 			children = (
+				84B616B02A5EAADD00E2F57D /* SDCardPlayer */,
+				84A964042A5C0A7A00DEC70E /* VodPlayer */,
+				84A963E02A54488900DEC70E /* DeviceAblity */,
 				84B3254728A394AC0054B369 /* thirdParty */,
 				96827D722867301E0012AC84 /* LogViewer */,
 				A819963928338F8500870CDA /* DeviceSetup */,
 				A89E3DDD2823DBCB002FFED9 /* Doorbell */,
 				96E4C1172807FB4F00A53A49 /* Base */,
 				96E4C11D2807FF6500A53A49 /* SwiftTools */,
-				84A963E02A54488900DEC70E /* DeviceAblity */,
 				96E4C121280D437C00A53A49 /* Home */,
 				96E4C122280D438C00A53A49 /* Mine */,
 				9601C308280D68FF00D3CA49 /* Login */,
@@ -1724,6 +1773,7 @@
 				962EAA6C28324A9900030C1B /* DoorbellLeftBackHView.swift in Sources */,
 				966BA9012864380000DE8958 /* SelectHeardImgVC.swift in Sources */,
 				9697BE9A2812B25F00447DF9 /* EXT-StringDecimal.swift in Sources */,
+				84B616B32A5EAB4000E2F57D /* SDCardPlayerVC.swift in Sources */,
 				9618255E2825192600053691 /* DoorbellAbilityTopView.swift in Sources */,
 				A8598E252835AE6600168244 /* ShareDeviceDetailVC.swift in Sources */,
 				9697BE5D2811390B00447DF9 /* AgoraIotManager.swift in Sources */,
@@ -1769,6 +1819,7 @@
 				84FFD15628F58FAF0076AD29 /* DeviceDelSuccessVC.swift in Sources */,
 				96827D7B2867301E0012AC84 /* LoggerViewController.swift in Sources */,
 				965B1FA2282E6F2C0045D002 /* AGToolHUD.swift in Sources */,
+				84A964072A5C0AFF00DEC70E /* VodPlayerMainVC.swift in Sources */,
 				9601C310280D6A0B00D3CA49 /* UserAccountModel.swift in Sources */,
 				963956EF28DDBBCA0049B9C8 /* SearchFailBluefiView.swift in Sources */,
 				A805ADC62816B40600E6C6DF /* AGAlertBaseView.swift in Sources */,
@@ -1806,6 +1857,7 @@
 				A80D5ED8282DEAB70096BBDE /* SystemSettingCell.swift in Sources */,
 				A805ADC1281696F100E6C6DF /* DeviceAddSuccessVC.swift in Sources */,
 				A805ADC82816B85400E6C6DF /* AGAlertViewController.swift in Sources */,
+				84B616B62A5FA89B00E2F57D /* SDCardMediaViewCell.swift in Sources */,
 				960ECFFD283E1660005A00D0 /* DoorbellChangeSoundModel.swift in Sources */,
 				84DF99F32A40818100F9BA3E /* CocoaMqttMgr.swift in Sources */,
 				A805ADBB2816876600E6C6DF /* DeviceConnectTimeoutVC.swift in Sources */,

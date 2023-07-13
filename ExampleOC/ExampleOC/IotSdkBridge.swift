@@ -206,12 +206,16 @@ public class IVodPlayerManager : NSObject,IVodPlayerMgr{
         return mgr.close()
     }
     
-    @objc public func getPlayingProgress() -> UInt64 {
+    @objc public func getPlayingProgress() -> Double {
         return mgr.getPlayingProgress()
     }
     
-    @objc public func setDisplayView(_ displayView: UIView, _ frame: CGRect) -> Int {
-        return mgr.setDisplayView(displayView, frame)
+    @objc public func getPlayDuration() -> Double {
+        return mgr.getPlayDuration()
+    }
+    
+    public func getCurrentPlaybackTime() -> Double {
+        return mgr.getCurrentPlaybackTime()
     }
     
     @objc public func play() {
@@ -226,7 +230,7 @@ public class IVodPlayerManager : NSObject,IVodPlayerMgr{
         return mgr.stop()
     }
     
-    @objc public func seek(seekPos: UInt64) -> UInt64 {
+    @objc public func seek(seekPos: Double) {
         return mgr.seek(seekPos: seekPos)
     }
     

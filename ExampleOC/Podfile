@@ -5,8 +5,8 @@ platform :ios, '13.0'
 target 'ExampleOC' do
 
   pod 'AgoraIotLink', :path => '../'
-#  pod 'SJBaseVideoPlayer', :path => '../libs/SJBaseVideoPlayer'
-#  pod 'SJVideoPlayer', :path => '../libs/SJVideoPlayer'
+  pod 'SJBaseVideoPlayer', :path => '../libs/SJBaseVideoPlayer'
+  pod 'SJVideoPlayer', :path => '../libs/SJVideoPlayer'
   pod 'SwiftDate'
   pod 'SDWebImageSwiftUI'
   

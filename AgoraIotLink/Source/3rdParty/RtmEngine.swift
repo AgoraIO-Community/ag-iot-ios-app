@@ -286,11 +286,11 @@ class RtmEngine : NSObject{
     func destroy(){
         log.i("rtm is destroying()")
         if(kit == nil){
-            log.e("rtc engine is nil")
+            log.e("rtm engine is nil")
             return
         }
         if(state != RtmEngine.CREATED){
-            log.e("rtc state:\(state) not correct")
+            log.e("rtm state:\(state) not correct")
             return
         }
         
@@ -311,7 +311,7 @@ class RtmEngine : NSObject{
         if(state == RtmEngine.ENTERED){
             let cbLeave = {(b:Bool) in
                 if(!b){
-                    log.w("rtc leave channel error when leaveAndDestroy")
+                    log.w("rtm leave channel error when leaveAndDestroy")
                 }
                 self.destroy()
                 cb(b)

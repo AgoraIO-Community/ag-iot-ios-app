@@ -10,13 +10,13 @@ import Foundation
 class RuleManager{
     
     private var app:Application
-    private var ctx:Context
+//    private var ctx:Context
     private var _fsmApp:FsmApp
     private var _trigger:TriggerListener
     
     init(_ app:Application,_ onPost: @escaping Fsm.PostFun){
         self.app = app
-        self.ctx = app.context
+//        self.ctx = app.context
         _fsmApp = FsmApp(onPost)
         _trigger = TriggerListener()
         _fsmApp.listener = AppListener(app: app)

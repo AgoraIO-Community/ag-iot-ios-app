@@ -53,7 +53,7 @@ open class Application{
     }
     
     func release() {
-        _proxy?.rtc.destroy()
+//        _proxy?.rtc.destroy()
         _config = nil
         _context = nil
 //        _rule?.trans(FsmApp.Event.LOGOUT)
@@ -68,7 +68,7 @@ open class Application{
     var config:Config{get{return _config!}}
 //    var status:StateListener{get{return _status!}}
     var proxy:Proxy{get{return _proxy!}}
-    var context:Context{get{return _context!}}
+    var context:Context{get{return _context ?? Context()}}
     
     private var _config : Config?
     private var _context : Context?

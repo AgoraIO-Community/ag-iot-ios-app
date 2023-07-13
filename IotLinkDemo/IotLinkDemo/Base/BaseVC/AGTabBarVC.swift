@@ -38,6 +38,14 @@ class AGTabBarVC: UITabBarController {
         
         addChildVC(homeVC, TiensLocalString("首页"), "tabbar1")
         
+        let sdVC = SDCardPlayerVC()
+        
+        addChildVC(sdVC, TiensLocalString("SDCard"), "tabbar1")
+        
+        let vodVC = VodPlayerMainVC()
+        
+        addChildVC(vodVC, TiensLocalString("云台"), "tabbar1")
+        
         let myVC = MinePageMainVC()
 
         addChildVC(myVC, "我的", "tabbar5")

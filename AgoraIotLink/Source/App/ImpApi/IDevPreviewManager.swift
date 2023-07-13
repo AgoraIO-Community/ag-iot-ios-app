@@ -93,16 +93,26 @@ class IDevPreviewManager : IDevPreviewMgr{
     deinit {
         log.i("IDevPreviewManager 销毁了")
     }
+
+    func getRtcTaklingKit()->AgoraTalkingEngine?{
+        return CallListenerManager.sharedInstance.getCurrentTalkingEngine(curSessionId)
+    }
     
 }
 
 extension IDevPreviewManager{
     
     func setPeerVideoView(peerView: UIView?) -> Int {
+        
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("setPeerVideoView: talkingKit is nil")
+            return ErrCode.XERR_NOT_FOUND
+        }
+        
         let session = CallListenerManager.sharedInstance.getCurrentCallSession(curSessionId)
         if(session?.peerUid != 0){
             log.i("call setPeerVideoView uid:\(session?.peerUid ?? 0) \(String(describing: peerView))")
-            return app.proxy.rtc.setupRemoteView(peerView: peerView, uid: session?.peerUid ?? 0)
+            return talkingKit.setupRemoteView(peerView: peerView, uid: session?.peerUid ?? 0)
         }
         else{
             log.d("call setPeerVideoView with no remote user joined")
@@ -111,26 +121,43 @@ extension IDevPreviewManager{
     }
     
     func muteLocalVideo(mute: Bool,result:@escaping (Int,String)->Void){
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("muteLocalVideo: talkingKit is nil")
+            return
+        }
+        
         DispatchQueue.main.async {
-            self.rtc.muteLocalVideo(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
+            talkingKit.muteLocalVideo(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func muteLocalAudio(mute: Bool,result:@escaping (Int,String)->Void){
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("muteLocalAudio: talkingKit is nil")
+            return
+        }
         DispatchQueue.main.async {
-            self.rtc.muteLocalAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
+            talkingKit.muteLocalAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func mutePeerVideo(mute: Bool,result:@escaping (Int,String)->Void){
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("mutePeerVideo: talkingKit is nil")
+            return
+        }
         DispatchQueue.main.async {
-            self.rtc.mutePeerVideo(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
+            talkingKit.mutePeerVideo(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func mutePeerAudio(mute: Bool,result:@escaping (Int,String)->Void){
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("mutePeerAudio: talkingKit is nil")
+            return
+        }
         DispatchQueue.main.async {
-            self.rtc.mutePeerAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
+            talkingKit.mutePeerAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
@@ -147,25 +174,42 @@ extension IDevPreviewManager{
     }
     
     func recordingStart(outFilePath:String, result: @escaping (Int, String) -> Void) {
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("recordingStart: talkingKit is nil")
+            return
+        }
         DispatchQueue.main.async {
-            self.rtc.startRecord(outFilePath:outFilePath, result: {ec,msg in self.asyncResult(ec, msg,result)})
+            talkingKit.startRecord(outFilePath:outFilePath, result: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     
     func recordingStop(result:@escaping (Int,String)->Void){
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("recordingStop: talkingKit is nil")
+            return
+        }
         DispatchQueue.main.async {
-            self.rtc.stopRecord (result:{ec,msg in self.asyncResult(ec, msg,result)})
+            talkingKit.stopRecord (result:{ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
 
     func captureVideoFrame(result: @escaping (Int, String, UIImage?) -> Void) {
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("captureVideoFrame: talkingKit is nil")
+            return
+        }
+        
         DispatchQueue.main.async {
-            self.app.proxy.rtc.capturePeerVideoFrame(cb: {ec,msg,img in self.asyncResultData(ec,msg,img,result)})
+            talkingKit.capturePeerVideoFrame(cb: {ec,msg,img in self.asyncResultData(ec,msg,img,result)})
         }
     }
     
     func getNetworkStatus() -> RtcNetworkStatus {
-        return self.app.proxy.rtc.getNetworkStatus()
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("getNetworkStatus: talkingKit is nil")
+            return RtcNetworkStatus()
+        }
+        return talkingKit.getNetworkStatus()
     }
 
     func setRtcPrivateParam(privateParam: String) -> Int {

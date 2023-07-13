@@ -133,6 +133,10 @@ class DeviceDetailVC: AGBaseVC {
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        let preMgr = sdk?.deviceSessionMgr.getDevPreviewMgr(sessionId: curSessionId)
+        preMgr?.mutePeerAudio(mute: false, result: { code, msg in
+            
+        })
         sdk?.deviceSessionMgr.disconnect(sessionId: curSessionId)
         sdk?.release()
     }

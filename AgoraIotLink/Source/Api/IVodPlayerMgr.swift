@@ -16,7 +16,7 @@ public protocol IVodPlayerMgr {
     /**
      * @brief 打开媒体文件准备播放，打开成功后播放进度位于开始0处，状态切换到 VODPLAYER_STATE_PAUSED
      * @param mediaUrl: 要播放的媒体文件URL，包含密码信息
-     * @param callback : 播放回调接口
+     * @param callback : 播放回调接口(errCode:错误码，displayView：视频帧显示视图)
      * @return 返回错误码
      */
     func open(mediaUrl:String,callback: @escaping (_ errCode:Int,_ displayView:UIView) -> Void)
@@ -28,18 +28,22 @@ public protocol IVodPlayerMgr {
     func close()
     
     /**
-     * @brief 获取当前播放的时间戳，单位ms
-     * @return 播放进度时间戳
+     * @brief 获取当前播放进度，单位ms
+     * @return 播放进度
      */
-    func getPlayingProgress()->UInt64
+    func getPlayingProgress() -> Double
     
     /**
-     * @brief 设置播放器视频帧显示控件
-     * @param displayView: 视频帧显示控件
-     * @param frame: 视频帧显示控件的frame
-     * @return 返回错误码
+     * @brief 获取总时长，单位ms
+     * * @return 总时长
      */
-    func setDisplayView(_ displayView:UIView, _ frame:CGRect)->Int
+    func getPlayDuration() -> Double
+    
+    /**
+     * @brief 获取当前播放时间，单位ms
+     * @return 当前播放时间
+     */
+    func getCurrentPlaybackTime() -> Double
     
     /**
      * @brief 从当前进度开始播放，状态切换到 VODPLAYER_STATE_PLAYING
@@ -62,9 +66,8 @@ public protocol IVodPlayerMgr {
     /**
      * @brief 直接跳转播放进度
      * @param seekPos: 需要跳转到的目标时间戳，单位ms
-     * @return 如果seek成功，返回实际跳转的时间戳； <0 表示seek失败，返回错误码
      */
-    func seek(seekPos:UInt64)->UInt64;
+    func seek(seekPos:Double);
     
     
 }

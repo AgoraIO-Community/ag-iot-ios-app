@@ -7,6 +7,16 @@
 
 import Foundation
 
+/*
+ * @brief sd卡回放时产生的行为/事件
+ */
+@objc public enum MediaCallback:Int{
+    case onPlayed                //设备连接连接完成
+    case onStoped                //设备断开连接
+    case onError                 //会话错误
+    case UnknownAction           //未知错误
+}
+
 
 class IDevMediaManager : IDevMediaMgr{
     
@@ -70,10 +80,12 @@ class IDevMediaManager : IDevMediaMgr{
 //                    }
                 } else {
                     log.e("解码失败")
+                    cmdListener(errCode,Data())
                 }
+            }else{
+                cmdListener(errCode,Data())
             }
             log.i("queryMediaCoverImage resutArray:\(resultDic)")
-            cmdListener(errCode,Data())
         }
         
     }
@@ -81,33 +93,35 @@ class IDevMediaManager : IDevMediaMgr{
     func play(globalStartTime: UInt64, playingCallListener: IPlayingCallbackListener)->Int {
         
         playStateListener = playingCallListener
-//        playingCallListener.onDevMediaOpenDone(mediaUrl: "ceshi123456", errCode: ErrCode.XOK)
         
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:Int = 2005
         let payloadParam = ["begin":globalStartTime,"rate":1] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
-        sendGeneralDicData(paramDic, curTimestamp) { errCode, resultDic in
-            guard let cname = resultDic["cname"] as? String else{
-                return
+        sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
+            if errCode == 0{
+                self?.startSDCardCall(resultDic)
             }
-            log.i("play globalStartTime: cname:\(cname) \(resultDic)")
+            log.i("play globalStartTime: \(resultDic)")
             
         }
         return ErrCode.XOK
         
     }
-    
+
     func play(fileId: String, startPos: UInt64, playSpeed: Int, playingCallListener: IPlayingCallbackListener)->Int {
+        
         playStateListener = playingCallListener
         
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:Int = 2006
         let payloadParam = ["id":fileId,"offset":startPos,"rate":playSpeed] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
-        sendGeneralDicData(paramDic, curTimestamp) { errCode, resutArray in
-            log.i("play fileId:\(resutArray)")
-            
+        sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
+            if errCode == 0{
+                self?.startSDCardCall(resultDic)
+            }
+            log.i("play fileId:\(resultDic)")
         }
         return ErrCode.XOK
     }
@@ -118,6 +132,10 @@ class IDevMediaManager : IDevMediaMgr{
         let commanId:Int = 2007
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
         sendGeneralStringData(paramDic, curTimestamp) { errCode, resutArray in
+            if errCode == 0{
+                CallListenerManager.sharedInstance.hunUpSDCard()
+                
+            }
             log.i("stop:\(resutArray)")
             
         }
@@ -138,6 +156,21 @@ class IDevMediaManager : IDevMediaMgr{
     }
     
     func setDisplayView(peerView: UIView?)->Int {
+        
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("setPeerVideoView: talkingKit is nil")
+            return ErrCode.XERR_NOT_FOUND
+        }
+        
+        let session = CallListenerManager.sharedInstance.getCurrentSDCardCallSession()
+        if(session?.peerUid != 0){
+            log.i("call setPeerVideoView uid:\(session?.peerUid ?? 0) \(String(describing: peerView))")
+            return talkingKit.setupRemoteView(peerView: peerView, uid: session?.peerUid ?? 0)
+        }
+        else{
+            log.d("call setPeerVideoView with no remote user joined")
+        }
+        
         return ErrCode.XOK
     }
     
@@ -188,7 +221,6 @@ extension IDevMediaManager{
         }
         
         let jsonString = paramDic.convertDictionaryToJSONString()
-        let data:Data = jsonString.data(using: .utf8) ?? Data()
         rtm.sendStringMessage(sequenceId: "\(sequenceId)", toPeer: peer, message: jsonString, cb: cmdListener)
         
     }
@@ -198,6 +230,55 @@ extension IDevMediaManager{
         let curSequenceId : UInt32 = app.config.counter.increment()
         return curSequenceId
     }
+    
+    func getRtcTaklingKit()->AgoraTalkingEngine?{
+        return CallListenerManager.sharedInstance.getCurrentSDcardTalkingEngine()
+    }
+}
+
+extension IDevMediaManager{
+    
+    func startSDCardCall(_ paramDic : Dictionary<String, Any>){
+        
+        guard let cname = paramDic["cname"] as? String else{ return }
+        guard let token = paramDic["token"] as? String else{ return }
+        guard let uid = paramDic["uid"] as? UInt else{ return }
+        guard let deviceUid = paramDic["device_uid"] as? UInt else{ return }
+        
+        let callSession = CallSession()
+        callSession.cname = cname
+        callSession.token = token
+        callSession.uid = uid
+        callSession.peerUid = deviceUid
+        CallListenerManager.sharedInstance.startSDCardCall(dialParam: callSession) {[weak self] ackBack, sessionId, errCode in
+            self?.handelCallAct(ackBack,errCode)
+        } memberState: { MemberState, memList, sessionId in }
+
+    }
+    
+    //处理连接设备返回
+    func handelCallAct(_ act:MediaCallback, _ errorCode:Int ){
+        
+        if act == .onPlayed{
+            
+            playStateListener?.onDevMediaOpenDone(mediaUrl: "", errCode: ErrCode.XOK)
+            let rtc = getRtcTaklingKit()
+            rtc?.mutePeerAudio(false, cb: { code, msg in })
+            rtc?.mutePeerVideo(false, cb: { code, msg in })
+            
+        }else if act == .onStoped{
+            
+            playStateListener?.onDevMediaPlayingDone(mediaUrl: "", duration: 0)
+            
+        }else if act == .onError{
+            
+            playStateListener?.onDevPlayingError(mediaUrl: "", errCode:errorCode)
+            
+        }else{
+            
+        }
+    }
+    
 }
 
 extension IDevMediaManager{

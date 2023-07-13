@@ -57,6 +57,9 @@ class TDUserInforManager: NSObject {
     //当前蓝牙配网成功
     var curBluefiSuc : Bool = false
     
+    ///当前连接的SessionId
+    var curSessionId:String = ""
+    
     //本地设备管理
     var markPeerNodeIdArray = [String]()
     

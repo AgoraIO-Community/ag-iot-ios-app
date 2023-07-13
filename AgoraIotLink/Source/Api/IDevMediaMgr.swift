@@ -99,7 +99,7 @@ import Foundation
  * @brief 设备媒体文件播放状态机
  */
 @objc public enum DevMediaStatus : Int{
-    case stopped                                       //当前播放器关闭
+    case stopped                                      //当前播放器关闭
     case playing                                      //当前正在播放
     case paused                                       //当前暂停播放
     case seeking                                      //当前正在SEEK操作

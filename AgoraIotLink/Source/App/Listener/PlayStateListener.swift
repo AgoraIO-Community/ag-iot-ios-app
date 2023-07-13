@@ -30,44 +30,44 @@ class PlayStateListener: NSObject {
         rtcSetting.subscribeAudio = setting.subscribeAudio
         rtcSetting.subscribeVideo = setting.subscribeVideo
         
-        app.proxy.rtc.createAndEnter(appId: sess.appId, setting: rtcSetting, uid: uid, peerId: 10,name: name, token:token, info: "",
-                                     cb: {ret,msg in
-            if(ret == .Fail){
-                log.e("player rtc.createAndEnter failed:\(msg)")
-//                self.app.rule.trans(FsmPlay.Event.ENTER_FAIL)
-            }
-            else if(ret == .Succ){
-//                self.app.rule.trans(FsmPlay.Event.ENTER_SUCC)
-            }
-            else {//Abort
-                log.i("player rtc.createAndEnter aborted:\(msg)")
-            }
-        },
-        peerAction: {act,uid in
-            if(act == .Enter){
-                self.sess.peerUid = uid
-//                self.app.rule.trans(FsmPlay.Event.PEER_JOIN)
-            }
-            else if(act == .Leave){
-                self.sess.peerUid = 0
-//                self.app.rule.trans(FsmPlay.Event.PEER_LEFT)
-            }
-            else if(act == .VideoReady){
-//                self.app.rule.trans(FsmPlay.Event.VIDEOREADY)
-            }
-        },
-        memberState:{s,a in
-            log.w("player other member can't join this channel")
-        })
+//        app.proxy.rtc.createAndEnter(appId: sess.appId, setting: rtcSetting, uid: uid, peerId: 10,name: name, token:token, info: "",
+//                                     cb: {ret,msg in
+//            if(ret == .Fail){
+//                log.e("player rtc.createAndEnter failed:\(msg)")
+////                self.app.rule.trans(FsmPlay.Event.ENTER_FAIL)
+//            }
+//            else if(ret == .Succ){
+////                self.app.rule.trans(FsmPlay.Event.ENTER_SUCC)
+//            }
+//            else {//Abort
+//                log.i("player rtc.createAndEnter aborted:\(msg)")
+//            }
+//        },
+//        peerAction: {act,uid in
+//            if(act == .Enter){
+//                self.sess.peerUid = uid
+////                self.app.rule.trans(FsmPlay.Event.PEER_JOIN)
+//            }
+//            else if(act == .Leave){
+//                self.sess.peerUid = 0
+////                self.app.rule.trans(FsmPlay.Event.PEER_LEFT)
+//            }
+//            else if(act == .VideoReady){
+////                self.app.rule.trans(FsmPlay.Event.VIDEOREADY)
+//            }
+//        },
+//        memberState:{s,a in
+//            log.w("player other member can't join this channel")
+//        })
     }
     
     func do_LEAVEANDDESTROY() {
         log.i("player do_LEAVEANDDESTROY")
-        app.proxy.rtc.leaveAndDestroy(cb: {succ in
-            if(!succ){
-                log.e("player rtc leaveAndDestroy fail")
-            }
-        })
+//        app.proxy.rtc.leaveAndDestroy(cb: {succ in
+//            if(!succ){
+//                log.e("player rtc leaveAndDestroy fail")
+//            }
+//        })
 //        app.rule.trans(FsmPlay.Event.DESTROY_SUCC)
     }
     
@@ -95,7 +95,8 @@ class PlayStateListener: NSObject {
 //    }
     
     func setPlaybackView(peerView: UIView?) -> Int {
-        app.proxy.rtc.setupRemoteView(peerView: peerView, uid: sess.peerUid)
+//        app.proxy.rtc.setupRemoteView(peerView: peerView, uid: sess.peerUid)
+        return 0
     }
     
     func start(channelName: String,token:String, uid: UInt, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
@@ -104,8 +105,8 @@ class PlayStateListener: NSObject {
         sess.peerUid = uid
         sess.channel = channelName
         sess.stateChanged = stateChanged
-        app.proxy.rtc.muteLocalAudio(true, cb: {ec,msg in})
-        app.proxy.rtc.muteLocalVideo(true, cb: {ec,msg in})
+//        app.proxy.rtc.muteLocalAudio(true, cb: {ec,msg in})
+//        app.proxy.rtc.muteLocalVideo(true, cb: {ec,msg in})
         result(ErrCode.XOK,"")
     }
     

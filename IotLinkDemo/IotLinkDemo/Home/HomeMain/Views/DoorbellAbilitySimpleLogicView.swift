@@ -345,11 +345,11 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         
         guard let device = device, device.sessionId != "" else { return }
         
-        DoorBellManager.shared.sendCmdSDCtrl(sessionId: device.sessionId,  cb: { code, msg in
-            debugPrint("sendCmdSDCtrl成功 : \(msg)")
-        })
-        
-        return
+//        DoorBellManager.shared.sendCmdSDCtrl(sessionId: device.sessionId,  cb: { code, msg in
+//            debugPrint("sendCmdSDCtrl成功 : \(msg)")
+//        })
+//
+//        return
         
         if startRecord == false {
             let videoPath = getTempVideoUrl()
@@ -430,26 +430,26 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
 //        return
         
         //-------------- 测试发送控制命令----------------
-        DoorBellManager.shared.sendCmdPtzCtrl(sessionId: device.sessionId,  cb: { code, msg in
-            debugPrint("sendCmdPtzCtrl成功 : \(msg)")
-        })
-
-        return
-        
-        
-//        startRecord = !startRecord
+//        DoorBellManager.shared.sendCmdPtzCtrl(sessionId: device.sessionId,  cb: { code, msg in
+//            debugPrint("sendCmdPtzCtrl成功 : \(msg)")
+//        })
 //
-//        DoorBellManager.shared.capturePeerVideoFrame(sessionId:device.sessionId) { [weak self] success, msg, shotImg in
-//            if success{
-//                debugPrint("截屏成功")
-//                guard let shotImg = shotImg else {
-//                    AGToolHUD.showInfo(info: "图片截屏失败！")
-//                    return
-//                }
-//                self?.saveImgToAlbum(shotImg)
-//                self?.handelSaveImgAlert(shotImg)
-//            }
-//        }
+//        return
+        
+        
+        startRecord = !startRecord
+
+        DoorBellManager.shared.capturePeerVideoFrame(sessionId:device.sessionId) { [weak self] success, msg, shotImg in
+            if success{
+                debugPrint("截屏成功")
+                guard let shotImg = shotImg else {
+                    AGToolHUD.showInfo(info: "图片截屏失败！")
+                    return
+                }
+                self?.saveImgToAlbum(shotImg)
+                self?.handelSaveImgAlert(shotImg)
+            }
+        }
         
     }
     
