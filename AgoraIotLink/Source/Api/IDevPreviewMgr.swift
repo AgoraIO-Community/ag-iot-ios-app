@@ -78,10 +78,11 @@
     /**
      * @brief 设备端首帧出图
      * @param sessionId : 会话唯一标识
+     * @param bSubAudio : 是否禁止拉取音频（true:禁止，false：拉取）
      * @param videoWidth : 首帧视频宽度
      * @param videoHeight : 首帧视频高度
      */
-    func previewStart(previewListener: @escaping (_ sessionId:String,_ videoWidth:Int,_ videoHeight:Int) -> Void)
+    func previewStart(bSubAudio:Bool, previewListener: @escaping (_ sessionId:String,_ videoWidth:Int,_ videoHeight:Int) -> Void)
 
     /**
      * @brief 停止设备音视频流预览

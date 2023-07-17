@@ -48,8 +48,8 @@ public class IDeviceSessionManager : NSObject,IDeviceSessionMgr{
 
 public class IDevPreviewManager : NSObject,IDevPreviewMgr{
 
-    @objc public func previewStart(previewListener: @escaping (String, Int, Int) -> Void) {
-        return mgr.previewStart(previewListener: previewListener)
+    @objc public func previewStart(bSubAudio: Bool,previewListener: @escaping (String, Int, Int) -> Void) {
+        return mgr.previewStart(bSubAudio:bSubAudio,  previewListener: previewListener)
     }
     
     @objc public func previewStop(result: @escaping (Int, String) -> Void) {

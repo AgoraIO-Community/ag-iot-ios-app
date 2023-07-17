@@ -60,7 +60,7 @@
     
     ConnectResult *conResult = [self connectDevice];
     IDevPreviewManager *preDevMgr = [[IotSdk.shared getDeviceSessionMgr] getDevPreviewMgrWithSessionId:conResult.mSessionId];
-    [preDevMgr previewStartWithPreviewListener:^(NSString * _Nonnull, NSInteger, NSInteger) {
+    [preDevMgr previewStartWithBSubAudio:false previewListener:^(NSString * _Nonnull, NSInteger, NSInteger) {
         
     }];
     UIView *peerView = [[UIView alloc] init];

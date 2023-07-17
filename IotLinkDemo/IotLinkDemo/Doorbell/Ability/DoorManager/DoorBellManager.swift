@@ -26,7 +26,7 @@ class DoorBellManager: NSObject {
     
     func previewStart(sessionId:String,previewListener: @escaping (_ sessionId:String,_ videoWidth:Int,_ videoHeight:Int) -> Void){
         let callkitMgr = getDevSessionMgr(sessionId)
-        callkitMgr.previewStart { sessionId, videoWidth, videoHeight in
+        callkitMgr.previewStart(bSubAudio: false) { sessionId, videoWidth, videoHeight in
             previewListener(sessionId,videoWidth,videoHeight)
         }
     }
