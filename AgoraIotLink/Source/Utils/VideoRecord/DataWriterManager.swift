@@ -93,22 +93,23 @@ public class DataWriterManager: NSObject {
  
 		if assetWriter != nil && assetWriter?.status == AVAssetWriter.Status.writing {
 			writeQueue.async {[weak self] in
-				
+
 				guard let strongSelf = self else {
 					return
 				}
 				strongSelf.assetWriter?.finishWriting {
-					//写入系统相册
-					PHPhotoLibrary.shared().performChanges({
-						PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: strongSelf.videoUrl)
-					}, completionHandler: { (isSuccess, error) in
-						if isSuccess {
-							print("save successed")
-						}
-                        if error != nil {
-                            print("写入相册失败:\(String(describing: error))")
-                        }
-					})
+                    strongSelf.destroyWriter()
+//					//写入系统相册
+//					PHPhotoLibrary.shared().performChanges({
+//						PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: strongSelf.videoUrl)
+//					}, completionHandler: { (isSuccess, error) in
+//						if isSuccess {
+//							print("save successed")
+//						}
+//                        if error != nil {
+//                            print("写入相册失败:\(String(describing: error))")
+//                        }
+//					})
 				}
 			}
 		}
