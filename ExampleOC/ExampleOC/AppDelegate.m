@@ -95,7 +95,7 @@
     [devMediaMgr queryMediaListWithQueryParam:param queryListener:^(NSInteger, NSArray<DevMediaItem *> * _Nonnull) {
         
     }];
-    [devMediaMgr playWithGlobalStartTime:0 playingCallListener:self];
+    [devMediaMgr playWithGlobalStartTime:0 playSpeed:1 playingCallListener:self];
 }
 
 //-------IPlayingCallbackListener---------

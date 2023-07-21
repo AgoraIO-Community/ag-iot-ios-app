@@ -30,6 +30,7 @@
 		84B3ECBB28B4715B0047EE1A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECBA28B4715B0047EE1A /* UIKit.framework */; };
 		84B616B32A5EAB4000E2F57D /* SDCardPlayerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B616B22A5EAB4000E2F57D /* SDCardPlayerVC.swift */; };
 		84B616B62A5FA89B00E2F57D /* SDCardMediaViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B616B52A5FA89B00E2F57D /* SDCardMediaViewCell.swift */; };
+		84B616C52A678F7900E2F57D /* PlayerExampleSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B616C42A678F7900E2F57D /* PlayerExampleSwift.swift */; };
 		84CE395828FECA8C007A749C /* RegisterMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395728FECA8C007A749C /* RegisterMainVC.swift */; };
 		84CE395A28FECB48007A749C /* VerifyInputCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */; };
 		84CE395C28FECBAF007A749C /* SetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395B28FECBAF007A749C /* SetPasswordVC.swift */; };
@@ -256,6 +257,7 @@
 		84B3ECBA28B4715B0047EE1A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		84B616B22A5EAB4000E2F57D /* SDCardPlayerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDCardPlayerVC.swift; sourceTree = "<group>"; };
 		84B616B52A5FA89B00E2F57D /* SDCardMediaViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDCardMediaViewCell.swift; sourceTree = "<group>"; };
+		84B616C42A678F7900E2F57D /* PlayerExampleSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerExampleSwift.swift; sourceTree = "<group>"; };
 		84CE395728FECA8C007A749C /* RegisterMainVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterMainVC.swift; sourceTree = "<group>"; };
 		84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyInputCodeVC.swift; sourceTree = "<group>"; };
 		84CE395B28FECBAF007A749C /* SetPasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetPasswordVC.swift; sourceTree = "<group>"; };
@@ -1406,6 +1408,7 @@
 				A80D5ED9282E08F60096BBDE /* MessagePlayerVC.swift */,
 				84FAAC5D29B0826F00E5BB52 /* PlayerExampleOC.h */,
 				84FAAC5E29B0826F00E5BB52 /* PlayerExampleOC.m */,
+				84B616C42A678F7900E2F57D /* PlayerExampleSwift.swift */,
 			);
 			path = MessageCenter;
 			sourceTree = "<group>";
@@ -1864,6 +1867,7 @@
 				9697BE9B2812B25F00447DF9 /* EXT-CheckStr.swift in Sources */,
 				84DF99D32A3DA74B00F9BA3E /* TopControTooBarSimpleView.swift in Sources */,
 				963956E828DDBA2B0049B9C8 /* BlufiFrameCtrlData.m in Sources */,
+				84B616C52A678F7900E2F57D /* PlayerExampleSwift.swift in Sources */,
 				A805ADC32816A17500E6C6DF /* ConnectResultView.swift in Sources */,
 				84DF99F82A49863E00F9BA3E /* KeyCenter.swift in Sources */,
 				A89E3DE52823E1AA002FFED9 /* DoorbellMessageVC.swift in Sources */,
@@ -2116,7 +2120,7 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1037;
+				CURRENT_PROJECT_VERSION = 1093;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -2167,7 +2171,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/IotLinkDemo/SwiftTools/BlufiLibrary/Security/openssl",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2270,11 +2274,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1037;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = JDPG69R49Z;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1093;
+				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -2324,7 +2326,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/IotLinkDemo/SwiftTools/BlufiLibrary/Security/openssl",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2405,10 +2407,9 @@
 					"-weak_framework",
 					"\"SwiftUI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iot;
+				PRODUCT_BUNDLE_IDENTIFIER = io.agora.Iot.AgoraIoT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = disIot2022;
 				SKIP_INSTALL = NO;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;

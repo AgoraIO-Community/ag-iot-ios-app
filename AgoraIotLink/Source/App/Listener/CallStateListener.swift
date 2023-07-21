@@ -197,6 +197,9 @@ extension CallStateListener : CallStateMachineListener{
                 self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
             }
             else if(ret == .Succ){
+                let timeSpace = String.dateCurrentTime() - CallListenerManager.sharedInstance.startConnectTime
+                log.i("-------------talkingEngine joinSuccess timeSpace:\(timeSpace)")
+                
                 CallListenerManager.sharedInstance.startTime = String.dateCurrentTime()
                 if self?.isIcoming == false{//主动呼叫
                     log.i("call reqCall CallForward")
@@ -226,7 +229,7 @@ extension CallStateListener : CallStateMachineListener{
                 log.i("listener Enter uid:\(uid)")
                 if(self.callSession?.peerUid == uid){
                     let timeSpace = String.dateCurrentTime() - CallListenerManager.sharedInstance.startTime
-                    log.i("----------listener Enter timeSpace:\(timeSpace)")
+                    log.i("-------------listener Enter timeSpace:\(timeSpace)")
                     if self.isIcoming == false{//主动呼叫
                         self.callMachine?.handleEvent(.peerOnline)
                         self.callAct(.onConnectDone,self.callSession?.mSessionId ?? "",ErrCode.XOK)
@@ -254,6 +257,8 @@ extension CallStateListener : CallStateMachineListener{
             }
             else if(act == .VideoReady){
                 log.i("listener VideoReady uid:\(uid)")
+                let timeSpace = String.dateCurrentTime() - CallListenerManager.sharedInstance.startTime
+                log.i("-------------listener VideoReady timeSpace:\(timeSpace)")
                 if(self.callSession?.peerUid == uid){
                     if self.isIcoming == false{//主动呼叫
                         self.endTime()

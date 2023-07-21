@@ -223,7 +223,7 @@ extension SDCardPlayerVC{
     func sendCmdSDQueryCoverImagPCtrl(sessionId:String = "", cb:@escaping(Int,Data)->Void){
    
         let mediaMgr = getDevMediaMgr()
-        mediaMgr.queryMediaCoverImage(imgUrl: "http://jd.com/image1.jpg") { errCode, result in
+        mediaMgr.getMediaCoverData(imgUrl: "http://jd.com/image1.jpg") { errCode,fileId,result in
             print("sendCmdSDCtrl---:\(errCode) result:\(result)")
             cb(errCode,result)
         }
@@ -233,7 +233,7 @@ extension SDCardPlayerVC{
     func sendCmdSDPlayCtrl(sessionId:String = ""){
    
         let mediaMgr = getDevMediaMgr()
-        mediaMgr.play(globalStartTime: 0, playingCallListener: self)
+        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
         
     }
     
@@ -266,7 +266,7 @@ extension SDCardPlayerVC{
 //            cb(errCode,"success")
 //        }
         
-         mediaMgr.play(globalStartTime: 0, playingCallListener: self)
+        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
         
 //          mediaMgr.play(fileId: "1", startPos: 989898989, playSpeed: 1, playingCallListener: self)
         
@@ -280,20 +280,32 @@ extension SDCardPlayerVC{
 }
 
 extension SDCardPlayerVC: IPlayingCallbackListener {
+    func onDevMediaPlayingDone(fileId: String) {
+        
+    }
+    
+    func onDevMediaPauseDone(fileId: String, errCode: Int) {
+        
+    }
+    
+    func onDevMediaResumeDone(fileId: String, errCode: Int) {
+        
+    }
+    
     
     func onDevPlayingStateChanged(mediaUrl: String, newState: Int) {
         
     }
     
-    func onDevMediaOpenDone(mediaUrl: String, errCode: Int) {
+    func onDevMediaOpenDone(fileId mediaUrl: String, errCode: Int) {
         let sessionId = TDUserInforManager.shared.curSessionId
         let mediaMgr = getDevMediaMgr()
         if errCode == 0 {
-            mediaMgr.setDisplayView(peerView: displayView)
+            mediaMgr.setDisplayView(displayView: displayView)
         }
     }
     
-    func onDevMediaSeekDone(mediaUrl: String, errCode: Int, targetPos: UInt64, seekedPos: UInt64) {
+    func onDevMediaSeekDone(fileId mediaUrl: String, errCode: Int, targetPos: UInt64, seekedPos: UInt64) {
         
     }
     
@@ -301,7 +313,7 @@ extension SDCardPlayerVC: IPlayingCallbackListener {
         
     }
     
-    func onDevPlayingError(mediaUrl: String, errCode: Int) {
+    func onDevPlayingError(fileId mediaUrl: String, errCode: Int) {
         
     }
     

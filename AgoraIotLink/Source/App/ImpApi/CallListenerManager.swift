@@ -14,6 +14,7 @@ class CallListenerManager {
     var mediaLister : MediaStateListener?
     
     //todo:
+    var startConnectTime : TimeInterval = 0
     var startTime : TimeInterval = 0
     var endTime   : TimeInterval = 0
     
@@ -176,6 +177,22 @@ class CallListenerManager {
                 self?.hunUpSDCard()
             }
         }
+    }
+    
+    func pausingSDCardPlay(){
+        mediaLister?.pausingSDCardPlay()
+    }
+    
+    func pausedSDCardPlay(){
+        mediaLister?.pausedSDCardPlay()
+    }
+    
+    func resumeingSDCardPlay(){
+        mediaLister?.resumeingSDCardPlay()
+    }
+    
+    func resumedSDCardPlay(){
+        mediaLister?.resumedSDCardPlay()
     }
     
     func hunUpSDCard(){

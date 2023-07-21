@@ -265,7 +265,7 @@ class DoorBellManager: NSObject {
 //            cb(errCode,"success")
 //        }
         
-         mediaMgr.play(globalStartTime: 0, playingCallListener: self)
+        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
         
 //          mediaMgr.play(fileId: "1", startPos: 989898989, playSpeed: 1, playingCallListener: self)
         
@@ -280,16 +280,28 @@ class DoorBellManager: NSObject {
 }
 
 extension DoorBellManager:IPlayingCallbackListener{
+    func onDevMediaPlayingDone(fileId: String) {
+        
+    }
+    
+    func onDevMediaPauseDone(fileId: String, errCode: Int) {
+        
+    }
+    
+    func onDevMediaResumeDone(fileId: String, errCode: Int) {
+        
+    }
+    
     
     func onDevPlayingStateChanged(mediaUrl: String, newState: Int) {
         
     }
     
-    func onDevMediaOpenDone(mediaUrl: String, errCode: Int) {
+    func onDevMediaOpenDone(fileId mediaUrl: String, errCode: Int) {
         
     }
     
-    func onDevMediaSeekDone(mediaUrl: String, errCode: Int, targetPos: UInt64, seekedPos: UInt64) {
+    func onDevMediaSeekDone(fileId mediaUrl: String, errCode: Int, targetPos: UInt64, seekedPos: UInt64) {
         
     }
     
@@ -297,7 +309,7 @@ extension DoorBellManager:IPlayingCallbackListener{
         
     }
     
-    func onDevPlayingError(mediaUrl: String, errCode: Int) {
+    func onDevPlayingError(fileId mediaUrl: String, errCode: Int) {
         
     }
 }

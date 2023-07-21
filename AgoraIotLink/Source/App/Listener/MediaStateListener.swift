@@ -59,7 +59,7 @@ class MediaStateListener: NSObject {
         let callM = MediaStateMachine()
         callMachine = callM
         callMachine?.delegate = self
-        callMachine?.handleEvent(.startCall)
+        callMachine?.handleEvent(.openCall)
  
     }
     
@@ -214,4 +214,24 @@ extension MediaStateListener : CallStateMachineListener{
         callMachine = nil
     }
   
+}
+
+extension MediaStateListener{
+    
+    func pausingSDCardPlay(){
+        callMachine?.handleEvent(.toWillPaused)
+    }
+    
+    func pausedSDCardPlay(){
+        callMachine?.handleEvent(.toHavePaused)
+    }
+    
+    func resumeingSDCardPlay(){
+        callMachine?.handleEvent(.toResuming)
+    }
+    
+    func resumedSDCardPlay(){
+        callMachine?.handleEvent(.toReplay)
+    }
+    
 }

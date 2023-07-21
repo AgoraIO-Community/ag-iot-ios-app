@@ -100,16 +100,27 @@ class DeviceDetailVC: AGBaseVC {
         super.viewDidLoad()
 //        checkLoginState()
         addObserver()
+        addCustomBarButtonItem()
         setUpUI()
         initAgoraIot()
-//        loadData()
         // 监听网络状态
         startListeningNetStatus()
         loadPreConfig()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            self.requestConDeviceParam()
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//            self.requestConDeviceParam()
+//        }
+    }
+    
+    private func addCustomBarButtonItem() {
+        navigationItem.leftBarButtonItem=UIBarButtonItem(image: UIImage(named: "doorbell_back")!.withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.plain, target: self, action: #selector(leftBtnDidClick))
+    }
+    
+    @objc func leftBtnDidClick(){
+        DispatchQueue.global().async {
+            self.releasePlayer()
         }
+        navigationController?.popViewController(animated: true)
     }
     
     //初始化mqtt
@@ -133,12 +144,22 @@ class DeviceDetailVC: AGBaseVC {
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        let preMgr = sdk?.deviceSessionMgr.getDevPreviewMgr(sessionId: curSessionId)
-        preMgr?.mutePeerAudio(mute: false, result: { code, msg in
-            
-        })
-        sdk?.deviceSessionMgr.disconnect(sessionId: curSessionId)
+//        let preMgr = sdk?.deviceSessionMgr.getDevPreviewMgr(sessionId: curSessionId)
+//        preMgr?.mutePeerAudio(mute: false, result: { code, msg in
+//
+//        })
+//        DispatchQueue.global(qos: .background).async {[weak self] in
+//            self?.releasePlayer()
+//        }
+    }
+    
+    func releasePlayer(){
+        
+        print("releasePlayer:调用了")
+        print("Thread Name 0: \(Thread.current)")
+        sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId)
         sdk?.release()
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -321,6 +342,7 @@ extension DeviceDetailVC { //呼叫设备
     
     //请求连接参数
     func requestConDeviceParam(){
+        print("requestConDeviceParam:")
         let deviceId = "IVFDMNJVJM2VG3KLKNFTMLKEINCDQN2DGFAUCQZQGI"
         AGToolHUD.showNetWorkWait()
         ThirdAccountManager.getConnectDeviceParam { [weak self] success, msg,retData in
@@ -530,12 +552,15 @@ extension DeviceDetailVC{
         param.rtcAppId = "aab8b8f5a8cd4469a63042fcfafe7063" //AgoraIotConfig.appId
         param.projectId = AgoraIotConfig.projectId
         
-        if(ErrCode.XOK != iotsdk.initialize(initParam: param,callbackFilter:{ [weak self] ec, msg in
+        if(ErrCode.XOK == iotsdk.initialize(initParam: param,callbackFilter:{  ec, msg in
             if(ec != ErrCode.XOK){
                 log.w("demo app recv api result \(msg)(\(ec))")
             }
             return (ec,msg)
         })){
+            requestConDeviceParam()
+            log.e("initialize successed")
+        }else{
             log.e("initialize failed")
         }
     }

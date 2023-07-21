@@ -16,12 +16,14 @@ import UIKit
  }
 
 enum MediaEvent {
+    case openCall              // 获取呼叫参数
     case startCall             // 发起呼叫请求
-    case toPaused              // 暂停
+    case toWillPaused          // 去暂停
+    case toHavePaused          // 已暂停
+    case toResuming            // resuming
     case toReplay              // 重新播放
     case toSeeking             // seeking
     case peerOnline            // 对端上线
-    case peerOffline           // 对端离线
     case endCall               // 结束通话事件
 }
 
@@ -33,7 +35,17 @@ class MediaStateMachine: NSObject {
     
     func handleEvent(_ event: MediaEvent) {
         switch currentState {
+            
         case .stopped:
+            switch event {
+            case .openCall:
+                currentState = .opening
+            case .endCall:
+                currentState = .stopped
+            default:
+                break
+            }
+        case .opening:
             switch event {
             case .startCall:
                 delegate?.do_CREATEANDENTER()
@@ -44,32 +56,29 @@ class MediaStateMachine: NSObject {
             default:
                 break
             }
-            
+            break
         case .playing:
             switch event {
-            case .toPaused:
-                currentState = .paused
+            case .toWillPaused:
+                currentState = .pausing
             case .toSeeking:
                 currentState = .seeking
-            case .peerOffline:
-                currentState = .stopped
             case .endCall:
                 currentState = .stopped
                 break
             default:
                 break
             }
-            
+            break
         case .paused:
             switch event {
-            case .toReplay:
-                currentState = .playing
+            case .toResuming:
+                currentState = .resuming
             case .endCall:
                 currentState = .stopped
             default:
                 break
             }
-            
         case .seeking:
             switch event {
             case .toReplay:
@@ -79,7 +88,28 @@ class MediaStateMachine: NSObject {
             default:
                 break
             }
-            
+        case .pausing:
+            switch event {
+            case .toHavePaused:
+                currentState = .paused
+            case .endCall:
+                currentState = .stopped
+                break
+            default:
+                break
+            }
+            break
+        case .resuming:
+            switch event {
+            case .toReplay:
+                currentState = .playing
+            case .endCall:
+                currentState = .stopped
+                break
+            default:
+                break
+            }
+            break
         }
     }
     

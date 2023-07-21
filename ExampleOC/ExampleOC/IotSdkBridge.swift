@@ -144,16 +144,16 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.deleteMediaList(deletingList: deletingList, deleteListener: deleteListener)
     }
     
-    @objc public func queryMediaCoverImage(imgUrl: String, cmdListener: @escaping (Int, Data) -> Void) {
-        return mgr.queryMediaCoverImage(imgUrl: imgUrl, cmdListener: cmdListener)
+    @objc public func getMediaCoverData(imgUrl: String, cmdListener: @escaping (Int, String, Data) -> Void) {
+        return mgr.getMediaCoverData(imgUrl: imgUrl, cmdListener: cmdListener)
     }
     
-    @objc public func setDisplayView(peerView: UIView?) -> Int {
-        return mgr.setDisplayView(peerView: peerView)
+    @objc public func setDisplayView(displayView : UIView?) -> Int {
+        return mgr.setDisplayView(displayView: displayView)
     }
     
-    @objc public func play(globalStartTime: UInt64, playingCallListener: AgoraIotLink.IPlayingCallbackListener) -> Int {
-        return mgr.play(globalStartTime: globalStartTime, playingCallListener: playingCallListener)
+    @objc public func play(globalStartTime: UInt64, playSpeed: Int, playingCallListener: AgoraIotLink.IPlayingCallbackListener) -> Int {
+        return mgr.play(globalStartTime: globalStartTime, playSpeed: playSpeed, playingCallListener: playingCallListener)
     }
     
     @objc public func play(fileId: String, startPos: UInt64, playSpeed: Int, playingCallListener: AgoraIotLink.IPlayingCallbackListener) -> Int {

@@ -100,8 +100,11 @@ import Foundation
  */
 @objc public enum DevMediaStatus : Int{
     case stopped                                      //当前播放器关闭
+    case opening                                      //正在打开媒体文件
     case playing                                      //当前正在播放
-    case paused                                       //当前暂停播放
+    case pausing                                      //正在暂停当前播放
+    case paused                                       //当前播放已经暂停
+    case resuming                                     //正在恢复当前播放
     case seeking                                      //当前正在SEEK操作
 }
 
@@ -111,41 +114,50 @@ import Foundation
 @objc public protocol IPlayingCallbackListener{
     
     /**
-     * @brief 当前播放状态变化事件
-     * @param mediaUrl : 媒体文件Url
-     * @param newState : 切换后的新状态
+     * @brief 设备媒体文件打开完成事件
+     * @param mediaUrl : 媒体文件Id
+     * @param errCode : 错误码，0表示打开成功直接播放，切换为 DEVPLAYER_STATE_PLAYING 状态
+     *                  其他值表示打开失败，状态还是原先的 DEVPLAYER_STATE_STOPPED 状态
      */
-    func onDevPlayingStateChanged(mediaUrl:String,newState:Int)
+    func onDevMediaOpenDone(fileId:String,errCode:Int)
     
     /**
-     * @brief 设备媒体文件打开完成事件
-     * @param mediaUrl : 媒体文件Url
-     * @param errCode : 错误码，0表示打开成功
+     * @brief 媒体文件播放完成事件，此时状态机切换为 DEVPLAYER_STATE_STOPPED 状态
+     * @param fileId : 媒体文件Id
      */
-    func onDevMediaOpenDone(mediaUrl:String,errCode:Int)
+    func onDevMediaPlayingDone(fileId:String)
+    
+    /**
+     * @brief 暂停操作完成事件
+     * @param fileId : 媒体文件Id
+     * @param errCode : 错误码，0表示暂停成功，状态切换为 DEVPLAYER_STATE_PAUSED；
+     *                        其他值表示暂停失败，状态还是原先的 DEVPLAYER_STATE_PLAYING 状态
+     */
+    func onDevMediaPauseDone(fileId:String,errCode:Int)
+    
+    /**
+     * @brief 恢复操作完成事件
+     * @param fileId : 媒体文件Id
+     * @param errCode : 错误码，0表示恢复成功，状态切换为 DEVPLAYER_STATE_PLAYING；
+     *                        其他值表示暂停失败，状态还是原先的 DEVPLAYER_STATE_PAUSED 状态
+     */
+    func onDevMediaResumeDone(fileId:String,errCode:Int)
     
     /**
      * @brief 设备媒体文件Seek完成事件
-     * @param mediaUrl : 媒体文件Url
+     * @param fileId : 媒体文件Id
      * @param errCode : 错误码，0表示Seek成功
      * @param targetPos : 要seek到的时间戳
      * @param seekedPos : 实际跳转到的时间戳
      */
-    func onDevMediaSeekDone(mediaUrl:String,errCode:Int,targetPos:UInt64,seekedPos:UInt64)
+    func onDevMediaSeekDone(fileId:String,errCode:Int,targetPos:UInt64,seekedPos:UInt64)
     
     /**
-     * @brief 当前媒体文件播放完成事件，通常此时可以调用 stop()回到开始重新play()，或者close()关闭播放器
-     * @param mediaUrl : 媒体文件Url
-     * @param duration : 整个播放时长
-     */
-    func onDevMediaPlayingDone(mediaUrl:String,duration:UInt64)
-    
-    /**
-     * @brief 播放过程中遇到错误，并且不能恢复，此时上层只能调用 close()关闭播放器
-     * @param mediaUrl : 媒体文件Url
+     * @brief 播放过程中遇到错误，并且不能恢复，此时上层只能调用 stop()关闭播放器
+     * @param fileId : 媒体文件Id
      * @param errCode : 错误码
      */
-    func onDevPlayingError(mediaUrl:String,errCode:Int)
+    func onDevPlayingError(fileId:String,errCode:Int)
     
 }
 
@@ -174,10 +186,10 @@ import Foundation
     
     /**
      * @brief 根据图片路径查询图片内容（新增）
-     * @param cmdListener: 命令完成回调
+     * @param cmdListener: 命令完成回调(errCode : 查询结果错误码，0标识查询成功,imgUrl : 封面文件路径,coverData : 封面图像的数据)
      * @return 返回错误码
      */
-    func queryMediaCoverImage(imgUrl:String,cmdListener: @escaping (_ errCode:Int,_ result:Data) -> Void)
+    func getMediaCoverData(imgUrl:String,cmdListener: @escaping (_ errCode:Int,_ imgUrl:String,_ result:Data) -> Void)
     
     
     /**
@@ -185,18 +197,20 @@ import Foundation
      * @param displayView: 视频帧显示控件
      * @return 返回错误码
      */
-    func setDisplayView(peerView: UIView?)->Int
+    func setDisplayView(displayView: UIView?)->Int
     
     /**
-     * @brief 开始播放，成功后切换到 DEVPLAYER_STATE_PLAYING 状态
+     * @brief 开始播放，先切换到 DEVPLAYER_STATE_OPENING 状态
+     *        操作完成后触发 onDevMediaOpenDone() 回调，并且更新状态
      * @param globalStartTime: 全局开始时间
      * @param playingCallback : 播放回调接口
      * @return 返回错误码
      */
-    func play(globalStartTime:UInt64,playingCallListener:IPlayingCallbackListener)->Int
+    func play(globalStartTime:UInt64,playSpeed:Int,playingCallListener:IPlayingCallbackListener)->Int
     
     /**
-     * @brief 开始播放，成功后切换到 DEVPLAYER_STATE_PLAYING 状态
+     * @brief 开始播放，先切换到 DEVPLAYER_STATE_OPENING 状态
+     *        操作完成后触发 onDevMediaOpenDone() 回调，并且更新状态
      * @param fileId: 要播放的媒体文件Id
      * @param startPos: 开始播放的开始时间点
      * @param playSpeed: 播放倍速
@@ -214,18 +228,21 @@ import Foundation
     
     /**
      * @brief 暂停播放，切换到 DEVPLAYER_STATE_PAUSED 状态
+     *        操作完成后触发 onDevMediaPauseDone() 回调，并且更新状态
      * @return 错误码
      */
     func pause()->Int
     
     /**
      * @brief 恢复暂停的播放，切换到 DEVPLAYER_STATE_PLAYING 状态
+     *        操作完成后触发 onDevMediaResumeDone() 回调，并且更新状态
      * @return 错误码
      */
     func resume()->Int
     
     /**
-     * @brief 直接跳转播放进度，先切换成 DEVPLAYER_STATE_SEEKING状态，之后切换回原先 播放/暂停状态
+     * @brief 直接跳转播放进度，先切换成 DEVPLAYER_STATE_SEEKING状态，
+     *        seek完成后触发 onDevMediaSeekDone() 回调，并切换回原先 播放/暂停状态
      * @param seekPos: 需要跳转到的目标时间戳，单位ms
      * @return 返回错误码
      */
@@ -233,7 +250,7 @@ import Foundation
     
     /**
      * @brief 设置快进、快退播放倍速，默认是正常播放速度（speed=1）
-     * @param speed: 固定几个倍速：-4；-2；1；2；4
+     * @param speed: 固定几个倍速：1; 2; 3;
      * @return 返回错误码
      */
     func setPlayingSpeed(speed:Int)->Int

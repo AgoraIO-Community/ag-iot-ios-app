@@ -102,6 +102,7 @@ class IVodPlayerManager : IVodPlayerMgr{
     
     func installObserver(){
         NotificationCenter.default.addObserver(self, selector: #selector(mediaIsPreparedToPlayDidChange), name: NSNotification.Name.IJKMPMediaPlaybackIsPreparedToPlayDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(moviePlayBackDidFinish), name: NSNotification.Name.IJKMPMoviePlayerPlaybackDidFinish, object: self.player)
     }
     
     @objc func mediaIsPreparedToPlayDidChange(notification:NSNotification){
@@ -109,8 +110,28 @@ class IVodPlayerManager : IVodPlayerMgr{
         callAct(ErrCode.XOK, self.player?.view ?? UIView())
     }
     
+    @objc func moviePlayBackDidFinish(notification:NSNotification){
+        log.i("ijk moviePlayBackDidFinish \(String(describing: notification.userInfo))")
+        let reason = (notification.userInfo?[IJKMPMoviePlayerPlaybackDidFinishReasonUserInfoKey] ?? "0") as? IJKMPMovieFinishReason
+        guard let reason = reason else{
+            log.w("ijk unknown reason")
+            return
+        }
+        switch(reason){
+        case .playbackEnded:
+            log.i("ijk finished by playbackEnded")
+        case .playbackError:
+            log.i("ijk finished by playbackError")
+        case .userExited:
+            log.i("ijk finished by userExited")
+        @unknown default:
+            log.i("ijk finished by unknown")
+        }
+    }
+    
     func destory(){
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.IJKMPMediaPlaybackIsPreparedToPlayDidChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.IJKMPMoviePlayerPlaybackDidFinish, object: self.player)
     }
   
 }

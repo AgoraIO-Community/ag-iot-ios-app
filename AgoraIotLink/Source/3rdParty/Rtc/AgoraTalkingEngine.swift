@@ -376,6 +376,14 @@ extension AgoraTalkingEngine{
 
 extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
 
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didClientRoleChanged oldRole: AgoraClientRole, newRole: AgoraClientRole, newRoleOptions: AgoraClientRoleOptions?) {
+        log.i("rtc didJoinedOfUid oldRole:\(oldRole.rawValue) newRole:\(newRole.rawValue)")
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didClientRoleChangeFailed reason: AgoraClientRoleChangeFailedReason, currentRole: AgoraClientRole) {
+        log.i("rtc didJoinedOfUid currentRole:\(currentRole.rawValue) reason:\(reason)")
+    }
+    
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
         log.i("rtc didJoinedOfUid \(uid)")
         peerEntered = true

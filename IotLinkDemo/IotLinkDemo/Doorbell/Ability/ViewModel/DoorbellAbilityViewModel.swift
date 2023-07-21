@@ -23,7 +23,7 @@ extension DoorBellManager{
             let ret = ConnectResult(mSessionId: "", mErrCode: -1)
             return ret
         }
-        log.i("wakeupDevice :\(param)")
+        log.i("connectDevice :\(param)")
         let ret = callMgr.connect(connectParam: param, sessionCallback:{ sback, sessionId, errCode in
             
             if(sback == .onDisconnected){
