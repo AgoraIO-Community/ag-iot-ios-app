@@ -8,6 +8,15 @@
 import Foundation
 //import AgoraRtmKit
 
+/*
+ * @brief SDK 状态机
+ */
+@objc public enum SdkState:Int {
+    case invalid        // SDK未初始化
+    case runing         // SDK就绪完成，可以正常使用
+    case unpreparing    // SDK正在注销处理
+}
+
 open class Application{
     
     func initialize(initParam: InitParam,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int {
@@ -47,22 +56,27 @@ open class Application{
             return ErrCode.XERR_INVALID_PARAM
         }
         
+        if sdkStare == .runing {
+            log.e("sdk initParam.rtcAppId is runing");
+            return ErrCode.XERR_BAD_STATE
+        }
+        
 //        _rule!.start(queue:DispatchQueue.main)
+        sdkStare = .runing
 
         return ErrCode.XOK
     }
     
     func release() {
-//        _proxy?.rtc.destroy()
         _config = nil
         _context = nil
-//        _rule?.trans(FsmApp.Event.LOGOUT)
         _proxy = nil
-  
+        log.i("sdk release:");
+        sdkStare = .invalid
     }
     
     public static let shared = Application()
-    
+    var sdkStare : SdkState = .invalid
     var sdk:IotAppSdk{get{return _sdk}}
 //    var rule:RuleManager{get{return _rule!}}
     var config:Config{get{return _config!}}

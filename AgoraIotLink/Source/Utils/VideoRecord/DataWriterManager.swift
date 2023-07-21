@@ -45,9 +45,10 @@ public class DataWriterManager: NSObject {
     
     var outFilePath : String = ""
     
-	private var timer: Timer?
+//	private var timer: Timer?
 	private var recordTime: CGFloat = 0
 	private var isCanWrite: Bool = false
+    private var isFirstWrite: Bool = true
     private var timescaleValue : Int32 = 25 //创建CMTime 使用，每秒多少帧 x86模拟器是25，真机为15 千从为25
     
     
@@ -88,8 +89,8 @@ public class DataWriterManager: NSObject {
 	@objc func stopWrite() {
         
 		writeState = .finish
-		timer?.invalidate()
-		timer = nil
+//		timer?.invalidate()
+//		timer = nil
  
 		if assetWriter != nil && assetWriter?.status == AVAssetWriter.Status.writing {
 			writeQueue.async {[weak self] in
@@ -143,20 +144,26 @@ public class DataWriterManager: NSObject {
                 
                 if !strongSelf.isCanWrite && mediaType == AVMediaType.video {
                     strongSelf.assetWriter?.startWriting()
-                    strongSelf.assetWriter?.startSession(atSourceTime: CMTime.zero)
+                    strongSelf.assetWriter?.startSession(atSourceTime: CMTimeMake(value: 1, timescale: strongSelf.timescaleValue))//CMTimeMake(value: 1, timescale: 20)
 //                    strongSelf.assetWriter?.startSession(atSourceTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
                     strongSelf.isCanWrite = true
                 }
-                if strongSelf.timer != nil {
-                    DispatchQueue.main.async {
-                        strongSelf.timer = Timer.init(timeInterval: 0.05, target: strongSelf, selector: #selector(strongSelf.updateProgress), userInfo: nil, repeats: true)
-                        
-                    }
-                }
+//                if strongSelf.timer != nil {
+//                    DispatchQueue.main.async {
+//                        strongSelf.timer = Timer.init(timeInterval: 0.05, target: strongSelf, selector: #selector(strongSelf.updateProgress), userInfo: nil, repeats: true)
+//
+//                    }
+//                }
+                let curTime : CMTime = CMTimeMake(value: Int64(index), timescale: strongSelf.timescaleValue)
+//                var curTime : CMTime = CMTime.zero
+//                if strongSelf.isCanWrite == false{
+//                    curTime = CMTimeMake(value: Int64(index), timescale: strongSelf.timescaleValue)
+//                }
                 //开始写入视频
                 if mediaType == AVMediaType.video && strongSelf.assetWriterVideoInput != nil {
                     if strongSelf.assetWriterVideoInput!.isReadyForMoreMediaData {
-                        let flag = strongSelf.adatptor!.append(sampleBuffer!, withPresentationTime: CMTimeMake(value: Int64(index), timescale: strongSelf.timescaleValue))
+                        let flag = strongSelf.adatptor!.append(sampleBuffer!, withPresentationTime:curTime )
+                        strongSelf.isCanWrite = true
 //                        let flag = strongSelf.assetWriterVideoInput!.append(sampleBuffer)
                         print("video record")
                         if !flag {
@@ -259,20 +266,20 @@ public class DataWriterManager: NSObject {
 //	}
     
     
-	@objc private func updateProgress() {
-		if  recordTime >= 8.0 {
-			stopWrite()
-			
-			if delegate != nil {
-				delegate!.finishWriting()
-			}
-			return
-		}
-		recordTime += 0.05
-		if delegate != nil  {
-			delegate!.updateWritingProgress(progress: recordTime/8.0)
-		}
-	}
+//	@objc private func updateProgress() {
+//		if  recordTime >= 8.0 {
+//			stopWrite()
+//
+//			if delegate != nil {
+//				delegate!.finishWriting()
+//			}
+//			return
+//		}
+//		recordTime += 0.05
+//		if delegate != nil  {
+//			delegate!.updateWritingProgress(progress: recordTime/8.0)
+//		}
+//	}
 	private func setUpWriter() {
 		
         if outFilePath == ""{
@@ -364,8 +371,8 @@ public class DataWriterManager: NSObject {
 		assetWriterVideoInput = nil
 		assetWriterAudioInput = nil
 		recordTime = 0
-		timer?.invalidate()
-		timer = nil
+//		timer?.invalidate()
+//		timer = nil
 	}
     
     private func fixTransform(deviceOrientation: UIDeviceOrientation) -> CGAffineTransform {
