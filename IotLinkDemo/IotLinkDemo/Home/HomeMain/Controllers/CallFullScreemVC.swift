@@ -61,7 +61,7 @@ class CallFullScreemVC: UIViewController {
         addRightBarButtonItem()
         
         NotificationCenter.default.addObserver(self, selector: #selector(receiveFirstVideo), name: Notification.Name(ReceiveFirstVideoFrameNotify), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(remoteHangup), name: Notification.Name(cRemoteHangupNotify), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(remoteHangup), name: Notification.Name(cRemoteHangupNotify), object: nil)
         
         
         // Do any additional setup after loading the view.

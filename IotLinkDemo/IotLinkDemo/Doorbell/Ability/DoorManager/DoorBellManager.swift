@@ -108,64 +108,6 @@ class DoorBellManager: NSObject {
         })
     }
     
-    //设置设备属性
-    func setSynDevicecProperty(_ dev:IotDevice,pointId:Int,value: Int, _ cb:@escaping(Bool,String)->Void){
-        
-        let doorBell = dev.toDoorBell()
-        switch pointId {
-        case 101:
-            doorBell.nightView = value
-            break
-        case 102:
-            let valueB : Bool = value == 1 ? true:false
-            doorBell.motionAlarm = valueB
-            break
-        case 103:
-            doorBell.pirSwitch = value
-            break
-        case 105:
-            let valueB : Bool = value == 1 ? true:false
-            doorBell.forceAlarm = valueB
-            break
-        default:
-            break
-        }
-                
-//        guard let devMgr = sdk?.deviceMgr else{
-//            log.e("demo app manager not inited")
-//            return
-//        }
-//        doorBell.sync(devMgr: devMgr, result: {ec,msg in
-//            log.i("demo app sync result:\(msg)(\(ec))")
-//            cb(ec == ErrCode.XOK ? true : false,msg)
-//        })
-    }
-    
-    
-    func setDeviceProperty(_ dev:IotDevice,dict:Dictionary<String,Any>,cb:@escaping(Bool,String)->Void){
-        log.i("------设置属性：\(dict)")
-//        sdk?.deviceMgr.setDeviceProperty(deviceId: dev.deviceId, properties: dict, result: {
-//            (ec,msg) in
-//            log.i("demo app sync result:\(msg)(\(ec)))")
-//            cb(ec == ErrCode.XOK ? true : false,msg)
-//        })
-        
-    }
-    
-    func getDeviceProperty(_ dev:IotDevice,cb:@escaping(Bool,String,Dictionary<String, Any>?,Dictionary<String, Any>?)->Void){
-        
-//        sdk?.deviceMgr.getDeviceProperty(deviceId: dev.deviceId, result: { ecCode, msg, desiredDic,reportedDic in
-//            if ecCode == 0 {
-//                debugPrint("查询设备信息：\(msg)")
-//                cb(true,msg,desiredDic,reportedDic)
-//            }else{
-//                debugPrint("查询设备信息：\(msg)")
-////                AGToolHUD.showInfo(info: "\(msg)")
-//            }
-//        })
-        
-    }
-    
     //接听来电
     func callAnswer(sessionId:String = "" ,cb:@escaping(Bool,String)->Void){
 //         sdk?.callkitMgr.callAnswer(sessionId:sessionId, pubLocalAudio:true, result: {ec,msg in

@@ -123,13 +123,6 @@ public protocol IAlarmMgr {
      */
     func queryCount(productId:String?,deviceId:String?,messageType:Int?,status:Int?,createDateBegin:Date?,createDateEnd:Date? , result:@escaping(Int,String,UInt)->Void)
     
-    /*
-    * @brief 新增告警信息
-    * @param device : 当前设备
-    * @param desc : 告警描述
-    * @return 0：成功，<0：失败
-    */
-    func addAlarm(device:IotDevice,desc:String,result:@escaping(Int,String)->Void)
     
     /*
     * @brief 根据图片 ID 查询告警图片信息

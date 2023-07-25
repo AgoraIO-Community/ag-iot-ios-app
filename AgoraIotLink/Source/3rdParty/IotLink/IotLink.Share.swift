@@ -101,55 +101,7 @@ extension IotLink{
             let info:[Device]?
         }
     }
-    public func shareOwnDevice(token:String,rsp:@escaping(Int,String,[DeviceShare]?)->Void){
-        let header : HTTPHeaders = ["Content-Type":"text/html; charset=utf-8", "token":token]
-        let params:[String:String] = [:]
-        let url = http + api.ShareOwnDevice
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: header)
-            .validate()
-            .responseDecodable(of: OwnDevice.Rsp.self) { (dataRsp : AFDataResponse<OwnDevice.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    DispatchQueue.main.async {
-                        var ec = ErrCode.XOK
-                        var devs:[DeviceShare]? = nil
-                        if(value.code != 0 || value.info == nil){
-                            log.e("gw shareOwnDevice \(url) fail, detail: \(value.tip)(\(value.code)) ")
-                        }
-                        else{
-                            log.i("gw shareOwnDevice: \(value.tip)(\(value.code))")
-                            devs = [DeviceShare]()
-                            for item in value.info!{
-                                
-                                let dev = DeviceShare()
-                                dev.nickName = item.nickName
-                                dev.deviceNumber = item.deviceId
-                                dev.count = item.count
-                                dev.time = item.time
-                                dev.deviceId = item.mac
-                                devs?.append(dev)
-                            }
-                        }
-                        if(value.code == IotLink.tokenInvalidCode){
-                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil)
-                        }
-                        else{
-                            if(value.code != 0){
-                                log.e("gw shareOwnDevice failed:\(value.tip)(\(value.code))")
-                                ec = ErrCode.XERR_UNKNOWN
-                            }
-                            rsp(ec,value.tip,devs)
-                        }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        log.e("gw shareOwnDevice \(url) fail, detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
-                    }
-                }
-        }
-    }
-    
+
     struct ShareWithme{
         public struct Device : Decodable{
             let nickName:String
@@ -161,53 +113,6 @@ extension IotLink{
             let code:Int
             let tip:String
             let info:[Device]?
-        }
-    }
-    public func shareWithMe(token:String,rsp:@escaping(Int,String,[DeviceShare]?)->Void){
-        let header : HTTPHeaders = ["Content-Type":"text/html; charset=utf-8", "token":token]
-        let params:[String:String] = [:]
-        let url = http + api.ShareWithMe
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: header)
-            .validate()
-            .responseDecodable(of: ShareWithme.Rsp.self) { (dataRsp : AFDataResponse<ShareWithme.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    DispatchQueue.main.async {
-                        var ec = ErrCode.XOK
-                        var devs:[DeviceShare]? = nil
-                        if(value.code != 0 || value.info == nil){
-                            log.e("gw shareWithMe \(url) fail, detail: \(value.tip)(\(value.code)) ")
-                        }
-                        else{
-                            log.i("gw shareWithMe: \(value.tip)(\(value.code))")
-                            devs = [DeviceShare]()
-                            for item in value.info!{
-                                let dev = DeviceShare()
-                                dev.nickName = item.nickName
-                                dev.deviceNumber = item.deviceId
-                                dev.count = 0
-                                dev.time = item.time
-                                dev.deviceId = item.mac
-                                devs?.append(dev)
-                            }
-                        }
-                        if(value.code == IotLink.tokenInvalidCode){
-                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil)
-                        }
-                        else{
-                            if(value.code != 0){
-                                log.e("gw shareWithMe failed:\(value.tip)(\(value.code))")
-                                ec = ErrCode.XERR_UNKNOWN
-                            }
-                            rsp(ec,value.tip,devs)
-                        }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        log.e("gw shareWithMe \(url) fail, detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
-                    }
-                }
         }
     }
     
@@ -235,78 +140,6 @@ extension IotLink{
             let info:[Info]?
         }
     }
-    
-    public func shareCancelable(token:String,deviceId:String,rsp:@escaping(Int,String,[DeviceCancelable]?)->Void){
-        let header : HTTPHeaders = ["Content-Type":"text/html; charset=utf-8", "token":token]
-        let params:[String:String] = ["mac":deviceId]
-        let url = http + api.ShareCancel
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: header)
-            .validate()
-            .responseDecodable(of: ShareCancel.Rsp.self) { (dataRsp : AFDataResponse<ShareCancel.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    DispatchQueue.main.async {
-                        var ec = ErrCode.XOK
-                        var devsCancel:[DeviceCancelable]? = nil
-                        if(value.code != 0 || value.info == nil){
-                            log.e("gw shareCancelable \(url) fail for \(deviceId) detail: \(value.tip)(\(value.code)) ")
-                        }
-                        else{
-                            log.i("gw shareCancelable: \(value.tip)(\(value.code))")
-                            devsCancel = [DeviceCancelable]()
-                            for item in value.info!{
-                                
-                                let devs = DeviceCancelable()
-                                devs.appuserId = item.appuserId
-                                devs.avatar = item.avatar ?? ""
-                                devs.connect = item.connect
-                                devs.createTime = item.createTime
-                                devs.deviceNumber = item.deviceId
-                                devs.deviceNickname = item.deviceNickname
-                                devs.email = item.email ?? ""
-                                devs.deviceId = item.mac
-                                devs.nickName = item.nickName ?? ""
-                                devs.phone = item.phone ?? ""
-                                devs.productId = item.productId
-                                devs.productKey = item.productKey
-                                devs.sharer = item.sharer
-                                devs.uType = item.uType
-                                devs.updateTime = item.updateTime
-                                devsCancel?.append(devs)
-                            }
-                        }
-                        if(value.code == IotLink.tokenInvalidCode){
-                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil)
-                        }
-                        else{
-                            if(value.code != 0){
-                                log.e("gw shareCancelable failed: for \(deviceId) \(value.tip)(\(value.code))")
-                                ec = ErrCode.XERR_UNKNOWN
-                            }
-                            rsp(ec,value.tip,devsCancel)
-                        }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        log.e("gw shareCancelable \(url) fail for \(deviceId) detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
-                    }
-                }
-        }
-        
-//        .responseString(completionHandler: {(response) in
-//        switch response.result{
-//        case .success(let value):
-//            log.e(value)
-//            _ = JSON(value)
-//            //cb(ErrCode.XERR_ALARM_NOT_FOUND,value,nil)
-//        case .failure(let error):
-//            log.e("http request detail: \(error) ")
-//            //cb(ErrCode.XERR_ACCOUNT_REGISTER,"")
-//        }
-//       })
-    }
-    
     
     public func shareRemove(token:String,deviceId:String,userId:String,rsp:@escaping(Int,String)->Void){
         let header : HTTPHeaders = ["Content-Type":"text/html; charset=utf-8", "token":token]
@@ -453,66 +286,7 @@ extension IotLink{
         }
         
     }
-    
-    public func sharePushDetail(token:String,id:String,rsp:@escaping(Int,String,ShareDetail?)->Void){
-        let header : HTTPHeaders = ["Content-Type":"text/html; charset=utf-8", "token":token]
-        let params:[String:String] = ["id":id]
-        let url = http + api.SharePushDetail
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: header)
-            .validate()
-            .responseDecodable(of: PushDetail.Rsp.self) { (dataRsp : AFDataResponse<PushDetail.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    DispatchQueue.main.async {
-                        var ec = ErrCode.XOK
-                        var detail:ShareDetail? = nil
-                        if(value.code != 0){
-                            log.e("gw sharePushDetail \(url) fail for \(id), detail: \(value.tip)(\(value.code)) ")
-                        }
-                        else{
-                            log.i("gw sharePushDetail: \(value.tip)(\(value.code))")
-                        }
-                        if(value.code == IotLink.tokenInvalidCode){
-                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil)
-                        }
-                        else{
-                            if(value.code != 0){
-                                log.e("gw sharePushDetail failed:\(value.tip)(\(value.code))")
-                                ec = ErrCode.XERR_UNKNOWN
-                            }
-                            else{
-                                    let det = ShareDetail()
-                                    let item = value.info
-                                    det.auditStatus = item.auditStatus
-                                    det.content = item.content
-                                    det.createBy = item.createBy
-                                    det.createTime = item.createTime
-                                    det.deleted = item.deleted
-                                    det.id = item.id
-                                    det.merchantId = item.merchantId
-                                    det.merchantName = item.merchantName
-                                    det.msgType = item.msgType
-                                    det.para = item.para
-                                    det.permission = item.permission
-                                    det.status = item.status
-                                    det.title = item.title
-                                    det.type = item.type
-                                    det.updateBy = item.updateBy ?? 0
-                                    det.updateTime = item.updateTime ?? 0
-                                    det.userId = item.userId
-                                    detail = det
-                            }
-                            rsp(ec,value.tip,detail)
-                        }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        log.e("gw sharePushDetail \(url) fail for \(id), detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
-                    }
-                }
-        }
-    }
+
     struct PushList{
         struct Info:Decodable{
             let auditStatus:Bool
@@ -556,88 +330,5 @@ extension IotLink{
             let pageTurn:PageTurn?
         }
     }
-    
-    public func sharePushList(token:String,pageNo:Int,pageSize:Int,auditStatus:String, rsp:@escaping(Int,String,[ShareItem]?,PageTurn?)->Void){
-        let header : HTTPHeaders = ["Content-Type":"text/html; charset=utf-8", "token":token]
-        let params = ["pageNo":String(pageNo),"pageSize":String(pageSize),"auditStatus":auditStatus]
-        let url = http + api.SharePushList
-        log.i("gw sharePushList:\(params)")
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: header)
-            .validate()
-            .responseDecodable(of: PushList.Rsp.self) { (dataRsp : AFDataResponse<PushList.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    DispatchQueue.main.async {
-                        var ec = ErrCode.XOK
-                        var items:[ShareItem]? = nil
-                        var pageturn : PageTurn? = nil
-                        if(value.code != 0){
-                            log.e("gw sharePushList \(url) fail, detail: \(value.tip)(\(value.code)) ")
-                        }
-                        else{
-                            log.i("gw sharePushList: \(value.tip)(\(value.code))")
-                        }
-                        if(value.code == IotLink.tokenInvalidCode){
-                            rsp(ErrCode.XERR_TOKEN_INVALID,value.tip,nil,nil)
-                        }
-                        else{
-                            if(value.code != 0){
-                                log.e("gw sharePushList failed:\(value.tip)(\(value.code))")
-                                ec = ErrCode.XERR_UNKNOWN
-                            }
-                            else{
-                                items = [ShareItem]()
-                                if(value.list != nil){
-                                    for info in value.list!{
-                                        let item = ShareItem()
-                                        item.auditStatus = info.auditStatus
-                                        item.content = info.content
-                                        item.createBy = info.createBy
-                                        item.createTime = info.createTime
-                                        item.deleted = info.deleted
-                                        item.deviceNumber = info.deviceId
-                                        item.id = info.id
-                                        item.img = info.img
-                                        item.merchantId = info.merchantId
-                                        item.merchantName = info.merchantName
-                                        item.msgType = info.msgType
-                                        item.para = info.para
-                                        item.permission = info.permission
-                                        item.productName = info.productName
-                                        item.pushTime = info.pushTime
-                                        item.shareName = info.shareName ?? ""
-                                        item.status = info.status
-                                        item.title = info.title
-                                        item.type = info.type
-                                        item.userId = info.userId
-                                        items?.append(item)
-                                    }
-                                }
-                                
-                                if let turn = value.pageTurn
-                                {
-                                    pageturn?.currentPage = turn.currentPage
-                                    pageturn?.end = turn.end
-                                    pageturn?.firstPage = turn.end
-                                    pageturn?.nextPage = turn.nextPage
-                                    pageturn?.page = turn.page
-                                    pageturn?.pageCount = turn.pageCount
-                                    pageturn?.pageSize = turn.pageSize
-                                    pageturn?.prevPage = turn.prevPage
-                                    pageturn?.rowCount = turn.rowCount
-                                    pageturn?.start = turn.start
-                                    pageturn?.startIndex = turn.startIndex
-                                }
-                            }
-                            rsp(ec,value.tip,items,pageturn)
-                        }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        log.e("gw sharePushList \(url) fail  detail: \(error) ")
-                        rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil,nil)
-                    }
-                }
-        }
-    }
+
 }

@@ -45,12 +45,8 @@
 		84DF99F32A40818100F9BA3E /* CocoaMqttMgr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DF99F12A40818000F9BA3E /* CocoaMqttMgr.swift */; };
 		84DF99F42A40818100F9BA3E /* CocoaMqtt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DF99F22A40818000F9BA3E /* CocoaMqtt.swift */; };
 		84DF99F82A49863E00F9BA3E /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DF99F72A49863E00F9BA3E /* KeyCenter.swift */; };
-		84F7453B289BBDEA00702944 /* DeviceFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */; };
-		84F7453D289BC14A00702944 /* DeviceFirmwareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */; };
-		84F7453F289BEE0500702944 /* AGFirmwareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7453E289BEE0500702944 /* AGFirmwareVC.swift */; };
 		84F74541289CBDCC00702944 /* AGConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F74540289CBDCC00702944 /* AGConfirmView.swift */; };
 		84FAAC5F29B0827000E5BB52 /* PlayerExampleOC.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FAAC5E29B0826F00E5BB52 /* PlayerExampleOC.m */; };
-		84FFD15628F58FAF0076AD29 /* DeviceDelSuccessVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FFD15528F58FAF0076AD29 /* DeviceDelSuccessVC.swift */; };
 		9601C2FC280D5C6400D3CA49 /* MinePageMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C2FB280D5C6400D3CA49 /* MinePageMainVC.swift */; };
 		9601C2FF280D5EBF00D3CA49 /* NetWorkTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C2FE280D5EBF00D3CA49 /* NetWorkTool.swift */; };
 		9601C301280D638800D3CA49 /* TDTURLConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C300280D638800D3CA49 /* TDTURLConstant.swift */; };
@@ -59,7 +55,6 @@
 		9601C315280E4B9D00D3CA49 /* LoginMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C314280E4B9D00D3CA49 /* LoginMainVC.swift */; };
 		9601C317280E4BE900D3CA49 /* LoginMainVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C316280E4BE900D3CA49 /* LoginMainVM.swift */; };
 		9602957528FCF4DE00BE26FF /* Bluetooth_LE_Hex.c in Sources */ = {isa = PBXBuildFile; fileRef = 9602957328FCF4DE00BE26FF /* Bluetooth_LE_Hex.c */; };
-		960ECFFB283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960ECFFA283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift */; };
 		960ECFFD283E1660005A00D0 /* DoorbellChangeSoundModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960ECFFC283E1660005A00D0 /* DoorbellChangeSoundModel.swift */; };
 		961825392817D4D400053691 /* SetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961825382817D4D400053691 /* SetPasswordView.swift */; };
 		9618253B2817D4EE00053691 /* ResetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9618253A2817D4EE00053691 /* ResetPasswordView.swift */; };
@@ -67,11 +62,8 @@
 		96182543281937A300053691 /* LoginProtocolAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96182542281937A300053691 /* LoginProtocolAlertVC.swift */; };
 		9618254D281AA6C000053691 /* VerifyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9618254C281AA6C000053691 /* VerifyManager.swift */; };
 		961825552824FF0E00053691 /* DoorbellAbilityViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961825542824FF0E00053691 /* DoorbellAbilityViewCell.swift */; };
-		961825572824FF3300053691 /* DoorbellAbilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961825562824FF3300053691 /* DoorbellAbilityView.swift */; };
 		961825592824FF6E00053691 /* DoorbellAbilityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961825582824FF6E00053691 /* DoorbellAbilityViewModel.swift */; };
 		9618255B2824FF8400053691 /* DoorbellAbilityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9618255A2824FF8400053691 /* DoorbellAbilityModel.swift */; };
-		9618255E2825192600053691 /* DoorbellAbilityTopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9618255D2825192600053691 /* DoorbellAbilityTopView.swift */; };
-		961825602825195200053691 /* DoorbellAbilityTooBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9618255F2825195200053691 /* DoorbellAbilityTooBarView.swift */; };
 		962EAA6B28324A9900030C1B /* DoorbellAbilityTooBarHView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962EAA6928324A9800030C1B /* DoorbellAbilityTooBarHView.swift */; };
 		962EAA6C28324A9900030C1B /* DoorbellLeftBackHView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962EAA6A28324A9900030C1B /* DoorbellLeftBackHView.swift */; };
 		962FEFE1284F2CD000DCFD59 /* AppDelegate_Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962FEFE0284F2CD000DCFD59 /* AppDelegate_Push.swift */; };
@@ -93,18 +85,10 @@
 		963956E628DDBA2B0049B9C8 /* ESPFBYBLEHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956CB28DDBA2B0049B9C8 /* ESPFBYBLEHelper.m */; };
 		963956E728DDBA2B0049B9C8 /* BlufiNotifyData.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956D628DDBA2B0049B9C8 /* BlufiNotifyData.m */; };
 		963956E828DDBA2B0049B9C8 /* BlufiFrameCtrlData.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956D728DDBA2B0049B9C8 /* BlufiFrameCtrlData.m */; };
-		963956EF28DDBBCA0049B9C8 /* SearchFailBluefiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956E928DDBBC90049B9C8 /* SearchFailBluefiView.swift */; };
-		963956F028DDBBCA0049B9C8 /* ConnectFailBluefiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956EA28DDBBCA0049B9C8 /* ConnectFailBluefiView.swift */; };
-		963956F128DDBBCB0049B9C8 /* ConnectBluefiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956EB28DDBBCA0049B9C8 /* ConnectBluefiView.swift */; };
-		963956F228DDBBCB0049B9C8 /* BluefiResultCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956EC28DDBBCA0049B9C8 /* BluefiResultCell.swift */; };
-		963956F328DDBBCB0049B9C8 /* ConnectItemLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956ED28DDBBCA0049B9C8 /* ConnectItemLabel.swift */; };
-		963956F428DDBBCB0049B9C8 /* SearchBluefiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956EE28DDBBCA0049B9C8 /* SearchBluefiView.swift */; };
-		963956F628DDBBD70049B9C8 /* BluefiResultVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963956F528DDBBD70049B9C8 /* BluefiResultVC.swift */; };
 		965B1F9D282D237F0045D002 /* DoorBellManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965B1F9C282D237F0045D002 /* DoorBellManager.swift */; };
 		965B1FA2282E6F2C0045D002 /* AGToolHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965B1FA1282E6F2C0045D002 /* AGToolHUD.swift */; };
 		966BA9012864380000DE8958 /* SelectHeardImgVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966BA9002864380000DE8958 /* SelectHeardImgVC.swift */; };
 		966BA90428643CFB00DE8958 /* UserHeardImgModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966BA90328643CFB00DE8958 /* UserHeardImgModel.swift */; };
-		967C7AAF284749BA00236F92 /* DeviceShareViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967C7AAE284749BA00236F92 /* DeviceShareViewModel.swift */; };
 		96827D792867301E0012AC84 /* LoggerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96827D732867301E0012AC84 /* LoggerHelper.swift */; };
 		96827D7A2867301E0012AC84 /* LoggerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96827D742867301E0012AC84 /* LoggerManager.swift */; };
 		96827D7B2867301E0012AC84 /* LoggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96827D752867301E0012AC84 /* LoggerViewController.swift */; };
@@ -142,14 +126,9 @@
 		9699941828153EAA00910792 /* ChooseCountryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9699941728153EAA00910792 /* ChooseCountryView.swift */; };
 		9699941A28154EEF00910792 /* CountrySelectViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9699941928154EEE00910792 /* CountrySelectViewCell.swift */; };
 		9699941C28154F8000910792 /* CountryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9699941B28154F8000910792 /* CountryModel.swift */; };
-		96C1B5C7283B9E93005BCCB9 /* DeviceSetUpModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C1B5C6283B9E93005BCCB9 /* DeviceSetUpModel.swift */; };
 		96C1B5C9283B9EC4005BCCB9 /* DoorbellSaveImgAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C1B5C8283B9EC3005BCCB9 /* DoorbellSaveImgAlertView.swift */; };
 		96D97BA92828FE2B00575335 /* VideoAlertTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BA82828FE2B00575335 /* VideoAlertTipView.swift */; };
-		96D97BAB2828FE7300575335 /* TopControTooBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BAA2828FE7300575335 /* TopControTooBarView.swift */; };
-		96D97BAD2828FEA400575335 /* DoorbellAbilityLogicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BAC2828FEA400575335 /* DoorbellAbilityLogicView.swift */; };
 		96D97BB12828FF8600575335 /* ChanceSoundAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BB02828FF8600575335 /* ChanceSoundAlertVC.swift */; };
-		96D97BB32829001E00575335 /* DoorbellAnswerLogicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D97BB22829001E00575335 /* DoorbellAnswerLogicView.swift */; };
-		96DB2E6C292606520016F481 /* SelectMatchNetTypeAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DB2E6B292606520016F481 /* SelectMatchNetTypeAlertVC.swift */; };
 		96E4C1042807CA5500A53A49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4C1032807CA5500A53A49 /* AppDelegate.swift */; };
 		96E4C10B2807CA5500A53A49 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96E4C1092807CA5500A53A49 /* Main.storyboard */; };
 		96E4C10D2807CA5800A53A49 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96E4C10C2807CA5800A53A49 /* Assets.xcassets */; };
@@ -159,68 +138,31 @@
 		96E4C120280801A500A53A49 /* GlobalConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4C11F280801A500A53A49 /* GlobalConstant.swift */; };
 		96E4C12A280D453000A53A49 /* AGBaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4C129280D453000A53A49 /* AGBaseVC.swift */; };
 		96E4C12C280D457500A53A49 /* HomePageMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4C12B280D457500A53A49 /* HomePageMainVC.swift */; };
-		A805ADAA281502FF00E6C6DF /* SelectWIFIVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADA9281502FF00E6C6DF /* SelectWIFIVC.swift */; };
-		A805ADAD2815242900E6C6DF /* SelectWIFIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADAC2815242900E6C6DF /* SelectWIFIView.swift */; };
-		A805ADB02816382600E6C6DF /* CreateQRCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADAF2816382600E6C6DF /* CreateQRCodeVC.swift */; };
-		A805ADB22816384300E6C6DF /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADB12816384300E6C6DF /* QRCodeView.swift */; };
-		A805ADB42816394500E6C6DF /* DeviceResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADB32816394500E6C6DF /* DeviceResetView.swift */; };
-		A805ADB928167C9000E6C6DF /* DeviceConnectingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADB828167C9000E6C6DF /* DeviceConnectingVC.swift */; };
-		A805ADBB2816876600E6C6DF /* DeviceConnectTimeoutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADBA2816876600E6C6DF /* DeviceConnectTimeoutVC.swift */; };
-		A805ADBD2816891800E6C6DF /* DeviceItemLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADBC2816891800E6C6DF /* DeviceItemLabel.swift */; };
-		A805ADBF281696AD00E6C6DF /* DeviceAddFailedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADBE281696AD00E6C6DF /* DeviceAddFailedVC.swift */; };
-		A805ADC1281696F100E6C6DF /* DeviceAddSuccessVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADC0281696F100E6C6DF /* DeviceAddSuccessVC.swift */; };
-		A805ADC32816A17500E6C6DF /* ConnectResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADC22816A17500E6C6DF /* ConnectResultView.swift */; };
 		A805ADC62816B40600E6C6DF /* AGAlertBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADC52816B40600E6C6DF /* AGAlertBaseView.swift */; };
 		A805ADC82816B85400E6C6DF /* AGAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADC72816B85400E6C6DF /* AGAlertViewController.swift */; };
 		A805ADCA2816C51500E6C6DF /* AGEditAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADC92816C51500E6C6DF /* AGEditAlertVC.swift */; };
-		A805ADCC2817893400E6C6DF /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A805ADCB2817893400E6C6DF /* DeviceManager.swift */; };
 		A80D5EAE282B745C0096BBDE /* DoorbellSelectAllView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EAD282B745C0096BBDE /* DoorbellSelectAllView.swift */; };
 		A80D5EB1282CDF690096BBDE /* MineTopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EB0282CDF690096BBDE /* MineTopView.swift */; };
 		A80D5EB3282CE5630096BBDE /* MinePageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EB2282CE5630096BBDE /* MinePageCell.swift */; };
 		A80D5EB9282CE90C0096BBDE /* GeneralSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EB8282CE90C0096BBDE /* GeneralSettingVC.swift */; };
-		A80D5EBB282CE91F0096BBDE /* MessageCenterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EBA282CE91F0096BBDE /* MessageCenterVC.swift */; };
 		A80D5EBD282CE9800096BBDE /* AboutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EBC282CE9800096BBDE /* AboutVC.swift */; };
-		A80D5EC0282CECB80096BBDE /* PersonalInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EBF282CECB80096BBDE /* PersonalInfoVC.swift */; };
-		A80D5EC2282CEDEA0096BBDE /* NotifyMessageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EC1282CEDEA0096BBDE /* NotifyMessageVC.swift */; };
 		A80D5EC5282CFF900096BBDE /* DoorbellMessageEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EC4282CFF900096BBDE /* DoorbellMessageEnum.swift */; };
 		A80D5EC8282D110C0096BBDE /* GeneralSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EC7282D110C0096BBDE /* GeneralSettingCell.swift */; };
-		A80D5ECA282D156F0096BBDE /* PushMsgSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EC9282D156F0096BBDE /* PushMsgSettingVC.swift */; };
 		A80D5ECC282D16620096BBDE /* SwitchSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ECB282D16620096BBDE /* SwitchSettingCell.swift */; };
 		A80D5ECE282D386E0096BBDE /* AccountSafeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ECD282D386E0096BBDE /* AccountSafeVC.swift */; };
 		A80D5ED2282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED1282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift */; };
 		A80D5ED4282DE4E20096BBDE /* NotifyMsgCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED3282DE4E20096BBDE /* NotifyMsgCell.swift */; };
 		A80D5ED6282DEA890096BBDE /* SystemSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED5282DEA890096BBDE /* SystemSettingVC.swift */; };
 		A80D5ED8282DEAB70096BBDE /* SystemSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED7282DEAB60096BBDE /* SystemSettingCell.swift */; };
-		A80D5EDA282E08F60096BBDE /* MessagePlayerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED9282E08F60096BBDE /* MessagePlayerVC.swift */; };
-		A819963B28338FB100870CDA /* DeviceSetupHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819963A28338FB100870CDA /* DeviceSetupHomeVC.swift */; };
-		A819963E28339DB500870CDA /* DeviceSetupHomeHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819963D28339DB500870CDA /* DeviceSetupHomeHeaderView.swift */; };
-		A81996412834703E00870CDA /* DeviceBaseSetupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81996402834703E00870CDA /* DeviceBaseSetupVC.swift */; };
-		A81996432834705B00870CDA /* DeviceWarningSetupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81996422834705B00870CDA /* DeviceWarningSetupVC.swift */; };
-		A81996472834719C00870CDA /* DeviceInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81996462834719C00870CDA /* DeviceInfoVC.swift */; };
-		A81996492834724900870CDA /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81996482834724900870CDA /* DeviceInfoView.swift */; };
-		A819964B2834798D00870CDA /* DeviceInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819964A2834798D00870CDA /* DeviceInfoCell.swift */; };
-		A819964D2834840F00870CDA /* ShareDeviceSetupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819964C2834840F00870CDA /* ShareDeviceSetupVC.swift */; };
-		A8199650283484B600870CDA /* DeviceInfoCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819964F283484B600870CDA /* DeviceInfoCellData.swift */; };
-		A81996522834876C00870CDA /* DeviceAddShareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81996512834876C00870CDA /* DeviceAddShareVC.swift */; };
-		A81996542834971600870CDA /* ShareDeviceListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81996532834971600870CDA /* ShareDeviceListVC.swift */; };
-		A81996562834BAE000870CDA /* ShareDeviceInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81996552834BAE000870CDA /* ShareDeviceInfoCell.swift */; };
 		A81996592834CC4200870CDA /* PersonalInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81996582834CC4200870CDA /* PersonalInfoCell.swift */; };
 		A819965B2834CFCE00870CDA /* EditNicknameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819965A2834CFCE00870CDA /* EditNicknameVC.swift */; };
-		A819965D2834F5F500870CDA /* ReceiveDeviceShareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819965C2834F5F500870CDA /* ReceiveDeviceShareVC.swift */; };
 		A81996602835193700870CDA /* ReceiveDeviceShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819965F2835193700870CDA /* ReceiveDeviceShareView.swift */; };
 		A82A85A42812277A00E27229 /* QRCodeReaderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82A85A32812277A00E27229 /* QRCodeReaderVC.swift */; };
 		A82A85AA28127F6700E27229 /* NetworkTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82A85A928127F6700E27229 /* NetworkTipsView.swift */; };
-		A82A85AD281295FD00E27229 /* DeviceResetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82A85AC281295FD00E27229 /* DeviceResetVC.swift */; };
-		A8598E252835AE6600168244 /* ShareDeviceDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8598E242835AE6600168244 /* ShareDeviceDetailVC.swift */; };
-		A8598E272835AFEF00168244 /* ShareDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8598E262835AFEF00168244 /* ShareDetailCell.swift */; };
-		A8598E292835B38600168244 /* AGCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8598E282835B38600168244 /* AGCellData.swift */; };
 		A8598E2B283C929200168244 /* AGBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8598E2A283C929200168244 /* AGBaseModel.swift */; };
 		A86417182844BAA900E2F2C4 /* DoorbellDownlaodManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86417172844BAA900E2F2C4 /* DoorbellDownlaodManager.swift */; };
 		A864171A2844C34100E2F2C4 /* DownloadProgressVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86417192844C34100E2F2C4 /* DownloadProgressVC.swift */; };
-		A89E3DDF2823DD28002FFED9 /* DoorbellContainerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89E3DDE2823DD28002FFED9 /* DoorbellContainerVC.swift */; };
-		A89E3DE22823E17B002FFED9 /* DoorbellAbilityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89E3DE12823E17B002FFED9 /* DoorbellAbilityVC.swift */; };
 		A89E3DE52823E1AA002FFED9 /* DoorbellMessageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89E3DE42823E1AA002FFED9 /* DoorbellMessageVC.swift */; };
-		A89E3DE82824D104002FFED9 /* DoorbellPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89E3DE72824D103002FFED9 /* DoorbellPlayerView.swift */; };
 		A89E3DEA28250DBC002FFED9 /* DoorbellMsgCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89E3DE928250DBC002FFED9 /* DoorbellMsgCell.swift */; };
 		A89E3DEC2825FEC1002FFED9 /* DoorbellPlayerBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89E3DEB2825FEC1002FFED9 /* DoorbellPlayerBottomView.swift */; };
 		A89E3DEE28268D61002FFED9 /* DoorbellPlayerTopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89E3DED28268D61002FFED9 /* DoorbellPlayerTopView.swift */; };
@@ -272,13 +214,9 @@
 		84DF99F12A40818000F9BA3E /* CocoaMqttMgr.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CocoaMqttMgr.swift; sourceTree = "<group>"; };
 		84DF99F22A40818000F9BA3E /* CocoaMqtt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CocoaMqtt.swift; sourceTree = "<group>"; };
 		84DF99F72A49863E00F9BA3E /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
-		84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareVC.swift; sourceTree = "<group>"; };
-		84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFirmwareView.swift; sourceTree = "<group>"; };
-		84F7453E289BEE0500702944 /* AGFirmwareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGFirmwareVC.swift; sourceTree = "<group>"; };
 		84F74540289CBDCC00702944 /* AGConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGConfirmView.swift; sourceTree = "<group>"; };
 		84FAAC5D29B0826F00E5BB52 /* PlayerExampleOC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerExampleOC.h; sourceTree = "<group>"; };
 		84FAAC5E29B0826F00E5BB52 /* PlayerExampleOC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerExampleOC.m; sourceTree = "<group>"; };
-		84FFD15528F58FAF0076AD29 /* DeviceDelSuccessVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDelSuccessVC.swift; sourceTree = "<group>"; };
 		8C6A65CBF4F4809C66FEC83C /* Pods-AgoraIotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraIotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-AgoraIotLinkDemo/Pods-AgoraIotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		8DA61631220187EAFBFB57B5 /* Pods-IotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		9601C2FB280D5C6400D3CA49 /* MinePageMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinePageMainVC.swift; sourceTree = "<group>"; };
@@ -290,7 +228,6 @@
 		9601C316280E4BE900D3CA49 /* LoginMainVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginMainVM.swift; sourceTree = "<group>"; };
 		9602957328FCF4DE00BE26FF /* Bluetooth_LE_Hex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Bluetooth_LE_Hex.c; sourceTree = "<group>"; };
 		9602957428FCF4DE00BE26FF /* Bluetooth_LE_Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bluetooth_LE_Hex.h; sourceTree = "<group>"; };
-		960ECFFA283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityVC_Full.swift; sourceTree = "<group>"; };
 		960ECFFC283E1660005A00D0 /* DoorbellChangeSoundModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellChangeSoundModel.swift; sourceTree = "<group>"; };
 		961825382817D4D400053691 /* SetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPasswordView.swift; sourceTree = "<group>"; };
 		9618253A2817D4EE00053691 /* ResetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordView.swift; sourceTree = "<group>"; };
@@ -298,11 +235,8 @@
 		96182542281937A300053691 /* LoginProtocolAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginProtocolAlertVC.swift; sourceTree = "<group>"; };
 		9618254C281AA6C000053691 /* VerifyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyManager.swift; sourceTree = "<group>"; };
 		961825542824FF0E00053691 /* DoorbellAbilityViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityViewCell.swift; sourceTree = "<group>"; };
-		961825562824FF3300053691 /* DoorbellAbilityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityView.swift; sourceTree = "<group>"; };
 		961825582824FF6E00053691 /* DoorbellAbilityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityViewModel.swift; sourceTree = "<group>"; };
 		9618255A2824FF8400053691 /* DoorbellAbilityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityModel.swift; sourceTree = "<group>"; };
-		9618255D2825192600053691 /* DoorbellAbilityTopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityTopView.swift; sourceTree = "<group>"; };
-		9618255F2825195200053691 /* DoorbellAbilityTooBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityTooBarView.swift; sourceTree = "<group>"; };
 		9622675728D5E5FE00B11758 /* IotLinkDemo-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IotLinkDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		962EAA6928324A9800030C1B /* DoorbellAbilityTooBarHView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityTooBarHView.swift; sourceTree = "<group>"; };
 		962EAA6A28324A9900030C1B /* DoorbellLeftBackHView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoorbellLeftBackHView.swift; sourceTree = "<group>"; };
@@ -452,18 +386,10 @@
 		963956D628DDBA2B0049B9C8 /* BlufiNotifyData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiNotifyData.m; sourceTree = "<group>"; };
 		963956D728DDBA2B0049B9C8 /* BlufiFrameCtrlData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlufiFrameCtrlData.m; sourceTree = "<group>"; };
 		963956D828DDBA2B0049B9C8 /* BlufiNotifyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiNotifyData.h; sourceTree = "<group>"; };
-		963956E928DDBBC90049B9C8 /* SearchFailBluefiView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchFailBluefiView.swift; sourceTree = "<group>"; };
-		963956EA28DDBBCA0049B9C8 /* ConnectFailBluefiView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectFailBluefiView.swift; sourceTree = "<group>"; };
-		963956EB28DDBBCA0049B9C8 /* ConnectBluefiView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectBluefiView.swift; sourceTree = "<group>"; };
-		963956EC28DDBBCA0049B9C8 /* BluefiResultCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluefiResultCell.swift; sourceTree = "<group>"; };
-		963956ED28DDBBCA0049B9C8 /* ConnectItemLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectItemLabel.swift; sourceTree = "<group>"; };
-		963956EE28DDBBCA0049B9C8 /* SearchBluefiView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBluefiView.swift; sourceTree = "<group>"; };
-		963956F528DDBBD70049B9C8 /* BluefiResultVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluefiResultVC.swift; sourceTree = "<group>"; };
 		965B1F9C282D237F0045D002 /* DoorBellManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoorBellManager.swift; sourceTree = "<group>"; };
 		965B1FA1282E6F2C0045D002 /* AGToolHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AGToolHUD.swift; sourceTree = "<group>"; };
 		966BA9002864380000DE8958 /* SelectHeardImgVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectHeardImgVC.swift; sourceTree = "<group>"; };
 		966BA90328643CFB00DE8958 /* UserHeardImgModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHeardImgModel.swift; sourceTree = "<group>"; };
-		967C7AAE284749BA00236F92 /* DeviceShareViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceShareViewModel.swift; sourceTree = "<group>"; };
 		96827D732867301E0012AC84 /* LoggerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerHelper.swift; sourceTree = "<group>"; };
 		96827D742867301E0012AC84 /* LoggerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerManager.swift; sourceTree = "<group>"; };
 		96827D752867301E0012AC84 /* LoggerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerViewController.swift; sourceTree = "<group>"; };
@@ -501,14 +427,9 @@
 		9699941728153EAA00910792 /* ChooseCountryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseCountryView.swift; sourceTree = "<group>"; };
 		9699941928154EEE00910792 /* CountrySelectViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountrySelectViewCell.swift; sourceTree = "<group>"; };
 		9699941B28154F8000910792 /* CountryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryModel.swift; sourceTree = "<group>"; };
-		96C1B5C6283B9E93005BCCB9 /* DeviceSetUpModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceSetUpModel.swift; sourceTree = "<group>"; };
 		96C1B5C8283B9EC3005BCCB9 /* DoorbellSaveImgAlertView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoorbellSaveImgAlertView.swift; sourceTree = "<group>"; };
 		96D97BA82828FE2B00575335 /* VideoAlertTipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAlertTipView.swift; sourceTree = "<group>"; };
-		96D97BAA2828FE7300575335 /* TopControTooBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopControTooBarView.swift; sourceTree = "<group>"; };
-		96D97BAC2828FEA400575335 /* DoorbellAbilityLogicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityLogicView.swift; sourceTree = "<group>"; };
 		96D97BB02828FF8600575335 /* ChanceSoundAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChanceSoundAlertVC.swift; sourceTree = "<group>"; };
-		96D97BB22829001E00575335 /* DoorbellAnswerLogicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAnswerLogicView.swift; sourceTree = "<group>"; };
-		96DB2E6B292606520016F481 /* SelectMatchNetTypeAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectMatchNetTypeAlertVC.swift; sourceTree = "<group>"; };
 		96E4C1002807CA5500A53A49 /* IotLinkDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IotLinkDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96E4C1032807CA5500A53A49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		96E4C10A2807CA5500A53A49 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -520,68 +441,31 @@
 		96E4C11F280801A500A53A49 /* GlobalConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalConstant.swift; sourceTree = "<group>"; };
 		96E4C129280D453000A53A49 /* AGBaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGBaseVC.swift; sourceTree = "<group>"; };
 		96E4C12B280D457500A53A49 /* HomePageMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageMainVC.swift; sourceTree = "<group>"; };
-		A805ADA9281502FF00E6C6DF /* SelectWIFIVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectWIFIVC.swift; sourceTree = "<group>"; };
-		A805ADAC2815242900E6C6DF /* SelectWIFIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectWIFIView.swift; sourceTree = "<group>"; };
-		A805ADAF2816382600E6C6DF /* CreateQRCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateQRCodeVC.swift; sourceTree = "<group>"; };
-		A805ADB12816384300E6C6DF /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
-		A805ADB32816394500E6C6DF /* DeviceResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceResetView.swift; sourceTree = "<group>"; };
-		A805ADB828167C9000E6C6DF /* DeviceConnectingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConnectingVC.swift; sourceTree = "<group>"; };
-		A805ADBA2816876600E6C6DF /* DeviceConnectTimeoutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConnectTimeoutVC.swift; sourceTree = "<group>"; };
-		A805ADBC2816891800E6C6DF /* DeviceItemLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceItemLabel.swift; sourceTree = "<group>"; };
-		A805ADBE281696AD00E6C6DF /* DeviceAddFailedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAddFailedVC.swift; sourceTree = "<group>"; };
-		A805ADC0281696F100E6C6DF /* DeviceAddSuccessVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAddSuccessVC.swift; sourceTree = "<group>"; };
-		A805ADC22816A17500E6C6DF /* ConnectResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectResultView.swift; sourceTree = "<group>"; };
 		A805ADC52816B40600E6C6DF /* AGAlertBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGAlertBaseView.swift; sourceTree = "<group>"; };
 		A805ADC72816B85400E6C6DF /* AGAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGAlertViewController.swift; sourceTree = "<group>"; };
 		A805ADC92816C51500E6C6DF /* AGEditAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGEditAlertVC.swift; sourceTree = "<group>"; };
-		A805ADCB2817893400E6C6DF /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
 		A80D5EAD282B745C0096BBDE /* DoorbellSelectAllView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellSelectAllView.swift; sourceTree = "<group>"; };
 		A80D5EB0282CDF690096BBDE /* MineTopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MineTopView.swift; sourceTree = "<group>"; };
 		A80D5EB2282CE5630096BBDE /* MinePageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MinePageCell.swift; sourceTree = "<group>"; };
 		A80D5EB8282CE90C0096BBDE /* GeneralSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingVC.swift; sourceTree = "<group>"; };
-		A80D5EBA282CE91F0096BBDE /* MessageCenterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterVC.swift; sourceTree = "<group>"; };
 		A80D5EBC282CE9800096BBDE /* AboutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutVC.swift; sourceTree = "<group>"; };
-		A80D5EBF282CECB80096BBDE /* PersonalInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalInfoVC.swift; sourceTree = "<group>"; };
-		A80D5EC1282CEDEA0096BBDE /* NotifyMessageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMessageVC.swift; sourceTree = "<group>"; };
 		A80D5EC4282CFF900096BBDE /* DoorbellMessageEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellMessageEnum.swift; sourceTree = "<group>"; };
 		A80D5EC7282D110C0096BBDE /* GeneralSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingCell.swift; sourceTree = "<group>"; };
-		A80D5EC9282D156F0096BBDE /* PushMsgSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushMsgSettingVC.swift; sourceTree = "<group>"; };
 		A80D5ECB282D16620096BBDE /* SwitchSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchSettingCell.swift; sourceTree = "<group>"; };
 		A80D5ECD282D386E0096BBDE /* AccountSafeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSafeVC.swift; sourceTree = "<group>"; };
 		A80D5ED1282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMsgSectionHeaderView.swift; sourceTree = "<group>"; };
 		A80D5ED3282DE4E20096BBDE /* NotifyMsgCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMsgCell.swift; sourceTree = "<group>"; };
 		A80D5ED5282DEA890096BBDE /* SystemSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingVC.swift; sourceTree = "<group>"; };
 		A80D5ED7282DEAB60096BBDE /* SystemSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingCell.swift; sourceTree = "<group>"; };
-		A80D5ED9282E08F60096BBDE /* MessagePlayerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePlayerVC.swift; sourceTree = "<group>"; };
-		A819963A28338FB100870CDA /* DeviceSetupHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSetupHomeVC.swift; sourceTree = "<group>"; };
-		A819963D28339DB500870CDA /* DeviceSetupHomeHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSetupHomeHeaderView.swift; sourceTree = "<group>"; };
-		A81996402834703E00870CDA /* DeviceBaseSetupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceBaseSetupVC.swift; sourceTree = "<group>"; };
-		A81996422834705B00870CDA /* DeviceWarningSetupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceWarningSetupVC.swift; sourceTree = "<group>"; };
-		A81996462834719C00870CDA /* DeviceInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoVC.swift; sourceTree = "<group>"; };
-		A81996482834724900870CDA /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
-		A819964A2834798D00870CDA /* DeviceInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoCell.swift; sourceTree = "<group>"; };
-		A819964C2834840F00870CDA /* ShareDeviceSetupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareDeviceSetupVC.swift; sourceTree = "<group>"; };
-		A819964F283484B600870CDA /* DeviceInfoCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoCellData.swift; sourceTree = "<group>"; };
-		A81996512834876C00870CDA /* DeviceAddShareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAddShareVC.swift; sourceTree = "<group>"; };
-		A81996532834971600870CDA /* ShareDeviceListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareDeviceListVC.swift; sourceTree = "<group>"; };
-		A81996552834BAE000870CDA /* ShareDeviceInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareDeviceInfoCell.swift; sourceTree = "<group>"; };
 		A81996582834CC4200870CDA /* PersonalInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalInfoCell.swift; sourceTree = "<group>"; };
 		A819965A2834CFCE00870CDA /* EditNicknameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNicknameVC.swift; sourceTree = "<group>"; };
-		A819965C2834F5F500870CDA /* ReceiveDeviceShareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveDeviceShareVC.swift; sourceTree = "<group>"; };
 		A819965F2835193700870CDA /* ReceiveDeviceShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveDeviceShareView.swift; sourceTree = "<group>"; };
 		A82A85A32812277A00E27229 /* QRCodeReaderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeReaderVC.swift; sourceTree = "<group>"; };
 		A82A85A928127F6700E27229 /* NetworkTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTipsView.swift; sourceTree = "<group>"; };
-		A82A85AC281295FD00E27229 /* DeviceResetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceResetVC.swift; sourceTree = "<group>"; };
-		A8598E242835AE6600168244 /* ShareDeviceDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareDeviceDetailVC.swift; sourceTree = "<group>"; };
-		A8598E262835AFEF00168244 /* ShareDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareDetailCell.swift; sourceTree = "<group>"; };
-		A8598E282835B38600168244 /* AGCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGCellData.swift; sourceTree = "<group>"; };
 		A8598E2A283C929200168244 /* AGBaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AGBaseModel.swift; sourceTree = "<group>"; };
 		A86417172844BAA900E2F2C4 /* DoorbellDownlaodManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellDownlaodManager.swift; sourceTree = "<group>"; };
 		A86417192844C34100E2F2C4 /* DownloadProgressVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadProgressVC.swift; sourceTree = "<group>"; };
-		A89E3DDE2823DD28002FFED9 /* DoorbellContainerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellContainerVC.swift; sourceTree = "<group>"; };
-		A89E3DE12823E17B002FFED9 /* DoorbellAbilityVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityVC.swift; sourceTree = "<group>"; };
 		A89E3DE42823E1AA002FFED9 /* DoorbellMessageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellMessageVC.swift; sourceTree = "<group>"; };
-		A89E3DE72824D103002FFED9 /* DoorbellPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellPlayerView.swift; sourceTree = "<group>"; };
 		A89E3DE928250DBC002FFED9 /* DoorbellMsgCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellMsgCell.swift; sourceTree = "<group>"; };
 		A89E3DEB2825FEC1002FFED9 /* DoorbellPlayerBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellPlayerBottomView.swift; sourceTree = "<group>"; };
 		A89E3DED28268D61002FFED9 /* DoorbellPlayerTopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellPlayerTopView.swift; sourceTree = "<group>"; };
@@ -872,8 +756,6 @@
 		961825522824FDE400053691 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				A89E3DE12823E17B002FFED9 /* DoorbellAbilityVC.swift */,
-				960ECFFA283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift */,
 				96D97BB02828FF8600575335 /* ChanceSoundAlertVC.swift */,
 			);
 			path = ViewController;
@@ -883,15 +765,9 @@
 			isa = PBXGroup;
 			children = (
 				961825542824FF0E00053691 /* DoorbellAbilityViewCell.swift */,
-				961825562824FF3300053691 /* DoorbellAbilityView.swift */,
-				9618255D2825192600053691 /* DoorbellAbilityTopView.swift */,
-				9618255F2825195200053691 /* DoorbellAbilityTooBarView.swift */,
 				962EAA6928324A9800030C1B /* DoorbellAbilityTooBarHView.swift */,
 				962EAA6A28324A9900030C1B /* DoorbellLeftBackHView.swift */,
 				96D97BA82828FE2B00575335 /* VideoAlertTipView.swift */,
-				96D97BAA2828FE7300575335 /* TopControTooBarView.swift */,
-				96D97BAC2828FEA400575335 /* DoorbellAbilityLogicView.swift */,
-				96D97BB22829001E00575335 /* DoorbellAnswerLogicView.swift */,
 				96C1B5C8283B9EC3005BCCB9 /* DoorbellSaveImgAlertView.swift */,
 			);
 			path = View;
@@ -1118,14 +994,6 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		967C7AAD2847495D00236F92 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				967C7AAE284749BA00236F92 /* DeviceShareViewModel.swift */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
 		96827D722867301E0012AC84 /* LogViewer */ = {
 			isa = PBXGroup;
 			children = (
@@ -1252,7 +1120,6 @@
 				84A963E02A54488900DEC70E /* DeviceAblity */,
 				84B3254728A394AC0054B369 /* thirdParty */,
 				96827D722867301E0012AC84 /* LogViewer */,
-				A819963928338F8500870CDA /* DeviceSetup */,
 				A89E3DDD2823DBCB002FFED9 /* Doorbell */,
 				96E4C1172807FB4F00A53A49 /* Base */,
 				96E4C11D2807FF6500A53A49 /* SwiftTools */,
@@ -1319,7 +1186,6 @@
 			isa = PBXGroup;
 			children = (
 				A805ADC42816B3DE00E6C6DF /* Common */,
-				A82A85AB281295C600E27229 /* DeviceConnect */,
 				96E4C123280D43ED00A53A49 /* HomeMain */,
 			);
 			path = Home;
@@ -1348,24 +1214,6 @@
 			path = HomeMain;
 			sourceTree = "<group>";
 		};
-		A805ADAB2815218E00E6C6DF /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				A805ADAC2815242900E6C6DF /* SelectWIFIView.swift */,
-				A805ADB12816384300E6C6DF /* QRCodeView.swift */,
-				A805ADB32816394500E6C6DF /* DeviceResetView.swift */,
-				A805ADBC2816891800E6C6DF /* DeviceItemLabel.swift */,
-				A805ADC22816A17500E6C6DF /* ConnectResultView.swift */,
-				963956EC28DDBBCA0049B9C8 /* BluefiResultCell.swift */,
-				963956EB28DDBBCA0049B9C8 /* ConnectBluefiView.swift */,
-				963956EA28DDBBCA0049B9C8 /* ConnectFailBluefiView.swift */,
-				963956ED28DDBBCA0049B9C8 /* ConnectItemLabel.swift */,
-				963956EE28DDBBCA0049B9C8 /* SearchBluefiView.swift */,
-				963956E928DDBBC90049B9C8 /* SearchFailBluefiView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
 		A805ADC42816B3DE00E6C6DF /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -1374,8 +1222,6 @@
 				A89E3DFC2829E87B002FFED9 /* AGActionSheetVC.swift */,
 				A89E3DFE282A1C5E002FFED9 /* AGDatePickerVC.swift */,
 				A805ADC92816C51500E6C6DF /* AGEditAlertVC.swift */,
-				A805ADCB2817893400E6C6DF /* DeviceManager.swift */,
-				84F7453E289BEE0500702944 /* AGFirmwareVC.swift */,
 				84F74540289CBDCC00702944 /* AGConfirmView.swift */,
 			);
 			path = Common;
@@ -1403,9 +1249,6 @@
 			isa = PBXGroup;
 			children = (
 				A80D5EC3282CEDF70096BBDE /* Views */,
-				A80D5EBA282CE91F0096BBDE /* MessageCenterVC.swift */,
-				A80D5EC1282CEDEA0096BBDE /* NotifyMessageVC.swift */,
-				A80D5ED9282E08F60096BBDE /* MessagePlayerVC.swift */,
 				84FAAC5D29B0826F00E5BB52 /* PlayerExampleOC.h */,
 				84FAAC5E29B0826F00E5BB52 /* PlayerExampleOC.m */,
 				84B616C42A678F7900E2F57D /* PlayerExampleSwift.swift */,
@@ -1418,7 +1261,6 @@
 			children = (
 				A80D5EC6282D10D80096BBDE /* Views */,
 				A80D5EB8282CE90C0096BBDE /* GeneralSettingVC.swift */,
-				A80D5EC9282D156F0096BBDE /* PushMsgSettingVC.swift */,
 				A80D5ECD282D386E0096BBDE /* AccountSafeVC.swift */,
 				A80D5ED5282DEA890096BBDE /* SystemSettingVC.swift */,
 			);
@@ -1438,7 +1280,6 @@
 			children = (
 				966BA90228643CC400DE8958 /* Model */,
 				A81996572834CBF400870CDA /* Views */,
-				A80D5EBF282CECB80096BBDE /* PersonalInfoVC.swift */,
 				A819965A2834CFCE00870CDA /* EditNicknameVC.swift */,
 				966BA9002864380000DE8958 /* SelectHeardImgVC.swift */,
 			);
@@ -1464,56 +1305,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		A819963928338F8500870CDA /* DeviceSetup */ = {
-			isa = PBXGroup;
-			children = (
-				967C7AAD2847495D00236F92 /* ViewModel */,
-				A819964E283484A200870CDA /* Models */,
-				A819963F2834700800870CDA /* Controllers */,
-				A819963C28339D9500870CDA /* Views */,
-			);
-			path = DeviceSetup;
-			sourceTree = "<group>";
-		};
-		A819963C28339D9500870CDA /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				A819963D28339DB500870CDA /* DeviceSetupHomeHeaderView.swift */,
-				A81996482834724900870CDA /* DeviceInfoView.swift */,
-				A819964A2834798D00870CDA /* DeviceInfoCell.swift */,
-				A81996552834BAE000870CDA /* ShareDeviceInfoCell.swift */,
-				A8598E262835AFEF00168244 /* ShareDetailCell.swift */,
-				84F7453C289BC14A00702944 /* DeviceFirmwareView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		A819963F2834700800870CDA /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				A819963A28338FB100870CDA /* DeviceSetupHomeVC.swift */,
-				A819964C2834840F00870CDA /* ShareDeviceSetupVC.swift */,
-				A81996402834703E00870CDA /* DeviceBaseSetupVC.swift */,
-				A81996422834705B00870CDA /* DeviceWarningSetupVC.swift */,
-				A81996532834971600870CDA /* ShareDeviceListVC.swift */,
-				A8598E242835AE6600168244 /* ShareDeviceDetailVC.swift */,
-				A81996462834719C00870CDA /* DeviceInfoVC.swift */,
-				A81996512834876C00870CDA /* DeviceAddShareVC.swift */,
-				84F7453A289BBDEA00702944 /* DeviceFirmwareVC.swift */,
-			);
-			path = Controllers;
-			sourceTree = "<group>";
-		};
-		A819964E283484A200870CDA /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				A819964F283484B600870CDA /* DeviceInfoCellData.swift */,
-				A8598E282835B38600168244 /* AGCellData.swift */,
-				96C1B5C6283B9E93005BCCB9 /* DeviceSetUpModel.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		A81996572834CBF400870CDA /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -1527,29 +1318,10 @@
 			children = (
 				96E4C12B280D457500A53A49 /* HomePageMainVC.swift */,
 				A82A85A32812277A00E27229 /* QRCodeReaderVC.swift */,
-				A819965C2834F5F500870CDA /* ReceiveDeviceShareVC.swift */,
 				84DF99D82A3DAA1B00F9BA3E /* AGAlertSimpleViewController.swift */,
 				84DF99D92A3DAA1B00F9BA3E /* CallFullScreemVC.swift */,
 			);
 			path = Controllers;
-			sourceTree = "<group>";
-		};
-		A82A85AB281295C600E27229 /* DeviceConnect */ = {
-			isa = PBXGroup;
-			children = (
-				A805ADAB2815218E00E6C6DF /* Views */,
-				A82A85AC281295FD00E27229 /* DeviceResetVC.swift */,
-				A805ADA9281502FF00E6C6DF /* SelectWIFIVC.swift */,
-				A805ADAF2816382600E6C6DF /* CreateQRCodeVC.swift */,
-				A805ADB828167C9000E6C6DF /* DeviceConnectingVC.swift */,
-				A805ADBA2816876600E6C6DF /* DeviceConnectTimeoutVC.swift */,
-				A805ADBE281696AD00E6C6DF /* DeviceAddFailedVC.swift */,
-				A805ADC0281696F100E6C6DF /* DeviceAddSuccessVC.swift */,
-				84FFD15528F58FAF0076AD29 /* DeviceDelSuccessVC.swift */,
-				963956F528DDBBD70049B9C8 /* BluefiResultVC.swift */,
-				96DB2E6B292606520016F481 /* SelectMatchNetTypeAlertVC.swift */,
-			);
-			path = DeviceConnect;
 			sourceTree = "<group>";
 		};
 		A89E3DDD2823DBCB002FFED9 /* Doorbell */ = {
@@ -1558,7 +1330,6 @@
 				84B3254D28A50A7E0054B369 /* Control */,
 				A89E3DE02823E0FE002FFED9 /* Ability */,
 				A89E3DE32823E183002FFED9 /* Message */,
-				A89E3DDE2823DD28002FFED9 /* DoorbellContainerVC.swift */,
 			);
 			path = Doorbell;
 			sourceTree = "<group>";
@@ -1589,7 +1360,6 @@
 		A89E3DE62824D0D6002FFED9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A89E3DE72824D103002FFED9 /* DoorbellPlayerView.swift */,
 				A89E3DED28268D61002FFED9 /* DoorbellPlayerTopView.swift */,
 				A89E3DEB2825FEC1002FFED9 /* DoorbellPlayerBottomView.swift */,
 				A89E3DE928250DBC002FFED9 /* DoorbellMsgCell.swift */,
@@ -1754,17 +1524,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A89E3DE22823E17B002FFED9 /* DoorbellAbilityVC.swift in Sources */,
-				A805ADB02816382600E6C6DF /* CreateQRCodeVC.swift in Sources */,
 				96E4C12A280D453000A53A49 /* AGBaseVC.swift in Sources */,
-				960ECFFB283DD2CD005A00D0 /* DoorbellAbilityVC_Full.swift in Sources */,
 				A80D5ECE282D386E0096BBDE /* AccountSafeVC.swift in Sources */,
 				8429E943295003180064B604 /* ResetPasswordVC.swift in Sources */,
 				963956DE28DDBA2B0049B9C8 /* BlufiConfigureParams.m in Sources */,
 				84DF99D52A3DA74B00F9BA3E /* DoorbellSelectAllSimpleView.swift in Sources */,
 				A80D5ED6282DEA890096BBDE /* SystemSettingVC.swift in Sources */,
 				963956DF28DDBA2B0049B9C8 /* BlufiSecurity.m in Sources */,
-				96D97BAD2828FEA400575335 /* DoorbellAbilityLogicView.swift in Sources */,
 				9697BEA52812B25F00447DF9 /* EXT-ImageVSet.swift in Sources */,
 				84DF99CD2A3DA6AA00F9BA3E /* MDeviceModel.swift in Sources */,
 				A864171A2844C34100E2F2C4 /* DownloadProgressVC.swift in Sources */,
@@ -1777,41 +1543,27 @@
 				966BA9012864380000DE8958 /* SelectHeardImgVC.swift in Sources */,
 				9697BE9A2812B25F00447DF9 /* EXT-StringDecimal.swift in Sources */,
 				84B616B32A5EAB4000E2F57D /* SDCardPlayerVC.swift in Sources */,
-				9618255E2825192600053691 /* DoorbellAbilityTopView.swift in Sources */,
-				A8598E252835AE6600168244 /* ShareDeviceDetailVC.swift in Sources */,
 				9697BE5D2811390B00447DF9 /* AgoraIotManager.swift in Sources */,
 				A8A246C72811143700EAEA82 /* HomeMainDeviceCell.swift in Sources */,
 				9601C315280E4B9D00D3CA49 /* LoginMainVC.swift in Sources */,
 				9697BE982812B25F00447DF9 /* EXT-UIButton.swift in Sources */,
 				A80D5EB1282CDF690096BBDE /* MineTopView.swift in Sources */,
-				963956F328DDBBCB0049B9C8 /* ConnectItemLabel.swift in Sources */,
-				963956F128DDBBCB0049B9C8 /* ConnectBluefiView.swift in Sources */,
-				96D97BB32829001E00575335 /* DoorbellAnswerLogicView.swift in Sources */,
-				A80D5EBB282CE91F0096BBDE /* MessageCenterVC.swift in Sources */,
 				84DF99D42A3DA74B00F9BA3E /* DoorbellAbilitySimpleLogicView.swift in Sources */,
 				A819965B2834CFCE00870CDA /* EditNicknameVC.swift in Sources */,
-				A81996542834971600870CDA /* ShareDeviceListVC.swift in Sources */,
 				9697BE702812888200447DF9 /* LoginView.swift in Sources */,
 				A805ADCA2816C51500E6C6DF /* AGEditAlertVC.swift in Sources */,
 				96D97BA92828FE2B00575335 /* VideoAlertTipView.swift in Sources */,
 				9697BE7A28128ADE00447DF9 /* CountrySelectVC.swift in Sources */,
 				96E4C120280801A500A53A49 /* GlobalConstant.swift in Sources */,
 				9697BE6C2812873800447DF9 /* LoginBaseVC.swift in Sources */,
-				963956F028DDBBCA0049B9C8 /* ConnectFailBluefiView.swift in Sources */,
-				A819964D2834840F00870CDA /* ShareDeviceSetupVC.swift in Sources */,
-				A805ADB22816384300E6C6DF /* QRCodeView.swift in Sources */,
 				84DF99F42A40818100F9BA3E /* CocoaMqtt.swift in Sources */,
 				9697BE952812B25F00447DF9 /* EXT-CreateWithSB.swift in Sources */,
 				9618253B2817D4EE00053691 /* ResetPasswordView.swift in Sources */,
-				A80D5EC2282CEDEA0096BBDE /* NotifyMessageVC.swift in Sources */,
 				9697BE74281289DB00447DF9 /* LoginInputView.swift in Sources */,
 				96C1B5C9283B9EC4005BCCB9 /* DoorbellSaveImgAlertView.swift in Sources */,
 				84CE395828FECA8C007A749C /* RegisterMainVC.swift in Sources */,
 				A89E3DFF282A1C5E002FFED9 /* AGDatePickerVC.swift in Sources */,
-				A805ADB928167C9000E6C6DF /* DeviceConnectingVC.swift in Sources */,
 				96E4C11A2807FD1F00A53A49 /* AGTabBarVC.swift in Sources */,
-				A819965D2834F5F500870CDA /* ReceiveDeviceShareVC.swift in Sources */,
-				A819963E28339DB500870CDA /* DeviceSetupHomeHeaderView.swift in Sources */,
 				96E4C12C280D457500A53A49 /* HomePageMainVC.swift in Sources */,
 				9699941828153EAA00910792 /* ChooseCountryView.swift in Sources */,
 				A82A85A42812277A00E27229 /* QRCodeReaderVC.swift in Sources */,
@@ -1819,105 +1571,72 @@
 				9601C306280D67FE00D3CA49 /* TDUserInforManager.swift in Sources */,
 				84FAAC5F29B0827000E5BB52 /* PlayerExampleOC.m in Sources */,
 				9697BE722812891E00447DF9 /* PhoneInputView.swift in Sources */,
-				84FFD15628F58FAF0076AD29 /* DeviceDelSuccessVC.swift in Sources */,
 				96827D7B2867301E0012AC84 /* LoggerViewController.swift in Sources */,
 				965B1FA2282E6F2C0045D002 /* AGToolHUD.swift in Sources */,
 				84A964072A5C0AFF00DEC70E /* VodPlayerMainVC.swift in Sources */,
 				9601C310280D6A0B00D3CA49 /* UserAccountModel.swift in Sources */,
-				963956EF28DDBBCA0049B9C8 /* SearchFailBluefiView.swift in Sources */,
 				A805ADC62816B40600E6C6DF /* AGAlertBaseView.swift in Sources */,
 				84B3254928A394CA0054B369 /* ThirdManager.swift in Sources */,
-				A8598E292835B38600168244 /* AGCellData.swift in Sources */,
 				963956DA28DDBA2B0049B9C8 /* BlufiClient.m in Sources */,
 				96827D7A2867301E0012AC84 /* LoggerManager.swift in Sources */,
-				A819963B28338FB100870CDA /* DeviceSetupHomeVC.swift in Sources */,
 				84DF99DA2A3DAA1B00F9BA3E /* AGAlertSimpleViewController.swift in Sources */,
-				967C7AAF284749BA00236F92 /* DeviceShareViewModel.swift in Sources */,
-				A805ADAA281502FF00E6C6DF /* SelectWIFIVC.swift in Sources */,
 				9697BE962812B25F00447DF9 /* EXT-CutOutStr.swift in Sources */,
 				9697BE992812B25F00447DF9 /* EXT-GraphicsImage.swift in Sources */,
 				9697BE7628128A0D00447DF9 /* RegisterView.swift in Sources */,
 				84A963E32A544B3800DEC70E /* DeviceDetailVC.swift in Sources */,
 				9618253E2818356600053691 /* VerficaCodeView.swift in Sources */,
-				A89E3DDF2823DD28002FFED9 /* DoorbellContainerVC.swift in Sources */,
 				A89E3DEC2825FEC1002FFED9 /* DoorbellPlayerBottomView.swift in Sources */,
 				965B1F9D282D237F0045D002 /* DoorBellManager.swift in Sources */,
 				84DF99D22A3DA74B00F9BA3E /* DoorbellAbilityTooBarSimpleView.swift in Sources */,
 				9601C2FF280D5EBF00D3CA49 /* NetWorkTool.swift in Sources */,
 				962EAA6B28324A9900030C1B /* DoorbellAbilityTooBarHView.swift in Sources */,
 				A89E3DFB28290B45002FFED9 /* DoorbellSectionView.swift in Sources */,
-				A805ADCC2817893400E6C6DF /* DeviceManager.swift in Sources */,
 				9697BE6328113F6300447DF9 /* AppDelegate_ThidParty.swift in Sources */,
 				963956D928DDBA2B0049B9C8 /* BlufiConstants.m in Sources */,
 				84B3ECA028B3A0140047EE1A /* MediaPlayer.swift in Sources */,
-				A8199650283484B600870CDA /* DeviceInfoCellData.swift in Sources */,
-				96D97BAB2828FE7300575335 /* TopControTooBarView.swift in Sources */,
 				9697BE972812B25F00447DF9 /* EXT-View.swift in Sources */,
-				84F7453F289BEE0500702944 /* AGFirmwareVC.swift in Sources */,
 				A89E3DEA28250DBC002FFED9 /* DoorbellMsgCell.swift in Sources */,
-				96C1B5C7283B9E93005BCCB9 /* DeviceSetUpModel.swift in Sources */,
 				A80D5EBD282CE9800096BBDE /* AboutVC.swift in Sources */,
 				A80D5ED8282DEAB70096BBDE /* SystemSettingCell.swift in Sources */,
-				A805ADC1281696F100E6C6DF /* DeviceAddSuccessVC.swift in Sources */,
 				A805ADC82816B85400E6C6DF /* AGAlertViewController.swift in Sources */,
 				84B616B62A5FA89B00E2F57D /* SDCardMediaViewCell.swift in Sources */,
 				960ECFFD283E1660005A00D0 /* DoorbellChangeSoundModel.swift in Sources */,
 				84DF99F32A40818100F9BA3E /* CocoaMqttMgr.swift in Sources */,
-				A805ADBB2816876600E6C6DF /* DeviceConnectTimeoutVC.swift in Sources */,
 				9697BE9B2812B25F00447DF9 /* EXT-CheckStr.swift in Sources */,
 				84DF99D32A3DA74B00F9BA3E /* TopControTooBarSimpleView.swift in Sources */,
 				963956E828DDBA2B0049B9C8 /* BlufiFrameCtrlData.m in Sources */,
 				84B616C52A678F7900E2F57D /* PlayerExampleSwift.swift in Sources */,
-				A805ADC32816A17500E6C6DF /* ConnectResultView.swift in Sources */,
 				84DF99F82A49863E00F9BA3E /* KeyCenter.swift in Sources */,
 				A89E3DE52823E1AA002FFED9 /* DoorbellMessageVC.swift in Sources */,
 				963956E528DDBA2B0049B9C8 /* ESPPeripheral.m in Sources */,
 				84CE395C28FECBAF007A749C /* SetPasswordVC.swift in Sources */,
 				963956DB28DDBA2B0049B9C8 /* BlufiVersionResponse.m in Sources */,
-				A805ADBF281696AD00E6C6DF /* DeviceAddFailedVC.swift in Sources */,
 				9697BEA32812B25F00447DF9 /* EXT-ToModel.swift in Sources */,
-				A819964B2834798D00870CDA /* DeviceInfoCell.swift in Sources */,
-				84F7453B289BBDEA00702944 /* DeviceFirmwareVC.swift in Sources */,
 				96827D7C2867301E0012AC84 /* Extension+UIDevice.swift in Sources */,
-				96DB2E6C292606520016F481 /* SelectMatchNetTypeAlertVC.swift in Sources */,
 				961825392817D4D400053691 /* SetPasswordView.swift in Sources */,
-				A80D5EDA282E08F60096BBDE /* MessagePlayerVC.swift in Sources */,
 				9618254D281AA6C000053691 /* VerifyManager.swift in Sources */,
 				A80D5EB9282CE90C0096BBDE /* GeneralSettingVC.swift in Sources */,
 				961825552824FF0E00053691 /* DoorbellAbilityViewCell.swift in Sources */,
-				963956F228DDBBCB0049B9C8 /* BluefiResultCell.swift in Sources */,
 				9697BE942812B25F00447DF9 /* EXT-UIColor.swift in Sources */,
 				962FEFF82852F4D600DCFD59 /* PassWordTextField.swift in Sources */,
-				A89E3DE82824D104002FFED9 /* DoorbellPlayerView.swift in Sources */,
 				96827D7E2867301E0012AC84 /* Extension+UI.swift in Sources */,
 				84F74541289CBDCC00702944 /* AGConfirmView.swift in Sources */,
-				A80D5ECA282D156F0096BBDE /* PushMsgSettingVC.swift in Sources */,
 				84DF99DB2A3DAA1B00F9BA3E /* CallFullScreemVC.swift in Sources */,
-				A80D5EC0282CECB80096BBDE /* PersonalInfoVC.swift in Sources */,
 				961825592824FF6E00053691 /* DoorbellAbilityViewModel.swift in Sources */,
 				963956E628DDBA2B0049B9C8 /* ESPFBYBLEHelper.m in Sources */,
 				A8A246C5281100FA00EAEA82 /* MainTopView.swift in Sources */,
-				A81996412834703E00870CDA /* DeviceBaseSetupVC.swift in Sources */,
-				A81996562834BAE000870CDA /* ShareDeviceInfoCell.swift in Sources */,
-				963956F628DDBBD70049B9C8 /* BluefiResultVC.swift in Sources */,
-				84F7453D289BC14A00702944 /* DeviceFirmwareView.swift in Sources */,
 				96182543281937A300053691 /* LoginProtocolAlertVC.swift in Sources */,
-				961825572824FF3300053691 /* DoorbellAbilityView.swift in Sources */,
-				A805ADB42816394500E6C6DF /* DeviceResetView.swift in Sources */,
 				9697BE9E2812B25F00447DF9 /* EXT-Dictionary.swift in Sources */,
 				A86417182844BAA900E2F2C4 /* DoorbellDownlaodManager.swift in Sources */,
 				A82A85AA28127F6700E27229 /* NetworkTipsView.swift in Sources */,
 				969994142814EA9A00910792 /* LoginTextField.swift in Sources */,
-				963956F428DDBBCB0049B9C8 /* SearchBluefiView.swift in Sources */,
 				9697BEA42812B25F00447DF9 /* EXT-UILabel.swift in Sources */,
 				9697BE9D2812B25F00447DF9 /* EXT-IBInspectable.swift in Sources */,
 				966BA90428643CFB00DE8958 /* UserHeardImgModel.swift in Sources */,
 				963956E728DDBA2B0049B9C8 /* BlufiNotifyData.m in Sources */,
 				A81996602835193700870CDA /* ReceiveDeviceShareView.swift in Sources */,
-				A81996492834724900870CDA /* DeviceInfoView.swift in Sources */,
 				8429E9412949FC700064B604 /* NSString+Extension.m in Sources */,
 				9602957528FCF4DE00BE26FF /* Bluetooth_LE_Hex.c in Sources */,
-				A81996472834719C00870CDA /* DeviceInfoVC.swift in Sources */,
 				A89E3DF42827AC29002FFED9 /* UIViewController+RotationControl.m in Sources */,
 				9699941A28154EEF00910792 /* CountrySelectViewCell.swift in Sources */,
 				9697BE6128113BF500447DF9 /* AgoraIotConfig.swift in Sources */,
@@ -1931,8 +1650,6 @@
 				84CE395A28FECB48007A749C /* VerifyInputCodeVC.swift in Sources */,
 				9697BEA12812B25F00447DF9 /* EXT-UIImage.swift in Sources */,
 				A80D5ED4282DE4E20096BBDE /* NotifyMsgCell.swift in Sources */,
-				961825602825195200053691 /* DoorbellAbilityTooBarView.swift in Sources */,
-				A8598E272835AFEF00168244 /* ShareDetailCell.swift in Sources */,
 				A80D5EB3282CE5630096BBDE /* MinePageCell.swift in Sources */,
 				96827D792867301E0012AC84 /* LoggerHelper.swift in Sources */,
 				A81996592834CC4200870CDA /* PersonalInfoCell.swift in Sources */,
@@ -1940,21 +1657,16 @@
 				A80D5ED2282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift in Sources */,
 				9618255B2824FF8400053691 /* DoorbellAbilityModel.swift in Sources */,
 				9697BE932812B25F00447DF9 /* EXT-StrFromCls.swift in Sources */,
-				A805ADBD2816891800E6C6DF /* DeviceItemLabel.swift in Sources */,
 				963956DC28DDBA2B0049B9C8 /* BlufiStatusResponse.m in Sources */,
 				963956E328DDBA2B0049B9C8 /* BlufiDH.m in Sources */,
 				962FEFE1284F2CD000DCFD59 /* AppDelegate_Push.swift in Sources */,
-				A81996522834876C00870CDA /* DeviceAddShareVC.swift in Sources */,
 				9601C2FC280D5C6400D3CA49 /* MinePageMainVC.swift in Sources */,
-				A82A85AD281295FD00E27229 /* DeviceResetVC.swift in Sources */,
 				A80D5EC8282D110C0096BBDE /* GeneralSettingCell.swift in Sources */,
 				A89E3DFD2829E87B002FFED9 /* AGActionSheetVC.swift in Sources */,
 				963956DD28DDBA2B0049B9C8 /* BlufiScanResponse.m in Sources */,
-				A81996432834705B00870CDA /* DeviceWarningSetupVC.swift in Sources */,
 				969994162814EBAD00910792 /* EXT-UITextField.swift in Sources */,
 				A8598E2B283C929200168244 /* AGBaseModel.swift in Sources */,
 				A80D5EC5282CFF900096BBDE /* DoorbellMessageEnum.swift in Sources */,
-				A805ADAD2815242900E6C6DF /* SelectWIFIView.swift in Sources */,
 				96E4C1042807CA5500A53A49 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

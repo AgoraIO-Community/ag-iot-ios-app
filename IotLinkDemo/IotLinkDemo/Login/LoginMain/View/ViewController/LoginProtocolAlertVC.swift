@@ -80,7 +80,7 @@ class LoginProtocolAlertVC: UIViewController {
             agreeBtn.setTitle("确定", for: .normal)
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(backforeground), name: Notification.Name(cApplicationWillEnterForegroundNotify), object: nil)
+ //       NotificationCenter.default.addObserver(self, selector: #selector(backforeground), name: Notification.Name(cApplicationWillEnterForegroundNotify), object: nil)
     }
     
     @objc private func backforeground(){

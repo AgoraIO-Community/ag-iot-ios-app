@@ -105,21 +105,7 @@ class IotLink{
                 }
             }
     }
-    public func reqAllDevice(_ token:String, _ rsp: @escaping (Int,String,[IotDevice])->Void){
-        let headers : HTTPHeaders = ["token":token]
-        let url = http + api.DeviceList
-        AF.request(url,method: .post,headers: headers)
-            .validate()
-            .responseDecodable(of:DevList.Rsp.self) { (dataRsp : AFDataResponse<DevList.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    self.handleRspDevList(value, rsp)
-                case .failure(let error):
-                    log.e("iotlink reqAllDevice \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",[])
-                }
-            }
-        }
+
     public func reqChangePwd(_ token:String, _ account:String,_ oldPwd:String,_ newPwd:String,_ rsp:@escaping(Int,String)->Void){
         let header:HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
         let params:Dictionary = ["oldPassword":oldPwd,"newPassword":newPwd]
@@ -258,35 +244,7 @@ class IotLink{
                 }
             }
     }
-    public func reqProductList(_ token : String,_ query:ProductQueryParam,_ rsp:@escaping(Int,String,[ProductInfo])->Void){
-        let header:HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
-        var params:Dictionary<String,String> = query.blurry != "" ? ["blurry":query.blurry] : [:]
-        if(query.pageNo >= 0){
-            params["pageNo"] = String(query.pageNo)
-        }
-        if(query.pageSize != 0){
-            params["pageSize"] = String(query.pageSize)
-        }
-        if(query.productId != 0){
-            params["productId"] = String(query.productId)
-        }
-        if(query.productTypeId != 0){
-            params["productTypeId"] =  String(query.productTypeId)
-        }
-        let url = http + api.ProductList
-        log.v("iotlink reqProductList \(params)")
-        AF.request(url,method: .post, parameters: params,encoder: JSONParameterEncoder.default, headers: header)
-            .validate()
-            .responseDecodable(of:ProductList.Rsp.self) { (dataRsp : AFDataResponse<ProductList.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    self.handleRspProductList(value, rsp)
-                case .failure(let error):
-                    log.e("iotlink reqProductList \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",[])
-                }
-            }
-    }
+
     public func reqRenameDevice(_ token:String,_ deviceId:String,_ deviceNickName:String, _ rsp: @escaping (Int,String)->Void){
         let header:HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
         let params:Dictionary<String,String> = ["mac":deviceId,"deviceNickName":deviceNickName]
@@ -335,24 +293,6 @@ class IotLink{
                 case .failure(let error):
                     log.e("iotlink reqUnbindDevice \(url) fail, detail: \(error) ")
                     rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
-                }
-            }
-    }
-    
-    public func reqProperty(_ token:String,_ deviceId:String, _ productNumber:String,_ rsp:@escaping(Int,String,[Property])->Void){
-        let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
-        let params:Dictionary<String,String> = deviceId == "" ? ["productId":productNumber] : ["mac":deviceId]
-        let url = http + api.PointList
-        log.v("iotlink reqProperty \(productNumber)")
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
-            .validate()
-            .responseDecodable(of:PointList.Rsp.self) { (dataRsp : AFDataResponse<PointList.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    self.handleRspPointList(value, rsp)
-                case .failure(let error):
-                    log.e("iotlink reqProperty \(url) fail for \(deviceId),\(productNumber), detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",[])
                 }
             }
     }
@@ -413,44 +353,6 @@ class IotLink{
                 rsp(ErrCode.XOK,"")
             }
         })
-    }
-    
-    func reqOtaInfo(_ token:String,_ deviceId:String, _ rsp:@escaping(Int,String,FirmwareInfo?)->Void){
-        let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
-        let params:Dictionary<String,String> = ["mac":deviceId]
-        let url = http + api.OtaGetInfo
-        log.v("iotlink reqOtaInfo \(deviceId) token：\(token)")
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
-            .validate()
-            .responseDecodable(of:OtaInfo.Rsp.self) { (dataRsp : AFDataResponse<OtaInfo.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    log.i("reqOtaInfo response \(value)")
-                    self.handleRspOtaInfo(value, rsp)
-                case .failure(let error):
-                    log.e("iotlink reqOtaInfo \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
-                }
-            }
-    }
-    
-    func reqOtaStatus(_ token:String,_ upgradeId:String,_ rsp:@escaping(Int,String,FirmwareStatus?)->Void){
-        let headers : HTTPHeaders = ["token":token,"Content-Type":"text/html; charset=utf-8"]
-        let params:Dictionary<String,String> = ["upgradeId":upgradeId]
-        let url = http + api.OtaStatus
-        
-        log.v("iotlink reqOtaStatus token：\(token)")
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default, headers: headers)
-            .validate()
-            .responseDecodable(of:OtaStatus.Rsp.self) { (dataRsp : AFDataResponse<OtaStatus.Rsp>) in
-                switch dataRsp.result{
-                case .success(let value):
-                    self.handleRspOtaStatus(value, rsp)
-                case .failure(let error):
-                    log.e("iotlink reqOtaStatus \(url) fail, detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
-                }
-            }
     }
     
     func reqOtaUpdate(_ token:String,_ upgradeId:String,_ decide:Int,_ rsp:@escaping(Int,String)->Void){

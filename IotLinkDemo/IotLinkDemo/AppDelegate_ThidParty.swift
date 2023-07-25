@@ -153,86 +153,22 @@ extension AppDelegate{
 //    }
 }
 
-extension AppDelegate: IDeviceStateListener {//添加设备回调等
-    
-    func onDeviceOnOffline(online: Bool, deviceId: String, productId productKey: String) {
-        
-    }
-    
-    func onDeviceActionUpdated(deviceId: String, actionType: String) {
-        if actionType == "add" {
-            log.i("新增设备 update:\(actionType):\(deviceId)")
-            guard  TDUserInforManager.shared.currentMatchNetType != 0 else {
-                log.i("非操作配网流程消息 update:\(actionType):\(deviceId)")
-                return
-            }
-            //如果当前为蓝牙配网，且已获取配网成功消息，则返回
-            if TDUserInforManager.shared.currentMatchNetType == 2 && TDUserInforManager.shared.curBluefiSuc == true{
-//                AGToolHUD.showInfo(info: "不使用获取的订阅消息：\(deviceId)")
-                return
-            }
-            TDUserInforManager.shared.curBluefiSuc = true
-            TDUserInforManager.shared.currentMatchNetType = 0
-//            AGToolHUD.showInfo(info: "使用获取的订阅消息：\(deviceId)")
-            
-            let vc = DeviceAddSuccessVC()
-            vc.deviceId = deviceId
-            if currentViewController().navigationController != nil {
-                currentViewController().navigationController?.pushViewController(vc, animated: false)
-            }
-        }
-        if actionType == "delete" {
-            let vc = DeviceDelSuccessVC()
-            vc.deviceId = deviceId
-            log.i("移除设备 update:\(actionType):\(deviceId)")
-            if currentViewController().navigationController != nil {
-                currentViewController().navigationController?.pushViewController(vc, animated: false)
-            }
-        }
-            
-    }
-    
-    func onDevicePropertyUpdated(deviceId: String, deviceNumber: String, props: [String : Any]?) {
-        
-    }
-    
-    
-}
-
 extension AppDelegate {//监听收到被动呼叫回调等
     
     private func receiveCall(_ sessionId : String,_ deviceId : String){
         //self?.goToDoorBellContainerVC(device)
-        DeviceManager.shared.queryDeviceWithId(deviceId) { [weak self] _, _, dev in
-            guard let device = dev else {
-                log.i("demo stranger is calling in:\(deviceId)")
-                let stranger = IotDevice(userId: "", userType: 0, deviceId: deviceId, deviceName: "unknown", deviceNumber: "", tenantId: "", productId: "", productNumber: "", sharer: "", createTime: 0, updateTime: 0, alias: "unknown", connected: false, props: nil)
+//        DeviceManager.shared.queryDeviceWithId(deviceId) { [weak self] _, _, dev in
+//            guard let device = dev else {
+//                log.i("demo stranger is calling in:\(deviceId)")
+//                let stranger = IotDevice(userId: "", userType: 0, deviceId: deviceId, deviceName: "unknown", deviceNumber: "", tenantId: "", productId: "", productNumber: "", sharer: "", createTime: 0, updateTime: 0, alias: "unknown", connected: false, props: nil)
+//
+//               self?.goToDoorBellContainerVC(stranger)
+//               return
+//            }
+//            self?.goToDoorBellContainerVC(device)
+//        }
+    }
 
-               self?.goToDoorBellContainerVC(stranger)
-               return
-            }
-            self?.goToDoorBellContainerVC(device)
-        }
-    }
-    
-    func goToDoorBellContainerVC(_ device : IotDevice){
-        
-        if currentViewController().isKind(of: DoorbellContainerVC.self) {
-            
-            //呼叫中发通知（仅用户当前页已经是门铃控制页）
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cReceiveCallNotify), object: nil)
-            
-        }else{
-            
-            let dbVC = DoorbellContainerVC()
-            dbVC.device = device
-            dbVC.isReceiveCall = true
-            if currentViewController().navigationController != nil {
-                currentViewController().navigationController?.pushViewController(dbVC, animated: true)
-            }
-        }
-    }
-    
 }
 
 extension AppDelegate {//处理通用错误码，如token失效

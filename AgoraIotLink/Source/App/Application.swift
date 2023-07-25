@@ -6,7 +6,6 @@
 //
 
 import Foundation
-//import AgoraRtmKit
 
 /*
  * @brief SDK 状态机
@@ -42,7 +41,6 @@ open class Application{
         _config!.logFilePath = initParam.logFilePath
         _config!.projectId = initParam.projectId
         
-
         _context = Context()
         _context!.call.setting.logFilePath = initParam.logFilePath ?? ""
         _context!.rtm.setting.appId = initParam.rtcAppId
@@ -56,13 +54,12 @@ open class Application{
             return ErrCode.XERR_INVALID_PARAM
         }
         
-        if sdkStare == .runing {
+        if sdkState == .runing {
             log.e("sdk initParam.rtcAppId is runing");
             return ErrCode.XERR_BAD_STATE
         }
-        
-//        _rule!.start(queue:DispatchQueue.main)
-        sdkStare = .runing
+
+        sdkState = .runing
 
         return ErrCode.XOK
     }
@@ -72,22 +69,18 @@ open class Application{
         _context = nil
         _proxy = nil
         log.i("sdk release:");
-        sdkStare = .invalid
+        sdkState = .invalid
     }
     
     public static let shared = Application()
-    var sdkStare : SdkState = .invalid
+    var sdkState : SdkState = .invalid
     var sdk:IotAppSdk{get{return _sdk}}
-//    var rule:RuleManager{get{return _rule!}}
     var config:Config{get{return _config!}}
-//    var status:StateListener{get{return _status!}}
     var proxy:Proxy{get{return _proxy!}}
     var context:Context{get{return _context ?? Context()}}
     
     private var _config : Config?
     private var _context : Context?
-//    private var _rule:RuleManager?
-//    private var _status:StateListener?
     private var _sdk:IotAppSdk = IotAppSdk()
     
     private var _proxy:Proxy?
@@ -95,22 +88,8 @@ open class Application{
     init(){
         log.level = .verb
         self._sdk.application = self
-//        self._status = StateListener(self)
-//        _context = Context()
-//        self._rule = RuleManager(self,postFun)
         
     }
-    
-//    let queue = DispatchQueue(label: "myQueue",qos: DispatchQoS.default,attributes: DispatchQueue.Attributes.concurrent,autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit,target: nil)
-//    func postFun(act: @escaping ()->Void){
-//        queue.sync{
-//            act()
-//        }
-//    }
-    
-//    static func Instance()->Application{
-//        return Application.shared;
-//    }
     
     
 }

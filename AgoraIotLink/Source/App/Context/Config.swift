@@ -26,8 +26,8 @@ class Config {
      1, Output warnings and errors
      2  Output errors only
      */
-    var ntfLogLevel:Int = 0 //
-    var mqttLogLevel:Int = 1
+//    var ntfLogLevel:Int = 0 //
+//    var mqttLogLevel:Int = 1
     
     var logFilePath : String? = nil
     

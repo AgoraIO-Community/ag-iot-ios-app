@@ -62,11 +62,11 @@ class MinePageMainVC: AGBaseVC {
     private lazy var mineHeaderView:MineTopView = {
         let topView = MineTopView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 150))
     
-        topView.clickArrowButtonAction = {[weak self] in
-            let vc = PersonalInfoVC()
-            vc.userInfo = self?.userInfo
-            self?.navigationController?.pushViewController(vc, animated: true)
-        }
+//        topView.clickArrowButtonAction = {[weak self] in
+//            let vc = PersonalInfoVC()
+//            vc.userInfo = self?.userInfo
+//            self?.navigationController?.pushViewController(vc, animated: true)
+//        }
     
         return topView
     }()

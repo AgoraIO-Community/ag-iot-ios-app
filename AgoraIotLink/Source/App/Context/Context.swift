@@ -376,8 +376,6 @@ class Context{
     private var _rtm:RtmKitContext = RtmKitContext();
     private var _gran:IotLinkContext = IotLinkContext()
     private var _aglab:AgoraLabContext = AgoraLabContext()
-    private var _devices:[IotDevice] = []
-    private var _products:[ProductInfo]? = nil
     
     private var _callBackFilter:(Int,String)->(Int,String) = {ec,msg in return (ec,msg)}
     
@@ -387,8 +385,6 @@ class Context{
     var call:CallKitContext{get{return _call}set{_call = newValue}}
     var player:PlayerContext{get{return _player}}
     var rtm:RtmKitContext{get{return _rtm}set{_rtm = newValue}}
-    var devices:[IotDevice]{get{return _devices}set{_devices = newValue}}
-    var products:[ProductInfo]?{get{return _products}set{_products = newValue}}
     var account:String{get{return _account}set{_account = newValue}}
     var virtualNumber:String{get{return _virtualNumber}set{_virtualNumber = newValue}}
     var callbackFilter:(Int,String)->(Int,String){get{return _callBackFilter}set{_callBackFilter = newValue}}

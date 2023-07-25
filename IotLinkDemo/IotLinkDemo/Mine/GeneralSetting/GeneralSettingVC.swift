@@ -130,8 +130,8 @@ extension GeneralSettingVC: UITableViewDelegate,UITableViewDataSource {
     // MARK: - 下一页
     // 消息推送设置
     private func showPushMsgSettingVC(){
-        let vc = PushMsgSettingVC()
-        navigationController?.pushViewController(vc, animated: true)
+//        let vc = PushMsgSettingVC()
+//        navigationController?.pushViewController(vc, animated: true)
     }
     
     // 账号安全

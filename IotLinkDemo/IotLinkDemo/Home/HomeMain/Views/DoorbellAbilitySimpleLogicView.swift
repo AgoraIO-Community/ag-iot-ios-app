@@ -62,26 +62,11 @@ class DoorbellAbilitySimpleLogicView: UIView {
         self.tipType = .deviceSleep
         super.init(frame: frame)
         self.backgroundColor = UIColor.clear
-        addObserver()
         setUpViews()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // 注册通知
-    private func addObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(receiveRecordVideoStateChanged(notification:)), name: Notification.Name(cRecordVideoStateUpdated), object: nil)
-    }
-    
-    @objc private func receiveRecordVideoStateChanged(notification: NSNotification){
-        //录制视频通知
-//        guard let members = notification.userInfo?["isStart"] as? Bool else { return }
-//        if startRecord == true{
-//            recordScreen()
-//        }
-        toolBarView.handleRecordScreenBtnSuccess(false)
     }
     
     deinit {
