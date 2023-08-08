@@ -13,7 +13,6 @@ import IJKMediaFramework
 
 class IVodPlayerManager : IVodPlayerMgr{
     
-    public var url:URL?
     var player:IJKFFMoviePlayerController?
     
     typealias callActionAck = (_ errCode:Int,_ disPlayView:UIView)->Void
@@ -29,15 +28,20 @@ class IVodPlayerManager : IVodPlayerMgr{
         callAct = callback
         installObserver()
         
-        guard let options = IJKFFOptions.byDefault() else {
+        var url:URL?
+        if mediaUrl.hasPrefix("http") || mediaUrl.hasPrefix("rtmp") {
+            url = URL(string: mediaUrl)
+        }
+        else {
+            url = URL(fileURLWithPath: mediaUrl)
+        }
+        
+        guard let url = url else {
+            callAct(ErrCode.XERR_INVALID_PARAM, self.player?.view ?? UIView())
             return
         }
-        self.player = IJKFFMoviePlayerController.init(contentURL: url, with: options)
         
-        self.player?.view.autoresizingMask = [.flexibleWidth,.flexibleHeight]
-        
-        guard let url = URL(string: mediaUrl) else {
-            callAct(ErrCode.XERR_INVALID_PARAM, self.player?.view ?? UIView())
+        guard let options = IJKFFOptions.byDefault() else {
             return
         }
         
