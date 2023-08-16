@@ -9,9 +9,9 @@ import UIKit
 
 @objc protocol MediaStateMachineListener : NSObjectProtocol {
     
-    @objc func do_LEAVEANDDESTROY()  //srcState:stopAll
+    @objc func do_LEAVEANDDESTROY()
      
-    @objc func do_CREATEANDENTER()   //srcState:ready
+    @objc func do_CREATEANDENTER() 
     
  }
 
@@ -32,10 +32,13 @@ class MediaStateMachine: NSObject {
     weak var delegate : CallStateMachineListener?
     
     var currentState: DevMediaStatus = .stopped
+    var lastState : DevMediaStatus = .stopped
     
     func handleEvent(_ event: MediaEvent) {
+        
+        lastState = currentState
+        
         switch currentState {
-            
         case .stopped:
             switch event {
             case .openCall:
@@ -70,6 +73,17 @@ class MediaStateMachine: NSObject {
                 break
             }
             break
+        case .pausing:
+            switch event {
+            case .toHavePaused:
+                currentState = .paused
+            case .endCall:
+                currentState = .stopped
+                break
+            default:
+                break
+            }
+            break
         case .paused:
             switch event {
             case .toResuming:
@@ -79,22 +93,13 @@ class MediaStateMachine: NSObject {
             default:
                 break
             }
+            break
         case .seeking:
             switch event {
             case .toReplay:
                 currentState = .playing
             case .endCall:
                 currentState = .stopped
-            default:
-                break
-            }
-        case .pausing:
-            switch event {
-            case .toHavePaused:
-                currentState = .paused
-            case .endCall:
-                currentState = .stopped
-                break
             default:
                 break
             }

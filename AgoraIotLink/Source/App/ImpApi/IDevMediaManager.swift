@@ -162,6 +162,7 @@ class IDevMediaManager : IDevMediaMgr{
                 CallListenerManager.sharedInstance.pausedSDCardPlay()
                 self?.playStateListener?.onDevMediaPauseDone(fileId: "", errCode: ErrCode.XOK)
             }else{
+                CallListenerManager.sharedInstance.resumedSDCardPlay()
                 self?.playStateListener?.onDevMediaPauseDone(fileId: "", errCode: ErrCode.XOK)
             }
             
@@ -177,6 +178,8 @@ class IDevMediaManager : IDevMediaMgr{
         sendGeneralStringData(paramDic, curTimestamp) { errCode, resutArray in
             log.i("setPlayingSpeed:\(resutArray)")
             if errCode == ErrCode.XOK{
+                CallListenerManager.sharedInstance.resumedSDCardPlay()
+            }else{
                 CallListenerManager.sharedInstance.resumedSDCardPlay()
             }
             
@@ -212,8 +215,24 @@ class IDevMediaManager : IDevMediaMgr{
         return 000000
     }
     
-    func getPlayingState() -> Int {
-        return ErrCode.XOK
+    func getPlayingState() -> DevMediaStatus{
+        
+        guard let mediaMachine = getMediaStateMachine() else {
+            log.e("getPlayingState: talkingKit is nil")
+            return .stopped
+        }
+        return mediaMachine.currentState
+    }
+    
+    func setAudioMute(mute:Bool,result:@escaping (Int,String)->Void){
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("setAudioMute: talkingKit is nil")
+            result(ErrCode.XERR_NOT_FOUND,"talkingKit is nil")
+            return
+        }
+        DispatchQueue.main.async {
+            talkingKit.mutePeerAudio(mute, cb: result)
+        }
     }
  
 }
@@ -229,7 +248,6 @@ extension IDevMediaManager{
         
         let jsonString = paramDic.convertDictionaryToJSONString()
         let data:Data = jsonString.data(using: .utf8) ?? Data()
-//        rtm.sendStringMessage(sequenceId: "\(sequenceId)", toPeer: peer, message: jsonString, cb: cmdListener)
         rtm.sendRawMessageDic(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
     }
     
@@ -253,6 +271,10 @@ extension IDevMediaManager{
     
     func getRtcTaklingKit()->AgoraTalkingEngine?{
         return CallListenerManager.sharedInstance.getCurrentSDcardTalkingEngine()
+    }
+    
+    func getMediaStateMachine()->MediaStateMachine?{
+        return CallListenerManager.sharedInstance.getCurrentSDCardCallMachine()
     }
 }
 

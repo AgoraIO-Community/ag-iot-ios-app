@@ -38,7 +38,11 @@ open class IotAppSdk : IAgoraIotAppSdk{
     }}
     
     public func release() {
+        _iotAppSdkManager = nil
+        _deviceSessionManager = nil
+        _vodPlayerManager = nil
         app!.release()
+//        app = nil
     }
     
     

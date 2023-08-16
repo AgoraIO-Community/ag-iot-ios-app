@@ -14,7 +14,6 @@ class MediaStateListener: NSObject {
     var app  = Application.shared
     var rtc  = Application.shared.proxy.rtc
     private var  callRcbTime : TimeCallback<(Int,String)>? = nil
-    var isIcoming : Bool = false //是否是来电
     var callMachine : MediaStateMachine?
     var talkingEngine : AgoraTalkingEngine?
     
@@ -69,12 +68,10 @@ class MediaStateListener: NSObject {
     
     func hangUp(hangUpResult: @escaping (Bool,String) -> Void){
         hangUpRet = hangUpResult
-        if self.isIcoming == false{//主动呼叫
-            endTime()
-            callMachine?.handleEvent(.endCall)
-            self.callAct(.onStoped,self.callSession?.mSessionId ?? "",ErrCode.XOK)
-            self.do_LEAVEANDDESTROY()
-        }
+        endTime()
+        callMachine?.handleEvent(.endCall)
+        self.callAct(.onStoped,self.callSession?.mSessionId ?? "",ErrCode.XOK)
+        self.do_LEAVEANDDESTROY()
         destory()
     }
     
@@ -98,7 +95,7 @@ extension MediaStateListener : CallStateMachineListener{
         let peerId = callSession?.peerUid ?? 0
 
         let setting = app.context.call.setting
-        log.i("listener rtc.createAndEnter(uid:\(uid) channel:\(name))")
+        log.i("sdCard listener rtc.createAndEnter(uid:\(uid) channel:\(name))")
         var rtcSetting = RtcSetting()
         rtcSetting.dimension = setting.dimension
         rtcSetting.frameRate = setting.frameRate
@@ -132,15 +129,14 @@ extension MediaStateListener : CallStateMachineListener{
                 self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
             }
             else if(ret == .Succ){
-                if self?.isIcoming == false{//主动呼叫
-                    log.i("call reqCall CallForward")
-                    self?.callRcbTime?.schedule(time:self?.app.config.calloutTimeOut ?? 30,timeout: {
-                        log.i("call reqCall ring remote timeout")
-                        self?.callMachine?.handleEvent(.endCall)
-                        self?.callAct(.onError,self?.callSession?.mSessionId ?? "",ErrCode.XERR_CALLKIT_DIAL)
-                        self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
-                    })
-                }
+                
+                log.i("sdCard call reqCall CallForward")
+                self?.callRcbTime?.schedule(time:self?.app.config.calloutTimeOut ?? 30,timeout: {
+                    log.i("call reqCall ring remote timeout")
+                    self?.callMachine?.handleEvent(.endCall)
+                    self?.callAct(.onError,self?.callSession?.mSessionId ?? "",ErrCode.XERR_CALLKIT_DIAL)
+                    self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
+                })
 
             }
             else {//Abort
@@ -151,30 +147,22 @@ extension MediaStateListener : CallStateMachineListener{
             if(act == .Enter){
                 log.i("listener Enter uid:\(uid)")
                 if(self.callSession?.peerUid == uid){
-                    if self.isIcoming == false{//主动呼叫
-                        self.callMachine?.handleEvent(.peerOnline)
-                        self.callAct(.onPlayed,self.callSession?.mSessionId ?? "",ErrCode.XOK)
-                    }
-                    
+                    self.callMachine?.handleEvent(.peerOnline)
+                    self.callAct(.onPlayed,self.callSession?.mSessionId ?? "",ErrCode.XOK)
                 }
             }
             else if(act == .Leave){
                 log.i("listener Leave uid:\(uid)")
                 if(self.callSession?.peerUid == uid){
-                    if self.isIcoming == false{//主动呼叫
-                        self.callAct(.onStoped,self.callSession?.mSessionId ?? "",ErrCode.XOK)
-                        self.interCallAct(.RemoteHangup,self.callSession?.mSessionId ?? "",self.callSession?.peerNodeId ?? "")
-                    }
-                    
+                    self.callAct(.onStoped,self.callSession?.mSessionId ?? "",ErrCode.XOK)
+                    self.interCallAct(.RemoteHangup,self.callSession?.mSessionId ?? "",self.callSession?.peerNodeId ?? "")
                 }
             }
             else if(act == .VideoReady){
                 log.i("listener VideoReady uid:\(uid)")
                 if(self.callSession?.peerUid == uid){
-                    if self.isIcoming == false{//主动呼叫
-                        self.endTime()
-                        self.preViewlistener(self.callSession?.mSessionId ?? "",0,0)
-                    }
+                    self.endTime()
+                    self.preViewlistener(self.callSession?.mSessionId ?? "",0,0)
 
                 }
             }
@@ -199,7 +187,7 @@ extension MediaStateListener : CallStateMachineListener{
     }
     
     func do_LEAVEANDDESTROY() {
-        log.i("listener rtc.on_destroy")
+        log.i("sdCard listener rtc.on_destroy")
         talkingEngine?.leaveChannel(cb: { [weak self] succ in
             if(!succ){
                 log.e("listener rtc.leaveAndDestroy failed")
@@ -234,4 +222,8 @@ extension MediaStateListener{
         callMachine?.handleEvent(.toReplay)
     }
     
+    func reSetStateSDCardPlay(){
+        guard let lastState = callMachine?.lastState else { return }
+        callMachine?.currentState = lastState
+    }
 }

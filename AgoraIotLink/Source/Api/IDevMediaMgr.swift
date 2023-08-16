@@ -265,5 +265,14 @@ import Foundation
      * @brief 获取当前播放状态机
      * @return 返回当前播放状态
      */
-    func getPlayingState()->Int
+    func getPlayingState() -> DevMediaStatus
+    
+    /**
+      * @brief 设置播放过程中是否有声音
+      * @param mute: true--播放静音；  false--正常播放
+      * @result: 调用该接口是否成功
+      */
+    func setAudioMute(mute:Bool,result:@escaping (Int,String)->Void)
+    
+    
 }

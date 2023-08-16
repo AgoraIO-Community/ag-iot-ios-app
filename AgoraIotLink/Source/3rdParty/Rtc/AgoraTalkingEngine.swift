@@ -85,6 +85,8 @@ class AgoraTalkingEngine: NSObject {
         tempCon.localUid =  channelInfo.uid
         connection = tempCon
         
+//        setMetalData()
+        
         log.i("rtc enterChannel when uid:\(channelInfo.uid) token:\(channelInfo.token) name:\(channelInfo.cName)")
         _onEnterChannel?.invalidate()
         joinChannel(cb: cb)
@@ -92,6 +94,16 @@ class AgoraTalkingEngine: NSObject {
     
     func getRtcObject() -> AgoraRtcEngineKit {
         return AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit()
+    }
+    
+    func setMetalData(){
+        rtcKit?.setMediaMetadataDelegate(self, with: .video)
+        rtcKit?.setMediaMetadataDataSource(self, with: .video)
+    }
+    
+    func clearMetalData(){
+        rtcKit?.setMediaMetadataDelegate(nil, with: .video)
+        rtcKit?.setMediaMetadataDataSource(nil, with: .video)
     }
     
     func joinChannel(cb:@escaping(TaskResult,String)->Void){
@@ -170,6 +182,7 @@ class AgoraTalkingEngine: NSObject {
     
     func clearObject(){
         rtcKit?.setDelegateEx(nil, connection: connection)
+//        clearMetalData()
 //        rtcKit?.setAudioFrameDelegate(nil)
 //        rtcKit?.setVideoFrameDelegate(nil)
         rtcKit = nil
@@ -483,7 +496,23 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
     }
 }
 
-
+extension AgoraTalkingEngine: AgoraMediaMetadataDelegate,AgoraMediaMetadataDataSource {
+    
+    func metadataMaxSize() -> Int {
+        return 1024
+    }
+    
+    func readyToSendMetadata(atTimestamp timestamp: TimeInterval, sourceType: AgoraVideoSourceType) -> Data? {
+        return nil
+    }
+    
+    
+    func receiveMetadata(_ data: Data, fromUser uid: Int, atTimestamp timestamp: TimeInterval) {
+        let jsonDic = String.getDictionaryFromData(data: data)
+        log.i("receiveMetadata: \(jsonDic)")
+    }
+    
+}
 
 
 

@@ -72,9 +72,12 @@ extension VodPlayerMainVC{
     
     func openVodPlayer(){
         
-        sdk?.vodPlayerMgr.open(mediaUrl: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8", callback: { [weak self] errCode, displayView in
-             self?.setDisPlayView(displayView)
-             sdk?.vodPlayerMgr.play()
+        //https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8
+        AGToolHUD.showNetWorkWait()
+        sdk?.vodPlayerMgr.open(mediaUrl: "http://cloud-store-test.s3.cn-east-1.jdcloud-oss.com/ts-muxer.m3u8", callback: { [weak self] errCode, displayView in
+            AGToolHUD.disMiss()
+            self?.setDisPlayView(displayView)
+            sdk?.vodPlayerMgr.play()
             self?.isOpen = true
         })
         

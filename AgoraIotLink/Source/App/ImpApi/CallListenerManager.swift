@@ -218,6 +218,14 @@ class CallListenerManager {
         return callObjet.callSession
     }
     
+    func getCurrentSDCardCallMachine() -> MediaStateMachine?{
+        guard let callObjet = mediaLister else{
+            log.i("getCurrentSDcardTalkingEngine not found ")
+            return nil
+        }
+        return callObjet.callMachine
+    }
+    
     
     //-------来电单独处理，暂时不用-------
     

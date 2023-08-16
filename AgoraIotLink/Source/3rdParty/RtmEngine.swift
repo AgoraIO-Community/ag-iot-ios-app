@@ -23,6 +23,26 @@ import AgoraRtmKit
     case UnknownError                                   //未知错误
 }
 
+/*
+ * @brief 连接返回
+ */
+@objc public class RtmMsgObj : NSObject{
+    
+    @objc public var sequenceId: String = ""            //标记Id
+    @objc public var  timeStamp: TimeInterval = 0               //标记时间戳
+    public typealias ReaultAck = (Int,String)->Void     //返回类型，字符串
+    @objc public var msgObj :ReaultAck = {a,c in log.w("msgObj not inited")}
+    
+    @objc public init(sequenceId:String ,
+                      timeStamp:TimeInterval,
+                      msgObj:@escaping ReaultAck
+    ){
+        self.sequenceId = sequenceId
+        self.timeStamp = timeStamp
+        self.msgObj = msgObj
+    }
+}
+
 class RtmEngine : NSObject{
     static private let IDLED = 0
     static private let CREATED = 1
@@ -36,6 +56,8 @@ class RtmEngine : NSObject{
     
     var timer: Timer?
     var curSession: RtmSession?
+    
+    var timerTimeout: Timer?
     
     init(cfg:Config) {
         self.config = cfg
@@ -107,6 +129,8 @@ class RtmEngine : NSObject{
     private var _enterCallback:((TaskResult,String)->Void)? = nil
     private var _completionBlocks: [String: ((Int, String) -> Void)] = [:]
     private var _completionDicBlocks: [String: ((Int, Dictionary<String, Any>) -> Void)] = [:]
+    
+    private var _completionMsgObjs: [String: RtmMsgObj] = [:]
     
     public func waitForStatusUpdated(statusUpdated:@escaping(MessageChannelStatus,String,AgoraRtmMessage?)->Void){
         _statusUpdated = statusUpdated
@@ -182,10 +206,14 @@ class RtmEngine : NSObject{
             cb(reMsg.errCode,reMsg.msg)
         }else{
             _completionBlocks[sequenceId] = cb
+            
+//            let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId, timeStamp: String.dateCurrentTime(), msgObj: cb)
+//            _completionMsgObjs[sequenceId] = rtmMsgObj
+            
         }
        
     }
-    
+
     private func sendCallback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,Dictionary<String, Any>)->Void){
         let reMsg = getRtmSendMsg(e)
         if(reMsg.errCode != ErrCode.XOK){
@@ -420,8 +448,6 @@ extension RtmEngine : AgoraRtmDelegate{
         
         handelReceivedData(message: message, fromPeer: peerId)
         
-        
-        
 //        if(message.type == .raw){
 //            if let raw = message as? AgoraRtmRawMessage{
 //                DispatchQueue.main.async {
@@ -527,5 +553,44 @@ extension RtmEngine{
         timer = nil
     }
     
+    
+}
+
+extension RtmEngine{
+    
+    func  timeOutTimer(){
+        timerTimeout = Timer()
+        startTimeOut()
+    }
+    
+    func startTimeOut() {
+        timerTimeout = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(handelTimeOut), userInfo: nil, repeats: true)
+    }
+    
+    @objc func handelTimeOut() {
+        // 在这里实现发送消息的逻辑
+        log.i("send heartbeat msg")
+        handelRtmMsgTimeout()
+        
+    }
+    
+    func handelRtmMsgTimeout(){
+        
+        for (key,obj) in _completionMsgObjs{
+            let lastTime = obj.timeStamp
+            let timeSpace = String.dateTimeSpaceMillion(lastTime)
+            if timeSpace > 10{
+                let callBack = obj.msgObj
+                callBack(0,"resut string")
+                _completionMsgObjs["\(key)"] = nil
+            }
+        }
+    }
+    
+    func stopTimerOut() {
+        log.i("RtmEngine timer is nil")
+        timerTimeout?.invalidate()
+        timerTimeout = nil
+    }
     
 }
