@@ -184,8 +184,12 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.getPlayingProgress()
     }
     
-    @objc public func getPlayingState() -> Int {
+    @objc public func getPlayingState() -> AgoraIotLink.DevMediaStatus {
         return mgr.getPlayingState()
+    }
+    
+    @objc public func setAudioMute(mute: Bool, result: @escaping (Int, String) -> Void) {
+        return mgr.setAudioMute(mute: mute, result: result)
     }
     
     public init(mgr:IDevMediaMgr) {
