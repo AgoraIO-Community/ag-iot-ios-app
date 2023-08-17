@@ -8,47 +8,75 @@
 import Foundation
 
 open class IotAppSdk : IAgoraIotAppSdk{
+    
     public func getSdkVersion() -> String {
         return IAgoraIotSdkVersion
     }
     
     public func getMqttIsConnected() -> Bool {
-        return app!.proxy.mqtt.curMtConnected
-    }
-    
-    private var _callbackFilter:(Int,String)->(Int,String) = {ec,msg in return (ec,msg)}
-    private func onCallbackFilter(ec:Int,msg:String)->(Int,String){
-        if(ec == ErrCode.XERR_TOKEN_INVALID){
-            log.i("sdk token invalid,try logout")
-            self.accountMgr.logoutAccount(false) { ec, msg in
-                log.i("sdk logout done")
-            }
+        if app!.proxy.cocoaMqtt.curState == .ConnectDone{
+            return true
         }
-        return _callbackFilter(ec,msg)
+        return false
     }
     
-    public func initialize(initParam: InitParam, sdkStatus:@escaping (SdkStatus, String)->Void,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int {
-        _callbackFilter = callbackFilter
-        return app!.initialize(initParam: initParam,sdkStatus:sdkStatus,callbackFilter: onCallbackFilter)
+    public func getStateMachine() -> SdkState? {
+        return app?.sdkState ?? nil
+    }
+    
+    public func initialize(initParam: InitParam,OnSdkStateListener:@escaping(SdkState,StateChangeReason)->Void) -> Int {
+        if app == nil { app = Application.shared }
+        return app!.initialize(initParam: initParam,OnSdkStateListener: OnSdkStateListener)
+    }
+    
+    public func prepare(preParam: PrepareParam,prepareListener:@escaping(Int,String)->Void)-> Int{
+        return iotAppSdkMgr.prepare(preParam: preParam, prepareListener: prepareListener)
+    }
+    
+    public func unprepare() -> Int{
+        return iotAppSdkMgr.unprepare()
+    }
+    
+    public func getUserId()->String{
+        return iotAppSdkMgr.getUserId()
+    }
+    
+    public func getUserNodeId() -> String {
+        return iotAppSdkMgr.getUserNodeId()
     }
     
     private var app:Application?
     
-    var application:Application{set{
-        app = newValue
-    }get{
-        return app!
-    }}
-    
     public func release() {
+        
+        _iotAppSdkManager = nil
+        _callkitManager = nil
+        _accountManager = nil
+        _deviceManager = nil
+        _alarmManager = nil
+        _notifyManager = nil
+        
         app!.release()
+        app = nil
+        
     }
     
-    private var _accountManager : IAccountMgr? = nil
+    
+    private  var _iotAppSdkManager : IotAppSdkManager? = nil
+    
     private var _callkitManager: CallkitManager? = nil
+    private var _accountManager : IAccountMgr? = nil
     private var _deviceManager:IDeviceMgr? = nil
     private var _alarmManager:IAlarmMgr? = nil
     private var _notifyManager:INotificationMgr? = nil
+    
+    public var iotAppSdkMgr: IotAppSdkManager{get{
+        if(_iotAppSdkManager == nil){
+            _iotAppSdkManager = IotAppSdkManager(app: app!)
+        }
+        return _iotAppSdkManager!
+        
+    }}
     
     public var callkitMgr: ICallkitMgr{get{
         if(_callkitManager == nil){

@@ -15,17 +15,10 @@ import UIKit
     
  }
 
-enum CallState {
-    case idle           // 空闲状态
-    case callRequest    // 呼叫请求状态
-    case outgoing       // 去电状态
-    case onCall         // 通话状态
-    case incoming       // 来电状态
-}
-
 enum CallEvent {
     case startCall             // 发起呼叫请求
-    case makeCalling           // 发起去电呼叫事件
+    case localJoining          // 本地开始加入频道
+    case localJoinSuc          // 本地加入频道成功
     case peerOnline            // 对端上线
     case peerOffline           // 对端离线
     case incomingCall          // 来电事件
@@ -54,9 +47,10 @@ class CallStateMachine: NSObject {
             
         case .callRequest:
             switch event {
-            case .makeCalling:
-                currentState = .outgoing
+            case .localJoining:
                 delegate?.do_CREATEANDENTER()
+            case .localJoinSuc:
+                currentState = .dialing
             case .endCall:
                 currentState = .idle
                 break
@@ -64,7 +58,7 @@ class CallStateMachine: NSObject {
                 break
             }
             
-        case .outgoing:
+        case .dialing:
             switch event {
             case .peerOnline:
                 currentState = .onCall

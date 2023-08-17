@@ -173,7 +173,7 @@ struct CallKitSetting{
     var logFilePath = ""
     var publishAudio = true ///< 通话时是否推流本地音频
     var publishVideo = false ///< 通话时是否推流本地视频
-    var subscribeAudio = true ///< 通话时是否订阅对端音频
+    var subscribeAudio = false ///< 通话时是否订阅对端音频
     var subscribeVideo = true ///< 通话时是否订阅对端视频
 }
 
@@ -271,13 +271,13 @@ struct PlayerContext{
 }
 
 struct CallKitContext{
-    private var _session = CallKitSession()
-    private var _lastSession = CallKitLastSession()
+//    private var _session = CallKitSession()
+//    private var _lastSession = CallKitLastSession()
     private var _setting = CallKitSetting()
     
     var setting:CallKitSetting{get{return _setting} set{_setting = newValue}}
-    var session:CallKitSession{get{return _session} set{_session = newValue}}
-    var lastSession:CallKitLastSession{get{return _lastSession} set{_lastSession = newValue}}
+//    var session:CallKitSession{get{return _session} set{_session = newValue}}
+//    var lastSession:CallKitLastSession{get{return _lastSession} set{_lastSession = newValue}}
 }
 
 struct RtmKitContext{

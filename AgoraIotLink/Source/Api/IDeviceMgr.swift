@@ -412,18 +412,18 @@ public protocol IDeviceMgr {
      * @param result             : 调用sendMessageBegin()是否成功
      * @param statusUpdated      : 在sendMessageBegin()和sendMessageEnd()之间，状态变化回调
      */
-    func sendMessageBegin(deviceId:String,result:@escaping(Int,String)->Void,statusUpdated:@escaping(_ status:MessageChannelStatus,_ msg:String,_ data:Data?)->Void)
+//    func sendMessageBegin(deviceId:String,result:@escaping(Int,String)->Void,statusUpdated:@escaping(_ status:MessageChannelStatus,_ msg:String,_ data:Data?)->Void)
     /*
      * @brief 结束发送消息给设备（退出RTM系统）
      */
-    func sendMessageEnd()
+//    func sendMessageEnd()
     /*
      * @brief 发送消息给设备，在sendMessageBegin()返回Connected成功后，调用sendMessageEnd()前调用该接口
      * @param device           : 对端设备
      * @param data             : 发送的数据，每次发送数据大小不能超过1k
      * @param description      : 消息描述
      */
-    func sendMessage(data:Data,description:String,result:@escaping(Int,String)->Void)
+//    func sendMessage(data:Data,description:String,result:@escaping(Int,String)->Void)
     /*
      * @brief 开始播放sd卡上的视频记录
      * @param channelName      : 频道名

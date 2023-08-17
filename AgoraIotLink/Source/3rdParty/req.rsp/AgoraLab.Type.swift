@@ -59,6 +59,10 @@ extension AgoraLab{
         static let  resetDevice = "/call-service/v1/reset"
         //设置用户公钥
         static let  publicKeySet = "/oauth/public-key/set"
+        
+        //激活用户node
+        static let  nodeActivate = "/iot-core/v2/secret-node/user/activate"
+
     }
 
     static let tokenExpiredCode = 401
@@ -123,6 +127,38 @@ extension AgoraLab{
         }
         
     }
+    
+    class ActivateNode{
+        
+        struct Payload : Encodable{
+            let clientType:String
+            let userId:String
+            let masterAppId:String
+            let pusherId:String
+        }
+        struct Req : Encodable{
+            let payload:Payload
+        }
+        
+        struct Data : Decodable{
+            let nodeId:String
+            let nodeToken:String
+            let nodeRegion:String
+            let mqttServer:String
+            let mqttPort:UInt
+            let mqttUsername:String
+            let mqttSalt:String
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Data?
+        }
+        
+    }
+
     
     class Login{
         struct LsToken : Decodable{

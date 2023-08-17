@@ -271,7 +271,7 @@ class AccountManager : IAccountMgr{
     
     func resetDevice(){
         let deviceId = self.app.context.gyiot.session.cert.thingName
-        let appid = self.app.config.appId
+        let appid = self.app.config.masterAppId
         let agToken = app.context.aglab.session.accessToken
         self.app.proxy.al.resetDevice(deviceId, appid, agToken) { code, msg in
             log.i("---resetDevice--\(code):--\(msg)")
@@ -300,10 +300,10 @@ class AccountManager : IAccountMgr{
                 log.w("doLogoutNew:\(ec):\(msg)")
             }
             self.app.context.aglab.session.reset()
-            self.app.context.call.session.reset()
-            self.app.context.call.lastSession.reset()
-            self.app.proxy.mqtt.reset()
-            self.app.callkitMgr.reset()
+//            self.app.context.call.session.reset()
+//            self.app.context.call.lastSession.reset()
+//            self.app.proxy.mqtt.reset()
+//            self.app.callkitMgr.reset()
             self.rule.trigger.logout_watcher = {result(ErrCode.XOK,"")}
             self.rule.trans(FsmApp.Event.LOGOUT)
         }
@@ -402,7 +402,7 @@ class AccountManager : IAccountMgr{
     
     func updateHeadIcon(image: UIImage,result:@escaping(Int,String,String?)->Void) {
         let agToken = app.context.aglab.session.accessToken
-        let traceId = app.context.call.session.traceId
+        let traceId = "12345678"//app.context.call.session.traceId
         DispatchQueue.main.async {
             self.app.proxy.al.reqUploadIcon(agToken, image, traceId, {ec,msg,url in self.asyncResultData(ec,msg,url,result)})
         }

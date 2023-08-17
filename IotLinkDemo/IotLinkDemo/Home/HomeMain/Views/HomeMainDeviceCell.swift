@@ -10,6 +10,28 @@ import AgoraIotLink
 import Kingfisher
 
 class HomeMainDeviceCell: UITableViewCell {
+    
+    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
+    
+    
+    var dailBlock:((_ index : IndexPath) -> (Void))?
+    var fullScreenBlock:((_ index : IndexPath) -> (Void))?
+    
+    var device: MDeviceModel? {
+        didSet{
+            guard let device = device else {
+                return
+            }
+            nameLabel.text = device.peerNodeId
+            logicView.device = device
+            
+            selectedbutton.isHidden = !device.canEdit
+            selectedbutton.isSelected = device.isSelected
+        }
+    }
+    
+    var indexPath : IndexPath?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         createSubviews()
@@ -25,12 +47,52 @@ class HomeMainDeviceCell: UITableViewCell {
         return formatter
     }()
     
-    private lazy var bgView:UIView = {
+    lazy var videoParentView:UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .black
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
         return view
+    }()
+    
+    // 承载操作事件的view
+    lazy var logicView: DoorbellAbilitySimpleLogicView = {
+
+        let logicView = DoorbellAbilitySimpleLogicView()
+        logicView.tipType = .none
+        logicView.logicfullHorBtnBlock = { [weak self] in
+            self?.dailBlock?(self?.indexPath ?? IndexPath(row: 0, section: 0))
+        }
+        logicView.logicFullScreenBlock = { [weak self] in
+            self?.fullScreenBlock?(self?.indexPath ?? IndexPath(row: 0, section: 0))
+        }
+        
+        return logicView
+
+    }()
+    
+    private lazy var selectedbutton:UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: "msg_unselect"), for: .normal)
+        button.setImage(UIImage(named: "country_selected"), for: .selected)
+        button.isHidden = true
+        button.isUserInteractionEnabled = false
+        return button
+    }()
+    
+    private lazy var nameLabel:UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textColor = UIColor.blue
+        label.text = ""
+        return label
+    }()
+    
+    private lazy var statusLabel:UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.textColor = UIColor(hexRGB: 0xF7B500)
+        return label
     }()
     
     private lazy var iconImgView:UIImageView = {
@@ -42,61 +104,53 @@ class HomeMainDeviceCell: UITableViewCell {
     }()
     
     
-    private lazy var nameLabel:UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        label.textColor = UIColor(hexRGB: 0x000000, alpha: 0.85)
-        label.text = "可视门铃（WIFI）"
-        return label
-    }()
-    
-    private lazy var statusLabel:UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = UIColor(hexRGB: 0xF7B500)
-        return label
-    }()
-    
     private func createSubviews(){
-        contentView.addSubview(bgView)
+        
+        contentView.addSubview(videoParentView)
         contentView.backgroundColor = UIColor(hexRGB: 0xF8F8F8)
-        bgView.addSubview(iconImgView)
-        bgView.addSubview(nameLabel)
-        bgView.addSubview(statusLabel)
-            
-        bgView.snp.makeConstraints { make in
+        
+        contentView.addSubview(logicView)
+        logicView.addSubview(selectedbutton)
+        
+        videoParentView.snp.makeConstraints { make in
             make.edges.equalTo(UIEdgeInsets(top: 8, left: 25, bottom: 8, right: 25))
         }
         
-        iconImgView.snp.makeConstraints { make in
-            make.left.equalTo(25)
-            make.top.equalTo(20)
-            make.width.equalTo(90)
-            make.height.equalTo(90)
+        logicView.snp.makeConstraints { make in
+            make.edges.equalTo(UIEdgeInsets(top: 8, left: 25, bottom: 8, right: 25))
         }
         
-        nameLabel.snp.makeConstraints { make in
-            make.left.equalTo(iconImgView.snp.right).offset(20)
-            make.top.equalTo(20)
-            make.right.equalTo(-20)
+        // 可编辑标记
+        selectedbutton.snp.makeConstraints { make in
+            make.top.equalTo(15.S)
+            make.right.equalTo(-16)
+            make.width.height.equalTo(20)
         }
         
-        statusLabel.snp.makeConstraints { make in
-            make.left.equalTo(iconImgView.snp.right).offset(20)
-            make.bottom.equalTo(-60)
-            make.right.equalTo(-20)
-        }
     }
     
-    func setDevice(_ device:IotDevice,alarmDate:UInt64) {
-        nameLabel.text = device.deviceName
-        let offlineColor = UIColor(hexRGB: 0xF7B500)
-        let onLineColor = UIColor(hexRGB: 0x000000, alpha: 0.25)
-//        let dateStr = formatter.string(from: Date(timeIntervalSince1970: TimeInterval(alarmDate / 1000)))
-//        statusLabel.text = device.connected ? "移动侦测 \(dateStr)" : "离线"
-        statusLabel.text = device.connected ? "在线" : "离线"
-        statusLabel.textColor = device.connected ? onLineColor: offlineColor
-        iconImgView.kf.setImage(with: URL(string: device.productInfo?.imgSmall ?? ""), placeholder:  UIImage(named: "doorbell"))
+    //设置播放器view
+    func configPeerView(_ sessionId : String) {
+        let statusCode : Int = sdk?.callkitMgr.setPeerVideoView(sessionId: sessionId, peerView: videoParentView) ?? 0
+        debugPrint("--- \(statusCode)")
+    }
+    
+    //设置呼叫按钮状态
+    func handelCallStateText(_ isCallSuc : Bool?){
+        logicView.handelCallStateText(isCallSuc)
+    }
+    
+    //设置按钮回到初始状态
+    func handelStateNone(){
+        logicView.handelStateNone()
+    }
+    
+    func handelCallTipType(_ tipType : VideoAlertTipType){
+        logicView.tipType = tipType
+    }
+    
+    func handelUserMembers(_ members : Int){
+        logicView.handelUserMembers(members)
     }
     
 }

@@ -734,3 +734,12 @@ extension NSMutableAttributedString {
     }
     
 }
+
+public extension String{//国际化
+    
+    var L:String{
+            
+            return NSLocalizedString(self, comment: "")
+    }
+    
+}

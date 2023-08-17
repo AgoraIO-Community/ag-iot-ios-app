@@ -53,6 +53,7 @@ class DoorbellContainerVC: UIViewController {
     
     //是否横屏
     var isHorizonFull : Bool = false
+    var curSessionId : String = ""
     
     
     override var shouldAutorotate: Bool {
@@ -149,7 +150,7 @@ class DoorbellContainerVC: UIViewController {
     }
     
     @objc func leftBtnDidClick(){
-        DoorBellManager.shared.hungUpAnswer { success, msg in }
+        DoorBellManager.shared.hungUpAnswer(sessionId: curSessionId) { success, msg in }
         navigationController?.popViewController(animated: true)
     }
     
@@ -246,7 +247,7 @@ extension DoorbellContainerVC: JXSegmentedListContainerViewDataSource {
             msgVC.device = device
             return msgVC
         case 2:
-            controlVC.device = device
+//            controlVC.device = device
             return controlVC
         default:
             abilityVC.device = device
@@ -260,7 +261,9 @@ extension DoorbellContainerVC: JXSegmentedListContainerViewDataSource {
 //被动呼叫通知相关操作
 extension DoorbellContainerVC{
     
-    @objc private func receiveRemoteHangup(){
+    @objc private func receiveRemoteHangup(notification: NSNotification){
+        guard let sessionId = notification.userInfo?["sessionId"] as? String else { return }
+        curSessionId = sessionId
         // 挂断来电通知，隐藏呼叫弹框
         logicAnswerView.removeFromSuperview()
         leftBtnDidClick()
@@ -270,7 +273,7 @@ extension DoorbellContainerVC{
         
         guard isReceiveCall == true else { return }
         // 按下系统电源键挂断电话
-        DoorBellManager.shared.hungUpAnswer { success, msg in
+        DoorBellManager.shared.hungUpAnswer(sessionId: curSessionId) { success, msg in
             if success {
                 debugPrint("挂断成功")
             }else{

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AgoraIotLink'
-  s.version          = '1.5.0.1'
+  s.version          = '2.0.6.0'
   s.summary          = 'AgoraIotLink for iot development.'
 
 # This description is used to generate tags and improve search results.
@@ -32,7 +32,7 @@ TODO: Add long description of the pod here.
 
 #  s.xcconfig = { "USER_HEADER_SEARCH_PATHS" => "$(PODS_ROOT)" }
 #  s.xcconfig = { 'USER_HEADER_SEARCH_PATHS' => '"${PODS_ROOT}"' }
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '11.0'
 #  s.public_header_files = "AgoraIotLink/AgoraIotLink-Swift.h"
   s.source_files = 'AgoraIotLink/Source/**/*.{swift,h,m}'
   s.swift_version = '5.5'
@@ -48,9 +48,13 @@ TODO: Add long description of the pod here.
   # s.vendored_frameworks ='AgoraIotSdk/Libs/*.framework','AgoraIotSdk/Libs/*.xcframework'
   
   s.dependency 'Alamofire','5.6.0'
-  s.dependency 'AWSMobileClient','2.27.6'
-  s.dependency 'AWSIoT','2.27.6'
-  s.dependency 'EMPush'
-  s.dependency 'AgoraRtcEngine_iOS', '4.0.0-rc.1'
-  s.dependency 'AgoraRtm_iOS','1.5.0'
+#  s.dependency 'AWSMobileClient','2.27.6'
+#  s.dependency 'AWSIoT','2.27.6'
+#  s.dependency 'EMPush'
+  s.dependency 'AgoraRtcEngine_iOS','4.2.0'#可解决4.0.1 jpeg视频收不到流问题
+#  s.dependency 'AgoraRtcEngine_iOS', '4.0.1'
+  # s.dependency 'AgoraRtcEngine_iOS_beta1', '4.0.0-beta.1'
+#  s.dependency 'AgoraRtm_iOS','1.5.0'
+  s.dependency 'CocoaMQTT','2.1.3' #新版MQTT'2.1.5'
+  
 end

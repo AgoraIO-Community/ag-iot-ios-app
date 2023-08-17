@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraIotLink
 
 private let kCellID = "AccountSafeCell"
 private let kBtnHeight:CGFloat = 40
@@ -13,12 +14,14 @@ private let kBtnHeight:CGFloat = 40
 class AccountSafeVC: UIViewController {
 
     
+    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
+    
     fileprivate lazy var loginVM = LoginMainVM()
     
     private var dataArray = [String]()
 
     //private let modifyPwdTitle = "修改密码"
-    private let destoryAccTitle = "注销账号"
+    private let destoryAccTitle = "cancelAccount".L
     
     private let bgColor = UIColor.white
     
@@ -35,7 +38,7 @@ class AccountSafeVC: UIViewController {
         let button = UIButton(type: .custom)
         button.setTitleColor(UIColor(hexRGB: 0x262626), for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-        button.setTitle("退出登录", for: .normal)
+        button.setTitle("logOut".L, for: .normal)
         button.layer.cornerRadius = kBtnHeight * 0.5
         button.layer.borderColor = UIColor(hexRGB: 0x000000, alpha: 0.85).cgColor
         button.layer.borderWidth = 1
@@ -52,7 +55,7 @@ class AccountSafeVC: UIViewController {
     }
     
     private func setupUI() {
-        navigationItem.title = "账号安全"
+        navigationItem.title = "accountSecurity".L
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalTo(UIEdgeInsets.zero)
@@ -90,20 +93,26 @@ extension AccountSafeVC{
     //退出登陆
     func doLogOut(){
         
-        loginVM.doLogOut{ [weak self] success, msg in
-            
-            if success {
-                AGToolHUD.showInfo(info: "退出登录成功")
-                debugPrint("退出登录成功")
-                TDUserInforManager.shared.userSignOut()
-                self?.tabBarController?.selectedIndex = 0
-                self?.navigationController?.popToRootViewController(animated: true)
-                DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
-            }else{
-                AGToolHUD.showInfo(info: msg)
-            }
-            print("\(msg)")
-        }
+        sdk?.unprepare()
+        TDUserInforManager.shared.userSignOut()
+        self.tabBarController?.selectedIndex = 0
+        self.navigationController?.popToRootViewController(animated: true)
+        DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
+        
+//        loginVM.doLogOut{ [weak self] success, msg in
+//
+//            if success {
+//                AGToolHUD.showInfo(info: "退出登录成功")
+//                debugPrint("退出登录成功")
+//                TDUserInforManager.shared.userSignOut()
+//                self?.tabBarController?.selectedIndex = 0
+//                self?.navigationController?.popToRootViewController(animated: true)
+//                DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
+//            }else{
+//                AGToolHUD.showInfo(info: msg)
+//            }
+//            print("\(msg)")
+//        }
         
     }
     
@@ -150,9 +159,10 @@ extension AccountSafeVC: UITableViewDelegate,UITableViewDataSource {
     //注销账号
     private func destoryAccountClick(){
         
-        AGAlertViewController.showTitle("确定注销您的账号吗？", message: "如果您确定注销您的账号，我们立即删除您账户中的个人数据，感谢您的使用!") {[weak self] in
-            self?.destoryAccount()
-        }
+        AGToolHUD.showInfo(info: "该功能暂不支持，敬请期待！")
+//        AGAlertViewController.showTitle("确定注销您的账号吗？", message: "如果您确定注销您的账号，我们立即删除您账户中的个人数据，感谢您的使用!") {[weak self] in
+//            self?.destoryAccount()
+//        }
     }
     
     //注销账号

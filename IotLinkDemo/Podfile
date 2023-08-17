@@ -41,4 +41,6 @@ target 'IotLinkDemo' do
   pod 'SJVideoPlayer', :path => '../libs/SJVideoPlayer'
   pod 'SSKeychain', :path => '../libs/sskeychain'
   
+#  pod 'AgoraRtc_iOS', :path => '../AgoraRtc_iOS.podspec'
+  
 end

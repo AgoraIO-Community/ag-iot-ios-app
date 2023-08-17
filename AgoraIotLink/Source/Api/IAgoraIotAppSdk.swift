@@ -22,69 +22,130 @@
  *
  */
 /*
- * @brief 初始化参数
+ * @brief SDK初始化参数
  */
 public class InitParam : NSObject{
-    @objc public var rtcAppId: String = ""              // appId
+  
+    @objc public var mAppId: String = ""                // 项目的 appId
     @objc public var logFilePath : String? = ""         // 设置日志路径 ,nil:不保存到文件,"":保存到默认路径
-    @objc public var publishAudio = true                // 通话时是否推流本地音频
-    @objc public var publishVideo = false               // 通话时是否推流本地视频
-    @objc public var subscribeAudio = true              // 通话时是否订阅对端音频
-    @objc public var subscribeVideo = true              // 通话时是否订阅对端视频
-    @objc public var ntfAppKey: String = ""             // 离线推送的appkey
-    @objc public var ntfApnsCertName:String = ""        // 离线推送的AnpsCertName
-    @objc public var masterServerUrl:String = ""        // 主服务器后台地址
-    @objc public var slaveServerUrl:String = ""         // 副服务器后台地址
-    @objc public var projectId:String = ""              // 项目Id,作为查询产品列表的过滤条件
+    @objc public var mServerUrl:String = ""             // 服务器后台地址
 }
 
 /*
- * @brief sdk状态
+ * @brief SDK就绪参数
  */
-@objc public enum SdkStatus : Int{
-    case NotReady                                       //登录成功但还在初始化各个子模块中，处于未就绪状态
-    case InitCallFail                                   //登录成功后，初始化呼叫模块出错
-    case InitMqttFail                                   //登录成功后，初始化Mqtt模块出错
-    case InitPushFail                                   //登录成功后，初始化推送模块出错
-    case InitRtmFail                                    //登录成功后，初始化RTM模块出错
-    case AllReady                                       //登录成功后，初始化过程完毕，处于就绪状态
-    case Reconnected                                    //登录成功后，Mqtt重连成功
-    case Disconnected                                   //登录成功后，Mqtt断开连接
+public class PrepareParam : NSObject{
+    
+    @objc public var mUserId: String = ""         // 用户 userId
+    @objc public var mClientType: Int = 2         // 终端类型  1: Web;  2: Phone;  3: Pad;  4: TV;  5: PC;  6: Mini_app
+}
+
+/*
+ * @brief SDK 状态机
+ */
+@objc public enum SdkState:Int {
+    case invalid        // SDK未初始化
+    case initialized    // SDK初始化完成，但还未就绪
+    case preparing      // SDK正在就绪中
+    case runing         // SDK就绪完成，可以正常使用
+    case reconnecting   // SDK正在内部重连中，暂时不可用
+    case unpreparing    // SDK正在注销处理，完成后切换到初始化完成状态
+}
+
+/*
+ * @brief SDK 状态机变化原因
+ */
+@objc public enum StateChangeReason:Int {
+    case none           // 未指定
+    case prepareFail    // 节点prepare失败
+    case network        // 网络状态原因
+    case abort          // 节点被抢占激活
 }
 
 /*
  * @brief SDK引擎接口
  */
 public protocol IAgoraIotAppSdk {
+    
     /*
      * @biref 获取sdk版本信息
      */
     func getSdkVersion()->String
+    
     /*
      * @biref 获取当前mqtt是否连接 连接:true 断开:false
      */
     func getMqttIsConnected() -> Bool
-    /*
-     * @brief 初始化Sdk
-     * @param netStatus:返回当前mqtt网络状态
-     * @param callBackFilter：回调函数返回错误码集中回调(可作为返回错误码/错误消息)过滤。所有带有result回调的接口，都会在调用前触发该回调，参数1:ErrCode,参数2:ErrMessage,返回值:新的(ErrCode,ErrMessage)
-     */
-    func initialize(initParam: InitParam,sdkStatus:@escaping(SdkStatus,String)->Void,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int
 
     /*
-     * @brief 释放SDK所有资源
+     * @brief 初始化Sdk
+     * @param initParam : 初始化参数
+     * @retrun 返回错误码，XOK--初始化成功，SDK状态会切换到 SDK_STATE_INITIALIZED
+     *                   XERR_INVALID_PARAM--参数有错误；XERR_BAD_STATE--当前状态不正确
+     * @param OnSdkStateListener：SDK状态机监听回调（参数1:当前状态，参数2:状态原因）
+     */
+    func initialize(initParam: InitParam,OnSdkStateListener:@escaping(SdkState,StateChangeReason)->Void) -> Int
+    
+    /*
+     * @brief 释放SDK所有资源，所有的组件模块也会被释放
+     *        调用该函数后，SDK状态会切换到 SDK_STATE_INVALID
      */
     func release()
+    
+    /**
+     * @brief 获取SDK当前状态机
+     * @return 返回当前 SDK状态机值，如：SDK_STATE_XXXX
+     */
+    func getStateMachine() -> SdkState?
+    
+    /**
+     * @brief 就绪准备操作，仅在 SDK_STATE_INITIALIZED 状态下才能调用，异步调用，
+     *        异步操作完成后，通过 prepareListener() 回调就绪操作结果
+     *        如果就绪操作成功，则 SDK状态切换到 SDK_STATE_RUNNING 状态
+     *        如果就绪操作失败，则 SDK状态切换回 SDK_STATE_INITIALIZED
+     * @param prepareParam : 就绪操作的参数
+     * @param prepareListener : 就绪操作监听器 errCode=0表示就绪成功 errCode=XERR_NETWORK 表示网络错误，请求失败
+     * @return 返回错误码，XOK--就绪操作请求成功，SDK状态会切换到 SDK_STATE_PREPARING 开始异步就绪操作
+     *                   XERR_BAD_STATE-- 当前 非SDK_STATE_INITIALIZED 状态下调用本函数
+     */
+    func prepare(preParam: PrepareParam,prepareListener:@escaping(Int,String)->Void) -> Int
+    
+    /**
+     * @brief 逆就绪停止运行操作，仅在 SDK_STATE_RUNNING 或者 SDK_STATE_RECONNECTING 或者 SDK_STATE_PREPARING
+     *         这三种状态下才能调用，同步调用
+     *         该函数会触发SDK状态先切换到 SDK_STATE_UNPREPARING 状态，然后切换到 SDK_STATE_INITIALIZED 状态
+     * @return 返回错误码， XOK--逆就绪操作请求成功，SDK状态会切换到 SDK_STATE_INITIALIZED
+     *                   XERR_BAD_STATE-- 当前SDK状态不是 SDK_STATE_RUNNING 或者 SDK_STATE_RUNNING
+     */
+    func unprepare() -> Int
+    
+    /**
+     * @brief 获取用户的userId
+     * @return 返回当前就绪的 userId，如果当前还未就绪，则返回空字符串
+     */
+    func getUserId()->String
+    
+    /**
+     * @brief 获取用户的NodeId
+     * @return 返回当前就绪的 NodeId，如果当前还未就绪，则返回空字符串
+     */
+    func getUserNodeId()->String
+    
+    /*
+     * @brief 获取呼叫系统接口
+     * @return 返回呼叫组件接口，如果当前还未进行初始化，则返回null
+     */
+    var callkitMgr: ICallkitMgr{get}
+    
+    
+    
+    
+    
 
     /*
      * @brief 获取账号管理接口
      */
     var accountMgr: IAccountMgr{get}
-
-    /*
-     * @brief 获取呼叫系统接口
-     */
-    var callkitMgr: ICallkitMgr{get}
 
     /*
      * @brief 获取设备管理接口
@@ -102,4 +163,4 @@ public protocol IAgoraIotAppSdk {
     var notificationMgr: INotificationMgr{get}
 }
 
-public let IAgoraIotSdkVersion = "1.0.1.6"
+public let IAgoraIotSdkVersion = "2.1.0.0"

@@ -36,11 +36,11 @@ class AGTabBarVC: UITabBarController {
         
         let homeVC = HomePageMainVC()
         
-        addChildVC(homeVC, TiensLocalString("首页"), "tabbar1")
+        addChildVC(homeVC, TiensLocalString("home".L), "tabbar1")
         
         let myVC = MinePageMainVC()
 
-        addChildVC(myVC, "我的", "tabbar5")
+        addChildVC(myVC, "me".L, "tabbar5")
     }
     
     func addChildVC(_ vc:UIViewController,_ title:String,_ imgName:String) {

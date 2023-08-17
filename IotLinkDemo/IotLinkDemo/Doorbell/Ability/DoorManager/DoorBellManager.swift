@@ -18,6 +18,8 @@ class DoorBellManager: NSObject {
     var members:Int = 0
     var isPlaying:Bool = false
     
+    var mSessionId = "" //当前会话Id
+    
     fileprivate override init() {
         super.init()
     }
@@ -31,16 +33,16 @@ class DoorBellManager: NSObject {
     }
     
     //推本地音频到对端 mute: 是否禁止
-    func muteLocalAudio(mute: Bool,cb:@escaping(Bool,String)->Void){
-        sdk?.callkitMgr.muteLocalAudio(mute: mute, result: { ec, msg in
+    func muteLocalAudio(sessionId:String,mute: Bool,cb:@escaping(Bool,String)->Void){
+        sdk?.callkitMgr.muteLocalAudio(sessionId: sessionId, mute: mute, result: { ec, msg in
             cb(ec == ErrCode.XOK ? true : false , msg)
             debugPrint("---msg---\(msg)")
         })
     }
     
     //拉取对端音频 mute: 是否禁止
-    func mutePeerAudio(mute: Bool,cb:@escaping(Bool,String)->Void){
-        sdk?.callkitMgr.mutePeerAudio(mute: mute, result: { ec, msg in
+    func mutePeerAudio(sessionId:String, mute: Bool,cb:@escaping(Bool,String)->Void){
+        sdk?.callkitMgr.mutePeerAudio(sessionId: sessionId, mute: mute, result: { ec, msg in
             cb(ec == ErrCode.XOK ? true : false , msg)
             debugPrint("\(msg)")
         })
@@ -57,7 +59,7 @@ class DoorBellManager: NSObject {
     //开始录制当前通话（包括音视频流），仅在通话状态下才能调用
     func talkingRecordStart(cb:@escaping(Bool,String)->Void){
         
-        sdk?.callkitMgr.talkingRecordStart(result: { ec, msg in
+        sdk?.callkitMgr.talkingRecordStart(sessionId: "",outFilePath: "", result: { ec, msg in
             cb(ec == ErrCode.XOK ? true : false , msg)
             debugPrint("\(msg)")
         })
@@ -66,15 +68,15 @@ class DoorBellManager: NSObject {
     
     //停止录制当前通话（包括音视频流），仅在通话状态下才能调用
     func talkingRecordStop(cb:@escaping(Bool,String)->Void){
-        sdk?.callkitMgr.talkingRecordStop(result: { ec, msg in
+        sdk?.callkitMgr.talkingRecordStop(sessionId: "", result: { ec, msg in
             cb(ec == ErrCode.XOK ? true : false , msg)
             debugPrint("\(msg)")
         })
     }
     
     //屏幕截屏 仅在通话状态下才能调用
-    func capturePeerVideoFrame(cb:@escaping(Bool,String,UIImage?)->Void){
-        sdk?.callkitMgr.capturePeerVideoFrame(result: { ec, msg, shotImage in
+    func capturePeerVideoFrame(sessionId:String = "", cb:@escaping(Bool,String,UIImage?)->Void){
+        sdk?.callkitMgr.capturePeerVideoFrame(sessionId: "", result: { ec, msg, shotImage in
             cb(ec == ErrCode.XOK ? true : false , msg,shotImage)
             debugPrint("\(msg)")
         })
@@ -139,45 +141,30 @@ class DoorBellManager: NSObject {
     }
     
     //接听来电
-    func callAnswer(cb:@escaping(Bool,String)->Void,
-                    actionAck:@escaping(ActionAck)->Void){
-         sdk?.callkitMgr.callAnswer(result: {ec,msg in
-             self.sdk?.callkitMgr.muteLocalAudio(mute: true, result: { ec, msg in})
-             self.sdk?.callkitMgr.muteLocalVideo(mute: false, result: { ec, msg in})
+    func callAnswer(sessionId:String = "" ,cb:@escaping(Bool,String)->Void){
+         sdk?.callkitMgr.callAnswer(sessionId:sessionId, pubLocalAudio:true, result: {ec,msg in
+             self.sdk?.callkitMgr.muteLocalAudio(sessionId: sessionId, mute: true, result: { ec, msg in})
             log.i("demo app callAnswer ret:\(msg)(\(ec))")
             if(ec == ErrCode.XOK){
                 cb(ec == ErrCode.XOK ? true : false , msg)
             }
-        },
-        actionAck: {ack in
-            log.i("demo app callAnser ack:\(ack)")
-            if(ack == .RemoteHangup){
-                self.members = 0
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
-            }
-            actionAck(ack)
-        },
-        memberState:{s,a in
-             if(s == .Enter){self.members = self.members + a.count}
-             if(s == .Leave){self.members = self.members - a.count}
-             if(s == .Exist){self.members = 0}
-             log.i("demo app member count \(DoorBellManager.shared.members):\(s.rawValue) \(a)")
-             
-             NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
-         })
-        
+        })
     }
 
     //挂断来电
-    func hungUpAnswer(cb:@escaping(Bool,String)->Void){
-        if(sdk?.callkitMgr.getNetworkStatus().isBusy == true){
-            sdk?.callkitMgr.callHangup(result: {ec,msg in
-                log.i("demo app callHangup ret:\(msg)(\(ec))")
-                debugPrint("挂断 ret:\(msg)(\(ec))")
-                DoorBellManager.shared.members = 0
-                cb(ec == ErrCode.XOK ? true : false , msg)
-            })
+    func hungUpAnswer( sessionId:String = "" ,cb:@escaping(Bool,String)->Void){
+        var tempSessionId = sessionId
+        if sessionId == ""{
+            tempSessionId = mSessionId
+        }else{
+            mSessionId = sessionId
         }
+        sdk?.callkitMgr.callHangup(sessionId: tempSessionId, result: {ec,msg in
+            log.i("demo app callHangup ret:\(msg)(\(ec))")
+            debugPrint("挂断 ret:\(msg)(\(ec))")
+            DoorBellManager.shared.members = 0
+            cb(ec == ErrCode.XOK ? true : false , msg)
+        })
     }
     
     func unregister(account:String, _ cb:@escaping(Bool,String)->Void){

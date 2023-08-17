@@ -15,39 +15,33 @@ extension DoorBellManager{
 //    var isPlaying:Bool = false
     
 //    public static let shared = DoorbellAbilityViewModel()
+
     //呼叫设备
-    func wakeupDevice(_ dev:IotDevice,_ cb:@escaping(Bool,String)->Void,_ action:@escaping(ActionAck)->Void){
+    func wakeupDevice(_ dev:MDeviceModel,_ cb:@escaping(Int,String,String)->Void,_ action:@escaping(String,ActionAck)->Void,_ memberState:@escaping(Int,String)->Void){
         guard let callMgr = sdk?.callkitMgr else{
-            cb(false,"sdk 呼叫服务 未初始化")
+            log.i("sdk.callkitMgr not init")
+            cb(-1,"","")
             return
         }
-        callMgr.callDial(device:dev,attachMsg: "",result:{
-            (ec,msg) in
-            cb(ec == ErrCode.XOK ? true : false , msg)
-        },actionAck: {s in
+        let dailParam = DialParam(mPeerNodeId: dev.peerNodeId, mAttachMsg: "attachMsg", mPubLocalAudio: true)
+        callMgr.callDial(dialParam: dailParam,result:{
+            (ec,sessionId,peerNodeId) in
+            cb(ec, sessionId, peerNodeId)
+        },actionAck: {s,sessionId,peerNodeId in
             var msg = "未知的设备操作"
+            self.mSessionId = sessionId
             switch(s){
-                case .AcceptFail:msg="接听失败"
                 case .RemoteAnswer:msg = "设备接听"
                 case .RemoteHangup:msg = "设备挂断"
-                case .RemoteBusy:msg = "设备忙碌"
-                case .LocalAnswer:msg = "本地接听"
                 case .LocalHangup:msg = "本地挂断"
                 case .UnknownAction:msg = "未知行为"
                 case .RemoteVideoReady:msg = "首次收到设备视频"
-                case .RemoteAudioReady:msg = "首次收到设备音频"
-                case .CallForward:msg = "呼叫中"
                 case .CallIncoming:msg = "设备来电"
-                case .CallOutgoing:msg = "本地拨通"
-                case .LocalTimeout:msg = "呼叫超时"
-                case .StateInited:msg = "初始化呼叫状态"
                 case .RemoteTimeout:msg = "对端超时"
-                case .RecordEnd:msg = "云录停止"
                 
             }
             log.i("呼叫事件:\(msg)")
             if(s == .RemoteHangup){
-//                self._status.trans(FsmView.Event.BACK)
                 self.members = 0
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
             }
@@ -55,13 +49,14 @@ extension DoorBellManager{
                 self.members = self.members + 1
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
             }
-            action(s)
-        },memberState:{s,a in
+            action(sessionId,s)
+        },memberState:{s,a,sessionId in
             if(s == .Exist){self.members = 0}
             if(s == .Enter){self.members = self.members + 1}
             if(s == .Leave){self.members = self.members - 1}
             log.i("demo app member count \(self.members):\(s.rawValue) \(a)")
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+            memberState(self.members,sessionId)
+//            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
         })
         
         //sdk?.callkitMgr.mutePeerVideo(mute: false, result: { state, msg in
@@ -82,14 +77,14 @@ extension DoorBellManager{
         return iotsdk.deviceMgr.stopPlayback()
     }
     //挂断设备
-    func hangupDevice(_ cb:@escaping(Bool,String)->Void){
+    func hangupDevice(sessionId : String = "", _ cb:@escaping(Bool,String)->Void){
         log.i("demo app local req Hangup")
         guard let callMgr = sdk?.callkitMgr else{
             cb(false,"sdk 呼叫服务 未初始化")
             return
         }
         members = 0
-        iotsdk.callkitMgr.callHangup(result: { ec, msg in
+        iotsdk.callkitMgr.callHangup(sessionId: sessionId, result: { ec, msg in
             log.i("demo app call Hangup result:\(msg)(\(ec))")
             cb(ec == ErrCode.XOK ? true : false,msg)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
@@ -98,36 +93,36 @@ extension DoorBellManager{
     }
     
     //接听来电
-    func callAnswer2(cb:@escaping(Bool,String)->Void,
-                    actionAck:@escaping(ActionAck)->Void){
-         sdk?.callkitMgr.callAnswer(result: {ec,msg in
-            log.i("demo app callAnswer ret:\(msg)(\(ec))")
-            if(ec == ErrCode.XOK){
-                cb(ec == ErrCode.XOK ? true : false , msg)
-            }
-        },
-        actionAck: {ack in
-            log.i("demo app callAnser ack:\(ack)")
-             if(ack == .RemoteHangup){
-                 self.members = 0
-                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
-             }
-//             if(ack == .RemoteAnswer){
-//                 self.members = self.members + 1
+//    func callAnswer2(cb:@escaping(Bool,String)->Void,
+//                    actionAck:@escaping(ActionAck)->Void){
+//        sdk?.callkitMgr.callAnswer(sessionId: "", pubLocalAudio: true,result: {ec,msg in
+//            log.i("demo app callAnswer ret:\(msg)(\(ec))")
+//            if(ec == ErrCode.XOK){
+//                cb(ec == ErrCode.XOK ? true : false , msg)
+//            }
+//        },
+//        actionAck: {ack in
+//            log.i("demo app callAnser ack:\(ack)")
+//             if(ack == .RemoteHangup){
+//                 self.members = 0
 //                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
 //             }
-            actionAck(ack)
-            
-        },
-        memberState:{s,a in
-             if(s == .Exist){self.members = 0}
-             if(s == .Enter){self.members = self.members + a.count}
-             if(s == .Leave){self.members = self.members - a.count}
-             log.i("demo app member count \(self.members):\(s.rawValue) \(a)")
-             NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
-         })
-        
-    }
+////             if(ack == .RemoteAnswer){
+////                 self.members = self.members + 1
+////                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+////             }
+//            actionAck(ack)
+//
+//        },
+//        memberState:{s,a in
+//             if(s == .Exist){self.members = 0}
+//             if(s == .Enter){self.members = self.members + a.count}
+//             if(s == .Leave){self.members = self.members - a.count}
+//             log.i("demo app member count \(self.members):\(s.rawValue) \(a)")
+//             NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+//         })
+//
+//    }
     
     
     //-----------------------以上为获取网络数据部分----------------------------

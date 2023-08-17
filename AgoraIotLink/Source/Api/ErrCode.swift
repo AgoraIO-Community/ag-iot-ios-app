@@ -46,6 +46,12 @@ public class ErrCode : NSObject{
     @objc public static let XERR_NETWORK = -10012                       ///< 网络错误
     @objc public static let XERR_TOKEN_INVALID = -10015                 ///< Token无效
     @objc public static let XERR_API_RET_FAIL = -10016                  ///< 调用依赖api返回失败
+    @objc public static let XERR_HTTP_JSON_WRITE = -10017               ///< 发送 JSON格式的HTTP请求数据时，JSON组包失败
+    @objc public static let XERR_HTTP_NO_RESPONSE = -10018              ///< 服务有响应回复，但是没有带响应数据回来
+    @objc public static let XERR_HTTP_RESP_CODE = -10019                ///< 服务返回错误
+    @objc public static let XERR_HTTP_RESP_DATA = -10020                ///< 服务器返回的没有有效的响应数据
+    @objc public static let  XERR_NOT_AUTHORIZED = -10021               ///< 由于账号或密码不对，MQTT连接服务器失败
+    //
     //
     // 账号相关错误
     //

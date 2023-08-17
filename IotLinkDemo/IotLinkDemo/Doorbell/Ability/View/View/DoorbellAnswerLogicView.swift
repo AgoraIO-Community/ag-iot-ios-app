@@ -234,13 +234,6 @@ class DoorbellAnswerLogicView: UIView {
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: cReceiveCallSuccessNotify), object: nil, userInfo: ["success":true])
                 }
                 self?.callAnswerBtnBlock?()
-            } actionAck: { [weak self] ack in
-                if(ack == .RemoteVideoReady){
-                    log.i("demo app RemoteVideoReady")
-                    //首帧成功可显示发通知
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteVideoReadyNotify), object: nil)
-                }
-                self?.handelAnswerCallAct(ack)
             }
         }
     }
@@ -250,21 +243,18 @@ class DoorbellAnswerLogicView: UIView {
         
         AGToolHUD.disMiss()
         
-        if(act == .CallOutgoing){
-            debugPrint("本地来电振铃")
-        }
-        else if(act == .RemoteHangup){
+        if(act == .RemoteHangup){
             //设备休眠时会走此回调
             debugPrint("设备挂断")
             callAnswerHungUpBlock?()
         }
-        else if(act == .RemoteAnswer || act == .CallForward){
+        else if(act == .RemoteAnswer){
             debugPrint("设备接听")
         }
         else if(act == .RemoteVideoReady){
             debugPrint("获取到首帧")
         }
-        else if(act == .LocalTimeout || act == .UnknownAction){
+        else if(act == .UnknownAction){
             debugPrint("呼叫超时")
         }
     }

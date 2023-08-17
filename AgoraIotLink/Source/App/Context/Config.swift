@@ -8,10 +8,19 @@
 import Foundation
 
 class Config {
-    private var _appId: String = ""
-    var ntfAppKey: String = ""
-    var ntfApnsCertName:String = ""//io.agora.iot"//com.agora.iotsdk.demo"
-    var ntfEnableConsoleLog:Bool = true //推送日志打印到console
+    
+    /*
+     2.0新增参数
+     */
+    var masterAppId : String = ""
+    var userId : String = ""
+    var pusherId : String = ""
+
+    
+//    private var _appId: String = ""
+//    var ntfAppKey: String = ""
+//    var ntfApnsCertName:String = ""//io.agora.iot"//com.agora.iotsdk.demo"
+//    var ntfEnableConsoleLog:Bool = true //推送日志打印到console
     /*
      0, Output all logs
      1, Output warnings and errors
@@ -24,7 +33,7 @@ class Config {
     
     let calloutTimeOut:Double = 30 //呼叫超时时间
     let inComingTimeOut:Double = 30 //来电超时时间
-    var appId:String{get{return _appId}set{_appId = newValue}}
+//    var appId:String{get{return _appId}set{_appId = newValue}}
     
     var agoraServerUrl:String = "" 
     var iotlinkServerUrl:String = ""

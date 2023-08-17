@@ -25,9 +25,8 @@ class RuleManager{
         _fsmApp.listener = AppListener(app: app)
         _playback = PlayListener(app:app)
         _fsmPlay.listener = _playback
-        _fsmApp.getFsmState().listener = app.status
+//        _fsmApp.getFsmState().listener = app.status
         _fsmApp.getFsmPush().listener = PushListener(app:app)
-        _fsmApp.getFsmMqtt().listener = MqttListener(app:app)
         
     }
     
@@ -44,7 +43,6 @@ class RuleManager{
         else{
             _fsmApp.getFsmState().start(queue: queue)
             _fsmApp.getFsmPush().start(queue: queue)
-            _fsmApp.getFsmMqtt().start(queue: queue)
             _fsmApp.start(queue:queue)
             _fsmPlay.start(queue: queue)
         }
@@ -72,10 +70,6 @@ class RuleManager{
 
     func trans(_ evt:FsmPush.Event,_ act:@escaping ()->Void={},_ fail:@escaping ()->Void = {}){
         transByMain(self._fsmApp.getFsmPush(),evt.rawValue,act,fail)
-    }
-    
-    func trans(_ evt:FsmMqtt.Event,_ act:@escaping ()->Void={},_ faile:@escaping ()->Void = {}){
-        transByMain(self._fsmApp.getFsmMqtt(),evt.rawValue,act,faile)
     }
     
     func trans(_ evt:FsmPlay.Event,_ act:@escaping ()->Void={},_ faile:@escaping ()->Void = {}){

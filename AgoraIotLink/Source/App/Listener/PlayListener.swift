@@ -29,7 +29,7 @@ class PlayListener : FsmPlay.IListener{
         rtcSetting.subscribeAudio = setting.subscribeAudio
         rtcSetting.subscribeVideo = setting.subscribeVideo
         
-        app.proxy.rtc.createAndEnter(appId: sess.appId, setting: rtcSetting, uid: uid,name: name, token:token, info: "",
+        app.proxy.rtc.createAndEnter(appId: sess.appId, setting: rtcSetting, uid: uid,peerId:0, name: name, token:token, info: "",
                                      cb: {ret,msg in
             if(ret == .Fail){
                 log.e("player rtc.createAndEnter failed:\(msg)")
@@ -105,7 +105,7 @@ class PlayListener : FsmPlay.IListener{
     }
     
     func start(channelName: String,token:String, uid: UInt, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
-        sess.appId = app.config.appId //"aab8b8f5a8cd4469a63042fcfafe7063"
+        sess.appId = app.config.masterAppId //"aab8b8f5a8cd4469a63042fcfafe7063"
         sess.token = token
         sess.peerUid = uid
         sess.channel = channelName

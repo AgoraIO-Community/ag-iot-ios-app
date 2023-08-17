@@ -34,23 +34,23 @@ class NotificationManager : INotificationMgr{
     }
     
     func updateToken(_ deviceToken:Data){
-        app.proxy.ntf.updateToken(deviceToken)
+//        app.proxy.ntf.updateToken(deviceToken)
     }
     
     func enableNotify(enable:Bool,result:@escaping(Int,String)->Void){
         DispatchQueue.main.async {
             let eid = self.app.context.push.session.eid
-            self.app.proxy.mqtt.publishEnableNotify(eid:eid,enable: enable,result: {ec,msg in
-                if(ec == ErrCode.XOK){
-                    self.app.context.push.session.pushEnabled = enable
-                }
-                self.asyncResult(ec,msg,result)
-            })
+//            self.app.proxy.mqtt.publishEnableNotify(eid:eid,enable: enable,result: {ec,msg in
+//                if(ec == ErrCode.XOK){
+//                    self.app.context.push.session.pushEnabled = enable
+//                }
+//                self.asyncResult(ec,msg,result)
+//            })
         }
     }
 
     func queryAll(result:@escaping(UNNotification,String)->Void){
-        app.proxy.ntf.createQueryAllcompletion(queryAllcompletion: result)
+//        app.proxy.ntf.createQueryAllcompletion(queryAllcompletion: result)
     }
 
     func queryByDevice(productKey: String, deviceId: String,result:@escaping(Int,String)->Void){

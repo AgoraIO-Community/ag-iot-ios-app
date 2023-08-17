@@ -36,4 +36,50 @@ extension String{
              }
              return pos
          }
+    
+    static func getDictionaryFromJSONString(data:[UInt8]) -> Dictionary<String, Any> {
+        if let string = String(bytes: data, encoding: .utf8) {
+            // 将字符串转化为字典
+            if let dictionary = try? JSONSerialization.jsonObject(with: string.data(using: .utf8)!, options: []) as? [String: Any] {
+                return dictionary
+            }else{
+                return  Dictionary<String, Any>()
+            }
+        }else{
+            return  Dictionary<String, Any>()
+        }
+    }
+    
+    static func getDictionaryFromData(data:Data) -> Dictionary<String, Any> {
+        if let string = String(data: data, encoding: .utf8) {
+            // 将字符串转化为字典
+            if let dictionary = try? JSONSerialization.jsonObject(with: string.data(using: .utf8)!, options: []) as? [String: Any] {
+                return dictionary
+            }else{
+                return  Dictionary<String, Any>()
+            }
+        }else{
+            return  Dictionary<String, Any>()
+        }
+    }
+}
+
+extension Dictionary{
+    
+    public func convertDictionaryToJSONString()->String {
+        
+        var jsonStr : String = ""
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: self, options: [])
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                jsonStr = jsonString
+                log.i("convertDictionaryToJSONString:\(jsonString) ")
+            }
+        } catch {
+            print("Error converting dictionary to JSON: \(error.localizedDescription)")
+        }
+        return jsonStr
+        
+    }
+    
 }

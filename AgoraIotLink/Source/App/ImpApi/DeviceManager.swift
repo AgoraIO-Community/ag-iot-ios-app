@@ -155,10 +155,10 @@ class DeviceManager : IDeviceMgr{
     }
     
     func register(listener: IDeviceStateListener) {
-        DispatchQueue.main.async {
-            self.app.proxy.mqtt.setListener(listener: listener)
-            //self.app.proxy.rtm.setOnDataArrived(onDataArrived: onDataArrived)
-        }
+//        DispatchQueue.main.async {
+//            self.app.proxy.mqtt.setListener(listener: listener)
+//            //self.app.proxy.rtm.setOnDataArrived(onDataArrived: onDataArrived)
+//        }
     }
     
     func queryProductList(query:ProductQueryParam, result:@escaping(Int,String,[ProductInfo])->Void){
@@ -298,13 +298,13 @@ class DeviceManager : IDeviceMgr{
     
     func setDeviceProperty(deviceId: String, properties: Dictionary<String, Any>, result: @escaping (Int, String) -> Void) {
         DispatchQueue.main.async {
-            self.app.proxy.mqtt.setDeviceStatus(account: self.app.context.gyiot.session.account, things_name: deviceId, params: properties, result: {ec,msg in self.asyncResult(ec, msg, result)})
+//            self.app.proxy.mqtt.setDeviceStatus(account: self.app.context.gyiot.session.account, things_name: deviceId, params: properties, result: {ec,msg in self.asyncResult(ec, msg, result)})
         }
     }
     
     func getDeviceProperty(deviceId:String, result: @escaping (Int, String, Dictionary<String, Any>?,Dictionary<String, Any>?) -> Void) {
         DispatchQueue.main.async {
-            self.app.proxy.mqtt.getDeviceStatus(things_name: deviceId,result:{ec,msg,d1,d2 in self.asyncResultData2(ec, msg,d1,d2, result)})
+//            self.app.proxy.mqtt.getDeviceStatus(things_name: deviceId,result:{ec,msg,d1,d2 in self.asyncResultData2(ec, msg,d1,d2, result)})
         }
     }
     
@@ -344,52 +344,52 @@ class DeviceManager : IDeviceMgr{
 //            topicRtmUpdate = "$aws/things/" + self.app.context.virtualNumber + "/shadow/name/rtm/update"
 //            self.app.proxy.mqtt.publish(data: jsonStrRtm!, topic: topicRtmUpdate, qos: .messageDeliveryAttemptedAtLeastOnce)
 
-            let agToken = self.app.context.aglab.session.accessToken
-            let local = self.app.context.virtualNumber
-            let peer = deviceId
-
-            self.app.proxy.al.reqControlInfo(agToken, local, peer) { ec, msg, sess in
-                if(ErrCode.XOK == ec){
-                    guard let sess = sess else{
-                        log.e("rtm sess is nil")
-                        self.asyncResult(ErrCode.XERR_UNKNOWN,msg,result)
-                        return
-                    }
-                    self.app.context.rtm.session.token = sess.token
-                    self.app.context.rtm.session.peerVirtualNumber = peer
-                    let uid = self.app.context.virtualNumber
-                    self.app.proxy.rtm.enter(self.app.context.rtm.session,uid,statusUpdated) { tr, msg in
-                        if(tr != .Succ){
-                            log.e("rtm enter not succ,reset session")
-                            self.app.context.rtm.session.reset()
-                        }
-                        self.asyncResult(tr == .Succ ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,msg,result)
-                    }
-                }
-                else{
-                    self.asyncResult(ec,msg,result)
-                }
-            }
+//            let agToken = self.app.context.aglab.session.accessToken
+//            let local = self.app.context.virtualNumber
+//            let peer = deviceId
+//
+//            self.app.proxy.al.reqControlInfo(agToken, local, peer) { ec, msg, sess in
+//                if(ErrCode.XOK == ec){
+//                    guard let sess = sess else{
+//                        log.e("rtm sess is nil")
+//                        self.asyncResult(ErrCode.XERR_UNKNOWN,msg,result)
+//                        return
+//                    }
+//                    self.app.context.rtm.session.token = sess.token
+//                    self.app.context.rtm.session.peerVirtualNumber = peer
+//                    let uid = self.app.context.virtualNumber
+//                    self.app.proxy.rtm.enter(self.app.context.rtm.session,uid,statusUpdated) { tr, msg in
+//                        if(tr != .Succ){
+//                            log.e("rtm enter not succ,reset session")
+//                            self.app.context.rtm.session.reset()
+//                        }
+//                        self.asyncResult(tr == .Succ ? ErrCode.XOK : ErrCode.XERR_API_RET_FAIL,msg,result)
+//                    }
+//                }
+//                else{
+//                    self.asyncResult(ec,msg,result)
+//                }
+//            }
         }
     }
     
     func sendMessageEnd() {
-        self.app.proxy.rtm.leave { succ in
-            if(!succ){
-                log.w("rtm leave fail")
-            }
-        }
+//        self.app.proxy.rtm.leave { succ in
+//            if(!succ){
+//                log.w("rtm leave fail")
+//            }
+//        }
     }
     
     func sendMessage(data: Data, description: String, result: @escaping (Int, String) -> Void) {
-        DispatchQueue.main.async {
-            let peerVirtualNumber = self.app.context.rtm.session.peerVirtualNumber
-            self.app.proxy.rtm.sendRawMessage(toPeer: peerVirtualNumber, data: data, description: description, cb: {ec,msg in self.asyncResult(ec,msg,result)})
-        }
+//        DispatchQueue.main.async {
+//            let peerVirtualNumber = self.app.context.rtm.session.peerVirtualNumber
+//            self.app.proxy.rtm.sendRawMessage(toPeer: peerVirtualNumber, data: data, description: description, cb: {ec,msg in self.asyncResult(ec,msg,result)})
+//        }
     }
     
     private func doStartPlayback(channelName: String, result: @escaping (Int, String) -> Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
-        let appId = self.app.config.appId
+        let appId = self.app.config.masterAppId
         let agToken = self.app.context.aglab.session.accessToken
         app.proxy.al.reqPlayerToekn(agToken, appId, channelName) { ec, msg, sess in
             if(ec != ErrCode.XOK){

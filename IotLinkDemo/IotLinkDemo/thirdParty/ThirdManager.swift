@@ -15,10 +15,12 @@ class ThirdAccountManager{
     class api{
     #if false //dev 国内环境
         static let http_3rdParty = "https://third-user.sh.agoralab.co/third-party"
-    #elseif true //prd 国内环境
+    #elseif false //prd 国内环境
         static let http_3rdParty = "https://third-user.sh3.agoralab.co/third-party"
     #elseif false //dev 国外
         static let http_3rdParty = "https://third-user.la3.agoralab.co/third-party"
+    #elseif true //dev 2.0
+        static let http_3rdParty =  "https://api.sd-rtn.com/agoralink/cn/api" //"https://iot-api-gateway.sh.agoralab.co/api"
     #elseif false //prd 国外
         
     #endif
@@ -30,6 +32,12 @@ class ThirdAccountManager{
         static let getUid =          "/auth/getUidByUsername"
         static let getVerifyCode =   "/sys-verification-code/v1/sendRegisterCode" //注册 发送验证码
         static let getResetPwdVerifyCode =   "/sys-verification-code/v1/sendResetPwdCode" //重置密码 发送验证码
+        
+        //创建用户mode
+        static let  nodeCreate = "/iot-core/v2/secret-node/user/create"
+        //激活用户node
+        static let  nodeActivate = "/iot-core/v2/secret-node/user/activate"
+
         
         struct Rsp:Decodable{
             let code:Int
@@ -87,6 +95,41 @@ class ThirdAccountManager{
                 let data:Data?
             }
         }
+        
+        class createNode{
+            
+            struct Data : Decodable{
+                let nodeId:String
+                let region:String
+            }
+            struct Rsp : Decodable{
+                let code:Int
+                let msg:String
+                let timestamp:UInt64
+                let success:Bool
+                let data:Data?
+            }
+        }
+        
+        class activateNode{
+            
+            struct Data : Decodable{
+                let nodeId:String
+                let nodeToken:String
+                let nodeRegion:String
+                let mqttServer:String
+                let mqttPort:Int
+                let mqttUsername:String
+            }
+            struct Rsp : Decodable{
+                let code:Int
+                let msg:String
+                let timestamp:UInt64
+                let success:Bool
+                let data:Data?
+            }
+        }
+
         
         public class func handleLoginRsp(_ ret:Login.Rsp,_ rsp:@escaping (Int,String,LoginParam?)->Void){
             if(ret.code != 0){
@@ -158,6 +201,8 @@ class ThirdAccountManager{
         
     }
         
+    let userId = "18510378892"
+    
     class func reqRegister(_ userName:String,_ password:String,_ rsp:@escaping(Int,String)->Void){
         let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
         let params = ["username":userName,"password":password]
@@ -340,6 +385,75 @@ class ThirdAccountManager{
             }
         }
     }
+    
+    
+    class func nodeCreate(_ account : String, _ rsp:@escaping(Int,String,String)->Void){
+        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8","traceId":"123456789"]
+        let params = ["userId":account,"clientType":"2","masterAppId":TDUserInforManager.shared.curMasterAppId]//d0177a34373b482a9c4eb4dedcfa586a
+        let paramsDic = ["payload":params]
+        let url = api.http_3rdParty + api.nodeCreate
+        
+//        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in
+//
+//            guard  reData != nil else{
+//                return
+//            }
+//
+//            print("123456")
+//
+//        }
+
+        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
+            .validate()
+            .responseDecodable(of:api.createNode.Rsp.self){(dataRsp:AFDataResponse<api.createNode.Rsp>) in
+            URLCache.shared.removeAllCachedResponses()
+            switch dataRsp.result{
+            case .success(let ret):
+                if(ret.code != 0){
+                    log.e("3rd nodeCreate fail \(ret.msg)(\(ret.code))")
+                }
+                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret.data?.nodeId ?? "")
+            case .failure(let error):
+                log.e("3rd nodeCreate \(url) , detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error","")
+            }
+        }
+    }
+    
+    class func nodeActivate(_ rsp:@escaping(Int,String,api.activateNode.Rsp?)->Void){
+        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8","traceId":"123456"]
+        let params = ["userId":"18510378892","clientType":"2","masterAppId":"d0177a34373b482a9c4eb4dedcfa586a","pusherId":"d0177a34"]
+        let paramsDic = ["payload":params]
+        let url = api.http_3rdParty + api.nodeActivate
+        
+        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in
+
+            guard  reData != nil else{
+                return
+            }
+
+
+            print("123456")
+
+        }
+
+        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
+            .validate()
+            .responseDecodable(of:api.activateNode.Rsp.self){(dataRsp:AFDataResponse<api.activateNode.Rsp>) in
+            URLCache.shared.removeAllCachedResponses()
+            switch dataRsp.result{
+            case .success(let ret):
+                if(ret.code != 0){
+                    log.e("3rd resetPassword fail \(ret.msg)(\(ret.code))")
+                }
+                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret)
+            case .failure(let error):
+                log.e("3rd resetPassword \(url) , detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
+            }
+        }
+    }
+    
 }
 
 class Utils{

@@ -14,10 +14,11 @@ class GeneralSettingVC: AGBaseVC {
     
     private var dataArray = Array<Array<String>>()
 
-    private let pushMsgTitle = "消息推送"
+    private let pushMsgTitle = "messages".L
     private var versionTitle = "检查应用更新"
-    private let accountSafeTitle = "账号安全"
-    private let systemSetUpTitle = "系统权限设置"
+    private let accountSafeTitle = "accountSecurity".L
+    private let systemSetUpTitle = "systemPermissionSettings".L
+    private let appIdTitle = "Clear AppId data".L
     
     private let bgColor = UIColor(hexRGB: 0xF6F6F6)
 
@@ -29,7 +30,7 @@ class GeneralSettingVC: AGBaseVC {
     
     
     private func setupUI() {
-        navigationItem.title = "通用设置"
+        navigationItem.title = "generalSettings".L
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalTo(UIEdgeInsets.zero)
@@ -43,10 +44,11 @@ class GeneralSettingVC: AGBaseVC {
     private func setupData(){
         dataArray = [
             [
-                pushMsgTitle,
+//                pushMsgTitle,
 //                versionTitle,
                 accountSafeTitle,
-                systemSetUpTitle,
+//                systemSetUpTitle,
+                appIdTitle,
             ],
         ]
         tableView.reloadData()
@@ -122,6 +124,9 @@ extension GeneralSettingVC: UITableViewDelegate,UITableViewDataSource {
         case systemSetUpTitle:
             showSystemSettingVC()
             break
+        case appIdTitle:
+            showAppIdClearAlert()
+            break
         default:
             break
         }
@@ -144,6 +149,17 @@ extension GeneralSettingVC: UITableViewDelegate,UITableViewDataSource {
     private func showSystemSettingVC(){
         let vc = SystemSettingVC()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func showAppIdClearAlert(){
+        AGAlertViewController.showTitle("Clear AppId data".L, message: "温馨提示：清除AppId数据后，应用将自动退出,需重新启动应用才生效") {
+            TDUserInforManager.shared.clearMasterAppId()
+            TDUserInforManager.shared.userSignOut()
+            AGToolHUD.showInfo(info: "已清除appId,应用即将自动退出,请重新打开")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                TDUserInforManager.shared.exitApplication()
+            }
+        }
     }
 
 }

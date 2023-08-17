@@ -7,50 +7,72 @@
 
 import Foundation
 
-class StateListener : FsmState.IListener{
-    func do_INITRTM_FAIL(_ srcState: FsmState.State) {
-        _statusHandler(.InitRtmFail,"rtm init faill")
+class StateListener : NSObject{
+
+
+    func do_Invalid() {
+        app.sdkState = .invalid
+        _statusHandler(.invalid,.none)
     }
     
-    func do_INITPUSH_FAIL(_ srcState: FsmState.State) {
-        _statusHandler(.InitPushFail,"push init fail")
+    func do_Initialized(_ reason : StateChangeReason) {
+        app.sdkState = .initialized
+        _statusHandler(.initialized,reason)
     }
     
-    func do_INITCALL_FAIL(_ srcState: FsmState.State) {
-        _statusHandler(.InitCallFail,"callkit init fail")
+    func do_Preparing(_ reason : StateChangeReason) {
+        app.sdkState = .preparing
+        _statusHandler(.preparing,reason)
     }
     
-    func do_INITMQTT_FAIL(_ srcState: FsmState.State) {
-        _statusHandler(.InitMqttFail,"Mqtt init fail")
+    func do_Runing(_ reason : StateChangeReason) {
+        app.sdkState = .runing
+        _statusHandler(.runing,reason)
     }
     
-    func do_NOTREADY(_ srcState: FsmState.State) {
-        _statusHandler(.NotReady,"not ready")
+    func do_Reconnecting(_ reason : StateChangeReason) {
+        app.sdkState = .reconnecting
+        _statusHandler(.reconnecting,reason)
     }
     
-    func do_ALLREADY(_ srcState: FsmState.State) {
-        _statusHandler(.AllReady,"all ready")
+    func do_Unpreparing(_ reason : StateChangeReason) {
+        app.sdkState = .unpreparing
+        _statusHandler(.unpreparing,reason)
     }
     
+    
+
     let app:Application
-    var _statusHandler:(SdkStatus,String)->Void = {n,s in}
-    func setStatusHandler(handler:@escaping(SdkStatus,String)->Void){
+    var _statusHandler:(SdkState,StateChangeReason)->Void = {n,s in}
+    func setStatusHandler(handler:@escaping(SdkState,StateChangeReason)->Void){
         _statusHandler = handler
+        app.proxy.cocoaMqtt.waitForListenerDesired(listenterDesired: onMqttListenerDesired)
     }
-    func onMqttStatusChanged(status:IotMqttSession.Status){
-        if(status == .Connecting){
-            _statusHandler(.Disconnected,"Mqtt connecting")
+    
+    private func onMqttListenerDesired(state:MqttState,msg:String){
+
+        log.i("onMqttListenerDesired state : \(state.rawValue)")
+        
+        switch state {
+        case .ConnectDone:
+            break
+        case .ConnectFail:
+            do_Initialized(.abort)
+            break
+        case .ScribeDone:
+            do_Runing(.none)
+            break
+        case .ScribeFail:
+            break
+        case .ConnectionLost:
+            do_Reconnecting(.network)
+            break
+        default:
+            break
         }
-        else if(status == .ConnectionError){
-            _statusHandler(.Disconnected,"Mqtt connect fail")
-        }
-        else if(status == .Disconnected){
-            _statusHandler(.Disconnected,"Mqtt disconnected")
-        }
-        else if(status == .Connected){
-            _statusHandler(.Reconnected, "Mqtt auto connected")
-        }
+
     }
+    
     init(_ app:Application){
         self.app = app;
     }

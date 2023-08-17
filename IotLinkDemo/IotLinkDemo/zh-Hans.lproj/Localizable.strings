@@ -1,4 +1,4 @@
-/* 
+/*
   Localizable.strings
   AgoraIoT
 
@@ -6,857 +6,457 @@
   
 */
 
+"userAgreementAndPrivacyPolicy" = "用户协议与隐私政策";
+"privacyPolicy" = "隐私政策";
+"userAgreement" = "用户协议";
+"and" = "与";
+"agree" = "同意";
+"disagree" = "不同意";
+
+"register" = "注册";
+"login" = "登录";
+
+"getVerificationCode" = "获取验证码";
+
+"pleaseEnterVerificationCode" = "请输入验证码";
+"verificationCodeHasBeenSent" = "验证码已发送";
+
+"setPassword" = "设置密码";
+"password" = "密码";
+"includingLettersAndNumbers" = "8-20个字符，包含字母和数字";
+"finished" = "完成";
+
+"pleaseEnterYourAccount" = "请输入账号";
+"forgetPassword" = "忘记密码";
+"wrongAccountOrPassword" = "账号或密码输入有误";
+
+"wrongAccount" = "输入账号有误";
+"getVerificationCode" = "获取验证码";
+
+"myDevices" = "我的设备";
+"noDevices" = "暂无设备";
+"addDevices" = "添加设备";
+"home" = "首页";
+"me" = "我的";
+
+"addDevicesByScanning" = "扫一扫添加设备";
+"pleaseScanTheQRCodeOnTheDeviceOrManual" = "请扫描设备或说明书上的二维码";
+"addItManuallyIfThereIsNoQRCode" = "没有二维码，手动添加";
+"album" = "相册";
+"flashlight" = "手电筒";
+
+"theCurrentNetworkIsNotAvailable" = "当前网络不可用";
+"pleaseCheck" = "请检查手机网络";
+"visualDoorbell" = "可视门铃";
+"offline" = "离线";
+"motionDetection" = "移动侦测";
+"sharesIReceived" = "我接收的共享";
+
+"resetTheDevice" = "请先重置设备";
+"cancel" = "取消";
+"installTheBatteryOrConnectThePowerSupply" = "请先安装电池或连接电源";
+"pressTheButtonInBatteryCompartment" = "再按住电池仓内的SET按钮5秒";
+"hearTheBeepAndConfirmThatTheLightIsFlashing" = "随后听到提示音并确认指示灯闪烁";
+"pleaseMakeSureTheLightIsFlashingOrYouHearABeep" = "请确认指示灯在闪烁或者听到提示音";
+
+"selectWiFiAndEnterThePassword" = "选择2.4GHz WiFi网络并输入密码";
+"supportedCurrently " = "设备WiFi目前仅支持2.4G WiFi";
+"name" = "名称";
+"thePhoneIsNotConnected" = "目前手机没有连接WiFi";
+"next" = "下一步";
+"noPassword" = "WiFi没有密码";
+"pleaseSelect" = "当前WiFi为5GHz，请选择2.4G WiFi，或配置路由器打开2.4G 网络";
+
+"ThePhoneShouldConnectsTo" = "手机连接WiFi后才能与设备联网";
+"connect" = "连接";
+"configureRouterToOpen" = "当前连接的是5GHz WiFi 当前设备不支持,请切换至2.4GHz WiFi";
+"Switch" = "切换WiFi";
+
+"rightInFrontOfTheCamera" = "将二维码正对摄像头，保持15-20cm距离";
+"holdStillForAFewSeconds" = "保持静止几秒钟，随后会听到提示音";
+"ifYouDoNotHearTheBeep" = "如没有听到提示音，请检查摄像头";
+"adjustTheDistance" = "调整距离、角度、多试几次";
+"heardTheBeep" = "听到提示音";
+
+"addingDevices" = "正在添加设备...";
+"pleaseKeepTheDevicePoweredOn" = "请保持设备处于通电状态";
+"connecting" = "正在建立连接";
+
+"close" = "关闭";
+"deviceConnectionNetworkTimeout" = "设备连接网络超时";
+"pleaseTroubleshootTheFollowingProblemsAndTryAgain" = "请排查以下问题后重试";
+"checkWhetherTheEquipmentIsInTheStateOfPendingDistribution" = "1. 检查设备是否处于待配网状态";
+"checkIf" = "2. 检查WiFi是否为2.4G";
+"verifyPassword" = "3. 核对WiFi密码是否正确";
+"whetherToHearABeep" = "4. 扫描二维码时是否听到提示音";
+"checkIfCloseToRouter" = "5. 检查设备是否靠近路由器";
+"retry" = "按步骤重试";
+
+"failedToAdd" = "添加失败";
+"deviceHasBeenBoundByOtherUsers" = "设备已被其他用户绑定，不能重复绑定";
+"pleaseGoToTheOriginalAccountForRemoval" = "请到原账号进行移除，或联系客服提交解绑申请";
+"finished" = "完成";
+
+"deviceUnbundlingApplication" = "设备解绑申请";
+"problemDescription" = "问题描述";
+"pleaseDescribeYourProblem" = "请描述你的问题";
+"deviceID" = "设备ID";
+"equipmentCategory" = "设备品类";
+"timeOfProblem" = "问题发生时间";
+"contactInformation" = "联系方式";
+"submit" = "提交";
+
+"addedSuccessfully" = "添加成功";
+"rename" = "重命名";
+"update" = "更新";
+
+"remoteVideoLoading" = "远程视频加载中...";
+"playback" = "回放";
+"album" = "相册";
+"function" = "功能";
+"message" = "消息";
+"videoLoadingFailure" = "视频加载失败";
+"clickToRetry" = "点击重试";
+"deviceOffline" = "设备离线";
+"pleaseCheckTheDeviceStatus" = "请检查设备状态";
+"deviceSleeping" = "设备休眠";
+"clickToReboot" = "点击重启";
+
+"HD" = "高清";
+"nightVision" = "红外夜视";
+"voiceDetection" = "声音检测";
+"motionDetection" = "移动侦测";
+"passiveInfraredSwitch" = "PIR开关";
+"siren" = "警笛";
+
+"open" = "开启";
+"highSensitivity" = "高灵敏度";
+"screenshotHasBeenSavedToTheAlbum" = "截屏已保存到相册";
+"videoHasBeenSavedToTheAlbum" = "录像已保存到相册";
+"goToAlbum" = "进入相册";
+
+"voiceChangeCallingUncleVoice" = "变声通话中（大叔音）...";
+"voiceChangeCallingChildVoice" = "变声通话中（小孩音）...";
+"childVoice" = "小孩声音";
+"uncleVoice" = "大叔声音";
+
+"deleteOrNot" = "确认删除？";
+"yes" = "确认";
+"no" = "取消";
+"selectAll" = "全选";
+"delete" = "删除";
+
+"objectMovementIsDetected" = "侦测到可视门铃有物体移动";
+"someoneRingsTheDoorbell" = "有人按门铃";
+"someoneRingsTheVisualDoorbell" = "可视门铃有人按门铃";
+"recent" = "最近";
+"allMessages" = "全部消息";
+
+"alarmMessages" = "告警消息";
+"today" = "今天";
+"allTypes" = "全部类型";
+
+"settings" = "设置";
+"deviceInformation" = "设备信息";
+"basicFunction" = "基本功能设置";
+"detectingAlarms" = "侦测告警设置";
+"sharedDevices" = "共享设备";
+"deviceFirmware update" = "设备固件升级";
+"latestVersion" = "已是最新版本";
+"removeTheDevice" = "移除设备";
+"rebootTheDevice" = "重启设备";
+
+"deviceFrom" = "设备来自";
+"userName" = "用户名称";
+"removeShare" = "移除分享";
+
+"statusIndicator" = "状态指示灯";
+
+"notSharedWithOthersYet" = "可视门铃 暂未分享给其他人";
+"notSharedPleaseAdd" = "暂无共享给其他人，请添加";
+"addAShare" = "添加共享";
+
+"visualDoorbellSharedWith" = "可视门铃 已无共享给";
+
+"sharingDetails" = "共享详情";
+"avatar" = "头像";
+"account" = "账号";
+"expirationDte" = "有效期";
+"permanent" = "永久有效";
+"unshare" = "确认取消共享";
+
+"addAShare" = "添加共享";
+"countryRegion" = "国家/地区";
+"china" = "中国";
+"pleaseEnterYourAccount" = "请输入账号";
+"thisUserAlreadyHasThisDevice" = "该用户已有此设备";
+
+"sharedASmartDeviceWithYou" = "向您分享了一个智能设备";
+"intelligentVisualDoorbell" = "智能可视门铃";
+"acceptSharing" = "接受共享";
+
+"firmwareUpgrade" = "固件升级";
+"newVersionDetected" = "检测到新版本";
+"updates" = "更新内容";
+"fixSeveralBugs" = "1. 修复若干bug";
+"add" = "2. 增加";
+"function" = "功能";
+"updateImmediately?" = "是否立即更新？";
+"update" = "更新";
+"checkUpdates" = "检查更新";
+"importantTips" = "重要提示";
+"noPowerFailureDuringTheProcess" = "升级过程中不能断电，否则升级过程中忽然断电会导致升级失败，设备可能无法开机";
+"confirmToUpdate" = "确认更新？";
+"updating" = "正在升级...";
+
+"hangUp" = "挂断";
+"connect" = "接通";
+"voiceChangeCall" = "变声通话";
+
+"onCall" = "正在通话中...";
+
+"devices" = "台设备";
+"currentNetworkIsNotAvailable" = "当前网络不可用，请检查手机网络";
+"messageCenter" = "消息中心";
+"generalSettings" = "通用设置";
+"about" = "关于";
+
+"pleaseSelectAvatar" = "请选择头像";
+
+"alarm" = "告警消息";
+"notification" = "通知消息";
+"noMessages" = "暂无消息";
+
+"device" = "设备";
+"fromTheDeviceVisualDoorbell" = "来自设备 可视门铃";
+
+"upgradeNotice" = "升级通知";
+"thereIsANewUpgradedVersion!" = "有新的升级版本！";
+"abnormalLogin" = "异常登录";
+"itIsLoggedInOnTheNoneUsefulTerminal!" = "账号在非常用终端上登录！";
+
+"messages" = "消息推送";
+"checkForAppUpdates" = "检查应用更新";
+"accountSecurity" = "账号安全";
+"systemPermissionSettings" = "系统权限设置";
+"logOut" = "退出登录";
+
+"alarmMessages" = "告警消息";
+"notificationMessages" = "告警消息";
+
+"changePassword" = "修改密码";
+"cancelAccount" = "注销账号";
+
+"changePassword" = "修改密码";
+"enterOldPassword" = "输入旧密码";
+"enterNewPassword" = "输入新密码";
+"includingLettersAndNumbers" = "8-20个字符，包含字母和数字";
+
+"clickgetVerificationCode" = "点击’获取验证码‘，验证码将发送到您的注册账号：";
+"dearUser" = "尊敬的用户";
+"ifYouConfirmToCancel" = "如果您确定注销您的账号";
+"weWillAtOnce" = "我们立即";
+"deletePersonalDataFromYourAccount" = "删除您账户中的个人数据";
+"thankYou" = "感谢您的使用";
+"continueToCancel" = "继续注销";
+"confirmToCancel" = "确定注销";
+"confirm" = "确定";
+
+"systemPermissionSettings" = "系统权限设置";
+"licensed" = "已授权";
+"notificationReminder" = "通知提醒";
+"forTechniciansToReceiveAlarmMessages" = "为及时收到报警消息，建议开启此权限";
+"allowBackgroundOperation" = "允许后台运行";
+"notReceivingRemoteCallsOrNotifications" = "为接收远程呼叫或通知，建议开启此权限";
+
+"youAgreeToServiceAgreementAndPrivacyPolicy" = "使用该应用即表示您同意《服务协议》和《隐私政策》";
+"versionNumber" = "版本号";
+
+
+"deleteFailed" = "删除失败";
+"sureToRemoveTheDevice" = "确定要移除设备吗";
+"removeSharing" = "移除共享";
+"sharedDeviceSettings" = "共享设备设置";
+"shareRemoved" = "已移除分享";
+"setUpSuccessfully" = "设置成功";
+"sharedDeviceListObtainedSuccessfully" = "共享设备列表获取成功";
+"visualDoorbellHasBeenSharedWith" = "可视门铃已共享给";
+"visualDoorbellIsNotSharedToOthersYet" = "可视门铃暂未共享给其他人";
+"notSharedWithOthersYet" = "暂无共享给其他人";
+"pleaseAdd" = "请添加";
+"unshare" = "取消共享";
+"confirmedToCancelSharing" = "您是否已确认要取消共享？";
+"shareCanceled" = "已取消共享";
+"oldAccount" = "老账号";
+"modifyDeviceName" = "修改设备名称";
+"unknown" = "<未知>";
+"modificationFailed" = "修改失败";
+"unnamed" = "<未命名>";
+"visualDoorbellWiFi" = "可视门铃(Wi-Fi)";
+"thisFeatureIsNotOpenYetSoStayTuned" = "该功能暂未开放，敬请期待！";
+"3m" = "3米";
+"1.5m" = "1.5米";
+"08m" = "0.8米";
+"auto" = "自动";
+"close" = "关";
+"open" = "开";
+"imageQualitySettings" = "画质设置";
+"SD" = "标清";
+"voiceChangingDuringCall" = "变声通话中";
+"pictureScreenshotFailed" = "图片截屏失败！";
+"ScreenshotSaveFailed" = "截图保存失败！";
+"pickUp" = "接听";
+"someoneRingsTheDoorbell" = "有人按门铃…";
+"deviceName" = "设备名称";
+"imilabVisualDoorbell" = "设备名称：创米小白可视门铃D1";
+"screenshotSavedToAlbum" = "截图已保存至相册";
+"videoSavedToAlbum" = "视频已保存至相册";
+"viewAlbum" = "查看相册";
+"deviceIsOfflinePleaseCheckItsStatus" = "设备离线,请检查设备状态";
+"voiceChange" = "变声";
+"infraredDetection" = "PIR红外检测";
+"buttonAlarm" = "按钮报警";
+"otherAlarms" = "其他告警";
+"playing" = "播放中";
+"fromTheDevice" = "来自设备";
+"date" = "日期";
+"edit" = "编辑";
+"soundDetection" = "声音侦测";
+"reachingMaximumNumberOfDownloads" = "达到最大下载数量";
+"downloadAddressError" = "下载地址错误";
+"tips" = "提示";
+"sureToDeleteTheMessageBeingPlayed" = "确定要删除正在播放的消息吗";
+"sureToDeleteTheSelectedMessage" = "确定要删除所选中的消息吗";
+"pleaseSelectTheMessagesToDlete" = "请选择要删除的消息";
+"failedToCeckInformationDetails" = "查询信息详情失败";
+"failedToGetPlayAddress" = "获取播放地址失败";
+"failedToDeleteWarning" = "删除警告失败";
+"failedToSave" = "删除成功";
+"failedToSave" = "保存失败";
+"savedSuccessfullyPleaseCheck" = "保存成功，请到相册中查看";
+"canceled" = "已取消";
+"completed" = "已完成";
+"downloadProgress" = "下载进度";
+"smartDoorbell" = "智能门铃";
+"networkConnectionFailedPleaseCheck" = "网络连接失败,请检查你的网络设置";
+"pleaseEnterTheSharingAccount" = "请输入分享账号";
+"wifiName" = "WiFi名称";
+"currentWiFiMayBe5GHzPleaseSelect2.4G" = "当前WiFi可能是5GHz，请选择2.4G WiFi，或配置路由器打开2.4G 网络";
+"ifYouDontHearTheBeepPleaseCheck" = "如没有听到提示音，请检查摄像头，调整距离、角度、多试几次";
+"resetDevice" = "重置设备";
+"connectToWiFi" = "连接WiFi";
+"positioningIsNotTurnedOn" = "没有开启定位";
+"pleaseGoToTheSettingsToTurnOn" = "请到设置中开启定位";
+"goToSettings" = "去设置";
+"scanDeviceCode" = "设备扫码";
+"addingDevice" = "正在添加设备";
+"pleaseMakeSureDeviceIsPoweredOn" = "请确保设备处于通电状态";
+"checkIfDeviceIsInPending" = "检查设备是否处于待配网状态";
+"checkIfWiFiIs2.4G" = "检查WiFi是否为2.4G";
+"checkIfWiFiPasswordIsCorrect" = "核对WiFi密码是否正确";
+"doYouHearABeepWhenScanning" = "扫描二维码时是否听到提示音";
+"checkIfTheDeviceIsCloseToRouter" = "检查设备是否靠近路由器";
+"contactCustomerServiceToSubmitAnUnbundlingRequest" = "联系客服提交解绑申请";
+"theDeviceHasBeenBoundByAnotherUser" = "设备已被其他用户绑定，不能重复绑定";
+"pleaseGoToOriginalAccountToRemoveOr" = "请到原账号进行移除，或";
+"mySharedDevices" = "我的共享设备";
+"scanTheCode" = "扫一扫";
+"noQRCodeIsRecognized" = "没有识别到二维码";
+"illegalQRCode" = "非法的二维码";
+"ok" = "好的";
+"nickname" = "昵称";
+"personalInformation" = "个人资料";
+"avatarModifiedSuccessfully" = "头像修改成功";
+"failedToModifyAvatar" = "修改头像失败";
+"pleaseEnterANickname" = "请输入昵称";
+"failedToChangeNickname" = "修改昵称失败";
+"byUsingThisApplicationYouAgree" = "使用该应用即表示您同意";
+"unauthorized" = "未授权";
+"alarmMessageSwitchSetSuccessfully" = "告警消息开关设置成功！";
+"logOutSuccessfully" = "退出登录成功";
+"sureToCancelYourAccount" = "确定注销您的账号吗？";
+"ifYouDetermineToCancelYourAccount" = "如果您确定注销您的账号，我们立即删除您账户中的个人数据，感谢您的使用!";
+"accountCanceled" = "账号已注销";
+"pleaseEnterYourOldPassword" = "请输入旧密码";
+"pleaseEnterANewPassword" = "请输入新密码";
+"theOldPassword" = "旧密码为8至20位大小写字母及数字";
+"theNewPassword" = "新密码为8至20位大小写字母及数字";
+"passwordChangeSuccessfully" = "密码修改成功";
+"toReceiveAlarmMessagesInTime" = "为及时收到报警消息，建议开启此选项";
+"pleaseCheckTheNotificationMessage" = "请查收通知消息";
+"deviceOnLine" = "设备上线";
+"deviceOffLine" = "设备下线";
+"deviceBonding" = "设备绑定";
+"deviceUnbundling" = "设备解绑";
+"others" = "其他";
+"failedToQueryAlarmRecords" = "查询告警记录失败";
+"devices" = "台设备";
+"registerAnAccount" = "注册账号";
+"accountInputError" = "账号输入有误";
+"accountIsEmpty" = "账号为空";
+"passwordIsEmpty" = "密码为空";
+"pleaseUseYourMobileNumber" = "请使用手机号注册";
+"pleaseEnterTheCorrectMobileNumber" = "请输入正确的手机号";
+"verificationCodeSentSuccessfully" = "验证码发送成功";
+"registerSuccessfully" = "注册成功";
+"registerFailed" = "注册失败";
+"passwordResetSuccessfully" = "重置密码成功";
+"failedToResetPassword" = "重置密码失败";
+"loginSuccessfully" = "登录成功";
+"loginFailed" = "登录失败";
+"agoraLink" = "灵隼";
+"pleaseEnterYourPassword" = "请输入密码";
+"registerAnAccount" = "注册账号";
+"resetPassword" = "重置密码";
+"pleaseEnterTheRegisteredAccount" = "请输入注册的账号";
+"theAccountFormatIsIncorrect" = "账号格式不正确";
+"resend" = "重新发送";
+"usa" = "美国";
+"selectCountryRegion" = "选择国家/地区";
+"pleaseNoteThatIfTheCountryRegionIsIncorrect" = "请注意，如果选择的国家/地区不正确，可能影响正常使用";
+"thePasswordIs8To20LettersAndNumbers" = "密码为8至20位大小写字母及数字";
+"passwordResetSuccessfully" = "密码重置成功";
+"demolitionAlarm" = "强拆报警";
+"original" = "原生";
+"uncle" = "大叔";
+"lori" = "萝莉";
+"teenager" = "少年";
+
+
+//------2.0新增------
+"screenShot" = "截图";
+"record" = "录像";
+"stop" = "停录";
+"call" = "呼叫";
+"fullScreen" = "全屏";
+"mute" = "静音";
+"unmute" = "播放";
+"converse" = "通话";
+"forbitConverse" = "禁麦";
+"number" = "人数";
+"deviceClosed" = "设备关闭";
+"in call" = "呼叫中";
+"call failed" = "呼叫失败";
+"please enter nodeId" = "请输入设备nodeId";
+"Clear AppId data" = "清除AppId数据";
+
+
+
+//------以下为服务器返回msg字段------
+"账号不存在" = "账号不存在";
+"账号已经存在" = "账号已经存在";
+"密码错误" = "密码错误";
+"账号未登录" = "账号未登录";
+"账号注册失败" = "账号注册失败";
+"账号注销失败" = "账号注销失败";
+"账号登录失败" = "账号登录失败";
+"账号登出失败" = "账号登出失败";
+"账号更换密码失败" = "账号更换密码失败";
+"账号重置密码失败" = "账号重置密码失败";
+"获取验证码失败" = "获取验证码失败";
+"查询用户信息失败" = "查询用户信息失败";
+"更新用户信息失败" = "更新用户信息失败";
+"当前状态不正确，不能操作" = "当前状态不正确，不能操作";
+"Token过期" = "Token过期";
+"当前状态不正确，不能操作" = "当前状态不正确，不能操作";
 
-/*
-CreateQRCodeVC.swift
-*/
-"设备扫码"="设备扫码";
-"取消"="取消";
-
-/*
-SelectWIFIVC.swift
-*/
-"连接WiFi"="连接WiFi";
-"取消"="取消";
-"没有开启定位"="没有开启定位";
-"请到设置中开启定位"="请到设置中开启定位";
-"去设置"="去设置";
-"目前手机没有连接WiFi"="目前手机没有连接WiFi";
-"手机连接WiFi后才能与设备联网"="手机连接WiFi后才能与设备联网";
-"连接"="连接";
-
-/*
-DeviceAddSuccessVC.swift
-*/
-"添加成功"="添加成功";
-"完成"="完成";
-"修改设备名称"="修改设备名称";
-"修改后的名字：----(text)"="修改后的名字：----(text)";
-"修改失败:(msg)"="修改失败:(msg)";
-
-/*
-DeviceResetVC.swift
-*/
-"重置设备"="重置设备";
-"取消"="取消";
-
-/*
-DeviceConnectingVC.swift
-*/
-"正在添加设备"="正在添加设备";
-"取消"="取消";
-"请确保设备处于通电状态"="请确保设备处于通电状态";
-"正在建立连接"="正在建立连接";
-
-/*
-DeviceConnectTimeoutVC.swift
-*/
-"关闭"="关闭";
-"设备连接网络超时"="设备连接网络超时";
-"请排查以下问题后重试"="请排查以下问题后重试";
-"检查设备是否处于待配网状态"="检查设备是否处于待配网状态";
-"检查WiFi是否为2.4G"="检查WiFi是否为2.4G";
-"核对WiFi密码是否正确"="核对WiFi密码是否正确";
-"扫描二维码时是否听到提示音"="扫描二维码时是否听到提示音";
-"检查设备是否靠近路由器"="检查设备是否靠近路由器";
-"按步骤重试"="按步骤重试";
-
-/*
-DeviceAddFailedVC.swift
-*/
-"添加失败"="添加失败";
-"关闭"="关闭";
-"联系客服提交解绑申请"="联系客服提交解绑申请";
-"设备已被其他用户绑定，不能重复绑定n请到原账号进行移除，或(clickableTips)"="设备已被其他用户绑定，不能重复绑定n请到原账号进行移除，或(clickableTips)";
-
-/*
-ConnectResultView.swift
-*/
-"可视门铃(Wi-Fi)"="可视门铃(Wi-Fi)";
-"添加成功"="添加成功";
-"添加失败"="添加失败";
-
-/*
-SelectWIFIView.swift
-*/
-"选择2.4GHz WiFi网络并输入密码"="选择2.4GHz WiFi网络并输入密码";
-"设备WiFi目前仅支持2.4G WiFi"="设备WiFi目前仅支持2.4G WiFi";
-"WiFi名称"="WiFi名称";
-"目前手机没有连接WiFi"="目前手机没有连接WiFi";
-"密码"="密码";
-"下一步"="下一步";
-"当前WiFi可能是5GHz，请选择2.4G WiFi，或配置路由器打开2.4G 网络"="当前WiFi可能是5GHz，请选择2.4G WiFi，或配置路由器打开2.4G 网络";
-
-/*
-QRCodeView.swift
-*/
-"听到提示音"="听到提示音";
-"将二维码正对摄像头，保持15-20cm距离"="将二维码正对摄像头，保持15-20cm距离";
-"保持静止几秒钟，随后会听到提示音"="保持静止几秒钟，随后会听到提示音";
-"如没有听到提示音，请检查摄像头 调整距离、角度、多试几次"="如没有听到提示音，请检查摄像头 调整距离、角度、多试几次";
-
-/*
-DeviceResetView.swift
-*/
-"下一步"="下一步";
-"请先安装电池或连接电源"="请先安装电池或连接电源";
-"再按住电池仓内的SET按钮5秒"="再按住电池仓内的SET按钮5秒";
-"随后听到提示音并确认指示灯闪烁"="随后听到提示音并确认指示灯闪烁";
-"请确认指示灯在闪烁或者听到提示音"="请确认指示灯在闪烁或者听到提示音";
-
-/*
-AGAlertViewController.swift
-*/
-"取消"="取消";
-"确定"="确定";
-
-/*
-AGActionSheetVC.swift
-*/
-"items不能是空"="items不能是空";
-
-/*
-DeviceManager.swift
-*/
-"sdk 设备服务 未初始化"="sdk 设备服务 未初始化";
-
-/*
-AGAlertBaseView.swift
-*/
-"取消"="取消";
-"确定"="确定";
-
-/*
-AGEditAlertVC.swift
-*/
-"请输入分享账号"="请输入分享账号";
-"取消"="取消";
-"确定"="确定";
-
-/*
-HomePageMainVC.swift
-*/
-"点击添加设备"="点击添加设备";
-"我接收的共享"="我接收的共享";
-"暂无设备"="暂无设备";
-"添加设备"="添加设备";
-
-/*
-QRCodeReaderVC.swift
-*/
-"请扫描设备或说明书上的二维码"="请扫描设备或说明书上的二维码";
-"相册"="相册";
-"手电筒"="手电筒";
-"扫一扫"="扫一扫";
-"没有识别到二维码"="没有识别到二维码";
-" 识别出的二维码是： (result)"=" 识别出的二维码是： (result)";
-"非法的二维码"="非法的二维码";
-"好的"="好的";
-
-/*
-NetworkTipsView.swift
-*/
-"当前网络不可用，请检查手机网络"="当前网络不可用，请检查手机网络";
-
-/*
-ReceiveDeviceShareView.swift
-*/
-"接受共享"="接受共享";
-"取消"="取消";
-"向您分享了一个智能设备"="向您分享了一个智能设备";
-
-/*
-MainTopView.swift
-*/
-"我的设备"="我的设备";
-
-/*
-HomeMainDeviceCell.swift
-*/
-"可视门铃（WIFI）"="可视门铃（WIFI）";
-"移动侦测 (dateStr)"="移动侦测 (dateStr)";
-"离线"="离线";
-
-/*
-DoorbellContainerVC.swift
-*/
-"智能门铃"="智能门铃";
-"功能"="功能";
-"消息"="消息";
-
-/*
-DownloadProgressVC.swift
-*/
-"取消"="取消";
-"已取消"="已取消";
-"已完成"="已完成";
-"下载进度"="下载进度";
-
-/*
-DoorbellMessageVC.swift
-*/
-"画质设置"="画质设置";
-"标清"="标清";
-"高清"="高清";
-"类型"="类型";
-"全部类型"="全部类型";
-"声音侦测"="声音侦测";
-"移动侦测"="移动侦测";
-"达到最大下载数量：(kDownloadMaxCount)"="达到最大下载数量：(kDownloadMaxCount)";
-"下载地址错误"="下载地址错误";
-"提示"="提示";
-"确定要删除正在播放的消息吗"="确定要删除正在播放的消息吗";
-"取消"="取消";
-"确定"="确定";
-"确定要删除所选中的消息吗"="确定要删除所选中的消息吗";
-"请选择要删除的消息"="请选择要删除的消息";
-"查询告警记录失败"="查询告警记录失败";
-"查询信息详情失败(err)"="查询信息详情失败(err)";
-"获取播放地址失败"="获取播放地址失败";
-"删除警告失败(err)"="删除警告失败(err)";
-"删除成功"="删除成功";
-"暂无消息"="暂无消息";
-
-/*
-DoorbellDownlaodManager.swift
-*/
-"下载进度：(progress.fractionCompleted)"="下载进度：(progress.fractionCompleted)";
-"保存失败"="保存失败";
-"保存成功，请到相册中查看"="保存成功，请到相册中查看";
-
-/*
-DoorbellSectionView.swift
-*/
-"日期"="日期";
-"全部类型"="全部类型";
-"编辑"="编辑";
-"完成"="完成";
-"今天"="今天";
-
-/*
-DoorbellPlayerView.swift
-*/
-"标清"="标清";
-"高清"="高清";
-
-/*
-DoorbellMsgCell.swift
-*/
-"播放中"="播放中";
-"移动侦测"="移动侦测";
-"来自设备 (data.alarm.deviceName)"="来自设备 (data.alarm.deviceName)";
-
-/*
-DoorbellSelectAllView.swift
-*/
-"全选"="全选";
-"删除"="删除";
-
-/*
-DoorbellPlayerTopView.swift
-*/
-"高清"="高清";
-
-/*
-DoorbellAbilityViewModel.swift
-*/
-"sdk 呼叫服务 未初始化"="sdk 呼叫服务 未初始化";
-"未知的设备操作"="未知的设备操作";
-"设备接听"="设备接听";
-"设备挂断"="设备挂断";
-"设备忙碌"="设备忙碌";
-"本地接听"="本地接听";
-"本地挂断"="本地挂断";
-"未知行为"="未知行为";
-"首次收到设备视频"="首次收到设备视频";
-"首次收到设备音频"="首次收到设备音频";
-"呼叫中"="呼叫中";
-"设备来电"="设备来电";
-"本地拨通"="本地拨通";
-"设备超时"="设备超时";
-"回放"="回放";
-"相册"="相册";
-"强拆报警"="强拆报警";
-"红外夜视"="红外夜视";
-"声音检测"="声音检测";
-"移动侦测"="移动侦测";
-"PIR开关"="PIR开关";
-"警笛"="警笛";
-"原生"="原生";
-"大叔"="大叔";
-"萝莉"="萝莉";
-"少年"="少年";
-
-/*
-VideoAlertTipView.swift
-*/
-"远程视频加载中..."="远程视频加载中...";
-"点击重试"="点击重试";
-"视频加载失败"="视频加载失败";
-"请检查设备状态"="请检查设备状态";
-"设备离线"="设备离线";
-"点击重启"="点击重启";
-"设备休眠"="设备休眠";
-
-/*
-DoorbellAbilityLogicView.swift
-*/
-"loginView被释放了"="loginView被释放了";
-"转为横屏"="转为横屏";
-"本地唤起语音通话"="本地唤起语音通话";
-"返回竖屏"="返回竖屏";
-"请求通话"="请求通话";
-"挂断通话"="挂断通话";
-"请求通话/或者挂断 成功"="请求通话/或者挂断 成功";
-"变声恢复正常声音: 成功"="变声恢复正常声音: 成功";
-"关闭变声弹框"="关闭变声弹框";
-"变声成功"="变声成功";
-"语音通话中"="语音通话中";
-"正在通话中..."="正在通话中...";
-"结束语音通话"="结束语音通话";
-"变声语音通话中"="变声语音通话中";
-"变声通话中（(effectName)）..."="变声通话中（(effectName)）...";
-"恢复正常语音通话"="恢复正常语音通话";
-"截屏成功"="截屏成功";
-"图片截屏失败！"="图片截屏失败！";
-"截图保存失败！"="截图保存失败！";
-"截图保存成功！"="截图保存成功！";
-
-/*
-DoorbellAnswerLogicView.swift
-*/
-"变声通话"="变声通话";
-"挂断"="挂断";
-"接听"="接听";
-"有人按门铃…"="有人按门铃…";
-"变声"="变声";
-"挂断成功"="挂断成功";
-"接听成功"="接听成功";
-"本地来电振铃"="本地来电振铃";
-"设备挂断"="设备挂断";
-"设备接听"="设备接听";
-"获取到首帧"="获取到首帧";
-"设备超时"="设备超时";
-"关闭变声弹框"="关闭变声弹框";
-"变声成功"="变声成功";
-"设备名称：(deviceName)"="设备名称：(deviceName)";
-"设备名称：创米小白可视门铃D1"="设备名称：创米小白可视门铃D1";
-
-/*
-DoorbellLeftBackHView.swift
-*/
-"点击返回竖屏"="点击返回竖屏";
-
-/*
-DoorbellAbilityTooBarHView.swift
-*/
-"变声"="变声";
-"请求通话"="请求通话";
-"录屏"="录屏";
-"截屏"="截屏";
-"正在录制,调用停止"="正在录制,调用停止";
-"开始录制调用成功"="开始录制调用成功";
-"未录制,调用开始"="未录制,调用开始";
-"停止录制调用成功"="停止录制调用成功";
-
-/*
-DoorbellSaveImgAlertView.swift
-*/
-"截图已保存至相册"="截图已保存至相册";
-"视频已保存至相册"="视频已保存至相册";
-"查看相册"="查看相册";
-"获取图片成功"="获取图片成功";
-
-/*
-DoorbellAbilityTooBarView.swift
-*/
-"横屏"="横屏";
-"变声"="变声";
-"请求通话"="请求通话";
-"录屏"="录屏";
-"截屏"="截屏";
-"正在录制,调用停止"="正在录制,调用停止";
-"开始录制调用成功"="开始录制调用成功";
-"未录制,调用开始"="未录制,调用开始";
-"停止录制调用成功"="停止录制调用成功";
-"摄像头不可用"="摄像头不可用";
-"相册不可用"="相册不可用";
-"温馨提示"="温馨提示";
-"知道了"="知道了";
-
-/*
-TopControTooBarView.swift
-*/
-"标清"="标清";
-"设置画质"="设置画质";
-"设置静音"="设置静音";
-"竖屏全屏"="竖屏全屏";
-"设置静音成功"="设置静音成功";
-"画质设置"="画质设置";
-"高清"="高清";
-"设置成功"="设置成功";
-
-/*
-DoorbellAbilityView.swift
-*/
-"点击该item"="点击该item";
-"回放"="回放";
-"该功能暂未开放，敬请期待！"="该功能暂未开放，敬请期待！";
-"相册"="相册";
-"强拆报警"="强拆报警";
-"红外夜视"="红外夜视";
-"声音检测"="声音检测";
-"移动侦测"="移动侦测";
-"PIR开关"="PIR开关";
-"警笛"="警笛";
-"设置成功"="设置成功";
-"打开相册"="打开相册";
-"关闭"="关闭";
-"3米"="3米";
-"1.5米"="1.5米";
-"0.8米"="0.8米";
-"自动"="自动";
-"关"="关";
-"开"="开";
-"获取图片成功"="获取图片成功";
-
-/*
-DoorbellAbilityVC.swift
-*/
-"当前网络状态：(netType)"="当前网络状态：(netType)";
-"门铃控制页面销毁了"="门铃控制页面销毁了";
-"重新呼叫"="重新呼叫";
-"请检查设备"="请检查设备";
-"设备重启"="设备重启";
-"设备离线,请检查设备状态"="设备离线,请检查设备状态";
-"呼叫失败"="呼叫失败";
-"呼叫成功"="呼叫成功";
-"本地去电振铃"="本地去电振铃";
-"设备忙碌"="设备忙碌";
-"设备挂断"="设备挂断";
-"设备接听"="设备接听";
-"获取到首帧"="获取到首帧";
-"设备超时"="设备超时";
-"调用挂断：(msg)"="调用挂断：(msg)";
-"设置成功"="设置成功";
-"解除静音成功"="解除静音成功";
-
-/*
-DoorbellAbilityVC_Full.swift
-*/
-"转为横屏"="转为横屏";
-"返回竖屏"="返回竖屏";
-
-/*
-ChanceSoundAlertVC.swift
-*/
-"原生"="原生";
-"大叔"="大叔";
-"萝莉"="萝莉";
-"少年"="少年";
-"变声"="变声";
-
-/*
-MineTopView.swift
-*/
-"(count)台设备"="(count)台设备";
-
-/*
-MinePageMainVC.swift
-*/
-"消息中心"="消息中心";
-"通用设置"="通用设置";
-"关于"="关于";
-
-/*
-NotifyMessageVC.swift
-*/
-"提示"="提示";
-"确定要删除所选中的消息吗"="确定要删除所选中的消息吗";
-"取消"="取消";
-"确定"="确定";
-"请选择要删除的消息"="请选择要删除的消息";
-"查询告警记录失败"="查询告警记录失败";
-"删除警告失败(err)"="删除警告失败(err)";
-"删除成功"="删除成功";
-"暂无消息"="暂无消息";
-
-/*
-MessageCenterVC.swift
-*/
-"消息"="消息";
-"告警消息"="告警消息";
-"通知消息"="通知消息";
-
-/*
-MessagePlayerVC.swift
-*/
-"提示"="提示";
-"确定要删除正在播放的消息吗"="确定要删除正在播放的消息吗";
-"取消"="取消";
-"确定"="确定";
-"删除警告失败(err)"="删除警告失败(err)";
-"删除成功"="删除成功";
-"查询信息详情失败(err)"="查询信息详情失败(err)";
-"获取播放地址失败"="获取播放地址失败";
-
-/*
-NotifyMsgSectionHeaderView.swift
-*/
-"请查收通知消息"="请查收通知消息";
-"编辑"="编辑";
-"完成"="完成";
-
-/*
-AboutVC.swift
-*/
-"关于"="关于";
-"版本号：(version)"="版本号：(version)";
-"隐私政策"="隐私政策";
-"用户协议"="用户协议";
-"使用该应用即表示您同意n(privacyTips)与(userProtocolTips)"="使用该应用即表示您同意n(privacyTips)与(userProtocolTips)";
-"点击隐私政策-------"="点击隐私政策-------";
-"点击用户协议-------"="点击用户协议-------";
-
-/*
-PersonalInfoVC.swift
-*/
-"头像"="头像";
-"昵称"="昵称";
-"个人资料"="个人资料";
-"相册中选择"="相册中选择";
-"拍照"="拍照";
-"取消"="取消";
-"修改头像失败"="修改头像失败";
-
-/*
-EditNicknameVC.swift
-*/
-"请输入昵称"="请输入昵称";
-"昵称"="昵称";
-"完成"="完成";
-"修改昵称失败"="修改昵称失败";
-
-/*
-SystemSettingVC.swift
-*/
-"通知提醒"="通知提醒";
-"允许后台运行"="允许后台运行";
-"系统权限设置"="系统权限设置";
-"为及时收到报警消息，建议开启此选项"="为及时收到报警消息，建议开启此选项";
-"为接收远程呼叫或通知，建议开启此选项"="为接收远程呼叫或通知，建议开启此选项";
-
-/*
-GeneralSettingVC.swift
-*/
-"消息推送"="消息推送";
-"检查应用更新"="检查应用更新";
-"账号安全"="账号安全";
-"系统权限设置"="系统权限设置";
-"通用设置"="通用设置";
-
-/*
-PushMsgSettingVC.swift
-*/
-"告警消息"="告警消息";
-"通知消息"="通知消息";
-"消息推送"="消息推送";
-
-/*
-AccountSafeVC.swift
-*/
-"修改密码"="修改密码";
-"退出登录"="退出登录";
-"账号安全"="账号安全";
-"退出登录成功"="退出登录成功";
-
-/*
-SystemSettingCell.swift
-*/
-"已授权"="已授权";
-"未授权"="未授权";
-
-/*
-ModifyPwdVC.swift
-*/
-"请输入旧密码"="请输入旧密码";
-"请输入新密码"="请输入新密码";
-"完成"="完成";
-"修改密码"="修改密码";
-"旧密码为空或格式不正确(8至20位大小写字母及数字)"="旧密码为空或格式不正确(8至20位大小写字母及数字)";
-"新密码为8至20位大小写字母及数字"="新密码为8至20位大小写字母及数字";
-"密码修改成功"="密码修改成功";
-"密码重置成功"="密码重置成功";
-
-/*
-LoginMainVM.swift
-*/
-"sdk 未初始化"="sdk 未初始化";
-"注册成功"="注册成功";
-"注册失败"="注册失败";
-"重置密码成功"="重置密码成功";
-"重置密码失败"="重置密码失败";
-"登录成功"="登录成功";
-"登录失败"="登录失败";
-"请求成功"="请求成功";
-"状态错误"="状态错误";
-
-/*
-LoginView.swift
-*/
-"灵隼"="灵隼";
-"请选择国家"="请选择国家";
-"请输入账号"="请输入账号";
-"请输入密码"="请输入密码";
-"忘记密码"="忘记密码";
-"账号或密码输入有误"="账号或密码输入有误";
-"登录"="登录";
-"注册账号"="注册账号";
-
-/*
-ResetPasswordView.swift
-*/
-"重置密码"="重置密码";
-"请输入注册的账号"="请输入注册的账号";
-"请选择国家"="请选择国家";
-"请输入账号"="请输入账号";
-"账号输入有误"="账号输入有误";
-"获取验证码"="获取验证码";
-
-/*
-VerficaCodeView.swift
-*/
-"请输入验证码"="请输入验证码";
-
-/*
-SetPasswordView.swift
-*/
-"设置密码"="设置密码";
-"请输入密码"="请输入密码";
-"完成"="完成";
-
-/*
-SetPasswordVC.swift
-*/
-"密码为8至20位大小写字母及数字"="密码为8至20位大小写字母及数字";
-"注册成功"="注册成功";
-"密码重置成功"="密码重置成功";
-
-/*
-ResetPasswordVC.swift
-*/
-"请选择国家/地区"="请选择国家/地区";
-"账号为空"="账号为空";
-"请输入正确的邮箱或手机号"="请输入正确的邮箱或手机号";
-
-/*
-VerifyInputCodeVC.swift
-*/
-"验证码已发送 "="验证码已发送 ";
-"重新发送"="重新发送";
-"验证码页面销毁了"="验证码页面销毁了";
-"验证码发送成功"="验证码发送成功";
-
-/*
-LoginMainVC.swift
-*/
-"完成"="完成";
-"请选择国家/地区"="请选择国家/地区";
-"账号为空"="账号为空";
-"密码为8至20位大小写字母及数字"="密码为8至20位大小写字母及数字";
-"密码为空"="密码为空";
-"账号格式不正确"="账号格式不正确";
-"登录成功"="登录成功";
-"登录失败"="登录失败";
-
-/*
-LoginProtocolAlertVC.swift
-*/
-"我们非常重视用户的隐私保护，因此制定了本涵盖如何收集、使用、披露、分享以及存储用户的信息的《隐私条款》。用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时，我们如何收集、使用、储存和分享这些信息，以及我们为您提供的访问、更新、控制和保护这些信息的方式。"="我们非常重视用户的隐私保护，因此制定了本涵盖如何收集、使用、披露、分享以及存储用户的信息的《隐私条款》。用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时，我们如何收集、使用、储存和分享这些信息，以及我们为您提供的访问、更新、控制和保护这些信息的方式。";
-"1、用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时，我们如何收集、使用、储存和分享这些信息，以及我们为您提供的访问、更新、控制和保护这些信息的方式。收到费加罗撒娇管理监督管理；；用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时，我们如何收集、使用、储存和分666"="1、用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时，我们如何收集、使用、储存和分享这些信息，以及我们为您提供的访问、更新、控制和保护这些信息的方式。收到费加罗撒娇管理监督管理；；用户在使用我们的服务时，我们可能会收集和使用您的相关信息。我们希望通过本《隐私条款》向您说明，在使用我们的服务时，我们如何收集、使用、储存和分666";
-"用户协议与隐私政策"="用户协议与隐私政策";
-"隐私政策"="隐私政策";
-"用户协议"="用户协议";
-"与"="与";
-"不同意"="不同意";
-"同意"="同意";
-
-/*
-CountrySelectVC.swift
-*/
-"中国"="中国";
-"美国"="美国";
-"选择国家/地区"="选择国家/地区";
-"请注意，如果选择的国家/地区不正确，可能影响正常使用"="请注意，如果选择的国家/地区不正确，可能影响正常使用";
-
-/*
-RegisterView.swift
-*/
-"注册账号"="注册账号";
-"请选择国家"="请选择国家";
-"请输入账号"="请输入账号";
-"账号输入有误"="账号输入有误";
-"获取验证码"="获取验证码";
-
-/*
-RegisterMainVC.swift
-*/
-"注册页面销毁了"="注册页面销毁了";
-"请选择国家/地区"="请选择国家/地区";
-"账号为空"="账号为空";
-"请输入正确的邮箱或手机号"="请输入正确的邮箱或手机号";
-
-/*
-AGTabBarVC.swift
-*/
-"首页"="首页";
-"我的"="我的";
-
-/*
-EXT-CutOutStr.swift
-*/
-")
-            
-           return imgUrl
-        }
-        
-       return oriUrlStr
-    }
-
-    /**时间戳转化日期化字符串
-     举个栗子: let timeStr = "=")
-            
-           return imgUrl
-        }
-        
-       return oriUrlStr
-    }
-
-    /**时间戳转化日期化字符串
-     举个栗子: let timeStr = ";
-"刚刚"="刚刚";
-"(mins)分钟前"="(mins)分钟前";
-"(hours)小时前"="(hours)小时前";
-"昨天"="昨天";
-"MM月dd日 HH:mm"="MM月dd日 HH:mm";
-"yyyy年MM月dd日 HH:mm"="yyyy年MM月dd日 HH:mm";
-
-/*
-EXT-CheckStr.swift
-*/
-"验证码输入有误"="验证码输入有误";
-"密码输入有误"="密码输入有误";
-"昵称应为数字,字母,中文"="昵称应为数字,字母,中文";
-"昵称为数字,字母,中文"="昵称为数字,字母,中文";
-"应为(min)至(max)位中文"="应为(min)至(max)位中文";
-"请输入银行卡号!"="请输入银行卡号!";
-"银行卡号输入有误"="银行卡号输入有误";
-":  //   2数字+"=":  //   2数字+";
-":  //   4数字+"=":  //   4数字+";
-
-/*
-TDUserInforManager.swift
-*/
-"登录成功"="登录成功";
-"登录失败"="登录失败";
-"关闭弹框"="关闭弹框";
-
-/*
-NetWorkTool.swift
-*/
-"登录失效,请重新登录"="登录失效,请重新登录";
-
-/*
-AGToolHUD.swift
-*/
-"处理中,请稍候..."="处理中,请稍候...";
-"网络连接失败,请检查你的网络设置"="网络连接失败,请检查你的网络设置";
-
-/*
-DispatchCenter.swift
-*/
-"初始化失败"="初始化失败";
-
-/*
-ShareDeviceListVC.swift
-*/
-"添加共享"="添加共享";
-"共享设备"="共享设备";
-"昵称"="昵称";
-"可视门铃已共享给"="可视门铃已共享给";
-"可视门铃暂未共享给其他人"="可视门铃暂未共享给其他人";
-"共享设备列表获取成功"="共享设备列表获取成功";
-"暂无共享给其他人n请添加"="暂无共享给其他人n请添加";
-
-/*
-DeviceSetupHomeVC.swift
-*/
-"基本功能设置"="基本功能设置";
-"侦测告警设置"="侦测告警设置";
-"共享设备"="共享设备";
-"设备固件升级"="设备固件升级";
-"设置"="设置";
-"已是最新版本"="已是最新版本";
-
-/*
-DeviceAddShareVC.swift
-*/
-"国家/地区"="国家/地区";
-"账号"="账号";
-"可视门铃"="可视门铃";
-"去分享详情"="去分享详情";
-"完成"="完成";
-"添加共享"="添加共享";
-"请选择国家/地区"="请选择国家/地区";
-"添加成功"="添加成功";
-"请输入账号"="请输入账号";
-
-/*
-DeviceInfoVC.swift
-*/
-"设备ID"="设备ID";
-"修改设备名称"="修改设备名称";
-"设备信息"="设备信息";
-"<未知>"="<未知>";
-"修改失败:(msg)"="修改失败:(msg)";
-
-/*
-ShareDeviceDetailVC.swift
-*/
-"头像"="头像";
-"账号"="账号";
-"有效期"="有效期";
-"取消共享"="取消共享";
-"共享详情"="共享详情";
-"永久有效"="永久有效";
-"已取消共享"="已取消共享";
-"老账号"="老账号";
-
-/*
-ShareDeviceSetupVC.swift
-*/
-"设备来自"="设备来自";
-"设备ID"="设备ID";
-"修改设备名称"="修改设备名称";
-"可视门铃"="可视门铃";
-"移除共享"="移除共享";
-"共享设备设置"="共享设备设置";
-"已移除分享"="已移除分享";
-
-/*
-DeviceBaseSetupVC.swift
-*/
-"基本功能设置"="基本功能设置";
-"状态指示灯"="状态指示灯";
-"设置成功"="设置成功";
-
-/*
-DeviceSetupHomeHeaderView.swift
-*/
-"设备信息"="设备信息";
-"<未命名>"="<未命名>";
-
-/*
-DeviceInfoView.swift
-*/
-"可视门铃(Wi-Fi)"="可视门铃(Wi-Fi)";

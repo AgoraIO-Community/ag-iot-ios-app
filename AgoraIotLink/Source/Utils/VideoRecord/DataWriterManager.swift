@@ -46,7 +46,7 @@ public class DataWriterManager: NSObject {
 	private var timer: Timer?
 	private var recordTime: CGFloat = 0
 	private var isCanWrite: Bool = false
-    private var timescaleValue : Int32 = 25 //创建CMTime 使用，每秒多少帧 x86模拟器是25，真机为15 千从为25
+    private var timescaleValue : Int32 = 24 //创建CMTime 使用，每秒多少帧 x86模拟器是25，真机为15 千从为25
     
     
 	@objc init(url: URL?) {
@@ -101,10 +101,10 @@ public class DataWriterManager: NSObject {
 						PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: strongSelf.videoUrl)
 					}, completionHandler: { (isSuccess, error) in
 						if isSuccess {
-							print("save successed")
+							log.i("stopWrite:save successed")
 						}
                         if error != nil {
-                            print("写入相册失败:\(String(describing: error))")
+                            log.i("写入相册失败:\(String(describing: error))")
                         }
 					})
 				}
@@ -117,7 +117,7 @@ public class DataWriterManager: NSObject {
 
         if lock.try() {
             if writeState.rawValue < RecordState.recording.rawValue {
-                print("not ready yet")
+                log.i("not ready yet")
                 lock.unlock()
                 return
             }
@@ -131,7 +131,7 @@ public class DataWriterManager: NSObject {
             autoreleasepool{
                 if strongSelf.lock.try() {
                     if strongSelf.writeState.rawValue > RecordState.recording.rawValue {
-                        print("recordstate finished or failed")
+                        log.i("recordstate finished or failed")
                         strongSelf.lock.unlock()
                         return
                     }
@@ -155,9 +155,9 @@ public class DataWriterManager: NSObject {
                     if strongSelf.assetWriterVideoInput!.isReadyForMoreMediaData {
                         let flag = strongSelf.adatptor!.append(sampleBuffer!, withPresentationTime: CMTimeMake(value: Int64(index), timescale: strongSelf.timescaleValue))
 //                        let flag = strongSelf.assetWriterVideoInput!.append(sampleBuffer)
-                        print("video record")
+                        log.i("video record")
                         if !flag {
-                            print("video record failed")
+                            log.i("video record failed")
                             if strongSelf.lock.try() {
                                 strongSelf.stopWrite()
                                 strongSelf.destroyWriter()
@@ -170,9 +170,9 @@ public class DataWriterManager: NSObject {
                 if mediaType == AVMediaType.audio && strongSelf.assetWriterAudioInput != nil {
                     if strongSelf.assetWriterAudioInput!.isReadyForMoreMediaData {
                         let flag = strongSelf.assetWriterAudioInput!.append(audioBuffer!)
-                        print("audio record")
+                        log.i("audio record")
                         if !flag {
-                            print("audio record failed")
+                            log.i("audio record failed")
                             if strongSelf.lock.try() {
                                 strongSelf.stopWrite()
                                 strongSelf.destroyWriter()
@@ -190,7 +190,7 @@ public class DataWriterManager: NSObject {
 //
 //		if lock.try() {
 //			if writeState.rawValue < RecordState.recording.rawValue {
-//				print("not ready yet")
+//				log.i("not ready yet")
 //				lock.unlock()
 //				return
 //			}
@@ -204,7 +204,7 @@ public class DataWriterManager: NSObject {
 //			autoreleasepool{
 //				if strongSelf.lock.try() {
 //					if strongSelf.writeState.rawValue > RecordState.recording.rawValue {
-//						print("recordstate finished or failed")
+//						log.i("recordstate finished or failed")
 //						strongSelf.lock.unlock()
 //						return
 //					}
@@ -227,7 +227,7 @@ public class DataWriterManager: NSObject {
 //					if strongSelf.assetWriterVideoInput!.isReadyForMoreMediaData {
 //						let flag = strongSelf.assetWriterVideoInput!.append(sampleBuffer)
 //						if !flag {
-//							print("video record failed")
+//							log.i("video record failed")
 //							if strongSelf.lock.try() {
 //								strongSelf.stopWrite()
 //								strongSelf.destroyWriter()
@@ -241,7 +241,7 @@ public class DataWriterManager: NSObject {
 //					if strongSelf.assetWriterAudioInput!.isReadyForMoreMediaData {
 //						let flag = strongSelf.assetWriterAudioInput!.append(sampleBuffer)
 //						if !flag {
-//							print("video record failed")
+//							log.i("video record failed")
 //							if strongSelf.lock.try() {
 //								strongSelf.stopWrite()
 //								strongSelf.destroyWriter()
@@ -274,7 +274,7 @@ public class DataWriterManager: NSObject {
 		
         videoUrl = getTempVideoUrl()
         outputSize = CGSize.init(width: videoW, height: videoH)
-        debugPrint("--outputSize--%@---%@",videoW,videoH)
+        log.i("--outputSize--\(videoW)---\(videoH)")
         
         
         // 获取当前屏幕的最佳分辨率
@@ -286,9 +286,9 @@ public class DataWriterManager: NSObject {
         outputSize.width = screenSize.width
         outputSize.height = wScale * outputSize.height
         
-        debugPrint("---mWScale---%@",wScale)
-        debugPrint("---screenSize---%@",screenSize)
-        debugPrint("--outputSize_New--%@",outputSize)
+        log.i("---mWScale---\(wScale)")
+        log.i("---screenSize---\(screenSize)")
+        log.i("--outputSize_New--\(outputSize)")
         
 		//写入视频大小
 		let numPixels: NSInteger = NSInteger(outputSize.width * outputSize.height)
@@ -335,14 +335,14 @@ public class DataWriterManager: NSObject {
 			}
 		}
 		writeState = .recording
-        debugPrint("setUpWriter：")
+       log.i("setUpWriter：")
 	}
 	
 	deinit {
 		destroyWriter()
 	}
 	func destroyWriter() {
-        debugPrint("destroyWriter：")
+        log.i("destroyWriter：")
 		assetWriter = nil
 		assetWriterVideoInput = nil
 		assetWriterAudioInput = nil

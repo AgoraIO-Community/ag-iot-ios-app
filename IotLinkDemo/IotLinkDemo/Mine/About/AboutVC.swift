@@ -18,7 +18,7 @@ class AboutVC: AGBaseVC {
     
     private func setupUI() {
         view.backgroundColor = .white
-        title = "关于"
+        title = "about".L
         
         // 图片
         let logoImgView = UIImageView(image: UIImage(named: "clogo"))
@@ -33,7 +33,7 @@ class AboutVC: AGBaseVC {
         versionLabel.font = UIFont.systemFont(ofSize: 12)
         versionLabel.textColor = .black
         if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
-            versionLabel.text = "版本号：\(version)"
+            versionLabel.text = "versionNumber".L + "：\(version)"
         }
         view.addSubview(versionLabel)
         versionLabel.snp.makeConstraints { make in
@@ -43,9 +43,9 @@ class AboutVC: AGBaseVC {
         
         let tipsLabel = YYLabel()
         tipsLabel.numberOfLines = 0
-        let privacyTips = "隐私政策"
-        let userProtocolTips = "用户协议"
-        let tips = "使用该应用即表示您同意\n\(privacyTips)与\(userProtocolTips)"
+        let privacyTips = "privacyPolicy".L
+        let userProtocolTips = "userAgreement".L
+        let tips = "byUsingThisApplicationYouAgree".L + "\n\(privacyTips)" + "and" + "\(userProtocolTips)"
         let attributedTips = NSMutableAttributedString.init(string: tips)
         attributedTips.lineSpacing = 10
         attributedTips.alignment = .center

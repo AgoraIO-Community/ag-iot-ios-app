@@ -25,10 +25,12 @@ private let kCellID = "MineCell"
 
 class MinePageMainVC: AGBaseVC {
 
+//    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
+    
     var dataArray = Array<MineCellData>()
-    private let messageTitle = "消息中心"
-    private let settingTitle = "通用设置"
-    private let aboutTitle = "关于"
+    private let messageTitle = "messageCenter".L
+    private let settingTitle = "generalSettings".L
+    private let aboutTitle = "about".L
     private var userInfo :UserInfo?
     var message: MineCellData?
     var alamUnreadCount: UInt = 0 {
@@ -104,8 +106,9 @@ class MinePageMainVC: AGBaseVC {
             account.replaceSubrange(account.index(startIndex, offsetBy: 3)...account.index(startIndex, offsetBy: 6), with: "****")
         }
         AgoraIotManager.shared.sdk?.accountMgr.getAccountInfo(result: { [weak self] _, _, userInfo in
-            let uid:String = DeviceManager.shared.sdk?.accountMgr.getUserId() ?? ""
-            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: account,count:DeviceManager.shared.devices?.count ?? 0,uid: uid)
+//            let uid:String = DeviceManager.shared.sdk?.accountMgr.getUserId() ?? ""
+            let nodeId = sdk?.getUserNodeId()
+            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: account,count:DeviceManager.shared.devices?.count ?? 0,uid: nodeId ?? "")
             self?.userInfo = userInfo
             if(self?.userInfo?.sex == 0){
                 self?.userInfo?.sex = 1
@@ -140,12 +143,12 @@ class MinePageMainVC: AGBaseVC {
     }
     
     private func setupData(){
-        message = MineCellData(imgName: "mine_diamond", title: messageTitle)
+//        message = MineCellData(imgName: "mine_diamond", title: messageTitle)
         let setting = MineCellData(imgName: "mine_diamond", title: settingTitle)
         let about = MineCellData(imgName: "mine_vip", title: aboutTitle)
         
         dataArray = [
-            message!,
+//            message!,
             setting,
             about,
         ]
