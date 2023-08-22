@@ -83,9 +83,9 @@ public class IotAppSdkManager: NSObject {
     func prepare(preParam: PrepareParam,prepareListener:@escaping(Int,String)->Void)-> Int{
         
         if app.sdkState != .initialized{
+            log.i("---:\(app.sdkState.rawValue)")
             return ErrCode.XERR_BAD_STATE
         }
-        
         log.i("---prepare--\(preParam.mUserId)")
         _onPrepareListener = prepareListener
         app.proxy.cocoaMqtt.waitForPrepareListenerDesired(listenterDesired: onMqttListenerDesired)
@@ -98,6 +98,7 @@ public class IotAppSdkManager: NSObject {
         log.i("------unprepare------")
         if app.sdkState == .runing || app.sdkState == .reconnecting || app.sdkState == .preparing{
             app.proxy.cocoaMqtt.disconnect()
+            app.status.do_Initialized(.none)
             return ErrCode.XOK
         }else{
             log.i("------unprepare---XERR_BAD_STATE---\(app.sdkState)")
