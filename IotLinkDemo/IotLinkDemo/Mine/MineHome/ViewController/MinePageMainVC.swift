@@ -95,7 +95,7 @@ class MinePageMainVC: AGBaseVC {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        updateUIWithUserModel()
+        updateUIWithUserModel()
     }
     
     private func updateUIWithUserModel(){
