@@ -192,7 +192,7 @@ extension CallkitManager{
     
     func talkingRecordStart(sessionId: String, outFilePath:String, result:@escaping(Int,String)->Void) {
         DispatchQueue.main.async {
-            self.rtc.startRecord(result: {ec,msg in self.asyncResult(ec, msg,result)})
+            self.rtc.startRecord(outFilePath:outFilePath, result: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     

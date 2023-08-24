@@ -10,7 +10,7 @@ CFBundleDisplayName = "灵隼";
 UILaunchStoryboardName = "LaunchScreen";
 
 
-NSCameraUsageDescription = "需要您的同意,才能访问相机";
-NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
-NSPhotoLibraryUsageDescription =  "需要您的同意,才能访问相册";
-NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";
+//NSCameraUsageDescription = "需要您的同意,才能访问摄像头";
+//NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
+//NSPhotoLibraryUsageDescription =  "需要您的同意,才能访问相册";
+//NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";

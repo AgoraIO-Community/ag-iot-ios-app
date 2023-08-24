@@ -254,7 +254,8 @@ extension DoorbellAbilitySimpleLogicView{
             debugPrint("挂断通话")
             isPermitAudio = true
         }
-        DoorBellManager.shared.muteLocalAudio(sessionId:device.sessionId,mute: isPermitAudio) {[weak self] success, msg in
+        
+        DoorBellManager.shared.muteLocalVideo(sessionId:device.sessionId,mute: isPermitAudio) {[weak self] success, msg in
             if success{
                 debugPrint("请求通话/或者挂断 成功")
                 let isSelect = !btn.isSelected
@@ -267,6 +268,20 @@ extension DoorbellAbilitySimpleLogicView{
                 
             }
          }
+        
+//        DoorBellManager.shared.muteLocalAudio(sessionId:device.sessionId,mute: isPermitAudio) {[weak self] success, msg in
+//            if success{
+//                debugPrint("请求通话/或者挂断 成功")
+//                let isSelect = !btn.isSelected
+//                self?.toolBarView.handelCallSuccess(isSelect)
+//                self?.isOnCalling = true
+//                if isPermitAudio == true {//挂断电话
+//                    //通话结束变声通话置为正常
+//                    self?.isOnCalling = false
+//                }
+//
+//            }
+//         }
     }
     
     //静音
@@ -339,16 +354,18 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
     
     func recordScreenPre(){
         
-        if fetchPHAuthorization() == true{
-            recordScreen()
-        }
-        
+//        if fetchPHAuthorization() == true{
+//            recordScreen()
+//        }
+        recordScreen()
     }
     
     func recordScreen(){
         
         if startRecord == false {
-            DoorBellManager.shared.talkingRecordStart {[weak self] success, msg in
+            let videoPath = getTempVideoUrl()
+            print("videoPath:\(videoPath)")
+            DoorBellManager.shared.talkingRecordStart(outFilePath:videoPath,sessionId:"") {[weak self] success, msg in
                 if success{
                     self?.toolBarView.callBtn.isSelected = true
                     self?.startRecord = true
@@ -367,6 +384,23 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         }
     }
     
+    func getTempVideoUrl() -> String {
+        let videoName = String.init(format: "out_test%@.mp4", UUID().uuidString)
+        let videoPath = NSString(string: recordVideoFolder).appendingPathComponent(videoName) as String
+
+        return videoPath
+    }
+    //MARK: ----- property
+    var recordVideoFolder: String {//NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory
+        if let path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first {
+            let direc = NSString(string: path).appendingPathComponent("VideoFile") as String
+            if !FileManager.default.fileExists(atPath: direc) {
+                try? FileManager.default.createDirectory(atPath: direc, withIntermediateDirectories: true, attributes: [:])
+            }
+            return direc
+        }
+        return ""
+    }
     
     func fetchPHAuthorization()->Bool{
         

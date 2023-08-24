@@ -32,6 +32,14 @@ class DoorBellManager: NSObject {
         })
     }
     
+    //推本地视频到对端 mute: 是否禁止
+    func muteLocalVideo(sessionId:String,mute: Bool,cb:@escaping(Bool,String)->Void){
+        sdk?.callkitMgr.muteLocalVideo(sessionId: sessionId, mute: mute, result: { ec, msg in
+            cb(ec == ErrCode.XOK ? true : false , msg)
+            debugPrint("---msg---\(msg)")
+        })
+    }
+    
     //推本地音频到对端 mute: 是否禁止
     func muteLocalAudio(sessionId:String,mute: Bool,cb:@escaping(Bool,String)->Void){
         sdk?.callkitMgr.muteLocalAudio(sessionId: sessionId, mute: mute, result: { ec, msg in
@@ -57,9 +65,9 @@ class DoorBellManager: NSObject {
     }
     
     //开始录制当前通话（包括音视频流），仅在通话状态下才能调用
-    func talkingRecordStart(cb:@escaping(Bool,String)->Void){
+    func talkingRecordStart(outFilePath:String = "", sessionId:String = "",cb:@escaping(Bool,String)->Void){
         
-        sdk?.callkitMgr.talkingRecordStart(sessionId: "",outFilePath: "", result: { ec, msg in
+        sdk?.callkitMgr.talkingRecordStart(sessionId:"", outFilePath: outFilePath, result: { ec, msg in
             cb(ec == ErrCode.XOK ? true : false , msg)
             debugPrint("\(msg)")
         })

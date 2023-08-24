@@ -182,6 +182,14 @@ public protocol ICallkitMgr {
     func setPeerVideoView(sessionId:String, peerView: UIView?) -> Int
 
     /*
+     * @brief 禁止/启用 本地视频推流到对端
+     * @param sessionId : 会话唯一标识
+     * @param mute:是否禁止
+     * @param result: (参数1:错误码，参数2:提示信息) 错误码，XOK--设置成功； XERR_INVALID_PARAM--没有找到该会话； XERR_UNSUPPORTED--设置失败
+     */
+    func muteLocalVideo(sessionId:String, mute: Bool,result:@escaping(Int,String)->Void)
+    
+    /*
      * @brief 禁止/启用 本地音频推流到对端
      * @param sessionId : 会话唯一标识
      * @param mute: 是否禁止

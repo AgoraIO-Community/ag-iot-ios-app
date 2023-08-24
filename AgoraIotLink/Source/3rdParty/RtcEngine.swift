@@ -255,7 +255,7 @@ class RtcEngine : NSObject{
         }
         guard let engine = engine else {
             log.e("rtc engine is nil")
-            cb(ErrCode.XOK,op + " fail")
+            cb(ErrCode.XERR_BAD_STATE,op + " fail")
             return
         }
 
@@ -273,7 +273,7 @@ class RtcEngine : NSObject{
             log.w("rtc muteLocalVideo(\(mute)) faile:\(String(ret))")
         }
         
-        ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
+        ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNSUPPORTED,op + " fail:" + String(ret))
     }
     
     private var _localAudioMute:Bool = true
@@ -518,7 +518,7 @@ class RtcEngine : NSObject{
         isSnapShoting.setValue(true)
     }
     
-    func startRecord(result: @escaping (Int, String) -> Void){
+    func startRecord(outFilePath:String, result: @escaping (Int, String) -> Void){
         
         log.i("startRecord...")
         if(!peerEntered){
@@ -527,8 +527,11 @@ class RtcEngine : NSObject{
             return
         }
     
-        videoRecoredHanle(true)
         isRecording.setValue(true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            self?.videoRecordM.outFilePath = outFilePath
+            self?.videoRecoredHanle(true)
+        }
         result(ErrCode.XOK,"已开始")
     }
 
