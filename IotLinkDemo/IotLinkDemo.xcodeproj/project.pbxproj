@@ -2091,9 +2091,6 @@
 				);
 				INFOPLIST_FILE = IotLinkDemo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = " 需要您的同意，才能访问蓝牙";
-				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问相机";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要您的同意,才能保存图片到相册";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相册";
@@ -2242,9 +2239,6 @@
 				);
 				INFOPLIST_FILE = IotLinkDemo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = " 需要您的同意，才能访问蓝牙";
-				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问相机";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要您的同意,才能保存图片到相册";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相册";
