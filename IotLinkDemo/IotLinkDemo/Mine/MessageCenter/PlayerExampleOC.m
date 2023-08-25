@@ -11,10 +11,13 @@
 #import <IJKMediaFramework/IJKMediaFramework.h>
 #import <IJKMediaFramework/IJKFFOptions.h>
 #import "SJIJKMediaPlaybackController.h"
+#import <SDWebImage/SDWebImage.h>
 
 @interface PlayerExampleOC ()
 
 @property (nonatomic, strong) SJVideoPlayer *player;
+
+//@property (nonatomic, strong) UIImageView *playerImage;
 
 @end
 
@@ -37,10 +40,23 @@
     return  _player;
 }
 
+// player 对象
+//- (UIImageView *)playerImage{
+//    if(!_playerImage){
+//        _playerImage = [[UIImageView alloc] init];
+//    }
+//    return  _playerImage;
+//}
+
 - (void)setUpUI{
     
     self.player.view.frame = CGRectMake(0, 100, self.view.bounds.size.width, 400);
     [self.view addSubview:self.player.view];
+    
+//    self.playerImage.frame = CGRectMake(0, 100, self.view.bounds.size.width, 300);
+//    [self.view addSubview:self.playerImage];
+//
+//    [self.playerImage sd_setImageWithURL:[NSURL URLWithString:@"https://stream-media.s3.cn-north-1.jdcloud-oss.com/iot-three/332431691747586499_1692089225817_462457901.jpeg"] placeholderImage:[UIImage imageNamed:@"placeholder"]];
 }
 
 //创建ijkVC并播放

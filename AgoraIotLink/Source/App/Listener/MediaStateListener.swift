@@ -162,6 +162,7 @@ extension MediaStateListener : CallStateMachineListener{
                 log.i("listener VideoReady uid:\(uid)")
                 if(self.callSession?.peerUid == uid){
                     self.endTime()
+                    self.callAct(.onFirstFrame,self.callSession?.mSessionId ?? "",ErrCode.XOK)
                     self.preViewlistener(self.callSession?.mSessionId ?? "",0,0)
 
                 }

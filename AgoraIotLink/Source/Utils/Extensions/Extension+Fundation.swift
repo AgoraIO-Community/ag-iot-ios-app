@@ -62,9 +62,9 @@ public extension String {
         return timestamp
     }
     
-    static func dateTimeSpace(_ lastTime : Int)->Int {
+    static func dateTimeSpace(_ lastTime : UInt64)->UInt64 {
         let timeInterval: TimeInterval = Date().timeIntervalSince1970
-        let timestamp = Int(timeInterval)
+        let timestamp = UInt64(timeInterval)
         log.i("dateTimeSpace currentTime:\(timestamp)")
         return timestamp - lastTime
     }

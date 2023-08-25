@@ -241,14 +241,6 @@ import Foundation
     func resume()->Int
     
     /**
-     * @brief 直接跳转播放进度，先切换成 DEVPLAYER_STATE_SEEKING状态，
-     *        seek完成后触发 onDevMediaSeekDone() 回调，并切换回原先 播放/暂停状态
-     * @param seekPos: 需要跳转到的目标时间戳，单位ms
-     * @return 返回错误码
-     */
-    func seek(seekPos:UInt64)->Int
-    
-    /**
      * @brief 设置快进、快退播放倍速，默认是正常播放速度（speed=1）
      * @param speed: 固定几个倍速：1; 2; 3;
      * @return 返回错误码

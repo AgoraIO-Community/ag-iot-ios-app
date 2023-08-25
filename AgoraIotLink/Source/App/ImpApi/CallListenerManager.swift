@@ -172,6 +172,7 @@ class CallListenerManager {
 
         let callLister = MediaStateListener(dialParam:dialParam, actionAck: actionAck, memberState: memberState)
         mediaLister = callLister
+        callLister.callRequest()
         callLister.interCallAct = { [weak self] ack,sessionId,peerNodeId in
             if (ack == .RemoteHangup){
                 self?.hunUpSDCard()

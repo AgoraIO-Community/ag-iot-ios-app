@@ -12,6 +12,7 @@ import Foundation
  */
 @objc public enum MediaCallback:Int{
     case onPlayed                //设备连接连接完成
+    case onFirstFrame            //获取到播放首帧
     case onStoped                //设备断开连接
     case onError                 //会话错误
     case UnknownAction           //未知错误
@@ -26,15 +27,27 @@ class IDevMediaManager : IDevMediaMgr{
     
     private var playStateListener:IPlayingCallbackListener? = nil
     
+    var mediaItemArray = [DevMediaItem]()
+    var curPlayItem  : DevMediaItem?
+    var curStartTime : UInt64 = 0
+    
     init(app:Application,rtm:RtmEngine,sessionId:String){
         self.app = app
         self.rtm = rtm
         self.curSessionId = sessionId
     }
     
+    lazy var playClock : MediaPlayingClock = {
+        
+        let playClock = MediaPlayingClock()
+        return playClock
+        
+    }()
+    
     deinit {
         log.i("IDevMediaManager 销毁了")
     }
+
     
     func queryMediaList(queryParam: QueryParam, queryListener: @escaping (Int, [DevMediaItem]) -> Void) {
         
@@ -93,12 +106,18 @@ class IDevMediaManager : IDevMediaMgr{
         
         playStateListener = playingCallListener
         
+        let curState = getPlayingState()
+        playClock.setRunSpeed(playSpeed)
+        playClock.stopWithProgress(TimeInterval(globalStartTime))
+        
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:Int = 2005
         let payloadParam = ["begin":globalStartTime,"rate":playSpeed] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
-            self?.startSDCardCall(errCode,resultDic)
+            if curState == .stopped{
+                self?.startSDCardCall(errCode,resultDic)
+            }
             log.i("play globalStartTime: \(resultDic)")
             
         }
@@ -109,13 +128,21 @@ class IDevMediaManager : IDevMediaMgr{
     func play(fileId: String, startPos: UInt64, playSpeed: Int, playingCallListener: IPlayingCallbackListener)->Int {
         
         playStateListener = playingCallListener
+    
+        let curState = getPlayingState()
+        playClock.setRunSpeed(playSpeed)
+        playClock.stopWithProgress(TimeInterval(startPos))
         
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:Int = 2006
         let payloadParam = ["id":fileId,"offset":startPos,"rate":playSpeed] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
-            self?.startSDCardCall(errCode,resultDic)
+            if curState == .stopped{
+                self?.startSDCardCall(errCode,resultDic)
+            }else{
+                self?.playClock.setProgress(TimeInterval(startPos))
+            }
             log.i("play fileId:\(resultDic)")
         }
         return ErrCode.XOK
@@ -139,6 +166,8 @@ class IDevMediaManager : IDevMediaMgr{
     
     func setPlayingSpeed(speed: Int) -> Int {
         
+        playClock.setRunSpeed(speed)
+        
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:Int = 2008
         let payloadParam = ["rate":speed] as [String : Any]
@@ -151,6 +180,8 @@ class IDevMediaManager : IDevMediaMgr{
     }
     
     func pause() -> Int {
+        
+        playClock.stop()
         
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:Int = 2009
@@ -171,12 +202,16 @@ class IDevMediaManager : IDevMediaMgr{
     }
     
     func resume() -> Int {
+        
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:Int = 2010
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
         CallListenerManager.sharedInstance.resumeingSDCardPlay()
-        sendGeneralStringData(paramDic, curTimestamp) { errCode, resutArray in
+        sendGeneralStringData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
             log.i("setPlayingSpeed:\(resutArray)")
+            
+            self?.playClock.start()
+            
             if errCode == ErrCode.XOK{
                 CallListenerManager.sharedInstance.resumedSDCardPlay()
             }else{
@@ -184,10 +219,6 @@ class IDevMediaManager : IDevMediaMgr{
             }
             
         }
-        return ErrCode.XOK
-    }
-    
-    func seek(seekPos: UInt64) -> Int {
         return ErrCode.XOK
     }
     
@@ -211,8 +242,10 @@ class IDevMediaManager : IDevMediaMgr{
     }
     
     func getPlayingProgress() -> UInt64 {
-        //todo
-        return 000000
+        let playTime = playClock.getProgress()
+        log.i("getPlayingProgress:\(playTime)")
+        return UInt64(playTime)
+        
     }
     
     func getPlayingState() -> DevMediaStatus{
@@ -312,8 +345,10 @@ extension IDevMediaManager{
             rtc?.mutePeerAudio(false, cb: { code, msg in })
             rtc?.mutePeerVideo(false, cb: { code, msg in })
             
+        }else if act == .onFirstFrame{//获取首帧
+            playClock.start()
         }else if act == .onStoped{//播放完成
-            
+            playClock.stopWithProgress(0)
             playStateListener?.onDevMediaPlayingDone(fileId: "")
             
         }else if act == .onError{
@@ -338,6 +373,7 @@ extension IDevMediaManager{
             let medisItem = DevMediaItem(mFileId: item["id"] as? String ?? "", mStartTimestamp: item["start"] as? UInt64 ?? 0, mStopTimestamp: item["stop"] as? UInt64 ?? 0, mType: item["type"] as? Int ?? 0, mEvent: item["event"] as? Int ?? 0, mImgUrl: item["pic"] as? String ?? "", mVideoUrl: item["url"] as? String ?? "")
             resultArray.append(medisItem)
         }
+        mediaItemArray.append(contentsOf: resultArray)
         return resultArray
     }
     
@@ -352,5 +388,20 @@ extension IDevMediaManager{
         }
         return resultArray
     }
+    
+    func getMeidaItemWithFileId(_ fileId : String)->DevMediaItem?{
+        for item in mediaItemArray{
+            if fileId == item.mFileId {
+                return item
+            }
+        }
+        return nil
+    }
+    
+    func setStartPlayTime(){
+        let fileSTime = curPlayItem?.mStartTimestamp ?? 0
+        curStartTime =  String.dateTimeSpace(fileSTime)
+    }
+    
     
 }

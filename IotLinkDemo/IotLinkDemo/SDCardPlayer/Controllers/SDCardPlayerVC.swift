@@ -13,8 +13,13 @@ private let kCellID = "SDCardPlayerCell"
 class SDCardPlayerVC: AGBaseVC {
 
     var mediaArray = [DevMediaItem]()
-    
     var curImage : UIImage?
+    //---进度条---
+    var progressSlider: UISlider!
+    var playbackTimer: Timer?
+    var index : Int = 0
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +28,7 @@ class SDCardPlayerVC: AGBaseVC {
     }
     
     func setUpUI(){
-        
+  
         view.addSubview(displayView)
         displayView.snp.makeConstraints { make in
             make.top.equalTo(60)
@@ -70,6 +75,11 @@ class SDCardPlayerVC: AGBaseVC {
             make.right.equalTo(-15)
             make.bottom.equalTo(view)
         }
+        
+        // 设置进度条
+        progressSlider = UISlider(frame: CGRect(x: 30, y: view.bounds.height - 150, width: view.bounds.width-60, height: 30))
+        progressSlider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
+        view.addSubview(progressSlider)
         
     }
 
@@ -144,6 +154,45 @@ class SDCardPlayerVC: AGBaseVC {
         return btn
     }()
     
+    @objc private func updateProgressBar() {
+
+        index += 1
+        
+        let mediaMgr = getDevMediaMgr()
+        // 更新进度条的进度
+        let curTime = mediaMgr.getPlayingProgress()
+        print("更新进度条:  curTime:\(curTime)")
+        let progress = Double(curTime)/Double(60000)
+        print("更新进度条:  progress:\(progress)")
+        print("index : \(index)")
+        progressSlider.value = Float(progress)
+        if progress >= 1{
+            if playbackTimer != nil {
+                playbackTimer?.invalidate()
+                playbackTimer = nil
+            }
+            playBtn.isSelected = !playBtn.isSelected
+        }  
+    }
+    
+    // 监听进度条值的变化
+    @objc func progressSliderValueChanged(_ slider: UISlider) {
+ 
+    }
+    
+    func startTimeProgress(){
+        
+        index = 0
+        playbackTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateProgressBar), userInfo: nil, repeats: true)
+        
+    }
+    
+    func endTimeProgress(){
+        
+        playbackTimer?.invalidate()
+        playbackTimer = nil
+        
+    }
     
     @objc func btnClick(btn : UIButton){//播放
         
@@ -233,7 +282,8 @@ extension SDCardPlayerVC{
     func sendCmdSDPlayCtrl(sessionId:String = ""){
    
         let mediaMgr = getDevMediaMgr()
-        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
+        mediaMgr.play(fileId: "file_id1", startPos: 0, playSpeed: 1, playingCallListener: self)
+//        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
         
     }
     
@@ -246,35 +296,35 @@ extension SDCardPlayerVC{
     
     
     //SD卡回看命令 仅在通话状态下才能调用
-    func sendCmdSDCtrl(sessionId:String = "", cb:@escaping(Int,String)->Void){
-        
-        let mediaMgr = getDevMediaMgr()
-        
-//        let param = QueryParam(mFileId: 0, mBeginTimestamp: 12, mEndTimestamp: 20, mPageIndex: 0, mPageSize: 10)
-//        mediaMgr.queryMediaList(queryParam: param) { errCode, mediaList in
-//            print("sendCmdSDCtrl---:\(errCode) mediaList:\(mediaList)")
-//            cb(errCode,"success")
-//        }
-        
-//        mediaMgr.deleteMediaList(deletingList: ["1","2","3"]) { errCode, undeletedList in
-//            print("sendCmdSDCtrl---:\(errCode) mediaList:\(undeletedList)")
-//            cb(errCode,"success")
-//        }
-        
-//        mediaMgr.queryMediaCoverImage(imgUrl: "http://jd.com/image1.jpg") { errCode, result in
-//            print("sendCmdSDCtrl---:\(errCode) mediaList:\(result)")
-//            cb(errCode,"success")
-//        }
-        
-        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
-        
-//          mediaMgr.play(fileId: "1", startPos: 989898989, playSpeed: 1, playingCallListener: self)
-        
-//        mediaMgr.stop()
-        
-//          mediaMgr.setPlayingSpeed(speed: 2)
-        
-    }
+//    func sendCmdSDCtrl(sessionId:String = "", cb:@escaping(Int,String)->Void){
+//        
+//        let mediaMgr = getDevMediaMgr()
+//        
+////        let param = QueryParam(mFileId: 0, mBeginTimestamp: 12, mEndTimestamp: 20, mPageIndex: 0, mPageSize: 10)
+////        mediaMgr.queryMediaList(queryParam: param) { errCode, mediaList in
+////            print("sendCmdSDCtrl---:\(errCode) mediaList:\(mediaList)")
+////            cb(errCode,"success")
+////        }
+//        
+////        mediaMgr.deleteMediaList(deletingList: ["1","2","3"]) { errCode, undeletedList in
+////            print("sendCmdSDCtrl---:\(errCode) mediaList:\(undeletedList)")
+////            cb(errCode,"success")
+////        }
+//        
+////        mediaMgr.queryMediaCoverImage(imgUrl: "http://jd.com/image1.jpg") { errCode, result in
+////            print("sendCmdSDCtrl---:\(errCode) mediaList:\(result)")
+////            cb(errCode,"success")
+////        }
+//        
+//        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
+//        
+////          mediaMgr.play(fileId: "1", startPos: 989898989, playSpeed: 1, playingCallListener: self)
+//        
+////        mediaMgr.stop()
+//        
+////          mediaMgr.setPlayingSpeed(speed: 2)
+//        
+//    }
 
     
 }
@@ -303,6 +353,7 @@ extension SDCardPlayerVC: IPlayingCallbackListener {
         if errCode == 0 {
             mediaMgr.setDisplayView(displayView: displayView)
         }
+        startTimeProgress()
     }
     
     func onDevMediaSeekDone(fileId mediaUrl: String, errCode: Int, targetPos: UInt64, seekedPos: UInt64) {
@@ -310,7 +361,7 @@ extension SDCardPlayerVC: IPlayingCallbackListener {
     }
     
     func onDevMediaPlayingDone(mediaUrl: String, duration: UInt64) {
-        
+        endTimeProgress()
     }
     
     func onDevPlayingError(fileId mediaUrl: String, errCode: Int) {
