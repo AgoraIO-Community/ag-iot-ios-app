@@ -172,10 +172,6 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.resume()
     }
     
-    @objc public func seek(seekPos: UInt64) -> Int {
-        return mgr.seek(seekPos: seekPos)
-    }
-    
     @objc public func setPlayingSpeed(speed: Int) -> Int {
         return mgr.setPlayingSpeed(speed: speed)
     }
