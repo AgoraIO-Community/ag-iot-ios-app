@@ -359,9 +359,9 @@ class CallkitManager : ICallkitMgr{
         }
     }
     
-    func talkingRecordStart(result: @escaping (Int, String) -> Void) {
+    func talkingRecordStart(outFilePath:String,result:@escaping(Int,String)->Void) {
         DispatchQueue.main.async {
-            self.rtc.startRecord(result: {ec,msg in self.asyncResult(ec, msg,result)})
+            self.rtc.startRecord(outFilePath:outFilePath, result: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     

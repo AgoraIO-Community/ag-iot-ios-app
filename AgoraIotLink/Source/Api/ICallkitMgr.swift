@@ -197,9 +197,10 @@ public protocol ICallkitMgr {
 
     /*
      * @brief 开始录制当前通话（包括音视频流），仅在通话状态下才能调用
+     * @param outFilePath : 输出保存的视频文件路径（应用层确保文件有可写权限,以.mp4为后缀，比如：../Documents/VideoFile/out_test810C3162.mp4）
      * @param result: 调用该接口是否成功
      */
-    func talkingRecordStart(result:@escaping(Int,String)->Void)
+    func talkingRecordStart(outFilePath:String,result:@escaping(Int,String)->Void)
 
     /*
      * @brief 停止录制当前通话，仅在通话状态下才能调用
