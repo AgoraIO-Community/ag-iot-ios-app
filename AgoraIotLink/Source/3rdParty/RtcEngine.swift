@@ -533,22 +533,20 @@ class RtcEngine : NSObject{
         isSnapShoting.setValue(true)
     }
     
-    func startRecord(result: @escaping (Int, String) -> Void){
+    func startRecord(outFilePath:String,result: @escaping (Int, String) -> Void){
         
-        log.i("rtc try capturePeerVideoFrame ...")
-//        if(state != RtcEngine.ENTERED){
-//            log.e("rtc state : \(state) error for capturePeerVideoFrame()")
-//            result(ErrCode.XERR_BAD_STATE,"rtc state error")
-//            return
-//        }
+        log.i("startRecord...")
+
         if(!peerEntered){
             log.i("startRecord: rtc peer not entered for capture")
             result(ErrCode.XERR_BAD_STATE,"rtc peer not joined")
             return
-        }
-    
-        videoRecoredHanle(true)
+        } 
         isRecording.setValue(true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            self?.videoRecordM.outFilePath = outFilePath
+            self?.videoRecoredHanle(true)
+        }
         result(ErrCode.XOK,"已开始")
     }
 

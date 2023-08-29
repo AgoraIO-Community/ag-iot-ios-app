@@ -9,13 +9,13 @@ import Foundation
 import AgoraIotLink
 
 public class CallkitManager : NSObject,ICallkitMgr{
- 
+
     @objc public func talkingRecordStop(result: @escaping (Int, String) -> Void) {
         return mgr.talkingRecordStop(result: result)
     }
     
-    @objc public func talkingRecordStart(result: @escaping (Int, String) -> Void) {
-        return mgr.talkingRecordStart(result: result)
+    @objc public func talkingRecordStart(outFilePath: String, result: @escaping (Int, String) -> Void) {
+        return mgr.talkingRecordStart(outFilePath: outFilePath,result: result)
     }
     
     @objc public func capturePeerVideoFrame(result: @escaping (Int, String, UIImage?) -> Void) {
