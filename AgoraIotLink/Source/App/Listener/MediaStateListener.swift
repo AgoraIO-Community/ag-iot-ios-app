@@ -17,6 +17,8 @@ class MediaStateListener: NSObject {
     var callMachine : MediaStateMachine?
     var talkingEngine : AgoraTalkingEngine?
     
+    var peerDisplayView : UIView?
+    
     var callSession : CallSession?
     
     typealias callActionAck = (MediaCallback,_ sessionId:String,_ errCode:Int)->Void
@@ -33,8 +35,9 @@ class MediaStateListener: NSObject {
     var preViewlistener:PreviewListener = {sessionId,width,height in log.w("'_preViewlistener' callback not registered,please register it with 'PreviewListener'")}
     
     
-    init(dialParam: CallSession,actionAck:@escaping(MediaCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?) {
+    init(dialParam: CallSession,peerDisplayView:UIView?, actionAck:@escaping(MediaCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?) {
         super.init()
+        self.peerDisplayView = peerDisplayView
         callAct = actionAck
         callMemState = memberState
         startCall(dialParam)
@@ -108,8 +111,10 @@ extension MediaStateListener : CallStateMachineListener{
         rtcSetting.logFilePath = setting.logFilePath
         rtcSetting.publishAudio = setting.publishAudio
         rtcSetting.publishVideo = setting.publishVideo
-        rtcSetting.subscribeAudio = setting.subscribeAudio
-        rtcSetting.subscribeVideo = setting.subscribeVideo
+        rtcSetting.subscribeAudio = true   //sdk卡回看默认自动订阅音频
+        rtcSetting.subscribeVideo = true   //sdk卡回看默认自动订阅视频
+        
+        rtcSetting.peerDisplayView = peerDisplayView //初始化时设置视图
 
         callRcbTime = TimeCallback<(Int,String)>(cb: { (state, msg) in
             log.i("callRcbTime :\(msg)")
@@ -123,13 +128,14 @@ extension MediaStateListener : CallStateMachineListener{
         channelInfor.peerUid = peerId
         
         talkingEngine = AgoraTalkingEngine.init(setting: rtcSetting, channelInfo: channelInfor, cb: {[weak self]ret,msg in
+            
             if(ret == .Fail){
                 log.e("listener rtc.createAndEnter failed:\(msg)")
                 self?.callMachine?.handleEvent(.endCall)
                 self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
             }
             else if(ret == .Succ){
-                
+                self?.callAct(.onjoinSuc,self?.callSession?.mSessionId ?? "",ErrCode.XOK)
                 log.i("sdCard call reqCall CallForward")
                 self?.callRcbTime?.schedule(time:self?.app.config.calloutTimeOut ?? 30,timeout: {
                     log.i("call reqCall ring remote timeout")

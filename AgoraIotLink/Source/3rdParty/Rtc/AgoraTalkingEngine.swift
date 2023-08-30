@@ -31,6 +31,8 @@ struct RtcSetting{
     var publishVideo = false    ///< 通话时是否推流本地视频
     var subscribeAudio = false ///< 通话时是否订阅对端音频
     var subscribeVideo = false  ///< 通话时是否订阅对端视频
+    
+    var peerDisplayView : UIView? //对端渲染视图
 }
 
 public class ChannelInfo : NSObject{
@@ -53,6 +55,8 @@ class AgoraTalkingEngine: NSObject {
     var channelInfo : ChannelInfo?
     var connection  : AgoraRtcConnection = AgoraRtcConnection()
     var rtcSetting  : RtcSetting =  RtcSetting()
+    
+    var peerDisplayView : UIView?
     
     
     private var  _onEnterChannel : TimeCallback<(TaskResult,String)>? = nil
@@ -79,17 +83,19 @@ class AgoraTalkingEngine: NSObject {
         self.rtcSetting = setting
         _onPeerAction = peerAction
         _memberState = memberState
-    
+        
         let tempCon = AgoraRtcConnection()
         tempCon.channelId = channelInfo.cName
         tempCon.localUid =  channelInfo.uid
         connection = tempCon
         
+        peerDisplayView = setting.peerDisplayView
 //        setMetalData()
         
-        log.i("rtc enterChannel when uid:\(channelInfo.uid) token:\(channelInfo.token) name:\(channelInfo.cName)")
+//        log.i("rtc enterChannel when uid:\(channelInfo.uid) token:\(channelInfo.token) name:\(channelInfo.cName)")
         _onEnterChannel?.invalidate()
         joinChannel(cb: cb)
+        
     }
     
     func getRtcObject() -> AgoraRtcEngineKit {
@@ -111,19 +117,31 @@ class AgoraTalkingEngine: NSObject {
         let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
         option.channelProfile = .liveBroadcasting
         option.clientRoleType = .broadcaster
-        option.autoSubscribeAudio = rtcSetting.subscribeAudio
-        option.autoSubscribeVideo = rtcSetting.subscribeVideo
+        option.autoSubscribeAudio =  rtcSetting.subscribeAudio
+        option.autoSubscribeVideo =  rtcSetting.subscribeVideo
         option.publishCameraTrack = rtcSetting.publishVideo
-        option.publishMicrophoneTrack = rtcSetting.publishVideo
+        option.publishMicrophoneTrack = rtcSetting.publishAudio
         
         log.i("""
                  rtc try enterChannel: '\(String(describing: channelInfo?.cName))' for: uid(\(String(describing: channelInfo?.uid)))
                             audioType: \(rtcSetting.audioType)
                            sampleRate: \(rtcSetting.audioSampleRate)
+                           autoSubscribeAudio: \(rtcSetting.subscribeAudio)
+                           autoSubscribeVideo: \(rtcSetting.subscribeVideo)
+                           publishCameraTrack: \(rtcSetting.publishVideo)
+                           publishMicrophoneTrack: \(rtcSetting.publishAudio)
                  """)
-        
-        let ret = rtcKit?.joinChannelEx(byToken: channelInfo?.token, connection: connection, delegate: self, mediaOptions: option, joinSuccess:nil)
 
+        let ret = rtcKit?.joinChannelEx(byToken: channelInfo?.token, connection: connection, delegate: self, mediaOptions: option, joinSuccess:nil)
+        
+        rtc.setAudioAndVideoDelegate()
+        
+        if let peerView = peerDisplayView{
+            log.i("init setupRemoteView")
+            let ret = setupRemoteView(peerView: peerView, uid: self.channelInfo!.peerUid)
+            log.i("init setupRemoteView ret:\(ret)")
+        }
+        
         if(ret != 0){
             log.e("rtc enterChannel:\(String(describing: ret))")
             cb(.Fail,"join channel fail")
@@ -150,18 +168,9 @@ class AgoraTalkingEngine: NSObject {
 
         if(type != ""){
             cfg = "{\"che.audio.custom_payload_type\":" + type + "}"
-            rtcKit?.setParameters(cfg)
+            let ret = rtcKit?.setParameters(cfg)
+            log.i("custom_payload_type :\(cfg) ret : \(String(describing: ret))")
         }
-        
-        muteLocalVideo(true) { code, msg in
-            log.i("muteLocalVideo:\(code)")
-        }
-
-        muteLocalAudio(true){ code, msg in
-            log.i("muteLocalAudio:\(code)")
-        }
-        
-        rtc.setAudioAndVideoDelegate()
 
     }
     
@@ -171,11 +180,17 @@ class AgoraTalkingEngine: NSObject {
         _onPeerAction = {b,u in}
         _memberState = {s,a in}
         peerEntered = false
+        if peerDisplayView != nil{
+            log.i("leaveChannel setupRemoteView nil")
+            let ret = setupRemoteView(peerView: nil, uid: self.channelInfo?.peerUid ?? 0)
+            log.i("leaveChannel setupRemoteView nil ret:\(ret)")
+        }
         log.i("rtc try leaveChannel ...")
         let ret = rtcKit?.leaveChannelEx(connection,leaveChannelBlock: { stats in
             log.i("leaveChannelEx:\(stats)")
         })
         clearObject()
+        rtc.frameCount = 0
         log.i("rtc try leaveChannel ..ret:\(String(describing: ret))")
         cb(true)
     }
@@ -237,6 +252,7 @@ extension AgoraTalkingEngine{
         let canvas = AgoraRtcVideoCanvas()
         canvas.uid = uid
         canvas.renderMode = rtcSetting.renderMode
+        canvas.setupMode = .add
         canvas.view = peerView
         
         let ret = rtcKit.setupRemoteVideoEx(canvas, connection: connection)
@@ -389,16 +405,25 @@ extension AgoraTalkingEngine{
 
 extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
 
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didClientRoleChanged oldRole: AgoraClientRole, newRole: AgoraClientRole, newRoleOptions: AgoraClientRoleOptions?) {
-        log.i("rtc didJoinedOfUid oldRole:\(oldRole.rawValue) newRole:\(newRole.rawValue)")
-    }
-    
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didClientRoleChangeFailed reason: AgoraClientRoleChangeFailedReason, currentRole: AgoraClientRole) {
-        log.i("rtc didJoinedOfUid currentRole:\(currentRole.rawValue) reason:\(reason)")
-    }
+//    func rtcEngine(_ engine: AgoraRtcEngineKit, didClientRoleChanged oldRole: AgoraClientRole, newRole: AgoraClientRole, newRoleOptions: AgoraClientRoleOptions?) {
+//        log.i("rtc didJoinedOfUid oldRole:\(oldRole.rawValue) newRole:\(newRole.rawValue)")
+//    }
+//
+//    func rtcEngine(_ engine: AgoraRtcEngineKit, didClientRoleChangeFailed reason: AgoraClientRoleChangeFailedReason, currentRole: AgoraClientRole) {
+//        log.i("rtc didJoinedOfUid currentRole:\(currentRole.rawValue) reason:\(reason)")
+//    }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
         log.i("rtc didJoinedOfUid \(uid)")
+        
+//        if uid == 10{
+//            let param = ["mode":8,"enable":true] as [String : Any]
+//            let paramString = param.convertDictionaryToJSONString()
+//            let cfg2 =  "{\"engine.video.enable_video_dump\":{\"mode\":8,\"enable\":true}}"
+//            let ret2 = rtcKit?.setParameters(cfg2)
+//            log.i("rtc setParameters paramString1： \(cfg2) ret:\(ret2)")
+//        }
+        
         peerEntered = true
         _onPeerAction(.Enter,uid)
         _memberState(.Enter,[uid])
@@ -434,6 +459,15 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoDecodedOfUid uid: UInt, size: CGSize, elapsed: Int) {
         log.i("rtc firstRemoteVideoDecodedOfUid first video frame decoded： \(uid)")
+
+//        if uid == 10{
+//            let param1 = ["mode":16,"enable":true] as [String : Any]
+//            let paramString1 = param1.convertDictionaryToJSONString()
+//            let cfg1 = "{\"engine.video.enable_video_dump\":{\"mode\":16,\"enable\":true}}" //"{\"engine.video.enable_video_dump\":" + paramString1 + "}"
+//            let ret1 = rtcKit?.setParameters(cfg1)
+//            log.i("rtc setParameters paramString2： \(cfg1) ret:\(ret1)")
+//        }
+  
         _onPeerAction(.VideoReady,uid)
     }
 
@@ -454,11 +488,6 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
         rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
             log.i("rtcEngineRequestToken:stopRecord")
         }
-//        if (isRecording.getValue()){
-//            stopRecord { code, msg in
-//                log.i("rtcEngineRequestToken:stopRecord")
-//            }
-//        }
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode) {

@@ -19,6 +19,8 @@ class SDCardPlayerVC: AGBaseVC {
     var playbackTimer: Timer?
     var index : Int = 0
     
+    //是否正在播放
+    var isPLaying : Bool = false
     
     
     override func viewDidLoad() {
@@ -166,12 +168,12 @@ class SDCardPlayerVC: AGBaseVC {
         print("更新进度条:  progress:\(progress)")
         print("index : \(index)")
         progressSlider.value = Float(progress)
-        if progress >= 1{
+        if progress >= 0.99{
             if playbackTimer != nil {
                 playbackTimer?.invalidate()
                 playbackTimer = nil
             }
-            playBtn.isSelected = !playBtn.isSelected
+//            playBtn.isSelected = !playBtn.isSelected
         }  
     }
     
@@ -199,7 +201,20 @@ class SDCardPlayerVC: AGBaseVC {
         switch btn.tag{
         case 1002:
             
-            sendCmdSDPlayCtrl()
+            if isPLaying == false{
+                let mediaMgr = getDevMediaMgr()
+                let ret = mediaMgr.setDisplayView(displayView: displayView)
+                sendCmdSDPlayCtrl()
+            }else{
+                if btn.isSelected == false{
+                    //暂停
+                    sendCmdSDPauseCtrl()
+                }else{
+                    //播放
+                    sendCmdSDResumeCtrl()
+                }
+            }
+            
             
             break
         case 1003:
@@ -279,19 +294,29 @@ extension SDCardPlayerVC{
     
     }
     
-    func sendCmdSDPlayCtrl(sessionId:String = ""){
+    func sendCmdSDPlayCtrl(){
    
         let mediaMgr = getDevMediaMgr()
-        mediaMgr.play(fileId: "file_id1", startPos: 0, playSpeed: 1, playingCallListener: self)
+        let ret = mediaMgr.play(fileId: "file_id1", startPos: 0, playSpeed: 1, playingCallListener: self)
 //        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
         
     }
     
-    func sendCmdSDStopCtrl(sessionId:String = ""){
+    func sendCmdSDStopCtrl(){
    
         let mediaMgr = getDevMediaMgr()
         mediaMgr.stop()
         
+    }
+    
+    func sendCmdSDPauseCtrl(){
+        let mediaMgr = getDevMediaMgr()
+        mediaMgr.pause()
+    }
+    
+    func sendCmdSDResumeCtrl(){
+        let mediaMgr = getDevMediaMgr()
+        mediaMgr.resume()
     }
     
     
@@ -330,38 +355,40 @@ extension SDCardPlayerVC{
 }
 
 extension SDCardPlayerVC: IPlayingCallbackListener {
+    
+    func onDevMediaCreated(fileId:String,errCode:Int){
+//        let mediaMgr = getDevMediaMgr()
+//        mediaMgr.setDisplayView(displayView: displayView)
+    }
+    
+    func onDevMediaOpenDone(fileId mediaUrl: String, errCode: Int) {
+        if errCode == 0 {
+            isPLaying = true
+            playBtn.isSelected = true
+        }
+        startTimeProgress()
+    }
+    
     func onDevMediaPlayingDone(fileId: String) {
-        
+        endTimeProgress()
+        isPLaying  = false
     }
     
     func onDevMediaPauseDone(fileId: String, errCode: Int) {
-        
+        playBtn.isSelected = false
     }
     
     func onDevMediaResumeDone(fileId: String, errCode: Int) {
-        
+        playBtn.isSelected = true
     }
     
     
     func onDevPlayingStateChanged(mediaUrl: String, newState: Int) {
         
     }
-    
-    func onDevMediaOpenDone(fileId mediaUrl: String, errCode: Int) {
-        let sessionId = TDUserInforManager.shared.curSessionId
-        let mediaMgr = getDevMediaMgr()
-        if errCode == 0 {
-            mediaMgr.setDisplayView(displayView: displayView)
-        }
-        startTimeProgress()
-    }
-    
+
     func onDevMediaSeekDone(fileId mediaUrl: String, errCode: Int, targetPos: UInt64, seekedPos: UInt64) {
         
-    }
-    
-    func onDevMediaPlayingDone(mediaUrl: String, duration: UInt64) {
-        endTimeProgress()
     }
     
     func onDevPlayingError(fileId mediaUrl: String, errCode: Int) {

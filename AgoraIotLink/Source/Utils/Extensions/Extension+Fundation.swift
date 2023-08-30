@@ -20,7 +20,7 @@ public extension Date {
         self = Date(timeIntervalSince1970: TimeInterval(milliseconds / 1000))
     }
     
-    func getCurrentTimeString(_ format: String = "yyyy-MM-dd HH:mm:ss") -> String {
+    static func getCurrentTimeString(_ format: String = "yyyy-MM-dd HH:mm:ss") -> String {
         let nowDate = Date()
         let formatter = DateFormatter()
         formatter.dateFormat = format

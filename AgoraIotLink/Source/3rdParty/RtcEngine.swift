@@ -18,6 +18,8 @@ class RtcEngine : NSObject{
     private var _onImageCaptured:(Int,String,UIImage?)->Void = {ec,msg,img in}
     
     var curChannel : String = ""
+    
+    var frameCount : Int = 0
  
     func setAudioEffect(_ effectId:AudioEffectId,cb:@escaping (Int,String)->Void){
 
@@ -92,10 +94,12 @@ extension RtcEngine{
 
     func stopRecord(channel:String, result: @escaping (Int, String) -> Void){
         
-        self.curChannel = channel
-        videoRecoredHanle(false)
-        isRecording.setValue(false)
-        result(ErrCode.XOK,"已停止")
+        if isRecording.getValue() == true {
+            self.curChannel = channel
+            videoRecoredHanle(false)
+            isRecording.setValue(false)
+            result(ErrCode.XOK,"已停止")
+        }
     }
     
     func setAudioAndVideoDelegate(){
@@ -135,6 +139,11 @@ extension RtcEngine : AgoraVideoFrameDelegate{
     }
 
     func onRenderVideoFrame(_ videoFrame: AgoraOutputVideoFrame, uid: UInt, channelId: String) -> Bool {
+        
+        if uid != 10 {
+            frameCount += 1
+//            log.i("onRenderVideoFrame:count:\(frameCount) uid:\(uid)")
+        }
         
         if  videoRecordM.videoW == 0{
             videoRecordM.videoW = videoFrame.width

@@ -168,9 +168,9 @@ class CallListenerManager {
     
     
     //-----------sdk回看----------
-    func startSDCardCall(dialParam: CallSession,actionAck:@escaping(MediaCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?){
+    func startSDCardCall(dialParam: CallSession,peerDisplayView:UIView?,actionAck:@escaping(MediaCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?){
 
-        let callLister = MediaStateListener(dialParam:dialParam, actionAck: actionAck, memberState: memberState)
+        let callLister = MediaStateListener(dialParam:dialParam,peerDisplayView:peerDisplayView, actionAck: actionAck, memberState: memberState)
         mediaLister = callLister
         callLister.callRequest()
         callLister.interCallAct = { [weak self] ack,sessionId,peerNodeId in
