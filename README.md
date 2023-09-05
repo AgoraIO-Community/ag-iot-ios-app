@@ -17,10 +17,17 @@ https://docs.agora.io/cn/iot-apaas/enable_agora_link?platform=All%20Platforms
 ## Installation
 
 AgoraIotLink is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+it, simply add the following line to your Podfile(need to add SSH keys):
 
 ```ruby
 pod 'AgoraIotLink'
+```
+
+Local reference steps: put the downloaded library into the same level directory of the project,To install
+it, simply add the following line to your Podfile:
+
+```ruby
+pod 'AgoraIotLink',:path=>'../'
 ```
 
 ## Author
