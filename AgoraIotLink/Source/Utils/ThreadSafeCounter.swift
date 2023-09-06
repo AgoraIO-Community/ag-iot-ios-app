@@ -8,7 +8,7 @@
 import Foundation
 
 class ThreadSafeCounter {
-    private var value: UInt32 = 0
+    private var value: UInt32 = 1
     private let queue = DispatchQueue(label: "com.example.threadSafeCounterQueue")
     
     func increment() -> UInt32 {

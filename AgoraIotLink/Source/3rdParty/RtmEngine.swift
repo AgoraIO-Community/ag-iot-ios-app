@@ -29,8 +29,8 @@ import AgoraRtmKit
 @objc public class RtmMsgObj : NSObject{
     
     @objc public var sequenceId: String = ""            //标记Id
-    @objc public var  timeStamp: TimeInterval = 0               //标记时间戳
-    public typealias ReaultAck = (Int,String)->Void     //返回类型，字符串
+    @objc public var  timeStamp: TimeInterval = 0       //标记时间戳
+    public typealias ReaultAck = (Int,Any)->Void     //返回类型，字符串
     @objc public var msgObj :ReaultAck = {a,c in log.w("msgObj not inited")}
     
     @objc public init(sequenceId:String ,
@@ -142,12 +142,11 @@ class RtmEngine : NSObject{
         if(self._statusUpdated != nil){
             log.w("rtm _statusChanged is not nil,should call sendMessageEnd() before sendMessageBegin()")
         }
-        let ret = kit?.login(byToken: sess.token, user: uid) { err in
+        kit?.login(byToken: sess.token, user: uid) { err in
             self.sendLoginCallback(err,{tr,msg in
                 if(tr == TaskResult.Succ){
                     self.state = RtmEngine.ENTERED
                 }
-                //todo:
                 self.heartbeatTimer()
                 cb(tr,msg)
             })
@@ -199,30 +198,6 @@ class RtmEngine : NSObject{
             }
         }
     }
-    private func sendCallback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,String)->Void){
-        let reMsg = getRtmSendMsg(e)
-        if(reMsg.errCode != ErrCode.XOK){
-            log.e("rtm send message result:\(reMsg.msg)(\(reMsg))")
-            cb(reMsg.errCode,reMsg.msg)
-        }else{
-            _completionBlocks[sequenceId] = cb
-            
-//            let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId, timeStamp: String.dateCurrentTime(), msgObj: cb)
-//            _completionMsgObjs[sequenceId] = rtmMsgObj
-            
-        }
-       
-    }
-
-    private func sendCallback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,Dictionary<String, Any>)->Void){
-        let reMsg = getRtmSendMsg(e)
-        if(reMsg.errCode != ErrCode.XOK){
-            log.e("rtm send message result:\(reMsg.msg)(\(reMsg.errCode))")
-            cb(reMsg.errCode,[:])
-        }else{
-            _completionDicBlocks[sequenceId] = cb
-        }
-    }
     
     func getRtmSendMsg(_ e:AgoraRtmSendPeerMessageErrorCode)->(errCode:Int,msg:String){
         
@@ -260,6 +235,53 @@ class RtmEngine : NSObject{
         return (ec,msg)
     }
     
+    private func sendCallDicback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,Dictionary<String, Any>)->Void){
+        let reMsg = getRtmSendMsg(e)
+        if(reMsg.errCode != ErrCode.XOK){
+            log.e("rtm send dic message result:\(reMsg.msg)(\(reMsg.errCode))")
+            _completionMsgObjs[sequenceId] = nil
+            cb(reMsg.errCode,[:])
+        }
+    }
+    
+    private func setCallDicback(_ sequenceId:String,_ cb:@escaping(Int,Dictionary<String, Any>)->Void){
+
+        log.i("setCallDicback 开始 cb:\(String(describing: cb))")
+        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId, timeStamp: String.dateCurrentTime()) { code, result in
+            if let strResult = result as? Dictionary<String, Any>{
+                log.i("setCallDicback 结果)")
+                cb(code,strResult)
+            }else{
+                cb(code,[:])
+            }
+        }
+        _completionMsgObjs[sequenceId] = rtmMsgObj
+        log.e("setCallDicback  sequenceId:\(sequenceId) _completionBlocks:\(_completionMsgObjs) count:\(_completionMsgObjs.count)")
+        
+    }
+    
+    private func sendCallStringback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,String)->Void){
+        let reMsg = getRtmSendMsg(e)
+        if(reMsg.errCode != ErrCode.XOK){
+            log.e("rtm send string message result:\(reMsg.msg)(\(reMsg) sequenceId:\(sequenceId) _completionBlocks:\(_completionBlocks))")
+            _completionMsgObjs[sequenceId] = nil
+            cb(reMsg.errCode,reMsg.msg)
+        }
+    }
+    
+    private func setCallStringback(_ sequenceId:String,_ cb:@escaping(Int,String)->Void){
+
+        log.i("setCallStringback 开始 cb:\(String(describing: cb))")
+        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId, timeStamp: String.dateCurrentTime()) { code, result in
+            if let strResult = result as? String{
+                log.i("setCallStringback 结果)")
+                cb(code,strResult)
+            }
+        }
+        _completionMsgObjs[sequenceId] = rtmMsgObj
+        log.e("setCallStringback  sequenceId:\(sequenceId) _completionBlocks:\(_completionMsgObjs) count:\(_completionMsgObjs.count)")
+        
+    }
     
     func sendStringMessage(sequenceId:String, toPeer:String,message:String,cb:@escaping(Int,String)->Void){
         guard let kit = kit else{
@@ -277,10 +299,12 @@ class RtmEngine : NSObject{
         option.enableOfflineMessaging = false
         option.enableHistoricalMessaging = false
         kit.send(package, toPeer: toPeer, sendMessageOptions: option) { ec in
-            DispatchQueue.main.async {
-                self.sendCallback(sequenceId,ec,cb)
+            if ec != .ok{
+                self.sendCallStringback(sequenceId,ec,cb)
             }
         }
+        setCallStringback(sequenceId, cb)
+        
     }
     func sendRawMessage(sequenceId:String, toPeer:String,data:Data,description:String,cb:@escaping(Int,String)->Void){
         guard let kit = kit else{
@@ -298,10 +322,11 @@ class RtmEngine : NSObject{
         option.enableOfflineMessaging = false
         option.enableHistoricalMessaging = false
         kit.send(package, toPeer: toPeer, sendMessageOptions: option) { ec in
-            DispatchQueue.main.async {
-                self.sendCallback(sequenceId,ec,cb)
+            if ec != .ok{
+                self.sendCallStringback(sequenceId,ec,cb)
             }
         }
+        setCallStringback(sequenceId, cb)
     }
     
     func sendRawMessageDic(sequenceId:String, toPeer:String,data:Data,description:String,cb:@escaping(Int,Dictionary<String, Any>)->Void){
@@ -320,10 +345,11 @@ class RtmEngine : NSObject{
         option.enableOfflineMessaging = false
         option.enableHistoricalMessaging = false
         kit.send(package, toPeer: toPeer, sendMessageOptions: option) { ec in
-            DispatchQueue.main.async {
-                self.sendCallback(sequenceId,ec,cb)
+            if ec != .ok{
+                self.sendCallDicback(sequenceId,ec,cb)
             }
         }
+        setCallDicback(sequenceId, cb)
     }
     
     func destroy(){
@@ -375,38 +401,58 @@ class RtmEngine : NSObject{
         if(message.type == .raw){
             if let msg = message as? AgoraRtmRawMessage{
                 let dict = String.getDictionaryFromData(data: msg.rawData)
-                log.i("handelReceivedData dict: \(dict)")
+                log.i("handelReceivedData type:raw dict: \(dict)")
                 guard let sequenceId = dict["sequenceId"] as? UInt else {
                     log.e("handelReceivedData: dict:\(dict))")
                     return
                 }
                 // 根据sequenceId获取对应的闭包
-                let completionBlock = _completionBlocks["\(sequenceId)"]
-                let completionDicBlock = _completionDicBlocks["\(sequenceId)"]
+                let cbMsgObj = _completionMsgObjs["\(sequenceId)"]
    
-                if let resultDic = dict["data"] as? [String:Any] {
-                    let code = dict["code"] as? Int ?? -9999
-                    DispatchQueue.main.async {
-                        completionDicBlock?(code, resultDic)
-                    }
-                }else{
-                    guard let code = dict["code"] as? Int else{
-                        log.e("handelReceivedData: dict:\(dict))")
-                        completionBlock?(ErrCode.XERR_UNKNOWN, "")
+               
+                //判断是否正确返回，code = 0
+                guard let code = dict["code"] as? Int, code == 0 else{
+                    log.e("handelReceivedData: dict:\(dict))")
+                    guard let cbBlock = cbMsgObj?.msgObj else {
+                        log.e("handelReceivedData: cbBlock nil )")
                         return
                     }
-                    DispatchQueue.main.async {
-                        completionBlock?(ErrCode.XOK, "success")
+                    cbBlock(dict["code"] as? Int ?? -1, "fail")
+                    _completionMsgObjs["\(sequenceId)"] = nil
+                    return
+                }
+   
+                //判断是否带字典的返回
+                if let resultDic = dict["data"] as? [String:Any] {
+                    DispatchQueue.main.async { [weak self] in
+                        
+                        guard let cbBlock = cbMsgObj?.msgObj else {
+                            log.e("handelReceivedData: cbBlock nil )")
+                            return
+                        }
+                        cbBlock(code, resultDic)
+                        self?._completionMsgObjs["\(sequenceId)"] = nil
                     }
+                }else{
+                    DispatchQueue.main.async { [weak self] in
+                        guard let cbBlock = cbMsgObj?.msgObj else {
+                            log.e("handelReceivedData: cbBlock nil )")
+                            return
+                        }
+                        cbBlock(code, "success")
+                        self?._completionMsgObjs["\(sequenceId)"] = nil
+                    }
+                    
                 }
             }
             else{
                 log.e("rtm message type cast error")
             }
-        }else if (message.type == .text){
+        }
+        else if (message.type == .text){
             
             let dict = String.getDictionaryFromJSONString(jsonString: message.text)
-            
+            log.i("handelReceivedData type:text dict: \(dict)")
             guard let sequenceId = dict["sequenceId"] as? UInt else {
                 log.e("handelReceivedData: dict:\(dict))")
                 return
@@ -425,15 +471,13 @@ class RtmEngine : NSObject{
                 DispatchQueue.main.async {
                     completionDicBlock?(ErrCode.XOK,resultDic)
                 }
+                _completionDicBlocks["\(sequenceId)"] = nil
             }else{
                 DispatchQueue.main.async {
                     completionBlock?(ErrCode.XOK, "success")
                 }
+                _completionBlocks["\(sequenceId)"] = nil
             }
-            
-            _completionBlocks["\(sequenceId)"] = nil
-            _completionDicBlocks["\(sequenceId)"] = nil
-            
         }
         else{
             log.w("rtm unhandled messate type \(message.type)")
@@ -539,9 +583,6 @@ extension RtmEngine{
         let paramDic = [:] as [String : Any]
         let jsonString = paramDic.convertDictionaryToJSONString()
         let data:Data = jsonString.data(using: .utf8) ?? Data()
-//        sendStringMessage(sequenceId: "\(curTimestamp)", toPeer: peer, message: jsonString) { code, msg in
-//            log.i("RtmEnginesendStringMessage")
-//        }
         sendRawMessage(sequenceId: "\(curSequenceId)", toPeer: peer, data: data, description: "") { code, msg in
             log.i("RtmEnginesendStringMessage")
         }

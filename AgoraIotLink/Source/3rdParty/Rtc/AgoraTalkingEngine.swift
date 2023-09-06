@@ -92,7 +92,6 @@ class AgoraTalkingEngine: NSObject {
         peerDisplayView = setting.peerDisplayView
 //        setMetalData()
         
-//        log.i("rtc enterChannel when uid:\(channelInfo.uid) token:\(channelInfo.token) name:\(channelInfo.cName)")
         _onEnterChannel?.invalidate()
         joinChannel(cb: cb)
         
@@ -416,14 +415,6 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
         log.i("rtc didJoinedOfUid \(uid)")
         
-//        if uid == 10{
-//            let param = ["mode":8,"enable":true] as [String : Any]
-//            let paramString = param.convertDictionaryToJSONString()
-//            let cfg2 =  "{\"engine.video.enable_video_dump\":{\"mode\":8,\"enable\":true}}"
-//            let ret2 = rtcKit?.setParameters(cfg2)
-//            log.i("rtc setParameters paramString1： \(cfg2) ret:\(ret2)")
-//        }
-        
         peerEntered = true
         _onPeerAction(.Enter,uid)
         _memberState(.Enter,[uid])
@@ -456,17 +447,9 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoFrameOfUid uid: UInt, size: CGSize, elapsed: Int) {
         log.i("rtc firstRemoteVideoFrameOfUid first video frame rendered \(uid)")
     }
-
+    
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoDecodedOfUid uid: UInt, size: CGSize, elapsed: Int) {
         log.i("rtc firstRemoteVideoDecodedOfUid first video frame decoded： \(uid)")
-
-//        if uid == 10{
-//            let param1 = ["mode":16,"enable":true] as [String : Any]
-//            let paramString1 = param1.convertDictionaryToJSONString()
-//            let cfg1 = "{\"engine.video.enable_video_dump\":{\"mode\":16,\"enable\":true}}" //"{\"engine.video.enable_video_dump\":" + paramString1 + "}"
-//            let ret1 = rtcKit?.setParameters(cfg1)
-//            log.i("rtc setParameters paramString2： \(cfg1) ret:\(ret1)")
-//        }
   
         _onPeerAction(.VideoReady,uid)
     }

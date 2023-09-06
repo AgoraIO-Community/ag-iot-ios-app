@@ -213,7 +213,7 @@ class IDevMediaManager : IDevMediaMgr{
     
     func resume() -> Int {
         
-        if getPlayingState() != .pausing{
+        if getPlayingState() != .paused{
             return ErrCode.XERR_BAD_STATE
         }
         
@@ -222,7 +222,7 @@ class IDevMediaManager : IDevMediaMgr{
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
         CallListenerManager.sharedInstance.resumeingSDCardPlay()
         sendGeneralStringData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
-            log.i("setPlayingSpeed:\(resutArray)")
+            log.i("resume:\(resutArray)")
 
             if errCode == ErrCode.XOK{
                 self?.playClock.start()

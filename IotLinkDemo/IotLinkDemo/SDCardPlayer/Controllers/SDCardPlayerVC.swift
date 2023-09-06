@@ -206,9 +206,10 @@ class SDCardPlayerVC: AGBaseVC {
                 let ret = mediaMgr.setDisplayView(displayView: displayView)
                 sendCmdSDPlayCtrl()
             }else{
-                if btn.isSelected == false{
+                if btn.isSelected == true{
                     //暂停
                     sendCmdSDPauseCtrl()
+                    
                 }else{
                     //播放
                     sendCmdSDResumeCtrl()
@@ -372,6 +373,7 @@ extension SDCardPlayerVC: IPlayingCallbackListener {
     func onDevMediaPlayingDone(fileId: String) {
         endTimeProgress()
         isPLaying  = false
+        playBtn.isSelected = false
     }
     
     func onDevMediaPauseDone(fileId: String, errCode: Int) {
