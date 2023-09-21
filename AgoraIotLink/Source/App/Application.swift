@@ -65,11 +65,12 @@ open class Application{
     }
     
     func release() {
+        _proxy?.destory()
         _config = nil
         _context = nil
         _proxy = nil
-        log.i("sdk release:");
         sdkState = .invalid
+        log.i("sdk release:");
     }
     
     public static let shared = Application()

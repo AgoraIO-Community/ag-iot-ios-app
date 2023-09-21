@@ -96,6 +96,20 @@ import Foundation
 }
 
 /*
+ * @brief 设备信息，(productKey+mDeviceId) 构成设备唯一标识
+ */
+@objc public class DevFileDownloadResult : NSObject {
+    @objc public var mFileId: String = ""            //媒体文件Id，是文件唯一标识
+    @objc public var mErrCode: Int = 0               //错误码
+    
+    @objc public init(mFileId:String ,
+                      mErrCode:Int){
+        self.mFileId = mFileId
+        self.mErrCode = mErrCode
+    }
+}
+
+/*
  * @brief 设备媒体文件播放状态机
  */
 @objc public enum DevMediaStatus : Int{
@@ -265,6 +279,15 @@ import Foundation
       * @result: 调用该接口是否成功
       */
     func setAudioMute(mute:Bool,result:@escaping (Int,String)->Void)
+    
+    /**
+     * @brief 根据媒体文件的filedId来下载设备端多个文件，该方法是异步调用，通过回调返回下载结果
+     * @param filedIdList: 要下载的 媒体文件filedId的列表,fileid建议为文件的绝对路径
+     * @param downloadFailList : 下载结果回调监听器
+     * @return 返回错误码
+     */
+    func DownloadFileList(filedIdList:[String], downloadFailList: @escaping (Int,[DevFileDownloadResult]) -> Void)
+    
     
     
 }

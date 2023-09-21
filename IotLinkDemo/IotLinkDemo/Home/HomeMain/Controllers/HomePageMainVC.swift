@@ -390,9 +390,11 @@ extension HomePageMainVC { //呼叫设备
     //挂断设备
     func handUpDevice(_ sessionId : String){
         
-        doorbellVM.hangupDevice(sessionId:sessionId) { success, msg in
-            debugPrint("调用挂断：\(msg)")
-            AGToolHUD.showInfo(info: "挂断成功")
+        doorbellVM.hangupDevice(sessionId:sessionId) { act, sessionId,errCode in
+            debugPrint("调用挂断：\(errCode)")
+            if act == .onSessionDisconnectDone{
+                AGToolHUD.showInfo(info: "挂断成功")
+            }
         }
     }
     
@@ -466,23 +468,23 @@ extension HomePageMainVC{
         self.navigationController?.pushViewController(fullVC, animated: false)
     }
     
-    func initAgoraIot(){
-        log.i("AgoraIotManager app initialize()")
-        
-        let param:InitParam = InitParam()
-        
-        param.rtcAppId = "aab8b8f5a8cd4469a63042fcfafe7063" //AgoraIotConfig.appId
-        param.projectId = AgoraIotConfig.projectId
-        
-        if(ErrCode.XOK != iotsdk.initialize(initParam: param,callbackFilter:{ [weak self] ec, msg in
-            if(ec != ErrCode.XOK){
-                log.w("demo app recv api result \(msg)(\(ec))")
-            }
-            return (ec,msg)
-        })){
-            log.e("initialize failed")
-        }
-    }
+//    func initAgoraIot(){
+//        log.i("AgoraIotManager app initialize()")
+//        
+//        let param:InitParam = InitParam()
+//        
+//        param.rtcAppId = "aab8b8f5a8cd4469a63042fcfafe7063" //AgoraIotConfig.appId
+//        param.projectId = AgoraIotConfig.projectId
+//        
+//        if(ErrCode.XOK != iotsdk.initialize(initParam: param,callbackFilter:{ [weak self] ec, msg in
+//            if(ec != ErrCode.XOK){
+//                log.w("demo app recv api result \(msg)(\(ec))")
+//            }
+//            return (ec,msg)
+//        })){
+//            log.e("initialize failed")
+//        }
+//    }
     
     func goToDeciceDetailVC(indexPath : IndexPath){//跳转全屏页
 

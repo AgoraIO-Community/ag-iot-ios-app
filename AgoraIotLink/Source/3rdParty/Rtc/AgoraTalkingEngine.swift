@@ -163,6 +163,8 @@ class AgoraTalkingEngine: NSObject {
         }
         else if(rtcSetting.audioType == "G711A"){
             type = "8"
+        }else if(rtcSetting.audioType == "AAC"){
+            type = "69"
         }
 
         if(type != ""){
@@ -190,6 +192,7 @@ class AgoraTalkingEngine: NSObject {
         })
         clearObject()
         rtc.frameCount = 0
+        _onEnterChannel?.invoke(args:(.Abort,"leaveChannel"))
         log.i("rtc try leaveChannel ..ret:\(String(describing: ret))")
         cb(true)
     }

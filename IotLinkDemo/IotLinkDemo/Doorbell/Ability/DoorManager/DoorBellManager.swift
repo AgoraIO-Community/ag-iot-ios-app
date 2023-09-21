@@ -129,7 +129,8 @@ class DoorBellManager: NSObject {
         }else{
             mSessionId = sessionId
         }
-        let ret = sdk?.deviceSessionMgr.disconnect(sessionId: tempSessionId)
+        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:tempSessionId) {[weak self] act, sessionId,errCode in
+        }
         if ret == 0 {
             log.i("demo app callHangup ret:")
             debugPrint("挂断 ret:(\(String(describing: ret)))")
@@ -153,7 +154,7 @@ class DoorBellManager: NSObject {
     }
     
     func disConnectDevice(sessionId:String = "")->Void{
-        let devSessionMgr = sdk?.deviceSessionMgr.disconnect(sessionId: sessionId)
+//        let devSessionMgr = sdk?.deviceSessionMgr.disconnect(sessionId: sessionId)
     }
         
     //-------------------------------设备控制----------------------------------

@@ -237,6 +237,21 @@ class IDevMediaManager : IDevMediaMgr{
         return ErrCode.XOK
     }
     
+    func DownloadFileList(filedIdList:[String], downloadFailList: @escaping (Int,[DevFileDownloadResult]) -> Void){
+        
+        let curTimestamp : UInt32 = getSequenceId()
+        
+        let commanId:Int = 2011
+        let payloadParam = ["fileIdList":filedIdList] as [String : Any]
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
+        
+        sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
+            log.i("DownloadMediaList resutArray:\(resutArray)")
+            downloadFailList(errCode,(self?.getDownloadMediaResult(resutArray))!)
+        }
+        
+    }
+    
     func setDisplayView(displayView: UIView?)->Int {
 
         self.peerDisplayView = displayView
@@ -380,6 +395,18 @@ extension IDevMediaManager{
         var resultArray = [DevMediaDelResult]()
         for item in fileList{
             let medisItem = DevMediaDelResult(mFileId: item["id"] as? String ?? "", mErrCode: item["error"] as? Int ?? 0)
+            resultArray.append(medisItem)
+        }
+        return resultArray
+    }
+    
+    func getDownloadMediaResult(_ dic:Dictionary<String, Any>)->[DevFileDownloadResult]{
+        guard let fileList = dic["downloadFailList"] as? [Dictionary<String, Any>] else{
+            return [DevFileDownloadResult(mFileId: "", mErrCode: ErrCode.XERR_UNKNOWN)]
+        }
+        var resultArray = [DevFileDownloadResult]()
+        for item in fileList{
+            let medisItem = DevFileDownloadResult(mFileId: item["id"] as? String ?? "", mErrCode: item["error"] as? Int ?? 0)
             resultArray.append(medisItem)
         }
         return resultArray

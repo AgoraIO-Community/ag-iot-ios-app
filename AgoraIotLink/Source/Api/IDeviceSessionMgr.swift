@@ -88,6 +88,13 @@ public class ConnectParam : NSObject {
     case Leave                          //其他用户退出会话
 }
 
+/**
+ * @brief 连接设备监听器
+ */
+@objc public enum OnSessionDisconnectListener:Int{
+    case onSessionDisconnectDone           //断开设备完成回调
+}
+
 
 /*
  * @brief 设备连接接口
@@ -109,10 +116,11 @@ public protocol IDeviceSessionMgr {
     
     /**
      * @brief 断开设备连接，同步调用，会断开设备所有的连接并且停止所有的预览、控制处理等
-     * @param sessionId : 设备连接会话Id
+     * @param sessionId: 设备连接会话Id
+     * @param OnSessionDisconnectListener :断开设备连接回调 sessionId: 设备连接会话Id， errCode: 断开结果，0表示成功断开
      * @return 返回错误码
      */
-    func disconnect(sessionId:String)->Int
+    func disconnect(sessionId:String,disconnectListener:@escaping(OnSessionDisconnectListener,_ sessionId:String,_ errCode:Int)->Void)->Int
     
     
     /**

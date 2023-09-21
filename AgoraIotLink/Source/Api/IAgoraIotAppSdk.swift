@@ -29,29 +29,7 @@ public class InitParam : NSObject{
     @objc public var rtcAppId: String = ""              // appId
     @objc public var logFilePath : String? = ""         // 设置日志路径 ,nil:不保存到文件,"":保存到默认路径
     @objc public var projectId:String = ""              // 项目Id,作为查询产品列表的过滤条件
-}
-
-public class PrepareParam : NSObject{
-    
-    @objc public var mAppId: String = ""          //2.0 appId
-    @objc public var mUserId: String = ""         //2.0 userId
-    @objc public var mPusherId: String = ""       //2.0 离线推送id
-    @objc public var mClientType: Int = 2         //2.0 终端类型
-    
-}
-
-/*
- * @brief sdk状态
- */
-@objc public enum SdkStatus : Int{
-    case NotReady                                       //登录成功但还在初始化各个子模块中，处于未就绪状态
-    case InitCallFail                                   //登录成功后，初始化呼叫模块出错
-    case InitMqttFail                                   //登录成功后，初始化Mqtt模块出错
-    case InitPushFail                                   //登录成功后，初始化推送模块出错
-    case InitRtmFail                                    //登录成功后，初始化RTM模块出错
-    case AllReady                                       //登录成功后，初始化过程完毕，处于就绪状态
-    case Reconnected                                    //登录成功后，Mqtt重连成功
-    case Disconnected                                   //登录成功后，Mqtt断开连接
+    @objc public var userId: String = ""                // 用户的登陆账号
 }
 
 /*
@@ -84,34 +62,6 @@ public protocol IAgoraIotAppSdk {
      * @brief 获取云录播放器管理接口
      */
     var vodPlayerMgr: IVodPlayerMgr{get}
-    
-    
-    
-//    /*
-//     * @brief 获取账号管理接口
-//     */
-//    var accountMgr: IAccountMgr{get}
-
-//    /*
-//     * @brief 获取呼叫系统接口
-//     */
-//    var callkitMgr: ICallkitMgr{get}
-
-//    /*
-//     * @brief 获取设备管理接口
-//     */
-//    var deviceMgr: IDeviceMgr{get}
-
-//    /*
-//     * @brief 获取告警信息管理接口
-//     */
-//    var alarmMgr: IAlarmMgr{get}
-
-//    /*
-//     * @brief 获取通知信息管理接口
-//     */
-//    var notificationMgr: INotificationMgr{get}
-    
     
 
     

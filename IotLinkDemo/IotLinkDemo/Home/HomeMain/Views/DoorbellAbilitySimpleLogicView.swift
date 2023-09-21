@@ -285,9 +285,6 @@ extension DoorbellAbilitySimpleLogicView{
             debugPrint("（DoorbellAbilitySimpleLogicView.swift）handUpDevice：挂断:sessionId为空:\(device?.sessionId ?? "")")
             return
         }
-        if startRecord == true{
-            recordScreen()
-        }
         DoorBellManager.shared.hungUpAnswer(sessionId: sessionId) { success, msg in
             if success {
                 debugPrint("挂断成功")

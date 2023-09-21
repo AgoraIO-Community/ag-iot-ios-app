@@ -117,10 +117,13 @@ class DeviceDetailVC: AGBaseVC {
     }
     
     @objc func leftBtnDidClick(){
-        DispatchQueue.global().async {
-            self.releasePlayer()
-        }
-        navigationController?.popViewController(animated: true)
+//        DispatchQueue.global().async {
+//            self.releasePlayer()
+//        }
+//        navigationController?.popViewController(animated: true)
+        
+        releasePlayer()
+
     }
     
     //初始化mqtt
@@ -156,10 +159,19 @@ class DeviceDetailVC: AGBaseVC {
     func releasePlayer(){
         
         print("releasePlayer:调用了")
-        print("Thread Name 0: \(Thread.current)")
-        sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId)
+        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId) {[weak self] act, sessionId,errCode in
+            debugPrint("调用挂断：\(errCode)")
+            if act == .onSessionDisconnectDone{
+//                AGToolHUD.showInfo(info: "挂断成功")
+                self?.backAction()
+            }
+        }
+        print("------ret:\(String(describing: ret))")
+    }
+    
+    func backAction(){
         sdk?.release()
-        
+        navigationController?.popViewController(animated: true)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -459,11 +471,14 @@ extension DeviceDetailVC { //呼叫设备
     
     //挂断设备
     func handUpDevice(_ sessionId : String){
-        
-        doorbellVM.hangupDevice(sessionId:sessionId) { success, msg in
-            debugPrint("调用挂断：\(msg)")
-            AGToolHUD.showInfo(info: "挂断成功")
+                
+        doorbellVM.hangupDevice(sessionId:sessionId) { act, sessionId,errCode in
+            debugPrint("调用挂断：\(errCode)")
+            if act == .onSessionDisconnectDone{
+                AGToolHUD.showInfo(info: "挂断成功")
+            }
         }
+        
     }
     
     func previewStart(sessionId:String){//获取到首帧

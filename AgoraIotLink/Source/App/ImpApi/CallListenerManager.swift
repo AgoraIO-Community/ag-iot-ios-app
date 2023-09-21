@@ -45,7 +45,9 @@ class CallListenerManager {
         callLister.callSession?.mSessionId = sessionId
         callLister.interCallAct = { [weak self] ack,sessionId,peerNodeId in
             if (ack == .RemoteHangup){
-                self?.hangUp(sessionId)
+                self?.hungUp(sessionId, result: { errCode in
+                    log.i("inter disconnect")
+                })
             }
         }
         initOther(callLister,sessionId)
@@ -77,7 +79,13 @@ class CallListenerManager {
         callListen?.callRequest()
     }
     
-    func hangUp(_ sessionId:String){//挂断
+    func disConnect(_ sessionId:String,disconnectListener:@escaping(OnSessionDisconnectListener,_ sessionId:String,_ errCode:Int)->Void){
+        hungUp(sessionId) { errCode in
+            disconnectListener(.onSessionDisconnectDone,sessionId,errCode)
+        }
+    }
+    
+    func hungUp(_ sessionId:String,result:@escaping(Int)->Void){//挂断
         let callListen = getCurrentCallObjet(sessionId)
         callListen?.hangUp { isSuc, msg in
             self.clearCurrentCallObj(sessionId)
@@ -86,14 +94,16 @@ class CallListenerManager {
         log.i("CallListenerManager hangUp 调用了")
         
         //断开其他
+        hunUpSDCard()
+        
         callListen?.callSession?.rtm?.leave(cb: { succ in
             if(!succ){
                 log.w("rtm leave fail")
+                result(ErrCode.XERR_UNKNOWN)
+            }else{
+                result(ErrCode.XOK)
             }
         })
-        callListen?.callSession?.rtm?.destroy();
-        
-        hunUpSDCard()
         
     }
     
@@ -197,7 +207,8 @@ class CallListenerManager {
     }
     
     func hunUpSDCard(){
-        mediaLister?.hangUp(hangUpResult: { [weak self] isSuc, msg in
+        guard let mediaLister = mediaLister else{ return }
+        mediaLister.hangUp(hangUpResult: { [weak self] isSuc, msg in
             self?.mediaLister = nil
         })
     }

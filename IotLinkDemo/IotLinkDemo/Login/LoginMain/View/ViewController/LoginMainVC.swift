@@ -243,19 +243,25 @@ extension LoginMainVC{
     //激活Node
     func activeUserNode(acc: String, pwd: String){
             
-         AGToolHUD.showNetWorkWait()
-        ThirdAccountManager.nodeActivate(userId:acc) { [weak self] success, msg,retData in
-            AGToolHUD.disMiss()
-            if success == 0{
-                TDUserInforManager.shared.connectMqtt(userId: acc, param: retData)
-                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
-                TDUserInforManager.shared.isLogin = true
-                //登录成功发通知
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
-                self?.dismiss(animated: true, completion: { })
-            }
-            print("\(msg)---\(retData?.data?.nodeToken)---\(String(describing: retData))")
-         }
+        TDUserInforManager.shared.isLogin = true
+        //登录成功发通知
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
+        self.dismiss(animated: true, completion: { })
+        return
+        
+//         AGToolHUD.showNetWorkWait()
+//        ThirdAccountManager.nodeActivate(userId:acc) { [weak self] success, msg,retData in
+//            AGToolHUD.disMiss()
+//            if success == 0{
+//                TDUserInforManager.shared.connectMqtt(userId: acc, param: retData)
+//                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
+//                TDUserInforManager.shared.isLogin = true
+//                //登录成功发通知
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
+//                self?.dismiss(animated: true, completion: { })
+//            }
+//            print("\(msg)---\(retData?.data?.nodeToken)---\(String(describing: retData))")
+//         }
             
      }
     

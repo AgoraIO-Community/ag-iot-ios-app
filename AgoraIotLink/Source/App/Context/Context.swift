@@ -22,21 +22,21 @@ class RtcSession{
     //var paired = [UInt:VideoView]()
 }
 
-class PlayerSetting{
-    var dimension = AgoraVideoDimension640x360
-    var frameRate = AgoraVideoFrameRate.fps15
-    var bitRate = AgoraVideoBitrateStandard
-    var orientationMode:AgoraVideoOutputOrientationMode = .adaptative
-    var renderMode:AgoraVideoRenderMode = .fit
-    var audioType = "G711U" //G722，G711
-    var audioSampleRate = "8000"; //16000,8000
-    
-    var logFilePath = ""
-    var publishAudio = false ///< 通话时是否推流本地音频
-    var publishVideo = false ///< 通话时是否推流本地视频
-    var subscribeAudio = true ///< 通话时是否订阅对端音频
-    var subscribeVideo = true ///< 通话时是否订阅对端视频
-}
+//class PlayerSetting{
+//    var dimension = AgoraVideoDimension640x360
+//    var frameRate = AgoraVideoFrameRate.fps15
+//    var bitRate = AgoraVideoBitrateStandard
+//    var orientationMode:AgoraVideoOutputOrientationMode = .adaptative
+//    var renderMode:AgoraVideoRenderMode = .fit
+//    var audioType = "AAC" //G722，G711, AAC
+//    var audioSampleRate = "16000"; //16000,8000
+//
+//    var logFilePath = ""
+//    var publishAudio = false ///< 通话时是否推流本地音频
+//    var publishVideo = false ///< 通话时是否推流本地视频
+//    var subscribeAudio = true ///< 通话时是否订阅对端音频
+//    var subscribeVideo = true ///< 通话时是否订阅对端视频
+//}
 
 class RtmSetting{
     var appId:String = ""
@@ -165,8 +165,8 @@ struct CallKitSetting{
     var bitRate = AgoraVideoBitrateStandard
     var orientationMode:AgoraVideoOutputOrientationMode = .adaptative
     var renderMode:AgoraVideoRenderMode = .fit
-    var audioType = "G711U" //G722，G711A,G711U
-    var audioSampleRate = "8000"; //16000,8000
+    var audioType = "AAC" //G722，G711A,G711U,AAC
+    var audioSampleRate = "16000"; //16000,8000
     
     var logFilePath = ""
     var publishAudio = false ///< 通话时是否推流本地音频
@@ -264,8 +264,8 @@ struct AgoraLabContext{
 }
 
 struct PlayerContext{
-    private var _setting = PlayerSetting()
-    var setting:PlayerSetting{get{return _setting}}
+//    private var _setting = PlayerSetting()
+//    var setting:PlayerSetting{get{return _setting}}
 }
 
 struct CallKitContext{
@@ -383,7 +383,7 @@ class Context{
     var gyiot:IotLinkContext{get{return _gran}}
     var aglab:AgoraLabContext{get{return _aglab}set{_aglab = newValue}}
     var call:CallKitContext{get{return _call}set{_call = newValue}}
-    var player:PlayerContext{get{return _player}}
+//    var player:PlayerContext{get{return _player}}
     var rtm:RtmKitContext{get{return _rtm}set{_rtm = newValue}}
     var account:String{get{return _account}set{_account = newValue}}
     var virtualNumber:String{get{return _virtualNumber}set{_virtualNumber = newValue}}

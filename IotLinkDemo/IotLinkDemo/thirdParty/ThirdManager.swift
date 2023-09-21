@@ -452,7 +452,7 @@ class ThirdAccountManager{
             return
         }
         let header:HTTPHeaders = ["Authorization":"Basic \(base64LoginString)","Content-Type":"application/json;charset=utf-8"]
-        let paramsDic = ["appId":"cbe3df7bf11e4cf4a4ed4bf755d91013","deviceNo":"IVFDMNJVJM2VG3KLKNFTMLKEINCDQN2DGFAUCQZQGI","userId":"F6F0CF370FD68850C10AF3F8A2700563"]
+        let paramsDic = ["appId":"cbe3df7bf11e4cf4a4ed4bf755d91013","deviceNo":"IVFDMNJVJM2VG3KLKNFTMLKEINCDQN2DGFAUCQZQGA","userId":"F6F0CF370FD68850C10AF3F8A2700563"]
         let url = "https://api-test.sd-rtn.com/iot/cn" + api.connectDevice
         
 //        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in

@@ -104,17 +104,15 @@ extension DoorBellManager{
 //        return iotsdk.deviceMgr.stopPlayback()
 //    }
     //挂断设备
-    func hangupDevice(sessionId : String = "", _ cb:@escaping(Bool,String)->Void){
+    func hangupDevice(sessionId : String = "", _ disconnectListener:@escaping(OnSessionDisconnectListener,_ sessionId:String,_ errCode:Int)->Void){
         log.i("demo app local req Hangup")
         guard let callMgr = sdk?.deviceSessionMgr else{
-            cb(false,"sdk 呼叫服务 未初始化")
             return
         }
         members = 0
-        let ret = callMgr.disconnect(sessionId: sessionId)
+        let ret = callMgr.disconnect(sessionId: sessionId, disconnectListener: disconnectListener)
         if ret == 0{
             log.i("demo app call Hangup result:\(ret)")
-            cb(true,"")
         }
     }
     

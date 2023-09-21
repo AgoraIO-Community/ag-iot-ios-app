@@ -33,7 +33,7 @@ class SDCardPlayerVC: AGBaseVC {
   
         view.addSubview(displayView)
         displayView.snp.makeConstraints { make in
-            make.top.equalTo(60)
+            make.top.equalTo(30)
             make.left.right.equalTo(view)
             make.height.equalTo(200)
         }
@@ -70,9 +70,17 @@ class SDCardPlayerVC: AGBaseVC {
             make.height.equalTo(40)
         }
         
+        view.addSubview(downLoadBtn)
+        downLoadBtn.snp.makeConstraints { make in
+            make.top.equalTo(playBtn.snp.bottom).offset(10)
+            make.left.equalTo(playBtn.snp.left)
+            make.width.equalTo(80)
+            make.height.equalTo(40)
+        }
+        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(playBtn.snp.bottom).offset(10)
+            make.top.equalTo(downLoadBtn.snp.bottom).offset(10)
             make.left.equalTo(15)
             make.right.equalTo(-15)
             make.bottom.equalTo(view)
@@ -152,6 +160,19 @@ class SDCardPlayerVC: AGBaseVC {
         btn.layer.masksToBounds = true
         btn.setTitle("获取图片", for:.normal)
         btn.tag = 1005
+        btn.addTarget(self, action: #selector(btnClick(btn:)), for: .touchUpInside)
+        return btn
+    }()
+    
+    lazy var downLoadBtn: UIButton = {
+        let btn = UIButton()
+        btn.setTitleColor(UIColor.white, for: .normal)
+        btn.backgroundColor = UIColor.gray
+        btn.alpha = 0.8
+        btn.layer.cornerRadius = 8
+        btn.layer.masksToBounds = true
+        btn.setTitle("SD下载", for:.normal)
+        btn.tag = 1006
         btn.addTarget(self, action: #selector(btnClick(btn:)), for: .touchUpInside)
         return btn
     }()
@@ -246,6 +267,20 @@ class SDCardPlayerVC: AGBaseVC {
             }
             
             break
+        case 1006://下载文件
+            
+            sendCmdSDQueryCoverImagPCtrl { [weak self] code, data in
+
+                if let image = UIImage(data: data) {
+                    self?.curImage = image
+                    self?.tableView.reloadData()
+                    log.i("转化成功")
+                } else {
+                    log.i("转化失败")
+                }
+            }
+            
+            break
         default:
             break
         }
@@ -293,6 +328,15 @@ extension SDCardPlayerVC{
             cb(errCode,result)
         }
     
+    }
+    
+    func sendCmdSDQueryDownloadFile(sessionId:String = "", cb:@escaping(Int,[DevFileDownloadResult])->Void){
+   
+        let mediaMgr = getDevMediaMgr()
+        mediaMgr.DownloadFileList(filedIdList: ["1","2","3"]) { errCode, downloadFailList in
+            print("DownloadMediaList---:\(errCode) downloadFailList:\(downloadFailList)")
+            cb(errCode,downloadFailList)
+        }
     }
     
     func sendCmdSDPlayCtrl(){

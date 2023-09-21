@@ -39,9 +39,9 @@ open class IotAppSdk : IAgoraIotAppSdk{
     
     public func release() {
         _iotAppSdkManager = nil
-        _deviceSessionManager = nil
-        _vodPlayerManager = nil
         app!.release()
+//        _deviceSessionManager = nil
+//        _vodPlayerManager = nil
 //        app = nil
     }
     
@@ -66,7 +66,7 @@ open class IotAppSdk : IAgoraIotAppSdk{
     }}
 
     public var deviceSessionMgr: IDeviceSessionMgr{get{
-        if(_deviceSessionManager == nil){
+        if(_deviceSessionManager == nil ){
             _deviceSessionManager = IDeviceSessionManager(app: app!)
         }
         return _deviceSessionManager!
