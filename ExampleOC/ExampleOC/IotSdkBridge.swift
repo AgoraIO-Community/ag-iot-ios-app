@@ -10,12 +10,13 @@ import AgoraIotLink
 
 
 public class IDeviceSessionManager : NSObject,IDeviceSessionMgr{
+    
     @objc public func connect(connectParam: AgoraIotLink.ConnectParam, sessionCallback: @escaping (AgoraIotLink.SessionCallback, String, Int) -> Void, memberState: ((AgoraIotLink.MemberState, [UInt], String) -> Void)?) -> AgoraIotLink.ConnectResult {
         return mgr.connect(connectParam: connectParam, sessionCallback: sessionCallback, memberState: memberState)
     }
     
-    @objc public func disconnect(sessionId: String) -> Int {
-        return mgr.disconnect(sessionId: sessionId)
+    @objc public func disconnect(sessionId: String, disconnectListener: @escaping (AgoraIotLink.OnSessionDisconnectListener, String, Int) -> Void) -> Int {
+        return mgr.disconnect(sessionId: sessionId, disconnectListener: disconnectListener)
     }
     
     @objc public func getSessionList() -> [AgoraIotLink.SessionInfo] {
