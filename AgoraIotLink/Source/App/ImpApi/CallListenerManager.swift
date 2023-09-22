@@ -116,6 +116,7 @@ class CallListenerManager {
     
     func registerPreViewListener(sessionId:String,previewListener: @escaping (String, Int, Int) -> Void){
         let callListen = getCurrentCallObjet(sessionId)
+        log.i("registerPreViewListener:\(callDict.count)")
         callListen?.registerPreViewListener(previewListener: previewListener)
     }
 

@@ -140,10 +140,10 @@ extension RtcEngine : AgoraVideoFrameDelegate{
 
     func onRenderVideoFrame(_ videoFrame: AgoraOutputVideoFrame, uid: UInt, channelId: String) -> Bool {
         
-        if uid != 10 {
-            frameCount += 1
-//            log.i("onRenderVideoFrame:count:\(frameCount) uid:\(uid)")
-        }
+//        if uid != 10 {
+////            frameCount += 1
+////            log.i("onRenderVideoFrame:count:\(frameCount) uid:\(uid)")
+//        }
         
         if  videoRecordM.videoW == 0{
             videoRecordM.videoW = videoFrame.width

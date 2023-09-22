@@ -40,8 +40,8 @@ target 'IotLinkDemo' do
   #--------AgoraIotLink--------
   pod 'AgoraIotLink',:path=>'../'
   #--------SJVideoPlayer播放器--------
-  pod 'SJBaseVideoPlayer', :path => '../libs/SJBaseVideoPlayer'
-  pod 'SJVideoPlayer', :path => '../libs/SJVideoPlayer'
+#  pod 'SJBaseVideoPlayer', :path => '../libs/SJBaseVideoPlayer'
+#  pod 'SJVideoPlayer', :path => '../libs/SJVideoPlayer'
   pod 'SSKeychain', :path => '../libs/sskeychain'
   
 end

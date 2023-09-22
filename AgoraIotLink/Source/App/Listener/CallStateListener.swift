@@ -229,8 +229,9 @@ extension CallStateListener : CallStateMachineListener{
                 log.i("listener Enter uid:\(uid)")
                 if(self.callSession?.peerUid == uid){
                     let timeSpace = String.dateCurrentTime() - CallListenerManager.sharedInstance.startTime
-                    log.i("-------------listener Enter timeSpace:\(timeSpace)")
+//                    log.i("-------------listener Enter timeSpace:\(timeSpace)")
                     if self.isIcoming == false{//主动呼叫
+                        self.endTime()
                         self.callMachine?.handleEvent(.peerOnline)
                         self.callAct(.onConnectDone,self.callSession?.mSessionId ?? "",ErrCode.XOK)
                     }else{
@@ -261,7 +262,6 @@ extension CallStateListener : CallStateMachineListener{
                 log.i("-------------listener VideoReady timeSpace:\(timeSpace)")
                 if(self.callSession?.peerUid == uid){
                     if self.isIcoming == false{//主动呼叫
-                        self.endTime()
                         self.preViewlistener(self.callSession?.mSessionId ?? "",0,0)
                     }else{
                         self.income(self.callSession?.mSessionId ?? "", self.callSession?.peerNodeId ?? "", .RemoteVideoReady)

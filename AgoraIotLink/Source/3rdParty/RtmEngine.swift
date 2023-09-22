@@ -296,7 +296,7 @@ class RtmEngine : NSObject{
             }
         }
         _completionMsgObjs[sequenceId] = rtmMsgObj
-        log.e("setCallStringback  sequenceId:\(sequenceId) _completionBlocks:\(String(describing: _completionMsgObjs)) count:\(String(describing: _completionMsgObjs.count))")
+        log.i("setCallStringback  sequenceId:\(sequenceId) _completionBlocks:\(String(describing: _completionMsgObjs)) count:\(String(describing: _completionMsgObjs.count))")
         
     }
     

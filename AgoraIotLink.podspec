@@ -55,9 +55,12 @@ TODO: Add long description of the pod here.
   s.dependency 'EMPush'
   s.dependency 'AgoraRtcEngine_iOS', '4.2.0'
   s.dependency 'AgoraRtm_iOS','1.5.0'
+  s.vendored_frameworks = 'AgoraIotLink/IJK/IJKMediaFramework.framework'
+#  s.dependency  'SJBaseVideoPlayer'
+#  s.dependency  'SJVideoPlayer'
   
-  s.dependency  'SJBaseVideoPlayer'
-  s.dependency  'SJVideoPlayer'
+  s.frameworks  = "AudioToolbox", "AVFoundation", "CoreGraphics", "CoreMedia", "CoreVideo", "MobileCoreServices", "OpenGLES", "QuartzCore", "VideoToolbox", "MediaPlayer"
+  s.libraries   = "bz2", "z", "stdc++"
   
   
 #  s.ios.vendored_frameworks = 'AgoraIotLink/ijk/IJKMediaFramework.framework'

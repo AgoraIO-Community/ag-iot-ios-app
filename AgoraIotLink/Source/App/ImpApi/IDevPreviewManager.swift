@@ -78,6 +78,7 @@ class IDevPreviewManager : IDevPreviewMgr{
     
     func previewStart(bSubAudio:Bool,previewListener: @escaping (String, Int, Int) -> Void) {
         CallListenerManager.sharedInstance.registerPreViewListener(sessionId: curSessionId, previewListener:previewListener)
+        mutePeerVideo(mute: false){ ec, msg in }
         mutePeerAudio(mute: bSubAudio) { ec, msg in }
     }
     

@@ -68,6 +68,15 @@ class DoorBellManager: NSObject {
         })
     }
     
+    //拉取对端音频 mute: 是否禁止
+    func mutePeerVideo(sessionId:String, mute: Bool,cb:@escaping(Bool,String)->Void){
+        let callkitMgr = getDevSessionMgr(sessionId)
+        callkitMgr.mutePeerVideo(mute: mute, result: { ec, msg in
+            cb(ec == ErrCode.XOK ? true : false , msg)
+            debugPrint("\(msg)")
+        })
+    }
+    
     //设置音效效果（通常是变声等音效）effectId: 音效Id
     func setAudioEffect(sessionId:String = "",effectId: AudioEffectId,cb:@escaping(Bool,String)->Void){
         //todo:

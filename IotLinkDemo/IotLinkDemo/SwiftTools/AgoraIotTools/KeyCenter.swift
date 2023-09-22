@@ -9,7 +9,7 @@ import Foundation
 
 struct keyCenter{
     
-    static var AppId: String = "d0177a34373b482a9c4eb4dedcfa586a"
-    
+    static var AppId: String = "cbe3df7bf11e4cf4a4ed4bf755d91013"
+    static var deviceId: String = "IVFDMNJVJM2VG3KLKNFTMLKEINCDQN2DGFAUCQZQGA"
     
 }

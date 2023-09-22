@@ -185,7 +185,7 @@ extension DoorbellAbilityTooBarSimpleView{
     
     
     func handelHorBtnSuccess(_ isSuccess : Bool){//呼叫
-        print("handelHorBtnSuccess:______\(Thread.current)")
+//        print("handelHorBtnSuccess:______\(Thread.current)")
         DispatchQueue.main.async {
             // 在主线程执行的代码
             self.fullHorBtn.isSelected = isSuccess

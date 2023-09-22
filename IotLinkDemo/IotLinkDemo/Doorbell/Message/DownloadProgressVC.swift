@@ -149,10 +149,10 @@ class DownloadProgressVC: UIViewController {
     }
     
     static func show()  {
-        let vc = DownloadProgressVC()
-        vc.modalPresentationStyle = .overCurrentContext
-        vc.items = DoorbellDownlaodManager.shared.downloadInfoArray
-        currentViewController().present(vc, animated: false)
+//        let vc = DownloadProgressVC()
+//        vc.modalPresentationStyle = .overCurrentContext
+//        vc.items = DoorbellDownlaodManager.shared.downloadInfoArray
+//        currentViewController().present(vc, animated: false)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -179,7 +179,7 @@ extension DownloadProgressVC: UITableViewDelegate, UITableViewDataSource {
         cell.selectionStyle = .none
         cell.downloadInfo = info
         cell.clickCancelButtonAction = {[weak self] in
-            DoorbellDownlaodManager.shared.cancelDownload(url: info.url)
+//            DoorbellDownlaodManager.shared.cancelDownload(url: info.url)
             self?.tableView.reloadData()
         }
         return cell

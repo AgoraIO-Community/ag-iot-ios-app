@@ -279,7 +279,7 @@ extension HomePageMainVC { //呼叫设备
     
     //请求连接参数
     func requestConDeviceParam(){
-        let deviceId = "IVFDMNJVJM2VG3KLKNFTMLKEINCDQN2DGFAUCQZQGI"
+        let deviceId = keyCenter.deviceId
         AGToolHUD.showNetWorkWait()
         ThirdAccountManager.getConnectDeviceParam { [weak self] success, msg,retData in
             AGToolHUD.disMiss()
@@ -400,12 +400,14 @@ extension HomePageMainVC { //呼叫设备
     
     func previewStart(sessionId:String){//获取到首帧
         
+        let cell = getCurrentCellWithTag(sessionId)
+        cell.configPeerView(sessionId)
         DoorBellManager.shared.previewStart(sessionId: sessionId) {[weak self] sessionId, videoWidth, videoHeight in
             
             debugPrint("获取到首帧")
-            let cell = self?.getCurrentCellWithTag(sessionId)
-            cell?.configPeerView(sessionId)
-            cell?.handelCallTipType(.playing)
+//            let cell = self?.getCurrentCellWithTag(sessionId)
+//            cell?.configPeerView(sessionId)
+//            cell?.handelCallTipType(.playing)
             if self?.isFullScreemVisible() == true{
                 //首帧如果是详情页，则发送通知
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: ReceiveFirstVideoFrameNotify), object: nil, userInfo: nil)

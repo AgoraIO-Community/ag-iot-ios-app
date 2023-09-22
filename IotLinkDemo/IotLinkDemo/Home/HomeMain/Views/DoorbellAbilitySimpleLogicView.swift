@@ -259,12 +259,19 @@ extension DoorbellAbilitySimpleLogicView{
         if btn.isSelected {
             isShutAudio = false
         }
+        
         DoorBellManager.shared.mutePeerAudio(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
             if success{
                 log.i("设置静音成功")
                 btn.isSelected = !btn.isSelected
             }
          }
+        DoorBellManager.shared.mutePeerVideo(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
+            if success{
+                log.i("设置视频成功")
+            }
+         }
+
     }
     
     //变声恢复正常声音
