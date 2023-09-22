@@ -16,7 +16,7 @@ import Foundation
     /**
      * @brief 发送云台控制命令
      * @param action: 动作命令：0-开始，1-停止
-     * @param direction: 方向：0-上、1-下、2-左、3-右、4-镜头拉近、5-镜头拉远
+     * @param direction: 方向：0-左、1-右、2-上、3-下、4-镜头拉近、5-镜头拉远
      * @param speed: 速度：0-慢，1-适中（默认），2-快
      * @param cmdListener: 命令完成回调
      * @return 返回错误码
