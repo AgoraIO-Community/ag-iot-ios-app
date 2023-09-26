@@ -191,16 +191,17 @@ class RtmEngine : NSObject{
         }
         
         log.i("rtm try leaveChannel kit logout ...")
-        kit?.logout { err in
+        kit?.logout {[weak self] err in
             log.i("rtm try leaveChannel kit logout finished ...")
+            self?.state = nil
+            self?.kit = nil
             if err == .ok{
                 cb(true)
             }else{
                 cb(false)
             }
         }
-        state = nil
-        kit = nil
+        
             
 //            self?.sendLogoutCallback(err, cb)
 //            log.i("rtm try leaveChannel kit logout finished ...")
