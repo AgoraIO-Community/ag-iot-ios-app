@@ -91,7 +91,7 @@
     
     ConnectResult *conResult = [self connectDevice];
     IDevMediaManager *devMediaMgr = [[IotSdk.shared getDeviceSessionMgr] getDevMediaMgrWithSessionId:conResult.mSessionId];
-    QueryParam *param = [[QueryParam alloc] initWithMFileId:0 mBeginTimestamp:0 mEndTimestamp:0 mPageIndex:0 mPageSize:10];
+    QueryParam *param = [[QueryParam alloc] initWithMFileId:0 mBeginTimestamp:0 mEndTimestamp:0];
     [devMediaMgr queryMediaListWithQueryParam:param queryListener:^(NSInteger, NSArray<DevMediaItem *> * _Nonnull) {
         
     }];

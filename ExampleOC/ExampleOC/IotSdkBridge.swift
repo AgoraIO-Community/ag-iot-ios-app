@@ -136,7 +136,8 @@ public class IDevControllerManager : NSObject,IDevControllerMgr{
 }
 
 public class IDevMediaManager : NSObject,IDevMediaMgr{
-     
+
+    
     @objc public func queryMediaList(queryParam: AgoraIotLink.QueryParam, queryListener: @escaping (Int, [AgoraIotLink.DevMediaItem]) -> Void) {
         return mgr.queryMediaList(queryParam: queryParam, queryListener: queryListener)
     }
@@ -161,8 +162,12 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.play(fileId: fileId, startPos: startPos, playSpeed: playSpeed, playingCallListener: playingCallListener)
     }
     
-    @objc public func DownloadFileList(filedIdList: [String], downloadFailList: @escaping (Int, [AgoraIotLink.DevFileDownloadResult]) -> Void) {
-        return mgr.DownloadFileList(filedIdList: filedIdList, downloadFailList: downloadFailList)
+    @objc public func DownloadFileList(filedIdList: [String], onDownloadListener downloadFailList: @escaping (Int, [AgoraIotLink.DevFileDownloadResult]) -> Void) {
+        return mgr.DownloadFileList(filedIdList: filedIdList, onDownloadListener: downloadFailList)
+    }
+    
+    @objc public func queryEventTimeline(onQueryEventListener: @escaping (Int, [UInt64]) -> Void) {
+        return mgr.queryEventTimeline(onQueryEventListener: onQueryEventListener)
     }
     
     @objc public func stop() -> Int {
