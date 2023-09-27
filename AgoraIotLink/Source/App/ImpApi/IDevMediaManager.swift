@@ -56,7 +56,7 @@ class IDevMediaManager : IDevMediaMgr{
         
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:Int = 2002
-        let payloadParam = ["id":queryParam.mFileId, "begin": queryParam.mBeginTimestamp,"end": queryParam.mEndTimestamp, "index": queryParam.mPageIndex, "size": queryParam.mPageSize] as [String : Any]
+        let payloadParam = ["id":queryParam.mFileId, "begin": queryParam.mBeginTimestamp,"end": queryParam.mEndTimestamp] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) { [weak self] errCode, resutArray in
             log.i("queryMediaList resutArray:\(resutArray)")
@@ -237,7 +237,7 @@ class IDevMediaManager : IDevMediaMgr{
         return ErrCode.XOK
     }
     
-    func DownloadFileList(filedIdList:[String], downloadFailList: @escaping (Int,[DevFileDownloadResult]) -> Void){
+    func DownloadFileList(filedIdList:[String], onDownloadListener: @escaping (Int,[DevFileDownloadResult]) -> Void){
         
         let curTimestamp : UInt32 = getSequenceId()
         
@@ -247,7 +247,25 @@ class IDevMediaManager : IDevMediaMgr{
         
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
             log.i("DownloadMediaList resutArray:\(resutArray)")
-            downloadFailList(errCode,(self?.getDownloadMediaResult(resutArray))!)
+            onDownloadListener(errCode,(self?.getDownloadMediaResult(resutArray))!)
+        }
+        
+    }
+    
+    func queryEventTimeline(onQueryEventListener: @escaping (_ errCode:Int, _ videoTimeList : [UInt64]) -> Void){
+        
+        let curTimestamp : UInt32 = getSequenceId()
+        
+        let commanId:Int = 2012
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
+        
+        sendGeneralDicData(paramDic, curTimestamp) { errCode, resutDic in
+            log.i("queryEventTimeline resutArray:\(resutDic)")
+            guard let timeList = resutDic["arr"] as? [UInt64] else{
+                onQueryEventListener(errCode,[0])
+                return
+            }
+            onQueryEventListener(errCode,timeList)
         }
         
     }
@@ -377,14 +395,27 @@ extension IDevMediaManager{
     
     func getDevMediaItemResult(_ dic:Dictionary<String, Any>)->[DevMediaItem]{
         guard let fileList = dic["fileList"] as? [Dictionary<String, Any>] else{
-            return [DevMediaItem(mFileId: "", mStartTimestamp: 0, mStopTimestamp: 0, mType: 1, mEvent: 1, mImgUrl: "", mVideoUrl: "")]
+            return [DevMediaItem(mFileId: "", mStartTimestamp: 0, mStopTimestamp: 0, mType: 1, mEventList: [DevEventItem(mEventType: 0, mStartTime: 0, mStopTime: 0, mPicUrl: "", mVideoUrl: "")])]
         }
         var resultArray = [DevMediaItem]()
         for item in fileList{
-            let medisItem = DevMediaItem(mFileId: item["id"] as? String ?? "", mStartTimestamp: item["start"] as? UInt64 ?? 0, mStopTimestamp: item["stop"] as? UInt64 ?? 0, mType: item["type"] as? Int ?? 0, mEvent: item["event"] as? Int ?? 0, mImgUrl: item["pic"] as? String ?? "", mVideoUrl: item["url"] as? String ?? "")
+            let mTempEvent = getDevEventItemList(item)
+            let medisItem = DevMediaItem(mFileId: item["id"] as? String ?? "", mStartTimestamp: item["start"] as? UInt64 ?? 0, mStopTimestamp: item["stop"] as? UInt64 ?? 0, mType: item["type"] as? Int ?? 0, mEventList: mTempEvent)
             resultArray.append(medisItem)
         }
         mediaItemArray.append(contentsOf: resultArray)
+        return resultArray
+    }
+    
+    func getDevEventItemList(_ fileDic : Dictionary<String, Any>)->[DevEventItem]{
+        guard let eventList = fileDic["event"] as? [Dictionary<String, Any>] else{
+            return [DevEventItem(mEventType: 0, mStartTime: 0, mStopTime: 0, mPicUrl: "", mVideoUrl: "")]
+        }
+        var resultArray = [DevEventItem]()
+        for item in eventList{
+            let eventItem = DevEventItem(mEventType: item["eventType"] as? UInt ?? 0, mStartTime: item["start"] as? UInt64 ?? 0, mStopTime: item["stop"] as? UInt64 ?? 0, mPicUrl: item["pic"] as? String ?? "", mVideoUrl: item["url"] as? String ?? "")
+            resultArray.append(eventItem)
+        }
         return resultArray
     }
     
@@ -401,14 +432,13 @@ extension IDevMediaManager{
     }
     
     func getDownloadMediaResult(_ dic:Dictionary<String, Any>)->[DevFileDownloadResult]{
-        guard let fileList = dic["downloadFailList"] as? [Dictionary<String, Any>] else{
-            return [DevFileDownloadResult(mFileId: "", mErrCode: ErrCode.XERR_UNKNOWN)]
+        guard let fileDic = dic["result"] as? Dictionary<String, Any> else{
+            return [DevFileDownloadResult(mFileId: "", mFileName: "")]
         }
         var resultArray = [DevFileDownloadResult]()
-        for item in fileList{
-            let medisItem = DevFileDownloadResult(mFileId: item["id"] as? String ?? "", mErrCode: item["error"] as? Int ?? 0)
-            resultArray.append(medisItem)
-        }
+        let medisItem = DevFileDownloadResult(mFileId: fileDic["id"] as? String ?? "", mFileName: fileDic["fileName"] as? String ?? "")
+        resultArray.append(medisItem)
+        
         return resultArray
     }
     
@@ -420,6 +450,7 @@ extension IDevMediaManager{
         }
         return nil
     }
+    
     
     func setStartPlayTime(){
         let fileSTime = curPlayItem?.mStartTimestamp ?? 0

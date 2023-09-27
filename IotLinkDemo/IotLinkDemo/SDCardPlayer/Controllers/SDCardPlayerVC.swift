@@ -302,7 +302,7 @@ extension SDCardPlayerVC{
     func sendCmdSDQueryPCtrl(sessionId:String = "", cb:@escaping(Int,[DevMediaItem])->Void){
    
         let mediaMgr = getDevMediaMgr()
-        let param = QueryParam(mFileId: 0, mBeginTimestamp: 12, mEndTimestamp: 20, mPageIndex: 0, mPageSize: 10)
+        let param = QueryParam(mFileId: "0", mBeginTimestamp: 12, mEndTimestamp: 20)
         mediaMgr.queryMediaList(queryParam: param) { errCode, mediaList in
             print("sendCmdSDCtrl---:\(errCode) mediaList:\(mediaList)")
             cb(errCode,mediaList)
@@ -412,6 +412,9 @@ extension SDCardPlayerVC: IPlayingCallbackListener {
             playBtn.isSelected = true
         }
         startTimeProgress()
+//        let mediaMgr = getDevMediaMgr()
+//        let curTime = mediaMgr.getPlayingProgress()
+//        print("更新进度条666:  curTime:\(curTime)")
     }
     
     func onDevMediaPlayingDone(fileId: String) {

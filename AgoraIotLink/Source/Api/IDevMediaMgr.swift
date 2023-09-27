@@ -12,22 +12,20 @@ import Foundation
  * @brief 分页查询文件参数，可以进行查询组合
  */
 @objc public class QueryParam : NSObject {
-    @objc public var mFileId: UInt64 = 0             //文件Id, 0表示则返回根目录文件夹目录
+    @objc public var mFileId: String = ""            //文件Id, 0表示则返回根目录文件夹目录
     @objc public var mBeginTimestamp: UInt64 = 0     //查询时间段的开始时间戳，单位秒
     @objc public var mEndTimestamp: UInt64 = 0       //查询时间段的结束时间戳，单位秒
-    @objc public var mPageIndex: Int = 0             //查询开始的页索引，从1开始
-    @objc public var mPageSize: Int = 0              //一页文件数量
+//    @objc public var mPageIndex: Int = 0             //查询开始的页索引，从1开始
+//    @objc public var mPageSize: Int = 0              //一页文件数量
     
-    @objc public init(mFileId:UInt64 ,
+    @objc public init(mFileId:String ,
                 mBeginTimestamp:UInt64,
-                mEndTimestamp:UInt64,
-                mPageIndex:Int,
-                mPageSize:Int){
+                mEndTimestamp:UInt64){
         self.mFileId = mFileId
         self.mBeginTimestamp = mBeginTimestamp
         self.mEndTimestamp = mEndTimestamp
-        self.mPageIndex = mPageIndex
-        self.mPageSize = mPageSize
+//        self.mPageIndex = mPageIndex
+//        self.mPageSize = mPageSize
     }
 }
 
@@ -35,30 +33,48 @@ import Foundation
  * @brief 查询到的 设备媒体项
  */
 @objc public class DevMediaItem : NSObject {
-    @objc public var mFileId: String = ""             //媒体文件Id，是文件唯一标识
-    @objc public var mStartTimestamp: UInt64 = 0      //录制开始时间，单位秒
-    @objc public var mStopTimestamp: UInt64 = 0       //录制结束时间，单位秒
-    @objc public var mType: Int = 0                   //文件类型：0--媒体文件；1--目录
-    @objc public var mEvent: Int = 0                  //事件类型：0-全部事件、1-页面变动、2-有人移动
-    @objc public var mImgUrl : String = ""            //录像封面图片URL地址
-    @objc public var mVideoUrl : String = ""          //录像下载的URL地址
+    @objc public var mFileId: String = ""                       //设备录像文件Id，是文件的唯一标识
+    @objc public var mStartTimestamp: UInt64 = 0                //录制开始时间，单位秒
+    @objc public var mStopTimestamp: UInt64 = 0                 //录制结束时间，单位秒
+    @objc public var mType: Int = 0                             //文件类型：0-文件、1-文件夹
+    @objc public var mEventList: Array<DevEventItem>            //是 EventItem结构的数组
     
     @objc public init(mFileId:String ,
                 mStartTimestamp:UInt64,
                 mStopTimestamp:UInt64,
                 mType:Int,
-                mEvent:Int,
-                mImgUrl:String,
-                mVideoUrl:String){
+                      mEventList:Array<DevEventItem>){
         self.mFileId = mFileId
         self.mStartTimestamp = mStartTimestamp
         self.mStopTimestamp = mStopTimestamp
         self.mType = mType
-        self.mEvent = mEvent
-        self.mImgUrl = mImgUrl
+        self.mEventList = mEventList
+    }
+}
+
+/*
+ * @brief 查询到的 设备事件项
+ */
+@objc public class DevEventItem : NSObject {
+    @objc public var mEventType: UInt = 0                    //告警类型：0-画面变动、1-异常情况、2-有人移动、3-异常响声、4-宝宝哭声
+    @objc public var mStartTime: UInt64 = 0                  //设备录像文件的开始时间（时间戳精确到秒）
+    @objc public var mStopTime: UInt64 = 0                   //设备录像文件的结束时间（时间戳精确到秒）
+    @objc public var mPicUrl : String = ""                   //设备录像封面图片地址
+    @objc public var mVideoUrl : String = ""                 //设备录像下载地址
+    
+    @objc public init(mEventType:UInt ,
+                      mStartTime:UInt64,
+                      mStopTime:UInt64,
+                      mPicUrl:String,
+                      mVideoUrl:String){
+        self.mEventType = mEventType
+        self.mStartTime = mStartTime
+        self.mStopTime = mStopTime
+        self.mPicUrl = mPicUrl
         self.mVideoUrl = mVideoUrl
     }
 }
+
 
 /*
  * @brief 设备端单个文件媒体信息
@@ -100,12 +116,12 @@ import Foundation
  */
 @objc public class DevFileDownloadResult : NSObject {
     @objc public var mFileId: String = ""            //媒体文件Id，是文件唯一标识
-    @objc public var mErrCode: Int = 0               //错误码
+    @objc public var mFileName: String = ""          //单个文件项全录节目
     
     @objc public init(mFileId:String ,
-                      mErrCode:Int){
+                      mFileName:String){
         self.mFileId = mFileId
-        self.mErrCode = mErrCode
+        self.mFileName = mFileName
     }
 }
 
@@ -283,11 +299,17 @@ import Foundation
     /**
      * @brief 根据媒体文件的filedId来下载设备端多个文件，该方法是异步调用，通过回调返回下载结果
      * @param filedIdList: 要下载的 媒体文件filedId的列表,fileid建议为文件的绝对路径
-     * @param downloadFailList : 下载结果回调监听器
+     * @param OnDownloadListener : 下载结果回调监听器
      * @return 返回错误码
      */
-    func DownloadFileList(filedIdList:[String], downloadFailList: @escaping (Int,[DevFileDownloadResult]) -> Void)
+    func DownloadFileList(filedIdList:[String], onDownloadListener: @escaping (Int,[DevFileDownloadResult]) -> Void)
     
+    /**
+     * @brief 查询事件分布，该方法是异步调用，通过回调返回查询结果
+     * @param OnQueryEventListener : 查询结果回调监听器(errCode : 查询结果错误码，0标识查询成功,videoTimeList : 视频时间戳列表)
+     * @return 返回错误码
+     */
+    func queryEventTimeline(onQueryEventListener: @escaping (_ errCode:Int, _ videoTimeList : [UInt64]) -> Void)
     
     
 }

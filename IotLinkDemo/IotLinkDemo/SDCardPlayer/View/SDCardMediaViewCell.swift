@@ -18,7 +18,7 @@ class SDCardMediaViewCell: UITableViewCell {
                 return
             }
             nameLabel.text = mediaItem.mFileId
-            videoUrlLabel.text = mediaItem.mVideoUrl
+//            videoUrlLabel.text = mediaItem.mVideoUrl
         }
     }
     

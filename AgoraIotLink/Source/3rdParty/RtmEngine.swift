@@ -385,7 +385,7 @@ class RtmEngine : NSObject{
    
                
                 //判断是否正确返回，code = 0
-                guard let code = dict["code"] as? Int, code == 0 else{
+                guard let code = dict["code"] as? Int, code >= 0 else{
                     log.e("handelReceivedData: dict:\(dict))")
                     guard let cbBlock = cbMsgObj?.msgObj else {
                         log.e("handelReceivedData: cbBlock nil )")
