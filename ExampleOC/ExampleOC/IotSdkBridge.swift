@@ -127,6 +127,10 @@ public class IDevControllerManager : NSObject,IDevControllerMgr{
         return mgr.sendCmdDevReset(cmdListener: cmdListener)
     }
     
+    @objc public func sendCmdCustomize(customizeData: String, cmdListener: @escaping (Int, String) -> Void) {
+        return mgr.sendCmdCustomize(customizeData: customizeData, cmdListener: cmdListener)
+    }
+    
     public init(mgr:IDevControllerMgr) {
         self.mgr = mgr
     }
