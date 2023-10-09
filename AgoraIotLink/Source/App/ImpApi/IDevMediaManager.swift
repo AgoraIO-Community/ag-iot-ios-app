@@ -55,7 +55,7 @@ class IDevMediaManager : IDevMediaMgr{
     func queryMediaList(queryParam: QueryParam, queryListener: @escaping (Int, [DevMediaItem]) -> Void) {
         
         let curTimestamp:UInt32 = getSequenceId()
-        let commanId:Int = 2002
+        let commanId:String = "sd_query_record_group"
         let payloadParam = ["id":queryParam.mFileId, "begin": queryParam.mBeginTimestamp,"end": queryParam.mEndTimestamp] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) { [weak self] errCode, resutArray in
@@ -68,7 +68,7 @@ class IDevMediaManager : IDevMediaMgr{
     func deleteMediaList(deletingList: [String], deleteListener: @escaping (Int, [DevMediaDelResult]) -> Void) {
         
         let curTimestamp:UInt32 = getSequenceId()
-        let commanId:Int = 2003
+        let commanId:String = "sd_delete_record_file"
         let payloadParam = ["fileIdList":deletingList] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
@@ -81,7 +81,7 @@ class IDevMediaManager : IDevMediaMgr{
     func getMediaCoverData(imgUrl:String,cmdListener: @escaping (_ errCode:Int,_ imgUrl:String, _ result:Data) -> Void) {
         
         let curTimestamp:UInt32 = getSequenceId()
-        let commanId:Int = 2004
+        let commanId:String = "sd_get_cover_pic"
         let payloadParam = ["pic":imgUrl] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) { errCode, resultDic in
@@ -114,7 +114,7 @@ class IDevMediaManager : IDevMediaMgr{
         playClock.stopWithProgress(TimeInterval(globalStartTime))
         
         let curTimestamp:UInt32 = getSequenceId()
-        let commanId:Int = 2005
+        let commanId:String = "sd_play_timeline_video"
         let payloadParam = ["begin":globalStartTime,"rate":playSpeed] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
@@ -139,7 +139,7 @@ class IDevMediaManager : IDevMediaMgr{
         playClock.stopWithProgress(TimeInterval(startPos))
 
         let curTimestamp:UInt32 = getSequenceId()
-        let commanId:Int = 2006
+        let commanId:String = "sd_play_video"
         let payloadParam = ["id":fileId,"offset":startPos,"rate":playSpeed] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
@@ -173,7 +173,7 @@ class IDevMediaManager : IDevMediaMgr{
     func setPlayingSpeed(speed: Int) -> Int {
         
         let curTimestamp:UInt32 = getSequenceId()
-        let commanId:Int = 2008
+        let commanId:String = "sd_pause_video"
         let payloadParam = ["rate":speed] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralStringData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
@@ -193,7 +193,7 @@ class IDevMediaManager : IDevMediaMgr{
         }
          
         let curTimestamp:UInt32 = getSequenceId()
-        let commanId:Int = 2009
+        let commanId:String = "sd_pause_video"
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
         CallListenerManager.sharedInstance.pausingSDCardPlay()
         sendGeneralStringData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
@@ -211,14 +211,14 @@ class IDevMediaManager : IDevMediaMgr{
         return ErrCode.XOK
     }
     
-    func resume() -> Int {
+    func resume() -> Int {//暂停后的恢复播放
         
         if getPlayingState() != .paused{
             return ErrCode.XERR_BAD_STATE
         }
         
         let curTimestamp:UInt32 = getSequenceId()
-        let commanId:Int = 2010
+        let commanId:String = ""
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
         CallListenerManager.sharedInstance.resumeingSDCardPlay()
         sendGeneralStringData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
@@ -241,7 +241,7 @@ class IDevMediaManager : IDevMediaMgr{
         
         let curTimestamp : UInt32 = getSequenceId()
         
-        let commanId:Int = 2011
+        let commanId:String = "sd_download_record_file"
         let payloadParam = ["fileIdList":filedIdList] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         
@@ -256,7 +256,7 @@ class IDevMediaManager : IDevMediaMgr{
         
         let curTimestamp : UInt32 = getSequenceId()
         
-        let commanId:Int = 2012
+        let commanId:String = "sd_query_event_timeline"
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
         
         sendGeneralDicData(paramDic, curTimestamp) { errCode, resutDic in
@@ -267,7 +267,6 @@ class IDevMediaManager : IDevMediaMgr{
             }
             onQueryEventListener(errCode,timeList)
         }
-        
     }
     
     func setDisplayView(displayView: UIView?)->Int {
@@ -328,7 +327,11 @@ extension IDevMediaManager{
         }
         
         let jsonString = paramDic.convertDictionaryToJSONString()
-        rtm.sendStringMessage(sequenceId: "\(sequenceId)", toPeer: peer, message: jsonString, cb: cmdListener)
+        let data:Data = jsonString.data(using: .utf8) ?? Data()
+        rtm.sendRawMessage(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
+        
+//        let jsonString = paramDic.convertDictionaryToJSONString()
+//        rtm.sendStringMessage(sequenceId: "\(sequenceId)", toPeer: peer, message: jsonString, cb: cmdListener)
         
     }
     

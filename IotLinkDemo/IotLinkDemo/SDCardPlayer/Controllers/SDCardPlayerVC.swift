@@ -78,6 +78,14 @@ class SDCardPlayerVC: AGBaseVC {
             make.height.equalTo(40)
         }
         
+        view.addSubview(queryTimeBtn)
+        queryTimeBtn.snp.makeConstraints { make in
+            make.top.equalTo(playBtn.snp.bottom).offset(10)
+            make.left.equalTo(downLoadBtn.snp.right).offset(20)
+            make.width.equalTo(80)
+            make.height.equalTo(40)
+        }
+        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(downLoadBtn.snp.bottom).offset(10)
@@ -177,6 +185,19 @@ class SDCardPlayerVC: AGBaseVC {
         return btn
     }()
     
+    lazy var queryTimeBtn: UIButton = {
+        let btn = UIButton()
+        btn.setTitleColor(UIColor.white, for: .normal)
+        btn.backgroundColor = UIColor.gray
+        btn.alpha = 0.8
+        btn.layer.cornerRadius = 8
+        btn.layer.masksToBounds = true
+        btn.setTitle("查询时间", for:.normal)
+        btn.tag = 1007
+        btn.addTarget(self, action: #selector(btnClick(btn:)), for: .touchUpInside)
+        return btn
+    }()
+    
     @objc private func updateProgressBar() {
 
         index += 1
@@ -269,17 +290,17 @@ class SDCardPlayerVC: AGBaseVC {
             break
         case 1006://下载文件
             
-            sendCmdSDQueryCoverImagPCtrl { [weak self] code, data in
+            sendCmdSDQueryDownloadFile { [weak self] code, data in
 
-                if let image = UIImage(data: data) {
-                    self?.curImage = image
-                    self?.tableView.reloadData()
-                    log.i("转化成功")
-                } else {
-                    log.i("转化失败")
-                }
+                log.i("sendCmdSDQueryCoverImagPCtrl：\(code)")
             }
+            break
+        case 1007://查询时间戳
             
+            sendCmdSDQueryTimeList { [weak self] code in
+
+                log.i("sendCmdSDQueryTimeList：\(code)")
+            }
             break
         default:
             break
@@ -302,7 +323,7 @@ extension SDCardPlayerVC{
     func sendCmdSDQueryPCtrl(sessionId:String = "", cb:@escaping(Int,[DevMediaItem])->Void){
    
         let mediaMgr = getDevMediaMgr()
-        let param = QueryParam(mFileId: "0", mBeginTimestamp: 12, mEndTimestamp: 20)
+        let param = QueryParam(mFileId: "0", mBeginTimestamp: 0, mEndTimestamp: 20)
         mediaMgr.queryMediaList(queryParam: param) { errCode, mediaList in
             print("sendCmdSDCtrl---:\(errCode) mediaList:\(mediaList)")
             cb(errCode,mediaList)
@@ -337,6 +358,15 @@ extension SDCardPlayerVC{
             print("DownloadMediaList---:\(errCode) downloadFailList:\(downloadFailList)")
             cb(errCode,downloadFailList)
         }
+    }
+    
+    func sendCmdSDQueryTimeList(sessionId:String = "", cb:@escaping(Int)->Void){
+   
+        let mediaMgr = getDevMediaMgr()
+        mediaMgr.queryEventTimeline(onQueryEventListener: { errCode, list in
+            print("sendCmdSDQueryTimeList---:\(errCode)---:\(list)")
+            cb(errCode)
+        })
     }
     
     func sendCmdSDPlayCtrl(){

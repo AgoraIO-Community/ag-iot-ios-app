@@ -28,7 +28,7 @@ class IDevControllerManager : IDevControllerMgr{
         
         let curSequenceId : UInt32 = getSequenceId()
         
-        let commanId:Int = 1001
+        let commanId:String = "ptz_ctrl"
         let payloadParam = ["action": action, "direction": direction, "speed": speed] as [String : Any]
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralData(paramDic, curSequenceId,cmdListener)
@@ -39,7 +39,7 @@ class IDevControllerManager : IDevControllerMgr{
         
         let curSequenceId : UInt32 = getSequenceId()
         
-        let commanId:Int = 1002
+        let commanId:String = "ptz_reset"
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
         sendGeneralData(paramDic, curSequenceId,cmdListener)
         
@@ -49,19 +49,54 @@ class IDevControllerManager : IDevControllerMgr{
         
         let curSequenceId : UInt32 = getSequenceId()
         
-        let commanId:Int = 2001
+        let commanId:String = "sd_format"
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
         sendGeneralData(paramDic, curSequenceId,cmdListener)
  
         
     }
     
-    func sendCmdDevReset(cmdListener: @escaping (Int, String) -> Void) {
+    func sendCmdDevReset(cmdListener: @escaping (Int, String) -> Void) {//设备重启
         let curSequenceId : UInt32 = getSequenceId()
         
-        let commanId:Int = 3002
+        let commanId:String = "restart"
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
         sendGeneralData(paramDic, curSequenceId,cmdListener)
+    }
+    
+    func sendCmdCustomize(customizeData:String, cmdListener: @escaping (_ errCode:Int,_ result:String) -> Void){//发送自定义命令
+        
+        log.i("sendCmdCustomize:\(customizeData)")
+        
+        let curTimestamp:UInt32 = getSequenceId()
+        let commanId:Int = 3001
+        let sendParam = String.getDictionaryFromJSONString(jsonString: customizeData)
+        
+        let payloadParam = ["sendData":sendParam] as [String : Any]
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
+        
+        sendGeneralDicData(paramDic, curTimestamp) { errCode, resutDic in
+            log.i("sendCmdCustomize resutDic:\(resutDic)")
+            guard let recvData = resutDic["recvData"] as? String else{
+                cmdListener(errCode,"")
+                return
+            }
+            cmdListener(errCode,recvData)
+        }
+        
+    }
+    
+    
+    func sendGeneralDicData(_ paramDic:[String:Any],_ sequenceId:UInt32,_ cmdListener: @escaping (Int, Dictionary<String, Any>) -> Void){
+        
+        guard let peer =  rtm.curSession?.peerVirtualNumber else{
+            log.i("peerVirtualNumber is nil")
+            return
+        }
+        
+        let jsonString = paramDic.convertDictionaryToJSONString()
+        let data:Data = jsonString.data(using: .utf8) ?? Data()
+        rtm.sendRawMessageDic(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
     }
     
     func sendGeneralData(_ paramDic:[String:Any],_ sequenceId:UInt32,_ cmdListener: @escaping (Int, String) -> Void){
@@ -73,7 +108,6 @@ class IDevControllerManager : IDevControllerMgr{
         
         let jsonString = paramDic.convertDictionaryToJSONString()
         let data:Data = jsonString.data(using: .utf8) ?? Data()
-//        rtm.sendStringMessage(sequenceId: "\(sequenceId)", toPeer: peer, message: jsonString, cb: cmdListener)
         rtm.sendRawMessage(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
     }
   
