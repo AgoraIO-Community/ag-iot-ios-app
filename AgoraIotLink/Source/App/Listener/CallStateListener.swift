@@ -70,7 +70,6 @@ class CallStateListener: NSObject {
         callSession = CallSession()
         callSession?.callType = .DIAL
         callSession?.peerNodeId = dialParam.mPeerDevId
-        callSession?.mUserId = dialParam.mUserId
         
         //RTC需要的参数
         callSession?.token = dialParam.mRtcToken
@@ -79,6 +78,7 @@ class CallStateListener: NSObject {
         callSession?.peerUid = 10
         
         //RTM需要的参数
+        callSession?.mRtmUid = dialParam.mRtmUid
         callSession?.mRtmToken = dialParam.mRtmToken
         
     }
@@ -151,12 +151,19 @@ extension CallStateListener {
         callSession?.callType = sess.callType
     }
     
+    func renewToken(renewParam: TokenRenewParam) {
+        
+        talkingEngine?.renewToken(renewParam.mRtcToken)
+        
+        let rtm = callSession?.rtm
+        rtm?.renewToken(renewParam.mRtmToken)
+    }
+    
 }
 
 extension CallStateListener : CallStateMachineListener{
     
     func do_CREATEANDENTER() {
-
         let uid = callSession?.uid ?? 0
         let name = callSession?.cname ?? ""
         let token = callSession?.token ?? ""
@@ -226,6 +233,13 @@ extension CallStateListener : CallStateMachineListener{
         },
         peerAction: {act,uid in
             if(act == .Enter){
+                
+//                todo:
+//                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 60){
+//                    log.i("token过期模拟 1分钟")
+//                    self.callAct(.onSessionTokenWillExpire,self.callSession?.mSessionId ?? "",ErrCode.XOK)
+//                }
+                
                 log.i("listener Enter uid:\(uid)")
                 if(self.callSession?.peerUid == uid){
                     let timeSpace = String.dateCurrentTime() - CallListenerManager.sharedInstance.startTime
@@ -287,6 +301,10 @@ extension CallStateListener : CallStateMachineListener{
                 log.i("listener memberState aborted:\(s)")
             }
         })
+        
+        talkingEngine?.waitForTokenWillExpire {
+            self.callAct(.onSessionTokenWillExpire,self.callSession?.mSessionId ?? "",ErrCode.XOK)
+        }
     }
     
     func do_LEAVEANDDESTROY() {
@@ -323,7 +341,7 @@ extension CallStateListener{//rtm
             rtmSession.token = callSession?.mRtmToken ?? ""
             rtmSession.peerVirtualNumber = callSession?.peerNodeId ?? ""
             
-            let uid = callSession?.mUserId ?? "" //01GW488RS7MXFXX883VTV0EZV7
+            let uid = callSession?.mRtmUid ?? "" //01GW488RS7MXFXX883VTV0EZV7
             rtm?.enter(rtmSession, "\(uid)") { [weak self] ret, msg in
                 if ret == .Fail{
                     self?.callAct(.onDisconnected,self?.callSession?.mSessionId ?? "",ErrCode.XOK)
@@ -332,6 +350,12 @@ extension CallStateListener{//rtm
             }
 
         }
+        
+        rtm?.waitForStatusUpdated(statusUpdated: { MessageStatus, msg, rtmMsg in
+            if MessageStatus == .TokenWillExpire {
+                self.callAct(.onSessionTokenWillExpire,self.callSession?.mSessionId ?? "",ErrCode.XOK)
+            }
+        })
 
     }
 }

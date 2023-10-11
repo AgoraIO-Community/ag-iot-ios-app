@@ -19,6 +19,10 @@ public class IDeviceSessionManager : NSObject,IDeviceSessionMgr{
         return mgr.disconnect(sessionId: sessionId, disconnectListener: disconnectListener)
     }
     
+    @objc public func renewToken(sessionId: String, renewParam: AgoraIotLink.TokenRenewParam) -> Int {
+        return mgr.renewToken(sessionId: sessionId, renewParam: renewParam)
+    }
+    
     @objc public func getSessionList() -> [AgoraIotLink.SessionInfo] {
         return mgr.getSessionList()
     }

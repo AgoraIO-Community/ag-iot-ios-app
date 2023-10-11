@@ -277,14 +277,14 @@ extension HomePageMainVC { //呼叫设备
   
     }
     
-    //请求连接参数
+    //请求连接参数mRtmUid
     func requestConDeviceParam(){
         let deviceId = keyCenter.deviceId
         AGToolHUD.showNetWorkWait()
         ThirdAccountManager.getConnectDeviceParam { [weak self] success, msg,retData in
             AGToolHUD.disMiss()
             if success == 0{
-                let connectParam = ConnectParam(mUserId: retData?.data?.userId ?? "", mPeerDevId: deviceId, mLocalRtcUid: retData?.data?.uid ?? 0, mChannelName: retData?.data?.cname ?? "", mRtcToken: retData?.data?.rtcToken ?? "", mRtmToken: retData?.data?.rtmToken ?? "")
+                let connectParam = ConnectParam( mPeerDevId: deviceId, mLocalRtcUid: retData?.data?.uid ?? 0, mChannelName: retData?.data?.cname ?? "", mRtcToken: retData?.data?.rtcToken ?? "", mRtmUid: retData?.data?.userId ?? "",mRtmToken: retData?.data?.rtmToken ?? "")
                 self?.connectDevice(connectParam: connectParam)
             }
             print("\(msg)---\(String(describing: retData))")
@@ -306,7 +306,7 @@ extension HomePageMainVC { //呼叫设备
         curTraceId = sess.traceId
         let accountInfor = TDUserInforManager.shared.readKeyChainAccountAndPwd()
         let userId = nodeId //accountInfor.acc
-        let connectParam = ConnectParam(mUserId: userId, mPeerDevId: sess.peerNodeId, mLocalRtcUid: sess.uid, mChannelName: sess.cname, mRtcToken: sess.token, mRtmToken: "")
+        let connectParam = ConnectParam( mPeerDevId: sess.peerNodeId, mLocalRtcUid: sess.uid, mChannelName: sess.cname, mRtcToken: sess.token,mRtmUid: userId, mRtmToken: "")
         connectDevice(connectParam: connectParam)
     }
     
@@ -350,6 +350,9 @@ extension HomePageMainVC { //呼叫设备
             if(act == .onConnectDone){
                 self?.handelUserMembers(1,sessionId)
                 self?.previewStart(sessionId: sessionId)
+            }else if(act == .onSessionTokenWillExpire){
+                debugPrint("token 即将过期")
+                self?.renewToken(sessionId)
             }else{
                 self?.handelCallAct(sessionId,act)
             }
@@ -357,7 +360,20 @@ extension HomePageMainVC { //呼叫设备
         } _: { [weak self] members,sessionId in
             self?.handelUserMembers(members,sessionId)
         }
+    }
+    
+    func renewToken(_ sessionId : String){
         
+        let deviceId = keyCenter.deviceId
+        AGToolHUD.showNetWorkWait()
+        ThirdAccountManager.getConnectDeviceParam { [weak self] success, msg,retData in
+            AGToolHUD.disMiss()
+            print("homePageMainVC:getConnectDeviceParam:retData:\(String(describing: retData))")
+            if success == 0{
+                let reParam = TokenRenewParam.init(mRtcToken: retData?.data?.rtcToken ?? "", mRtmToken: retData?.data?.rtmToken ?? "")
+                self?.doorbellVM.renewToken(sessionId, reParam)
+            }
+        }
     }
     
     func handelUserMembers(_ members:Int,_ sessionId:String){

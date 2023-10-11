@@ -42,6 +42,18 @@ extension DoorBellManager{
 
     }
     
+    //刷新token
+    func renewToken(_ sessionId : String = "",_ param:TokenRenewParam)->Void{
+        guard let callMgr = sdk?.deviceSessionMgr else{
+            log.i("sdk.callkitMgr not init")
+            let ret = ConnectResult(mSessionId: "", mErrCode: -1)
+            return
+        }
+        let ret = callMgr.renewToken(sessionId: sessionId, renewParam: param)
+        log.i("renewToken result ret:\(ret)")
+
+    }
+    
 
 //    //呼叫设备
 //    func wakeupDevice(_ dev:MDeviceModel,_ cb:@escaping(Int,String,String)->Void,_ action:@escaping(String,ActionAck)->Void,_ memberState:@escaping(Int,String)->Void){

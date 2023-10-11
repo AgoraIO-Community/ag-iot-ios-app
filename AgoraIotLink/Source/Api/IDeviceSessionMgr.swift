@@ -12,23 +12,39 @@ import Foundation
  * @brief 设备信息，(productKey+mDeviceId) 构成设备唯一标识
  */
 public class ConnectParam : NSObject {
-    @objc public var mUserId: String = ""             //本地用户的 UserId
     @objc public var mPeerDevId: String = ""          //要连接设备的 DeviceId
     @objc public var mLocalRtcUid: UInt = 0           //本地 RTC uid
     @objc public var mChannelName: String = ""        //要会话的RTC频道名
     @objc public var mRtcToken: String = ""           //要会话的RTC Token
+    @objc public var mRtmUid: String = ""             //本地用户的 mRtmUid
     @objc public var mRtmToken: String = ""           //要会话的 RTM Token
     
-    @objc public init(mUserId:String ,
+    @objc public init(
                 mPeerDevId:String,
                 mLocalRtcUid:UInt,
                 mChannelName:String,
                 mRtcToken:String,
+                mRtmUid:String ,
                 mRtmToken:String){
-        self.mUserId = mUserId
         self.mPeerDevId = mPeerDevId
         self.mLocalRtcUid = mLocalRtcUid
         self.mChannelName = mChannelName
+        self.mRtcToken = mRtcToken
+        self.mRtmUid = mRtmUid
+        self.mRtmToken = mRtmToken
+    }
+}
+
+/*
+ * @brief 设备Token的Renew参数
+ */
+@objc public class TokenRenewParam : NSObject{
+    
+    @objc public var mRtcToken: String = ""            //要会话的RTC Token
+    @objc public var mRtmToken: String = ""            //要会话的 RTM Token
+    
+    @objc public init(mRtcToken:String ,
+                      mRtmToken:String){
         self.mRtcToken = mRtcToken
         self.mRtmToken = mRtmToken
     }
@@ -73,10 +89,11 @@ public class ConnectParam : NSObject {
  * @brief 与对端通话时的产生的行为/事件
  */
 @objc public enum SessionCallback:Int{
-    case onConnectDone           //设备连接连接完成
-    case onDisconnected          //设备断开连接
-    case onError                 //会话错误
-    case UnknownAction           //未知错误
+    case onConnectDone               //设备连接连接完成
+    case onDisconnected              //设备断开连接
+    case onSessionTokenWillExpire    //token即将过期
+    case onError                     //会话错误
+    case UnknownAction               //未知错误
 }
 
 /*
@@ -137,6 +154,14 @@ public protocol IDeviceSessionMgr {
      */
     func getSessionInfo(sessionId:String)->SessionInfo
     
+    
+    /**
+     * @brief 对会话进行 renewToken操作
+     * @param sessionId : 设备连接会话Id
+     * @param renewParam : token参数
+     * @return 返回错误码
+    */
+    func renewToken(sessionId:String, renewParam:TokenRenewParam)->Int
     
     /**
      * @brief 获取设备预览的组件接口

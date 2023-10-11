@@ -62,6 +62,7 @@ class AgoraTalkingEngine: NSObject {
     private var  _onEnterChannel : TimeCallback<(TaskResult,String)>? = nil
     private var  _onPeerAction : (RtcPeerAction,UInt)->Void = {b,u in}
     private var  _memberState : (MemberState,[UInt])->Void = {s,a in }
+    private var  _tokenWillExpire : ()->Void = {}
     
 
     private var _networkStatus : RtcNetworkStatus = RtcNetworkStatus()
@@ -97,6 +98,11 @@ class AgoraTalkingEngine: NSObject {
         
     }
     
+    //token 即将过期监听
+    func waitForTokenWillExpire(tokenWillExpireListern:@escaping()->Void){
+        _tokenWillExpire = tokenWillExpireListern
+    }
+    
     func getRtcObject() -> AgoraRtcEngineKit {
         return AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit()
     }
@@ -109,6 +115,25 @@ class AgoraTalkingEngine: NSObject {
     func clearMetalData(){
         rtcKit?.setMediaMetadataDelegate(nil, with: .video)
         rtcKit?.setMediaMetadataDataSource(nil, with: .video)
+    }
+    
+    func renewToken(_ rtcToken : String){
+        
+        log.i("rtc renewToken:\(rtcToken)")
+        guard let rtc = rtcKit else{
+            log.e("rtc engine is nil")
+            return
+        }
+        
+        let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
+        option.channelProfile = .liveBroadcasting
+        option.clientRoleType = .broadcaster
+        option.token = rtcToken
+        let ret = rtc.updateChannelEx(with: option, connection: connection)
+        log.i("rtc renewToken ret:\(ret)")
+        
+        channelInfo?.token = rtcToken
+        
     }
     
     func joinChannel(cb:@escaping(TaskResult,String)->Void){
@@ -464,6 +489,7 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, tokenPrivilegeWillExpire token: String) {
         log.w("rtc tokenPrivilegeWillExpire token:\(token)")
+        _tokenWillExpire()
     }
 
     func rtcEngineRequestToken(_ engine: AgoraRtcEngineKit) {

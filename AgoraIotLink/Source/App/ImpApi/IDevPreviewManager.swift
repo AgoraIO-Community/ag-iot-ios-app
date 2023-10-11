@@ -40,7 +40,7 @@ public class CallSession : NSObject{
     var devMediaMgr : IDevMediaMgr?           //设备媒体文件管理器接口对象
     
     
-    var mUserId: String = ""             //本地用户的 UserId
+    var mRtmUid: String = ""             //本地用户的 mRtmUid
     var rtm : RtmEngine?                 //当前连接对应的Rtm对象
     var mRtmToken: String = ""           //要会话的 RTM Token
     

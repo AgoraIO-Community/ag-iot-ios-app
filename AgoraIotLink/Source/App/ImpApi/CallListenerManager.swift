@@ -119,6 +119,11 @@ class CallListenerManager {
         log.i("registerPreViewListener:\(callDict.count)")
         callListen?.registerPreViewListener(previewListener: previewListener)
     }
+    
+    func renewToken(sessionId: String, renewParam: TokenRenewParam) -> Void{
+        let callListen = getCurrentCallObjet(sessionId)
+        callListen?.renewToken(renewParam: renewParam)
+    }
 
     func isTaking(_ peerNodeId : String)->Bool{
         

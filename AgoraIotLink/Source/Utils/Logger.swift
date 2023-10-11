@@ -48,6 +48,7 @@ public class Logger: NSObject {
     public var level: LoggerLevel = .none
     public var ouput: LoggerOutput = .debuggerConsole
     public var showThread: Bool = false
+    public var logFilePath: String = ""
     
     // MARK: - Init
     private let isolationQueue = DispatchQueue(label: "com.crafttang.isolation", qos: .background)
@@ -64,6 +65,14 @@ public class Logger: NSObject {
     
     private var logUrl: URL? {
         let fileName = "agoraiot"
+        if (logFilePath != ""){
+            print("Logger:logFilePath\(logFilePath)")
+            let filePathUrl = URL(string: logFilePath) ?? logSubdiretory
+            try? FileManager.default.createDirectory(at: filePathUrl, withIntermediateDirectories: false)
+            let url = filePathUrl.appendingPathComponent(fileName).appendingPathExtension(fileExtension)
+            return url
+        }
+
         try? FileManager.default.createDirectory(at: logSubdiretory, withIntermediateDirectories: false)
         let url = logSubdiretory.appendingPathComponent(fileName).appendingPathExtension(fileExtension)
         return url
@@ -105,6 +114,10 @@ public class Logger: NSObject {
                 print("wrote failed: \(url.absoluteString), \(error.localizedDescription)")
             }
         }
+    }
+    
+    func setLogFilePath(_ filePath : String) {
+        logFilePath = filePath
     }
     
     func removeAllAsync() {

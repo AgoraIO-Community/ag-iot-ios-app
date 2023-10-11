@@ -36,6 +36,13 @@ class IDeviceSessionManager : IDeviceSessionMgr{
         return ErrCode.XOK
     }
     
+    func renewToken(sessionId: String, renewParam: TokenRenewParam) -> Int {
+        
+        guard CallListenerManager.sharedInstance.getCurrentCallState(sessionId) == .onCall else{  return ErrCode.XERR_BAD_STATE }
+        CallListenerManager.sharedInstance.renewToken(sessionId: sessionId, renewParam: renewParam)
+        return ErrCode.XOK
+    }
+    
     func getSessionList() -> [SessionInfo] {
         return [SessionInfo]()
     }

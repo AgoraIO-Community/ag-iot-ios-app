@@ -151,10 +151,12 @@ class RtmEngine : NSObject{
         }
     }
     
-//    func renewToken(_ token:String){
-//        kit?.renewToken("token",completion: { token, errorCode in
-//        })
-//    }
+    func renewToken(_ token:String){//刷新token
+        log.i("rtm renewToken:\(token)")
+        kit?.renewToken(token,completion: { token, errorCode in
+            log.i("rtm renewToken result ret:\(errorCode)")
+        })
+    }
     
     private func sendLogoutCallback(_ e:AgoraRtmLogoutErrorCode,_ cb:@escaping(Bool)->Void){
         switch(e){

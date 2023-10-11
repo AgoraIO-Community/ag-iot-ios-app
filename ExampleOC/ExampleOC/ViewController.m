@@ -21,7 +21,7 @@
 }
 
 -(ConnectResult *)connectDevice{
-    ConnectParam *connectParam = [[ConnectParam alloc] initWithMUserId:@"123456" mPeerDevId:@"123456" mLocalRtcUid:123456 mChannelName:@"123456" mRtcToken:@"123456" mRtmToken:@"123456"];
+    ConnectParam *connectParam = [[ConnectParam alloc] initWithMPeerDevId:@"123456" mLocalRtcUid:123456 mChannelName:@"123456" mRtcToken:@"123456" mRtmUid:@"123456" mRtmToken:@"123456"];
     ConnectResult *conResult = [[IotSdk.shared getDeviceSessionMgr] connectWithConnectParam:connectParam sessionCallback:^(SessionCallback sCallback, NSString * sessionId, NSInteger errCode) {
         
         if (sCallback == SessionCallbackOnConnectDone){
