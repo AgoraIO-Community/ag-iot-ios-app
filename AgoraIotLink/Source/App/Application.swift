@@ -24,8 +24,8 @@ open class Application{
             log.ouput = .debugerConsoleAndFile
         }
         
-        Logger.shared.removeAllAsync()
         Logger.shared.setLogFilePath(initParam.logFilePath ?? "")
+//        Logger.shared.removeAllAsync() //清除之前的日志文件
         
         let tempAppId = initParam.rtcAppId.substring(to: 1) + "*********************" + initParam.rtcAppId.substring(from: initParam.rtcAppId.count - 1)
         let projectId = initParam.projectId.substring(to: 1) + "*******" + initParam.projectId.substring(from: initParam.projectId.count - 1)
@@ -40,7 +40,7 @@ open class Application{
         
         _config = Config()
         _config!.appId = initParam.rtcAppId
-        _config!.logFilePath = initParam.logFilePath
+//        _config!.logFilePath = initParam.logFilePath
         _config!.projectId = initParam.projectId
         
         _context = Context()

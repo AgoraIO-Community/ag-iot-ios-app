@@ -13,6 +13,19 @@ extension AppDelegate{
     
     var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
     
+    //MARK: ----- property
+    var recordVideoFolder: String {//NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory
+        if let path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first {
+//            let direc = NSString(string: path).appendingPathComponent("VideoFile2") as String
+            if !FileManager.default.fileExists(atPath: path) {
+                try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: [:])
+            }
+            return path
+        }
+        return ""
+    }
+    
+    
     func initAgoraIot(){
         log.i("AgoraIotManager app initialize()")
         
@@ -20,6 +33,7 @@ extension AppDelegate{
         
         param.rtcAppId = keyCenter.AppId 
         param.projectId = AgoraIotConfig.projectId
+//        param.logFilePath = recordVideoFolder
         
         if(ErrCode.XOK != iotsdk.initialize(initParam: param,callbackFilter:{ [weak self] ec, msg in
             if(ec != ErrCode.XOK){

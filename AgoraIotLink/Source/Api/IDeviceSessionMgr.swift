@@ -16,7 +16,7 @@ public class ConnectParam : NSObject {
     @objc public var mLocalRtcUid: UInt = 0           //本地 RTC uid
     @objc public var mChannelName: String = ""        //要会话的RTC频道名
     @objc public var mRtcToken: String = ""           //要会话的RTC Token
-    @objc public var mRtmUid: String = ""             //本地用户的 mRtmUid
+    @objc public var mRtmUid: String = ""             //要会话的 mRtmUid
     @objc public var mRtmToken: String = ""           //要会话的 RTM Token
     
     @objc public init(

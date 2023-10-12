@@ -55,7 +55,7 @@ class IDevMediaManager : IDevMediaMgr{
     func queryMediaList(queryParam: QueryParam, queryListener: @escaping (Int, [DevMediaItem]) -> Void) {
         
         let curTimestamp:UInt32 = getSequenceId()
-        let commanId:String = "sd_query_record_group"
+        let commanId:String = "sd_query_record_file"
         let payloadParam = ["id":queryParam.mFileId, "begin": queryParam.mBeginTimestamp,"end": queryParam.mEndTimestamp] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) { [weak self] errCode, resutArray in

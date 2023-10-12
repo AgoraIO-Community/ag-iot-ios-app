@@ -39,6 +39,7 @@ public enum LoggerOutput: String {
 
 
 private let fileExtension = "txt"
+private let fileName = "agoraiot"
 private let LOG_BUFFER_SIZE = 10
 
 public class Logger: NSObject {
@@ -53,7 +54,7 @@ public class Logger: NSObject {
     // MARK: - Init
     private let isolationQueue = DispatchQueue(label: "com.crafttang.isolation", qos: .background)
     private let serialQueue = DispatchQueue(label: "com.crafttang.swiftylog")
-    private let logSubdiretory = FileManager.documentDirectoryURL.appendingPathComponent(fileExtension)
+    private let logSubdiretory =  FileManager.documentDirectoryURL.appendingPathComponent("IotSdkLog")
 
     public static let shared = Logger()
     
@@ -63,20 +64,26 @@ public class Logger: NSObject {
         set { isolationQueue.async(flags: .barrier) { self._data = newValue } }        
     }
     
-    private var logUrl: URL? {
-        let fileName = "agoraiot"
+    private lazy var logUrl: URL? = {
+        
         if (logFilePath != ""){
-            print("Logger:logFilePath\(logFilePath)")
-            let filePathUrl = URL(string: logFilePath) ?? logSubdiretory
-            try? FileManager.default.createDirectory(at: filePathUrl, withIntermediateDirectories: false)
-            let url = filePathUrl.appendingPathComponent(fileName).appendingPathExtension(fileExtension)
-            return url
+            print("Logger:logFilePath:\(logFilePath)")
+            let filePathUrl = URL(fileURLWithPath: logFilePath)
+            if FileManager.default.fileExists(atPath: filePathUrl.path) {
+                let url = filePathUrl.appendingPathComponent(fileName).appendingPathExtension(fileExtension)
+                print("Logger:url:\(String(describing: url))")
+                return url
+            }
         }
-
+        
+        //默认路径：file:///var/mobile/Containers/Data/Application/F355D2BA-5EF1-4028-8E5F-52EFD189210A/Library/Caches/IotSdkLog/agoraiot.txt
         try? FileManager.default.createDirectory(at: logSubdiretory, withIntermediateDirectories: false)
         let url = logSubdiretory.appendingPathComponent(fileName).appendingPathExtension(fileExtension)
+        print("Logger:url:\(String(describing: url))")
         return url
-    }
+        
+    }()
+    
     
     private override init() {
         super.init()
