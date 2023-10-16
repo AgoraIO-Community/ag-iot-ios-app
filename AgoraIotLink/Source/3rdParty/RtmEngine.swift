@@ -128,14 +128,22 @@ class RtmEngine : NSObject{
 
     private var _statusUpdated:((MessageChannelStatus,String,AgoraRtmMessage?)->Void)?  = nil
     private var _enterCallback:((TaskResult,String)->Void)? = nil
+    private var _completionMsgObjs: [String: RtmMsgObj] = [:]
+    private var _customDataReceiveBack:((String, Data)->Void)?  = nil
+    
 //    private var _completionBlocks: [String: ((Int, String) -> Void)]? = nil
 //    private var _completionDicBlocks: [String: ((Int, Dictionary<String, Any>) -> Void)]? = nil
     
-    private var _completionMsgObjs: [String: RtmMsgObj] = [:]
-    
+    //监听rtm连接状态
     public func waitForStatusUpdated(statusUpdated:@escaping(MessageChannelStatus,String,AgoraRtmMessage?)->Void){
         _statusUpdated = statusUpdated
     }
+    
+    //监听收到自定义数据
+    func devRawMsgSetRecvListener(dataListener: @escaping (_ deviceRtmUid :String,_ data:Data) -> Void){
+        _customDataReceiveBack = dataListener
+    }
+    
     
     func enter(_ sess:RtmSession,_ uid:String,_ cb:@escaping (TaskResult,String)->Void){
         log.i("rtm try enter with token:\(sess.token),local:\(uid)")
@@ -178,6 +186,7 @@ class RtmEngine : NSObject{
         
         kit?.agoraRtmDelegate = nil
         _statusUpdated = nil
+        _customDataReceiveBack = nil
         _enterCallback = nil
         curSession = nil
 //        _completionBlocks = nil
@@ -372,14 +381,42 @@ class RtmEngine : NSObject{
         setCallDicback(sequenceId, cb)
     }
     
+    func sendRawMessageCustomData(toPeer:String,data:Data,description:String,cb:@escaping(Int,String)->Void){
+        guard let kit = kit else{
+            log.e("rtm engine is nil")
+            cb(ErrCode.XERR_BAD_STATE,"")
+            return
+        }
+        
+        let package = AgoraRtmRawMessage(rawData: data, description: description)
+        let option = AgoraRtmSendMessageOptions()
+        option.enableOfflineMessaging = false
+        option.enableHistoricalMessaging = false
+        kit.send(package, toPeer: toPeer, sendMessageOptions: option) { ec in
+            let reMsg = self.getRtmSendMsg(ec)
+            cb(reMsg.errCode,reMsg.msg)
+        }
+    }
+    
     func handelReceivedData(message: AgoraRtmMessage, fromPeer peerId: String) -> Void {
         
         if(message.type == .raw){
             if let msg = message as? AgoraRtmRawMessage{
+                
                 let dict = String.getDictionaryFromData(data: msg.rawData)
+                
                 log.i("handelReceivedData type:raw dict: \(dict)")
+                
+                //jd_判断 commandId 是否为空，为空则认为是自定义的raw消息，裸数据返回
+                guard let commandId = dict["commandId"] as? String else{
+                    _customDataReceiveBack?(peerId, msg.rawData)
+                    return
+                }
+                log.i("handelReceivedData:commandId:\(commandId))")
+                
+                //判断 sequenceId 是否为空
                 guard let sequenceId = dict["sequenceId"] as? UInt else {
-                    log.e("handelReceivedData: dict:\(dict))")
+                    log.i("handelReceivedData: sequenceId is nil dict:\(dict))")
                     return
                 }
                 // 根据sequenceId获取对应的闭包

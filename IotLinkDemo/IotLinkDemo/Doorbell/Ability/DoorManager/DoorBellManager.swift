@@ -180,7 +180,33 @@ class DoorBellManager: NSObject {
             cb(errCode,msg as! String)
         }
         controlMgr.sendCmdPtzReset(cmdListener: cb)
-        controlMgr.sendCmdPtzCtrl(cmdListener: cb)
+        controlMgr.sendCmdSdcardFmt(cmdListener: cb)
+    }
+    
+    //云台命令 发送自定义数据
+    func sendDevRawCustomData(sessionId:String = "",customData:String = "", cb:@escaping(Int,String)->Void){
+        let controlMgr = getDevControlMgr(sessionId)
+        controlMgr.devRawMsgSend(sendingMsg: customData, sendListener: cb)
+    }
+    
+    //云台命令 注册自定义命令监听
+    func devRawMsgSetRecvListener(sessionId:String = ""){
+        let controlMgr = getDevControlMgr(sessionId)
+        controlMgr.devRawMsgSetRecvListener { peerId, data in
+            let dic = String.getDictionaryFromData(data: data)
+            print("devRawMsgSetRecvListener ---peerId:\(peerId) ---dic:\(dic)")
+            
+        }
+    }
+    
+    static func getDictionaryFromData(data:Data) -> Dictionary<String, Any> {
+        
+        if let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+            return dictionary
+        }else{
+            return  Dictionary<String, Any>()
+        }
+        
     }
     
     

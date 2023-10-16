@@ -706,6 +706,16 @@ import UIKit
              return  Dictionary<String, Any>()
          }
      }
+     
+     static func getDictionaryFromData(data:Data) -> Dictionary<String, Any> {
+         
+         if let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+             return dictionary
+         }else{
+             return  Dictionary<String, Any>()
+         }
+         
+     }
 }
 
 extension NSMutableAttributedString {

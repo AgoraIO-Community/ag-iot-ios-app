@@ -287,7 +287,7 @@ extension HomePageMainVC { //呼叫设备
                 let connectParam = ConnectParam( mPeerDevId: deviceId, mLocalRtcUid: retData?.data?.uid ?? 0, mChannelName: retData?.data?.cname ?? "", mRtcToken: retData?.data?.rtcToken ?? "", mRtmUid: retData?.data?.userId ?? "",mRtmToken: retData?.data?.rtmToken ?? "")
                 self?.connectDevice(connectParam: connectParam)
             }
-            print("\(msg)---\(String(describing: retData))")
+            print("requestConDeviceParam:\(msg)---\(String(describing: retData))")
         }
     }
     
@@ -350,6 +350,7 @@ extension HomePageMainVC { //呼叫设备
             if(act == .onConnectDone){
                 self?.handelUserMembers(1,sessionId)
                 self?.previewStart(sessionId: sessionId)
+                self?.devSetRtmRecvListener(sessionId)
             }else if(act == .onSessionTokenWillExpire){
                 debugPrint("token 即将过期")
                 self?.renewToken(sessionId)
@@ -360,6 +361,11 @@ extension HomePageMainVC { //呼叫设备
         } _: { [weak self] members,sessionId in
             self?.handelUserMembers(members,sessionId)
         }
+        
+    }
+    
+    func devSetRtmRecvListener(_ sessionId : String){
+        doorbellVM.devRawMsgSetRecvListener(sessionId: sessionId)
     }
     
     func renewToken(_ sessionId : String){

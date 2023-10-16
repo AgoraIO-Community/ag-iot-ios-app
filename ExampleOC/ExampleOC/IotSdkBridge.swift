@@ -114,7 +114,7 @@ public class IDevPreviewManager : NSObject,IDevPreviewMgr{
 }
 
 public class IDevControllerManager : NSObject,IDevControllerMgr{
-    
+
     @objc public func sendCmdPtzCtrl(action: Int, direction: Int, speed: Int, cmdListener: @escaping (Int, String) -> Void) {
         return mgr.sendCmdPtzCtrl(action: action, direction: direction, speed: speed, cmdListener: cmdListener)
     }
@@ -123,8 +123,8 @@ public class IDevControllerManager : NSObject,IDevControllerMgr{
         return mgr.sendCmdPtzReset(cmdListener: cmdListener)
     }
     
-    @objc public func sendCmdPtzCtrl(cmdListener: @escaping (Int, String) -> Void) {
-        return mgr.sendCmdPtzCtrl(cmdListener: cmdListener)
+    @objc public func sendCmdSdcardFmt(cmdListener: @escaping (Int, String) -> Void) {
+        return mgr.sendCmdSdcardFmt(cmdListener: cmdListener)
     }
     
     @objc public func sendCmdDevReset(cmdListener: @escaping (Int, String) -> Void) {
@@ -133,6 +133,14 @@ public class IDevControllerManager : NSObject,IDevControllerMgr{
     
     @objc public func sendCmdCustomize(customizeData: String, cmdListener: @escaping (Int, String) -> Void) {
         return mgr.sendCmdCustomize(customizeData: customizeData, cmdListener: cmdListener)
+    }
+    
+    @objc public func devRawMsgSend(sendingMsg: String, sendListener: @escaping (Int, String) -> Void) {
+        return mgr.devRawMsgSend(sendingMsg: sendingMsg, sendListener: sendListener)
+    }
+    
+    @objc public func devRawMsgSetRecvListener(recvListener: @escaping (String, Data) -> Void) {
+        return mgr.devRawMsgSetRecvListener(recvListener: recvListener)
     }
     
     public init(mgr:IDevControllerMgr) {

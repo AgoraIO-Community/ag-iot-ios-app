@@ -45,7 +45,7 @@ class IDevControllerManager : IDevControllerMgr{
         
     }
     
-    func sendCmdPtzCtrl(cmdListener: @escaping (Int, String) -> Void) {//SD卡格式化
+    func sendCmdSdcardFmt(cmdListener: @escaping (Int, String) -> Void) {//SD卡格式化
         
         let curSequenceId : UInt32 = getSequenceId()
         
@@ -85,7 +85,24 @@ class IDevControllerManager : IDevControllerMgr{
         }
         
     }
+
+    func devRawMsgSend(sendingMsg:String, sendListener: @escaping (_ errCode:Int,_ sendingMsg:String) -> Void){
+        
+        guard let peer =  rtm.curSession?.peerVirtualNumber else{
+            log.i("peerVirtualNumber is nil")
+            return
+        }
+        
+        let data:Data = sendingMsg.data(using: .utf8) ?? Data()
+        rtm.sendRawMessageCustomData(toPeer: peer, data: data, description: "customData") { errCode, msg in
+            sendListener(errCode,msg)
+        }
+        
+    }
     
+}
+
+extension IDevControllerManager{
     
     func sendGeneralDicData(_ paramDic:[String:Any],_ sequenceId:UInt32,_ cmdListener: @escaping (Int, Dictionary<String, Any>) -> Void){
         
@@ -116,4 +133,12 @@ class IDevControllerManager : IDevControllerMgr{
         let curSequenceId : UInt32 = app.config.counter.increment()
         return curSequenceId
     }
+}
+
+extension IDevControllerManager{
+    
+    func devRawMsgSetRecvListener(recvListener: @escaping (_ deviceRtmUid :String, _ recvedData:Data) -> Void){
+        rtm.devRawMsgSetRecvListener(dataListener: recvListener)
+    }
+    
 }
