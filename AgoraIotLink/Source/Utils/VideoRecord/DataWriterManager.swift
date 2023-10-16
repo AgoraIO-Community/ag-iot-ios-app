@@ -49,7 +49,7 @@ public class DataWriterManager: NSObject {
 	private var recordTime: CGFloat = 0
 	private var isCanWrite: Bool = false
     private var isFirstWrite: Bool = true
-    private var timescaleValue : Int32 = 25 //创建CMTime 使用，每秒多少帧 x86模拟器是25，真机为15 千从为25
+    private var timescaleValue : Int32 = 15 //创建CMTime 使用，每秒多少帧 x86模拟器是25，真机为15 千从为25
     
     
 	@objc init(url: URL?) {
