@@ -29,6 +29,24 @@ import Foundation
     }
 }
 
+
+/*
+ * @brief 查询到的有视频内容的日期
+ */
+@objc public class DevMediaGroupItem : NSObject {
+    @objc public var mStartTime: UInt64 = 0                  //设备录像文件的开始时间（时间戳精确到秒）
+    @objc public var mStopTime: UInt64 = 0                   //设备录像文件的结束时间（时间戳精确到秒）
+    @objc public var mPicUrl : String = ""                   //设备录像封面图片地址
+    
+    @objc public init(mStartTime:UInt64,
+                      mStopTime:UInt64,
+                      mPicUrl:String){
+        self.mStartTime = mStartTime
+        self.mStopTime = mStopTime
+        self.mPicUrl = mPicUrl
+    }
+}
+
 /*
  * @brief 查询到的 设备媒体项
  */
@@ -196,6 +214,13 @@ import Foundation
  */
 @objc public protocol IDevMediaMgr {
     
+    /**
+     * @brief 根据查询条件来查询有视频内容的日期
+     * @param queryParam: 查询参数
+     * @param queryListener : 查询结果回调监听器
+     * @return 返回错误码
+     */
+    func queryMediaGroupList(queryParam: QueryParam, queryListener: @escaping (_ errCode:Int, _ groupList:[DevMediaGroupItem]) -> Void)
     
     /**
      * @brief 根据查询条件来分页查询相应的设备端 媒体文件列表，该方法是异步调用，通过回调返回查询结果
@@ -236,7 +261,16 @@ import Foundation
      * @param playingCallback : 播放回调接口
      * @return 返回错误码
      */
-    func play(globalStartTime:UInt64,playSpeed:Int,playingCallListener:IPlayingCallbackListener)->Int
+    func playTimeline(globalStartTime:UInt64,playSpeed:Int,playingCallListener:IPlayingCallbackListener)->Int
+    
+    
+    /**
+     * @brief  获取当前回看SD卡存储录像的进度
+     * @param queryListener : 回调接口(errCode：错误码 ，offSet:当前播放文件的开始时间（时间戳秒）+播放的进度（秒）)
+     * @return 返回错误码
+     */
+    func getCurrentTimelineOffset(queryTimeLineOffsetListener: @escaping (_ errCode:Int,_ offSet :UInt64)->Void)
+    
     
     /**
      * @brief 开始播放，先切换到 DEVPLAYER_STATE_OPENING 状态
@@ -253,7 +287,7 @@ import Foundation
      * @brief 停止当前播放，成功后切换到 DEVPLAYER_STATE_STOPPED 状态
      * @return 错误码
      */
-    func stop()->Int
+    func stop(fileId: String)->Int
     
     
     /**
@@ -269,13 +303,6 @@ import Foundation
      * @return 错误码
      */
     func resume()->Int
-    
-    /**
-     * @brief 设置快进、快退播放倍速，默认是正常播放速度（speed=1）
-     * @param speed: 固定几个倍速：1; 2; 3;
-     * @return 返回错误码
-     */
-    func setPlayingSpeed(speed:Int)->Int
     
     /**
      * @brief 获取当前播放的时间戳，单位ms

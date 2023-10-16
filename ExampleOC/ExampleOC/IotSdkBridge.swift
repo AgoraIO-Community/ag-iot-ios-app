@@ -152,7 +152,10 @@ public class IDevControllerManager : NSObject,IDevControllerMgr{
 }
 
 public class IDevMediaManager : NSObject,IDevMediaMgr{
-
+    
+    @objc public func queryMediaGroupList(queryParam: AgoraIotLink.QueryParam, queryListener: @escaping (Int, [AgoraIotLink.DevMediaGroupItem]) -> Void) {
+        return mgr.queryMediaGroupList(queryParam: queryParam, queryListener: queryListener)
+    }
     
     @objc public func queryMediaList(queryParam: AgoraIotLink.QueryParam, queryListener: @escaping (Int, [AgoraIotLink.DevMediaItem]) -> Void) {
         return mgr.queryMediaList(queryParam: queryParam, queryListener: queryListener)
@@ -170,8 +173,12 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.setDisplayView(displayView: displayView)
     }
     
-    @objc public func play(globalStartTime: UInt64, playSpeed: Int, playingCallListener: AgoraIotLink.IPlayingCallbackListener) -> Int {
-        return mgr.play(globalStartTime: globalStartTime, playSpeed: playSpeed, playingCallListener: playingCallListener)
+    @objc public func playTimeline(globalStartTime: UInt64, playSpeed: Int, playingCallListener: AgoraIotLink.IPlayingCallbackListener) -> Int {
+        return mgr.playTimeline(globalStartTime: globalStartTime, playSpeed: playSpeed, playingCallListener: playingCallListener)
+    }
+    
+    public func getCurrentTimelineOffset(queryTimeLineOffsetListener: @escaping (Int, UInt64) -> Void) {
+        return mgr.getCurrentTimelineOffset(queryTimeLineOffsetListener: queryTimeLineOffsetListener)
     }
     
     @objc public func play(fileId: String, startPos: UInt64, playSpeed: Int, playingCallListener: AgoraIotLink.IPlayingCallbackListener) -> Int {
@@ -186,8 +193,8 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.queryEventTimeline(onQueryEventListener: onQueryEventListener)
     }
     
-    @objc public func stop() -> Int {
-        return mgr.stop()
+    @objc public func stop(fileId:String) -> Int {
+        return mgr.stop(fileId: fileId)
     }
     
     @objc public func pause() -> Int {
@@ -198,9 +205,6 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.resume()
     }
     
-    @objc public func setPlayingSpeed(speed: Int) -> Int {
-        return mgr.setPlayingSpeed(speed: speed)
-    }
     
     @objc public func getPlayingProgress() -> UInt64 {
         return mgr.getPlayingProgress()
