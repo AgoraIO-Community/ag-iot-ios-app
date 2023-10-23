@@ -121,11 +121,17 @@ import Foundation
 @objc public class DevMediaDelResult : NSObject {
     @objc public var mFileId: String = ""            //媒体文件Id，是文件唯一标识
     @objc public var mErrCode: Int = 0               //错误码
+    @objc public var mStartTime: UInt64 = 0          //文件夹开始时间戳
+    @objc public var mStopTime: UInt64 = 0           //文件夹结束时间戳
     
     @objc public init(mFileId:String ,
-                      mErrCode:Int){
+                      mErrCode:Int,
+                      mStartTime: UInt64,
+                      mStopTime: UInt64){
         self.mFileId = mFileId
         self.mErrCode = mErrCode
+        self.mStartTime = mStartTime
+        self.mStopTime = mStopTime
     }
 }
 
@@ -223,6 +229,13 @@ import Foundation
     func queryMediaGroupList(queryParam: QueryParam, queryListener: @escaping (_ errCode:Int, _ groupList:[DevMediaGroupItem]) -> Void)
     
     /**
+     * @brief 根据媒体文件夹的start和end来删除，该方法是异步调用，通过回调返回删除结果
+     * @param deletingList: 要删除的 媒体文件夹列表
+     * @param deleteListener : 删除结果回调监听器
+     * @return 返回错误码
+     */
+    func deleteMediaGroupList(deletingList: [Dictionary<String,Any>], deleteListener: @escaping (Int, [DevMediaDelResult]) -> Void)
+    /**
      * @brief 根据查询条件来分页查询相应的设备端 媒体文件列表，该方法是异步调用，通过回调返回查询结果
      * @param queryParam: 查询参数
      * @param queryListener : 查询结果回调监听器
@@ -244,7 +257,7 @@ import Foundation
      * @param cmdListener: 命令完成回调(errCode : 查询结果错误码，0标识查询成功,imgUrl : 封面文件路径,coverData : 封面图像的数据)
      * @return 返回错误码
      */
-    func getMediaCoverData(imgUrl:String,cmdListener: @escaping (_ errCode:Int,_ imgUrl:String,_ result:Data) -> Void)
+    func getMediaCoverData(imgUrlList:[String],cmdListener: @escaping (_ errCode:Int, _ result:Any) -> Void)
     
     
     /**

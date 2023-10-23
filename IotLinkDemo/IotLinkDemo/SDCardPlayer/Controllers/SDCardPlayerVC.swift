@@ -344,10 +344,10 @@ extension SDCardPlayerVC{
     func sendCmdSDQueryCoverImagPCtrl(sessionId:String = "", cb:@escaping(Int,Data)->Void){
    
         let mediaMgr = getDevMediaMgr()
-        mediaMgr.getMediaCoverData(imgUrl: "http://jd.com/image1.jpg") { errCode,fileId,result in
-            print("sendCmdSDCtrl---:\(errCode) result:\(result)")
-            cb(errCode,result)
-        }
+//        mediaMgr.getMediaCoverData(imgUrl: "http://jd.com/image1.jpg") { errCode,fileId,result in
+//            print("sendCmdSDCtrl---:\(errCode) result:\(result)")
+//            cb(errCode,result)
+//        }
     
     }
     

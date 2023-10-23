@@ -157,6 +157,10 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.queryMediaGroupList(queryParam: queryParam, queryListener: queryListener)
     }
     
+    @objc public func deleteMediaGroupList(deletingList: [Dictionary<String, Any>], deleteListener: @escaping (Int, [DevMediaDelResult]) -> Void) {
+        return mgr.deleteMediaGroupList(deletingList: deletingList, deleteListener: deleteListener)
+    }
+    
     @objc public func queryMediaList(queryParam: AgoraIotLink.QueryParam, queryListener: @escaping (Int, [AgoraIotLink.DevMediaItem]) -> Void) {
         return mgr.queryMediaList(queryParam: queryParam, queryListener: queryListener)
     }
@@ -165,8 +169,8 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.deleteMediaList(deletingList: deletingList, deleteListener: deleteListener)
     }
     
-    @objc public func getMediaCoverData(imgUrl: String, cmdListener: @escaping (Int, String, Data) -> Void) {
-        return mgr.getMediaCoverData(imgUrl: imgUrl, cmdListener: cmdListener)
+    @objc public func getMediaCoverData(imgUrlList:[String], cmdListener: @escaping (Int, Any) -> Void) {
+        return mgr.getMediaCoverData(imgUrlList: imgUrlList, cmdListener: cmdListener)
     }
     
     @objc public func setDisplayView(displayView : UIView?) -> Int {

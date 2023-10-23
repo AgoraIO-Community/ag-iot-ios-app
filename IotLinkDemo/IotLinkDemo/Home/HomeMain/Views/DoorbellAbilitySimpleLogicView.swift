@@ -7,6 +7,7 @@
 import UIKit
 import AgoraIotLink
 import Photos
+import IJKMediaFramework
 
 
 //视频上层逻辑操作View
@@ -27,6 +28,8 @@ class DoorbellAbilitySimpleLogicView: UIView {
     var logicFullScreenBlock:(() -> (Void))?
     
     var startRecord : Bool = false //开始录屏
+    
+//    let downShared = AvConverManager.shared()//转码下载
         
     var tipType : VideoAlertTipType{
         didSet{
@@ -266,11 +269,11 @@ extension DoorbellAbilitySimpleLogicView{
                 btn.isSelected = !btn.isSelected
             }
          }
-        DoorBellManager.shared.mutePeerVideo(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
-            if success{
-                log.i("设置视频成功")
-            }
-         }
+//        DoorBellManager.shared.mutePeerVideo(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
+//            if success{
+//                log.i("设置视频成功")
+//            }
+//         }
 
     }
     
@@ -324,6 +327,10 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
     
     func recordScreenPre(){
         
+//        //测试文件转码下载
+//        openDownLoadManger()
+        
+        //todo:暂时注释
         if fetchPHAuthorization() == true{
             recordScreen()
         }
@@ -360,6 +367,23 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
                 }
             }
         }
+    }
+    
+    func openDownLoadManger(){
+        
+        let cvtParam = MediaCvtParam()
+        let pathString = getTempVideoUrl()
+        cvtParam.mDstFilePath = pathString
+        //"https://stream-media.s3.cn-north-1.jdcloud-oss.com/0000000/output.m3u8"
+        cvtParam.mSrcFileUrl = "https://stream-media.s3.cn-north-1.jdcloud-oss.com/0000000/output.m3u8"
+        AvConverManager.shared()?.convert(with:cvtParam, onMediaCvtOpenDoneBlock: { reParam, errCode in
+            debugPrint("openDownLoadManger:文件打开成功")
+        }, onMediaConvertingDoneBlock: { reParam, durtion in
+            debugPrint("openDownLoadManger:文件转换完成")
+        }, onMediaConvertingError: { reParam, errCode in
+            debugPrint("openDownLoadManger:文件转换失败，errCode：\(errCode)")
+        })
+        
     }
     
     func getTempVideoUrl() -> String {
@@ -424,6 +448,18 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
 //        })
 //
 //        return
+        
+        let queryParam = QueryParam(mFileId: "0", mBeginTimestamp: 0, mEndTimestamp: 20)
+        
+        let curTimestamp:UInt32 = 1000
+        let commanId:Int = 2012
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
+        
+        let jsonData = paramDic.convertDictionaryToJSONString()
+        DoorBellManager.shared.sendDevRawCustomData(sessionId: device.sessionId, customData:jsonData) { errCode, msg in
+            debugPrint("sendDevRawCustomData : \(msg)")
+        }
+          return
         
         
         startRecord = !startRecord
