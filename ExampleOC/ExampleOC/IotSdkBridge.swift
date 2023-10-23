@@ -15,8 +15,8 @@ public class IDeviceSessionManager : NSObject,IDeviceSessionMgr{
         return mgr.connect(connectParam: connectParam, sessionCallback: sessionCallback, memberState: memberState)
     }
     
-    @objc public func disconnect(sessionId: String, disconnectListener: @escaping (AgoraIotLink.OnSessionDisconnectListener, String, Int) -> Void) -> Int {
-        return mgr.disconnect(sessionId: sessionId, disconnectListener: disconnectListener)
+    @objc public func disconnect(sessionId: String) -> Int {
+        return mgr.disconnect(sessionId: sessionId)
     }
     
     @objc public func renewToken(sessionId: String, renewParam: AgoraIotLink.TokenRenewParam) -> Int {

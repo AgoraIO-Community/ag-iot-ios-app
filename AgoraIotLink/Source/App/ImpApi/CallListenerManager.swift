@@ -85,11 +85,9 @@ class CallListenerManager {
         callListen?.callRequest()
     }
     
-    func disConnect(_ sessionId:String,disconnectListener:@escaping(OnSessionDisconnectListener,_ sessionId:String,_ errCode:Int)->Void){
+    func disConnect(_ sessionId:String){
         log.i("CallListenerManager disConnect 调用了")
-        hungUp(sessionId) { errCode in
-            disconnectListener(.onSessionDisconnectDone,sessionId,errCode)
-        }
+        hungUp(sessionId) { errCode in }
     }
     
     func hungUp(_ sessionId:String,result:@escaping(Int)->Void){//挂断

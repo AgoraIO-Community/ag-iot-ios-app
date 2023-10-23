@@ -160,13 +160,7 @@ class DeviceDetailVC: AGBaseVC {
     func releasePlayer(){
         
         print("releasePlayer:调用了")
-        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId) {[weak self] act, sessionId,errCode in
-            log.i("releasePlayer result errCode:\(errCode)")
-            if act == .onSessionDisconnectDone{
-//                AGToolHUD.showInfo(info: "挂断成功")
-                self?.backAction()
-            }
-        }
+        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId)
         print("------ret:\(String(describing: ret))")
     }
     

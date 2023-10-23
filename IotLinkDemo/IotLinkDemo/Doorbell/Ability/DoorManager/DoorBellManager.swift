@@ -138,9 +138,7 @@ class DoorBellManager: NSObject {
         }else{
             mSessionId = sessionId
         }
-        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:tempSessionId) { act, sessionId,errCode in
-            log.i("demo app callHangup listener result errCode:\(errCode)")
-        }
+        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:tempSessionId)
         if ret == 0 {
             log.i("demo app callHangup ret:(\(String(describing: ret)))")
             DoorBellManager.shared.members = 0

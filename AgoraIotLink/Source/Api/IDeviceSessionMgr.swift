@@ -137,7 +137,7 @@ public protocol IDeviceSessionMgr {
      * @param OnSessionDisconnectListener :断开设备连接回调 sessionId: 设备连接会话Id， errCode: 断开结果，0表示成功断开
      * @return 返回错误码
      */
-    func disconnect(sessionId:String,disconnectListener:@escaping(OnSessionDisconnectListener,_ sessionId:String,_ errCode:Int)->Void)->Int
+    func disconnect(sessionId:String)->Int
     
     
     /**

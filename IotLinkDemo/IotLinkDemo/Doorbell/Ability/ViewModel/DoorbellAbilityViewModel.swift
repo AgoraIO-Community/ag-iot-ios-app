@@ -122,7 +122,7 @@ extension DoorBellManager{
             return
         }
         members = 0
-        let ret = callMgr.disconnect(sessionId: sessionId, disconnectListener: disconnectListener)
+        let ret = callMgr.disconnect(sessionId: sessionId)
         if ret == 0{
             log.i("demo app call Hangup result:\(ret)")
         }
