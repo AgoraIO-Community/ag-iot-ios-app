@@ -392,7 +392,7 @@ extension HomePageMainVC { //呼叫设备
     func handelCallAct(_ sessionId:String,_ act:SessionCallback){
         
         if(act == .onDisconnected){
-            debugPrint("连接断开")
+            log.i("handelCallAct:onDisconnected:连接断开")
             let cell = getCurrentCellWithTag(sessionId)
             let tempModel = getCurrentDataModel(indexPath: cell.indexPath ?? IndexPath(row: 0, section: 0))
             tempModel.sessionId = ""

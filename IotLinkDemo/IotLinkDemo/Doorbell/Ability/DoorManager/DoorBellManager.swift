@@ -138,15 +138,15 @@ class DoorBellManager: NSObject {
         }else{
             mSessionId = sessionId
         }
-        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:tempSessionId) {[weak self] act, sessionId,errCode in
+        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:tempSessionId) { act, sessionId,errCode in
+            log.i("demo app callHangup listener result errCode:\(errCode)")
         }
         if ret == 0 {
-            log.i("demo app callHangup ret:")
-            debugPrint("挂断 ret:(\(String(describing: ret)))")
+            log.i("demo app callHangup ret:(\(String(describing: ret)))")
             DoorBellManager.shared.members = 0
             cb( true, "")
         }else{
-            debugPrint("挂断 ret:(\(String(describing: ret)))")
+            debugPrint("demo app callHangup  ret:(\(String(describing: ret)))")
         }
 
     }
@@ -243,7 +243,7 @@ class DoorBellManager: NSObject {
 //            cb(errCode,"success")
 //        }
         
-        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
+//        mediaMgr.play(globalStartTime: 0, playSpeed: 1, playingCallListener: self)
         
 //          mediaMgr.play(fileId: "1", startPos: 989898989, playSpeed: 1, playingCallListener: self)
         

@@ -102,7 +102,8 @@ class DeviceDetailVC: AGBaseVC {
         addObserver()
         addCustomBarButtonItem()
         setUpUI()
-        initAgoraIot()
+//        initAgoraIot()
+        requestConDeviceParam()
         // 监听网络状态
         startListeningNetStatus()
         loadPreConfig()
@@ -160,7 +161,7 @@ class DeviceDetailVC: AGBaseVC {
         
         print("releasePlayer:调用了")
         let ret = sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId) {[weak self] act, sessionId,errCode in
-            debugPrint("调用挂断：\(errCode)")
+            log.i("releasePlayer result errCode:\(errCode)")
             if act == .onSessionDisconnectDone{
 //                AGToolHUD.showInfo(info: "挂断成功")
                 self?.backAction()

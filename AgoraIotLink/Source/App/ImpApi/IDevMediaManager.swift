@@ -188,7 +188,9 @@ class IDevMediaManager : IDevMediaMgr{
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId , "param":payloadParam] as [String : Any]
         sendGeneralStringData(paramDic, curTimestamp) { errCode, resutArray in
             if errCode == 0{
-                CallListenerManager.sharedInstance.hunUpSDCard()
+                CallListenerManager.sharedInstance.hunUpSDCard { isSuc in
+                    log.i("stop:hunUpSDCard:\(isSuc)")
+                }
             }
             log.i("stop:\(resutArray)")
             

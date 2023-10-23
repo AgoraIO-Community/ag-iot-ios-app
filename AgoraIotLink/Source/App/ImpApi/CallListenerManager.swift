@@ -61,10 +61,16 @@ class CallListenerManager {
     }
     
     func initRtm(_ callListen : CallStateListener,_ sessionId:String){//初始化其他
-        let rtm = RtmEngine(cfg: app.config)
-        callListen.callSession?.rtm = rtm
         
-        callListen.creatAndEnterRtm()
+        let rtm = app.proxy.rtm
+        
+        if rtm.getRtmState() != .ENTERED {
+            callListen.creatAndEnterRtm()
+        }else{
+            callListen.renewRtmToken()
+        }
+        callListen.registerRtmStatusLister()
+        
         
         let controlMgr = IDevControllerManager(app: self.app, rtm: rtm, sessionId: sessionId)
         callListen.callSession?.devControlMgr = controlMgr
@@ -80,36 +86,49 @@ class CallListenerManager {
     }
     
     func disConnect(_ sessionId:String,disconnectListener:@escaping(OnSessionDisconnectListener,_ sessionId:String,_ errCode:Int)->Void){
+        log.i("CallListenerManager disConnect 调用了")
         hungUp(sessionId) { errCode in
             disconnectListener(.onSessionDisconnectDone,sessionId,errCode)
         }
     }
     
     func hungUp(_ sessionId:String,result:@escaping(Int)->Void){//挂断
+        
+        log.i("CallListenerManager hangUp 调用了 Current Thread:\(Thread.current)")
         let callListen = getCurrentCallObjet(sessionId)
-        callListen?.hangUp { isSuc, msg in
-            self.clearCurrentCallObj(sessionId)
-            log.i(" hangUp 走完了")
+        
+        let group = DispatchGroup()
+        let queue = DispatchQueue.global()
+        
+        group.enter()
+        queue.async(group: group) {
+            callListen?.hangUp {[weak self] isSuc, msg in
+                self?.clearCurrentCallObj(sessionId)
+                log.i(" hangUp 走完了 Current Thread:\(Thread.current)")
+                group.leave()
+            }
         }
-        log.i("CallListenerManager hangUp 调用了")
         
-        //断开其他
-        hunUpSDCard()
+        group.enter()
+        queue.async(group: group) {[weak self] in
+            //断开SD卡回看
+            self?.hunUpSDCard { isSuc in
+                log.i(" hunUpSDCard 走完了")
+                group.leave()
+            }
+        }
         
-        callListen?.callSession?.rtm?.leave(cb: { succ in
-            if(!succ){
-                log.w("rtm leave fail")
-                result(ErrCode.XERR_UNKNOWN)
-            }else{
+        group.notify(queue: .main) {
+            log.i(" hungUp 完全走完了")
+            DispatchQueue.main.async {
                 result(ErrCode.XOK)
             }
-        })
+        }
         
     }
     
     func clearCurrentCallObj(_ sessionId:String){//清除当前call对象
         callDict.removeAll()
-//        CallListenerManager.destroy()
         log.i("clearCurrentCallObj:\(callDict.count)")
 //        callDict.removeValue(forKey: sessionId)
     }
@@ -121,8 +140,17 @@ class CallListenerManager {
     }
     
     func renewToken(sessionId: String, renewParam: TokenRenewParam) -> Void{
+        
         let callListen = getCurrentCallObjet(sessionId)
         callListen?.renewToken(renewParam: renewParam)
+        renewRtmToken(renewParam.mRtmToken)
+        
+    }
+    
+    func renewRtmToken(_ rtmToken : String){
+        //rtm 更新token
+        let rtm = app.proxy.rtm
+        rtm.renewToken(rtmToken)
     }
 
     func isTaking(_ peerNodeId : String)->Bool{
@@ -191,7 +219,9 @@ class CallListenerManager {
         callLister.callRequest()
         callLister.interCallAct = { [weak self] ack,sessionId,peerNodeId in
             if (ack == .RemoteHangup){
-                self?.hunUpSDCard()
+                self?.hunUpSDCard(result: { isSuc in
+                    log.i("interCallAct hunUpSDCard:\(isSuc) ")
+                })
             }
         }
     }
@@ -212,10 +242,14 @@ class CallListenerManager {
         mediaLister?.resumedSDCardPlay()
     }
     
-    func hunUpSDCard(){
-        guard let mediaLister = mediaLister else{ return }
+    func hunUpSDCard(result:@escaping(Bool)->Void){
+        guard let mediaLister = mediaLister else{
+            result(true)
+            return
+        }
         mediaLister.hangUp(hangUpResult: { [weak self] isSuc, msg in
             self?.mediaLister = nil
+            result(isSuc)
         })
     }
     

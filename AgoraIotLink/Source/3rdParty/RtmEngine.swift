@@ -24,6 +24,16 @@ import AgoraRtmKit
 }
 
 /*
+ * @brief rtm 自身状态
+ */
+@objc public enum RtmStatus : Int{
+    case IDLED                                    //空闲
+    case CREATED                                  //已创建sdk
+    case ENTERING                                 //登陆中
+    case ENTERED                                  //登陆成功
+}
+
+/*
  * @brief 连接返回
  */
 @objc public class RtmMsgObj : NSObject{
@@ -45,23 +55,19 @@ import AgoraRtmKit
 
 class RtmEngine : NSObject{
     
-    static private let IDLED = 0
-    static private let CREATED = 1
-    static private let ENTERED = 2
-    
     var app  = Application.shared
 //    private var config:Config
 //    var timerTimeout: Timer?
     
     private var kit:AgoraRtmKit? = nil
-    private var state:Int? = IDLED
+    private var state:RtmStatus  = .IDLED
     var timer: Timer?
     var curSession: RtmSession?
 
     
     init(cfg:Config) {
 //        self.config = cfg
-        self.state = RtmEngine.IDLED
+        self.state = .IDLED
     }
     
     deinit {
@@ -78,7 +84,7 @@ class RtmEngine : NSObject{
             log.e("rtm create engine kit fail")
             return false
         }
-        state = RtmEngine.CREATED
+        state = .CREATED
         log.i("rtm created")
         return true
     }
@@ -147,12 +153,16 @@ class RtmEngine : NSObject{
     
     func enter(_ sess:RtmSession,_ uid:String,_ cb:@escaping (TaskResult,String)->Void){
         log.i("rtm try enter with token:\(sess.token),local:\(uid)")
+        self.state = .ENTERING
         curSession = sess
         kit?.login(byToken: sess.token, user: uid) { err in
             self.sendLoginCallback(err,{tr,msg in
                 if(tr == TaskResult.Succ){
-                    self.state = RtmEngine.ENTERED
+                    self.state = .ENTERED
+                }else{
+                    self.state = .CREATED
                 }
+                log.i("rtm try enter result:\(tr) msg:\(msg)")
                 self.heartbeatTimer()
                 cb(tr,msg)
             })
@@ -164,6 +174,10 @@ class RtmEngine : NSObject{
         kit?.renewToken(token,completion: { token, errorCode in
             log.i("rtm renewToken result ret:\(errorCode)")
         })
+    }
+    
+    func getRtmState()->RtmStatus{
+        return state
     }
     
     private func sendLogoutCallback(_ e:AgoraRtmLogoutErrorCode,_ cb:@escaping(Bool)->Void){
@@ -194,7 +208,7 @@ class RtmEngine : NSObject{
         
         stopTimer()
         
-        if(state != RtmEngine.ENTERED){
+        if(state != .ENTERED){
             log.e("rtm state : \(String(describing: state)) error for leave()")
             kit = nil
             cb(false)
@@ -204,7 +218,6 @@ class RtmEngine : NSObject{
         log.i("rtm try leaveChannel kit logout ...")
         kit?.logout {[weak self] err in
             log.i("rtm try leaveChannel kit logout finished ...")
-            self?.state = nil
             self?.kit = nil
             if err == .ok{
                 cb(true)

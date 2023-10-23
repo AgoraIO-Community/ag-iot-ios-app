@@ -39,9 +39,8 @@ public class CallSession : NSObject{
     var devControlMgr : IDevControllerMgr?    //设备控制接口对象
     var devMediaMgr : IDevMediaMgr?           //设备媒体文件管理器接口对象
     
-    
+    //    var rtm : RtmEngine?                 //当前连接对应的Rtm对象
     var mRtmUid: String = ""             //本地用户的 mRtmUid
-    var rtm : RtmEngine?                 //当前连接对应的Rtm对象
     var mRtmToken: String = ""           //要会话的 RTM Token
     
 }

@@ -100,8 +100,11 @@ class CallStateListener: NSObject {
         if self.isIcoming == false{//主动呼叫
             endTime()
             callMachine?.handleEvent(.endCall)
-            self.callAct(.onDisconnected,self.callSession?.mSessionId ?? "",ErrCode.XOK)
             self.do_LEAVEANDDESTROY()
+            DispatchQueue.main.async {
+                self.callAct(.onDisconnected,self.callSession?.mSessionId ?? "",ErrCode.XOK)
+            }
+            
         }else{
             endTime()
             self.endIncomeTime()
@@ -152,11 +155,7 @@ extension CallStateListener {
     }
     
     func renewToken(renewParam: TokenRenewParam) {
-        
         talkingEngine?.renewToken(renewParam.mRtcToken)
-        
-        let rtm = callSession?.rtm
-        rtm?.renewToken(renewParam.mRtmToken)
     }
     
 }
@@ -315,7 +314,6 @@ extension CallStateListener : CallStateMachineListener{
             }
             self?.hangUpRet(succ, "leaveAndDestroy ret")
         })
-        //todo:
         talkingEngine?.destroy()
         talkingEngine = nil
     }
@@ -331,18 +329,18 @@ extension CallStateListener{//rtm
     
     func creatAndEnterRtm(){
         
-        let rtm = callSession?.rtm
+        let rtm = app.proxy.rtm
         //初始化其他
         let setting = app.context.rtm.setting
-        let succ = rtm?.create(setting)
+        let succ = rtm.create(setting)
         
         if succ == true{
             let rtmSession = RtmSession()
             rtmSession.token = callSession?.mRtmToken ?? ""
             rtmSession.peerVirtualNumber = callSession?.peerNodeId ?? ""
             
-            let uid = callSession?.mRtmUid ?? "" //01GW488RS7MXFXX883VTV0EZV7
-            rtm?.enter(rtmSession, "\(uid)") { [weak self] ret, msg in
+            let uid = callSession?.mRtmUid ?? ""
+            rtm.enter(rtmSession, "\(uid)") { [weak self] ret, msg in
                 if ret == .Fail{
                     self?.callAct(.onDisconnected,self?.callSession?.mSessionId ?? "",ErrCode.XOK)
                     self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
@@ -350,13 +348,24 @@ extension CallStateListener{//rtm
             }
 
         }
-        
-        rtm?.waitForStatusUpdated(statusUpdated: { MessageStatus, msg, rtmMsg in
+    }
+    
+    func renewRtmToken(){
+        let token = callSession?.mRtmToken ?? ""
+        log.i("renewRtmToken:token\(token)")
+        //rtm 更新token
+        let rtm = app.proxy.rtm
+        rtm.renewToken(token)
+    }
+    
+    func registerRtmStatusLister(){
+        let rtm = app.proxy.rtm
+        rtm.waitForStatusUpdated(statusUpdated: {[weak self] MessageStatus, msg, rtmMsg in
             if MessageStatus == .TokenWillExpire {
-                self.callAct(.onSessionTokenWillExpire,self.callSession?.mSessionId ?? "",ErrCode.XOK)
+                self?.callAct(.onSessionTokenWillExpire,self?.callSession?.mSessionId ?? "",ErrCode.XOK)
             }
         })
-
+        
     }
 }
 

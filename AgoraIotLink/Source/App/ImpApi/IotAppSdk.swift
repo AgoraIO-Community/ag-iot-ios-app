@@ -38,11 +38,25 @@ open class IotAppSdk : IAgoraIotAppSdk{
     }}
     
     public func release() {
+        
+        leaveRtm()
         _iotAppSdkManager = nil
         app!.release()
+        
 //        _deviceSessionManager = nil
 //        _vodPlayerManager = nil
 //        app = nil
+    }
+    
+    func leaveRtm(){
+        log.i("leaveRtm:")
+        application.proxy.rtm.leave(cb: { succ in
+            if(!succ){
+                log.w("rtm leave fail")
+            }else{
+                log.i("rtm leave success")
+            }
+        })
     }
     
     

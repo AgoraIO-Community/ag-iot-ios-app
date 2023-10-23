@@ -379,8 +379,8 @@ extension SDCardPlayerVC{
     
     func sendCmdSDStopCtrl(){
    
-        let mediaMgr = getDevMediaMgr()
-        mediaMgr.stop()
+//        let mediaMgr = getDevMediaMgr()
+//        mediaMgr.stop()
         
     }
     
