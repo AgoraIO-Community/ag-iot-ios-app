@@ -31,7 +31,10 @@ class IDeviceSessionManager : IDeviceSessionMgr{
     
     func disconnect(sessionId:String)->Int{
         
-        guard CallListenerManager.sharedInstance.getCurrentCallState(sessionId) == .onCall else{  return ErrCode.XERR_BAD_STATE }
+        guard CallListenerManager.sharedInstance.getCurrentCallState(sessionId) != .idle else{
+            log.i("disconnect fail:\(CallListenerManager.sharedInstance.getCurrentCallState(sessionId))")
+            return ErrCode.XERR_BAD_STATE
+        }
         CallListenerManager.sharedInstance.disConnect(sessionId)
         return ErrCode.XOK
     }

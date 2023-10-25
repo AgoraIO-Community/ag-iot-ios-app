@@ -161,7 +161,8 @@ class DoorBellManager: NSObject {
     }
     
     func disConnectDevice(sessionId:String = "")->Void{
-//        let devSessionMgr = sdk?.deviceSessionMgr.disconnect(sessionId: sessionId)
+        let ret = sdk?.deviceSessionMgr.disconnect(sessionId: sessionId)
+        print("disConnectDevice:\(String(describing: ret))")
     }
         
     //-------------------------------设备控制----------------------------------

@@ -449,20 +449,20 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
 //
 //        return
         
-        let queryParam = QueryParam(mFileId: "0", mBeginTimestamp: 0, mEndTimestamp: 20)
+//        let queryParam = QueryParam(mFileId: "0", mBeginTimestamp: 0, mEndTimestamp: 20)
+//        
+//        let curTimestamp:UInt32 = 1000
+//        let commanId:Int = 2012
+//        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
+//        
+//        let jsonData = paramDic.convertDictionaryToJSONString()
+//        DoorBellManager.shared.sendDevRawCustomData(sessionId: device.sessionId, customData:jsonData) { errCode, msg in
+//            debugPrint("sendDevRawCustomData : \(msg)")
+//        }
+//          return
         
-        let curTimestamp:UInt32 = 1000
-        let commanId:Int = 2012
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
         
-        let jsonData = paramDic.convertDictionaryToJSONString()
-        DoorBellManager.shared.sendDevRawCustomData(sessionId: device.sessionId, customData:jsonData) { errCode, msg in
-            debugPrint("sendDevRawCustomData : \(msg)")
-        }
-          return
-        
-        
-        startRecord = !startRecord
+//        startRecord = !startRecord
 
         DoorBellManager.shared.capturePeerVideoFrame(sessionId:device.sessionId) { [weak self] success, msg, shotImg in
             if success{

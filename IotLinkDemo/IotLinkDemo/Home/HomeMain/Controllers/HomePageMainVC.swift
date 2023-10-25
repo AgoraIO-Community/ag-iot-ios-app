@@ -340,8 +340,8 @@ extension HomePageMainVC { //呼叫设备
         
         log.i("connectDevice \(device.peerNodeId)")
         
-        doorbellVM.connectDevice(connectParam) { [weak self] sessionId, act in
-            
+        let connectResult =  doorbellVM.connectDevice(connectParam) { [weak self] sessionId, act in
+ 
             cell?.handelCallStateText(true)
             device.sessionId = sessionId
             TDUserInforManager.shared.curSessionId = sessionId
@@ -362,6 +362,16 @@ extension HomePageMainVC { //呼叫设备
             self?.handelUserMembers(members,sessionId)
         }
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4){
+            self.disconnectDevice(connectResult.mSessionId)
+        }
+        
+ 
+    }
+    
+    func disconnectDevice(_ sessionId : String){
+        print("disconnectDevice:sessionId:\(sessionId)")
+        doorbellVM.disConnectDevice(sessionId:sessionId)
     }
     
     func devSetRtmRecvListener(_ sessionId : String){

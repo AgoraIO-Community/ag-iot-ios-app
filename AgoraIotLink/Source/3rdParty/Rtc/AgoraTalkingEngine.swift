@@ -68,12 +68,10 @@ class AgoraTalkingEngine: NSObject {
     private var _networkStatus : RtcNetworkStatus = RtcNetworkStatus()
     
     private var peerEntered:Bool = false
-    private var state:Int = AgoraTalkingEngine.IDLED
     
     static private let IDLED = 0
     static private let CREATED = 1
     static private let ENTERED = 2
-    
     
     init(setting: RtcSetting,channelInfo: ChannelInfo,cb:@escaping (TaskResult,String)->Void,peerAction:@escaping(RtcPeerAction,UInt)->Void,memberState:@escaping(MemberState,[UInt])->Void){
         super.init()
@@ -82,6 +80,7 @@ class AgoraTalkingEngine: NSObject {
         self.rtcKit = rtcKit
         self.channelInfo = channelInfo
         self.rtcSetting = setting
+        
         _onPeerAction = peerAction
         _memberState = memberState
         
@@ -91,7 +90,6 @@ class AgoraTalkingEngine: NSObject {
         connection = tempCon
         
         peerDisplayView = setting.peerDisplayView
-//        setMetalData()
         
         _onEnterChannel?.invalidate()
         joinChannel(cb: cb)
@@ -105,16 +103,6 @@ class AgoraTalkingEngine: NSObject {
     
     func getRtcObject() -> AgoraRtcEngineKit {
         return AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit()
-    }
-    
-    func setMetalData(){
-        rtcKit?.setMediaMetadataDelegate(self, with: .video)
-        rtcKit?.setMediaMetadataDataSource(self, with: .video)
-    }
-    
-    func clearMetalData(){
-        rtcKit?.setMediaMetadataDelegate(nil, with: .video)
-        rtcKit?.setMediaMetadataDataSource(nil, with: .video)
     }
     
     func renewToken(_ rtcToken : String){
@@ -170,6 +158,7 @@ class AgoraTalkingEngine: NSObject {
             log.e("rtc enterChannel:\(String(describing: ret))")
             cb(.Fail,"join channel fail")
         }
+        log.i("rtc local joinchannel peerid: \([NSNumber(value: channelInfo?.peerUid ?? 0)])")
         _onEnterChannel = TimeCallback<(TaskResult,String)>(cb: cb)
         _onEnterChannel?.schedule(time: 20, timeout: {
             log.e("rtc join channel timeout")
@@ -197,6 +186,7 @@ class AgoraTalkingEngine: NSObject {
             let ret = rtcKit?.setParameters(cfg)
             log.i("custom_payload_type :\(cfg) ret : \(String(describing: ret))")
         }
+        peerEntered = false
 
     }
     
@@ -224,14 +214,14 @@ class AgoraTalkingEngine: NSObject {
     
     func clearObject(){
         rtcKit?.setDelegateEx(nil, connection: connection)
-//        clearMetalData()
+        rtcKit = nil
 //        rtcKit?.setAudioFrameDelegate(nil)
 //        rtcKit?.setVideoFrameDelegate(nil)
-        rtcKit = nil
     }
     
     func destroy()->Void{
         log.i("rtc is destroying()")
+        peerEntered = false
         AgoraRtcEngineMgr.sharedInstance.destroyRtcEngineKit()
     }
     
@@ -431,45 +421,36 @@ extension AgoraTalkingEngine{
 }
 
 extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
-
-//    func rtcEngine(_ engine: AgoraRtcEngineKit, didClientRoleChanged oldRole: AgoraClientRole, newRole: AgoraClientRole, newRoleOptions: AgoraClientRoleOptions?) {
-//        log.i("rtc didJoinedOfUid oldRole:\(oldRole.rawValue) newRole:\(newRole.rawValue)")
-//    }
-//
-//    func rtcEngine(_ engine: AgoraRtcEngineKit, didClientRoleChangeFailed reason: AgoraClientRoleChangeFailedReason, currentRole: AgoraClientRole) {
-//        log.i("rtc didJoinedOfUid currentRole:\(currentRole.rawValue) reason:\(reason)")
-//    }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
-        log.i("rtc didJoinedOfUid \(uid)")
-        
-        peerEntered = true
+        log.i("rtc remote user didJoinedOfUid \(uid)")
+        if uid == channelInfo?.peerUid{//只有设备端上线，状态才改变
+            peerEntered = true
+        }
         _onPeerAction(.Enter,uid)
         _memberState(.Enter,[uid])
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
-        log.i("rtc didOfflineOfUid \(uid)")
-        peerEntered = false
+        log.i("rtc remote user didOfflineOfUid \(uid)")
+        if uid == channelInfo?.peerUid{//只有设备端离线，状态才改变
+            peerEntered = false
+        }
         _onPeerAction(.Leave,uid)
         _memberState(.Leave,[uid])
         rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
             log.i("didOfflineOfUid:stopRecord")
         }
-//        if (isRecording.getValue()){
-//            stopRecord { code, msg in
-//                log.i("didOfflineOfUid:stopRecord")
-//            }
-//        }
+
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
-        log.i("rtc didJoinChannel \(uid)")
+        log.i("rtc local user didJoinChannel \(uid)")
         _onEnterChannel?.invoke(args:(.Succ,"join channel succ"))
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith status:AgoraChannelStats){
-        log.i("rtc didLeaveChannelWith")
+        log.i("rtc local user didLeaveChannelWith")
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoFrameOfUid uid: UInt, size: CGSize, elapsed: Int) {
