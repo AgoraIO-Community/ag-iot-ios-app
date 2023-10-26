@@ -159,27 +159,27 @@ class ThirdAccountManager{
             
             let param = LoginParam()
             
-            param.tokenType = lsToken.token_type
-            param.accessToken = lsToken.access_token
-            param.refreshToken = lsToken.refresh_token
-            param.expireIn = lsToken.expires_in
-            param.scope = lsToken.scope
-            
-            param.grawin_token = gyToken.granwin_token
-            param.expiration = gyToken.expiration
-            param.endPoint = gyToken.endpoint
-            param.region = gyToken.region
-            param.account = gyToken.account
-            
-            param.proof_secretKey = proof.secretKey
-            param.proof_sessionToken = proof.sessionToken
-            param.proof_accessKeyId = proof.accessKeyId
-            param.proof_sessionExpiration = proof.sessionExpiration
-            
-            param.pool_token = pool.token
-            param.pool_identifier = pool.identifier
-            param.pool_identityId = pool.identityId
-            param.pool_identityPoolId = pool.identityPoolId
+//            param.tokenType = lsToken.token_type
+//            param.accessToken = lsToken.access_token
+//            param.refreshToken = lsToken.refresh_token
+//            param.expireIn = lsToken.expires_in
+//            param.scope = lsToken.scope
+//            
+//            param.grawin_token = gyToken.granwin_token
+//            param.expiration = gyToken.expiration
+//            param.endPoint = gyToken.endpoint
+//            param.region = gyToken.region
+//            param.account = gyToken.account
+//            
+//            param.proof_secretKey = proof.secretKey
+//            param.proof_sessionToken = proof.sessionToken
+//            param.proof_accessKeyId = proof.accessKeyId
+//            param.proof_sessionExpiration = proof.sessionExpiration
+//            
+//            param.pool_token = pool.token
+//            param.pool_identifier = pool.identifier
+//            param.pool_identityId = pool.identityId
+//            param.pool_identityPoolId = pool.identityPoolId
             
             rsp(ErrCode.XOK,ret.msg,param)
         }

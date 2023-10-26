@@ -52,9 +52,7 @@ TODO: Add long description of the pod here.
 #  s.dependency 'AWSIoT','2.27.6'
 #  s.dependency 'EMPush'
   s.dependency 'AgoraRtcEngine_iOS','4.2.0'#可解决4.0.1 jpeg视频收不到流问题
-#  s.dependency 'AgoraRtcEngine_iOS', '4.0.1'
-  # s.dependency 'AgoraRtcEngine_iOS_beta1', '4.0.0-beta.1'
-#  s.dependency 'AgoraRtm_iOS','1.5.0'
+  s.dependency 'AgoraRtm_iOS','1.5.0'
   s.dependency 'CocoaMQTT','2.1.3' #新版MQTT'2.1.5'
   
 end

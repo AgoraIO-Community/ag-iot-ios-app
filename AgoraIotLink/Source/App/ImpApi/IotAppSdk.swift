@@ -20,21 +20,28 @@ open class IotAppSdk : IAgoraIotAppSdk{
         return false
     }
     
+    public func isSignalingReady() -> Bool {
+        if app!.proxy.rtm.curUpdateState  == .Connected{
+            return true
+        }
+        return false
+    }
+    
     public func getStateMachine() -> SdkState? {
         return app?.sdkState ?? nil
     }
     
-    public func initialize(initParam: InitParam,OnSdkStateListener:@escaping(SdkState,StateChangeReason)->Void) -> Int {
+    public func initialize(initParam: InitParam,OnSdkStateListener:@escaping(SdkState,StateChangeReason)->Void,onSignalingStateChanged:@escaping(Bool)->Void) -> Int {
         if app == nil { app = Application.shared }
-        return app!.initialize(initParam: initParam,OnSdkStateListener: OnSdkStateListener)
+        return app!.initialize(initParam: initParam,OnSdkStateListener: OnSdkStateListener,onSignalingStateChanged:onSignalingStateChanged)
     }
     
-    public func prepare(preParam: PrepareParam,prepareListener:@escaping(Int,String)->Void)-> Int{
-        return iotAppSdkMgr.prepare(preParam: preParam, prepareListener: prepareListener)
+    public func login(loginParam: LoginParam,onLoginListener:@escaping(Int,String)->Void) -> Int{
+        return iotAppSdkMgr.prepare(loginParam: loginParam, prepareListener: onLoginListener)
     }
     
-    public func unprepare() -> Int{
-        return iotAppSdkMgr.unprepare()
+    public func logout() -> Int{
+        return iotAppSdkMgr.logout()
     }
     
     public func getUserId()->String{

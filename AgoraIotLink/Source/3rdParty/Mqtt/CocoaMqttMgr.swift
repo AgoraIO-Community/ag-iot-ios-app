@@ -8,6 +8,15 @@
 import UIKit
 import CocoaMQTT
 
+/*
+ * @brief 会话类型
+ */
+@objc public enum MsgType : Int{
+    case UNKNOWN                         //未知
+    case Call                            //主叫
+    case UPDATETOKEN                     //刷新token
+}
+
 class CocoaMqttMgr: NSObject {
     
     
@@ -23,6 +32,7 @@ class CocoaMqttMgr: NSObject {
     
     private var _onActionDesired:(CallSession?)->Void = {c in log.w("mqtt _onActionAck not inited")}
     private var _onIncomingDesired:(CallSession?)->Void = {c in log.w("mqtt _onActionAck not inited")}
+    private var _onUpdateTokenDesired:(CallSession?)->Void = {c in log.w("mqtt _updateToken not inited")}
     private var _onListenterDesired:(MqttState,String)->Void = {s,msg in log.w("mqtt _onActionAck not inited")}
     private var _onListenterPreparDesired:(MqttState,Int,String)->Void = {s,c,msg in log.w("mqtt _onActionAck not inited")}
     
@@ -98,7 +108,10 @@ class CocoaMqttMgr: NSObject {
             let sess = dictToSession(dicResult)
             if sess?.callType == .DIAL {
                 _onActionDesired(sess)
-            }else{
+            }else if sess?.msgType == .UPDATETOKEN{
+                _onUpdateTokenDesired(sess)
+            }
+             else{
                 
                 guard let version = sess?.version, version > curRtcUpdateVersion else{
                     log.i(" version error:\(String(describing: sess?.version)) curRtcUpdateVersion:\(curRtcUpdateVersion)")
@@ -126,6 +139,18 @@ class CocoaMqttMgr: NSObject {
         let topicCallPub = "$falcon/callkit/" + (self.cocoaMqttTool?.mInitParam?.mClientId ?? "") + "/pub"
         publish(data: data, topic: topicCallPub)
     }
+    
+    //发送呼叫数据
+    func publishUpdateTokenData(sessionId:String,data:String,actionDesired:@escaping(CallSession?)->Void){
+        if self.cocoaMqttTool?.curConnState != .connected{
+            log.i("cocoaMqtt已断连 正在重连中...")
+            notSendMsg.append(data)
+            return
+        }
+        _onUpdateTokenDesired = actionDesired
+        let topicCallPub = "$falcon/callkit/" + (self.cocoaMqttTool?.mInitParam?.mClientId ?? "") + "/pub"
+        publish(data: data, topic: topicCallPub)
+    }
 }
 
 extension CocoaMqttMgr{
@@ -147,6 +172,8 @@ extension CocoaMqttMgr{
             sess.callType = .DIAL
         }else if method == "device-start-call"{
             sess.callType = .INCOMING
+        }else if method == "refresh-token"{
+            sess.msgType = .UPDATETOKEN
         }else{
             sess.callType = .UNKNOWN
         }
@@ -165,6 +192,8 @@ extension CocoaMqttMgr{
         var cnameStr = ""
         var tokenStr = ""
         var uId : UInt  = 0
+        var rtmUidStr = ""
+        var rtmTokenStr = ""
         if let cname = payloadDic["cname"] as? String {
             cnameStr = cname
         }
@@ -174,21 +203,29 @@ extension CocoaMqttMgr{
         if let uid = payloadDic["uid"] as? UInt {
             uId = uid
         }
+        if let rtmUid = payloadDic["rtmUid"] as? String {
+            rtmUidStr = rtmUid
+        }
+        if let rtmToken = payloadDic["rtmToken"] as? String {
+            rtmTokenStr = rtmToken
+        }
         sess.cname = cnameStr
         sess.peerNodeId = cnameStr
         sess.token = tokenStr
         sess.uid   = uId
+        sess.mRtmUid = rtmUidStr
+        sess.mRtmToken = rtmTokenStr
         
-        var peerIdStr = ""
         var versionStr : UInt  = 0
-        if let peerId = payloadDic["peerId"] as? String {
-            peerIdStr = peerId
-        }
         if let version = payloadDic["version"] as? UInt {
             versionStr = version
         }
         sess.version = versionStr
         
+//        var peerIdStr = ""
+//        if let peerId = payloadDic["peerId"] as? String {
+//            peerIdStr = peerId
+//        }
 
         log.i("dictToSession: method:\(method) payloadDic:\(payloadDic)")
         

@@ -9,7 +9,7 @@ import Foundation
 
 open class Application{
     
-    func initialize(initParam: InitParam,OnSdkStateListener:@escaping(SdkState,StateChangeReason)->Void) -> Int {
+     func initialize(initParam: InitParam,OnSdkStateListener:@escaping(SdkState,StateChangeReason)->Void,onSignalingStateChanged:@escaping(Bool)->Void) -> Int {
         
         if(initParam.logFilePath != nil){
             log.ouput = .debugerConsoleAndFile
@@ -35,6 +35,7 @@ open class Application{
         
         self._proxy = Proxy( rule:self.rule, cfg: self.config, ctx: self.context)
         _status?.setStatusHandler(handler: OnSdkStateListener)
+        _status?.setSignalingStatusHandler(handler: onSignalingStateChanged)
 
         
         if(initParam.mAppId == ""){

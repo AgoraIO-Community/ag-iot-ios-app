@@ -49,14 +49,14 @@ class AccountManager : IAccountMgr{
 //    }
     
     func login(param: LoginParam, result: @escaping (Int, String) -> Void) {
-        app.rule.trans(FsmApp.Event.LOGIN,
-                       {self.doLogin(param,{ec,msg in
-            
-                        self.asyncResult(ec,msg,result)
-            
-                        }//{self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
-                       )}
-                )
+//        app.rule.trans(FsmApp.Event.LOGIN,
+//                       {self.doLogin(param,{ec,msg in
+//            
+//                        self.asyncResult(ec,msg,result)
+//            
+//                        }//{self.asyncResult(ErrCode.XERR_BAD_STATE,"state error",result)})
+//                       )}
+//                )
     }
     
     func getUserId() -> String {
@@ -222,52 +222,52 @@ class AccountManager : IAccountMgr{
 //        }
 //    }
     
-    private func doLogin(_ param:LoginParam,_ result:@escaping (Int,String)->Void) {
-        let data = param
-        log.i("---doLogin--accessToken:\(param.accessToken) refreshToken:\(param.refreshToken) grawin_token:\(param.grawin_token)")
-        //self.app.context.aglab.session.userName = data.account
-        self.app.context.aglab.session = AgoraLabSession(
-            tokenType: data.tokenType,
-            accessToken: "Bearer " + data.accessToken,
-            refreshToken: data.refreshToken,
-            expireIn: data.expireIn,
-            scope: data.scope)
-        
-        self.app.context.gyiot.session = IotLinkSession(
-            granwin_token: data.grawin_token,
-            expiration: data.expiration,
-            endPoint: data.endPoint,
-            region: data.region,
-            account: data.account,
-            
-            proof_sessionToken: data.proof_sessionToken,
-            proof_secretKey: data.proof_secretKey,
-            proof_accessKeyId: data.proof_accessKeyId,
-            proof_sessionExpiration: data.proof_sessionExpiration,
-            
-            pool_token: data.pool_token,
-            pool_identityId: data.pool_identityId,
-            pool_identityPoolId: data.pool_identityId,
-            pool_identifier: data.pool_identifier)
-        
-        let pool_identifier = data.pool_identifier
-        let first = pool_identifier.findFirst("_")
-        let last = pool_identifier.findLast("_")
-        let certId = pool_identifier.substring(to: first)
-        let rear = pool_identifier.substring(from: last + 1)
-        let thingName = certId + "-" + rear
-        
-        self.app.context.account = data.account
-        self.app.context.virtualNumber = thingName
-        self.app.context.gyiot.session.cert.thingName = thingName
-        log.i("---doLogin--thingName:\(thingName)")
-        self.rule.trans(.LOGIN_SUCC,
-                        {result(ErrCode.XOK,"succ")}
-                        )//{result(ErrCode.XERR_BAD_STATE,"state error")}
-        
-//        resetDevice()
-        
-    }
+//    private func doLogin(_ param:LoginParam,_ result:@escaping (Int,String)->Void) {
+//        let data = param
+//        log.i("---doLogin--accessToken:\(param.accessToken) refreshToken:\(param.refreshToken) grawin_token:\(param.grawin_token)")
+//        //self.app.context.aglab.session.userName = data.account
+//        self.app.context.aglab.session = AgoraLabSession(
+//            tokenType: data.tokenType,
+//            accessToken: "Bearer " + data.accessToken,
+//            refreshToken: data.refreshToken,
+//            expireIn: data.expireIn,
+//            scope: data.scope)
+//        
+//        self.app.context.gyiot.session = IotLinkSession(
+//            granwin_token: data.grawin_token,
+//            expiration: data.expiration,
+//            endPoint: data.endPoint,
+//            region: data.region,
+//            account: data.account,
+//            
+//            proof_sessionToken: data.proof_sessionToken,
+//            proof_secretKey: data.proof_secretKey,
+//            proof_accessKeyId: data.proof_accessKeyId,
+//            proof_sessionExpiration: data.proof_sessionExpiration,
+//            
+//            pool_token: data.pool_token,
+//            pool_identityId: data.pool_identityId,
+//            pool_identityPoolId: data.pool_identityId,
+//            pool_identifier: data.pool_identifier)
+//        
+//        let pool_identifier = data.pool_identifier
+//        let first = pool_identifier.findFirst("_")
+//        let last = pool_identifier.findLast("_")
+//        let certId = pool_identifier.substring(to: first)
+//        let rear = pool_identifier.substring(from: last + 1)
+//        let thingName = certId + "-" + rear
+//        
+//        self.app.context.account = data.account
+//        self.app.context.virtualNumber = thingName
+//        self.app.context.gyiot.session.cert.thingName = thingName
+//        log.i("---doLogin--thingName:\(thingName)")
+//        self.rule.trans(.LOGIN_SUCC,
+//                        {result(ErrCode.XOK,"succ")}
+//                        )//{result(ErrCode.XERR_BAD_STATE,"state error")}
+//        
+////        resetDevice()
+//        
+//    }
     
     func resetDevice(){
         let deviceId = self.app.context.gyiot.session.cert.thingName

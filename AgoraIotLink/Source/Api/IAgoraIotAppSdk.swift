@@ -34,7 +34,7 @@ public class InitParam : NSObject{
 /*
  * @brief SDK就绪参数
  */
-public class PrepareParam : NSObject{
+public class LoginParam : NSObject{
     
     @objc public var mUserId: String = ""         // 用户 userId
     @objc public var mClientType: Int = 2         // 终端类型  1: Web;  2: Phone;  3: Pad;  4: TV;  5: PC;  6: Mini_app
@@ -46,10 +46,10 @@ public class PrepareParam : NSObject{
 @objc public enum SdkState:Int {
     case invalid        // SDK未初始化
     case initialized    // SDK初始化完成，但还未就绪
-    case preparing      // SDK正在就绪中
+    case loginOnGoing   // SDK正在就绪中
     case runing         // SDK就绪完成，可以正常使用
     case reconnecting   // SDK正在内部重连中，暂时不可用
-    case unpreparing    // SDK正在注销处理，完成后切换到初始化完成状态
+    case logoutOnGoing  // SDK正在注销处理，完成后切换到初始化完成状态
 }
 
 /*
@@ -72,10 +72,6 @@ public protocol IAgoraIotAppSdk {
      */
     func getSdkVersion()->String
     
-    /*
-     * @biref 获取当前mqtt是否连接 连接:true 断开:false
-     */
-    func getMqttIsConnected() -> Bool
 
     /*
      * @brief 初始化Sdk
@@ -83,8 +79,9 @@ public protocol IAgoraIotAppSdk {
      * @retrun 返回错误码，XOK--初始化成功，SDK状态会切换到 SDK_STATE_INITIALIZED
      *                   XERR_INVALID_PARAM--参数有错误；XERR_BAD_STATE--当前状态不正确
      * @param OnSdkStateListener：SDK状态机监听回调（参数1:当前状态，参数2:状态原因）
+     * @param onSignalingStateChanged:在信令状态机变化时回调（参数: 当前是否可以收发信令）
      */
-    func initialize(initParam: InitParam,OnSdkStateListener:@escaping(SdkState,StateChangeReason)->Void) -> Int
+    func initialize(initParam: InitParam,OnSdkStateListener:@escaping(SdkState,StateChangeReason)->Void,onSignalingStateChanged:@escaping(Bool)->Void) -> Int
     
     /*
      * @brief 释放SDK所有资源，所有的组件模块也会被释放
@@ -98,26 +95,31 @@ public protocol IAgoraIotAppSdk {
      */
     func getStateMachine() -> SdkState?
     
-    /**
-     * @brief 就绪准备操作，仅在 SDK_STATE_INITIALIZED 状态下才能调用，异步调用，
-     *        异步操作完成后，通过 prepareListener() 回调就绪操作结果
-     *        如果就绪操作成功，则 SDK状态切换到 SDK_STATE_RUNNING 状态
-     *        如果就绪操作失败，则 SDK状态切换回 SDK_STATE_INITIALIZED
-     * @param prepareParam : 就绪操作的参数
-     * @param prepareListener : 就绪操作监听器 errCode=0表示就绪成功 errCode=XERR_NETWORK 表示网络错误，请求失败
-     * @return 返回错误码，XOK--就绪操作请求成功，SDK状态会切换到 SDK_STATE_PREPARING 开始异步就绪操作
-     *                   XERR_BAD_STATE-- 当前 非SDK_STATE_INITIALIZED 状态下调用本函数
+    /*
+     * @biref 获取当前信令是否能收发  是:true 否:false
      */
-    func prepare(preParam: PrepareParam,prepareListener:@escaping(Int,String)->Void) -> Int
+    func isSignalingReady() -> Bool
     
     /**
-     * @brief 逆就绪停止运行操作，仅在 SDK_STATE_RUNNING 或者 SDK_STATE_RECONNECTING 或者 SDK_STATE_PREPARING
-     *         这三种状态下才能调用，同步调用
-     *         该函数会触发SDK状态先切换到 SDK_STATE_UNPREPARING 状态，然后切换到 SDK_STATE_INITIALIZED 状态
-     * @return 返回错误码， XOK--逆就绪操作请求成功，SDK状态会切换到 SDK_STATE_INITIALIZED
-     *                   XERR_BAD_STATE-- 当前SDK状态不是 SDK_STATE_RUNNING 或者 SDK_STATE_RUNNING
+     * @brief 登录操作，仅在 SDK_STATE_INITIALIZED 状态下才能调用，异步调用，
+     *        异步操作完成后，通过 onLoginListener() 回调就绪操作结果
+     *        如果登录操作成功，则 SDK状态切换到 SDK_STATE_RUNNING 状态
+     *        如果登录操作失败，则 SDK状态切换回 SDK_STATE_INITIALIZED
+     * @param loginParam : 登录操作的参数
+     * @param onLoginListener : 登录操作完成监听器
+     * @return 返回错误码，XOK--就绪操作请求成功，SDK状态会切换到 SDK_STATE_LOGIN_ONGOING 开始异步就绪操作
+     *                   XERR_BAD_STATE-- 当前 非SDK_STATE_INITIALIZED 状态下调用本函数
      */
-    func unprepare() -> Int
+    func login(loginParam: LoginParam,onLoginListener:@escaping(Int,String)->Void) -> Int
+    
+    /**
+     * @brief 登出操作，仅在 SDK_STATE_RUNNING 或者 SDK_STATE_RECONNECTING 或者 SDK_STATE_LOGIN_ONGOING
+     *         这三种状态下才能调用，同步调用
+     *         该函数会触发SDK状态先切换到 SDK_STATE_LOGOUT_ONGOING 状态，然后切换到 SDK_STATE_INITIALIZED 状态
+     * @return 返回错误码， XOK--逆就绪操作请求成功，SDK状态会切换到 SDK_STATE_INITIALIZED
+     *                   XERR_BAD_STATE-- 当前SDK状态不是上述三种状态之一
+     */
+    func logout() -> Int
     
     /**
      * @brief 获取用户的userId

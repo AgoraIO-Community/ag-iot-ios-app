@@ -264,12 +264,12 @@ extension LoginMainVC{
         loginV.hide()
         AGToolHUD.showNetWorkWait()
         
-        let preParam = PrepareParam()
+        let preParam = LoginParam()
         //24cbe3f57d2b45c58c47004085f3ff03 //"d0177a34373b482a9c4eb4dedcfa586a"
         preParam.mUserId = acc
         preParam.mClientType = 2
         
-        sdk?.prepare(preParam: preParam, prepareListener: {[weak self] code, msg in
+        sdk?.login(loginParam: preParam, onLoginListener: {[weak self] code, msg in
             print("prepare result :\(code)")
             AGToolHUD.disMiss()
             if code == ErrCode.XOK {

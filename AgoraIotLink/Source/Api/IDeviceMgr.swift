@@ -254,17 +254,17 @@ public class FirmwareStatus : NSObject{
 /*
  * @brief rtm通信时的状态事件
  */
-@objc public enum MessageChannelStatus : Int{
-    case DataArrived                                    //收到数据
-    case Disconnected                                   //连接断开
-    case Connecting                                     //连接中
-    case Connected                                      //连接成功
-    case Reconnecting                                   //重连中
-    case Aborted                                        //中断
-    case TokenWillExpire                                //token将要过期
-    case TokenDidExpire                                 //token已经过期
-    case UnknownError                                   //未知错误
-}
+//@objc public enum MessageChannelStatus : Int{
+//    case DataArrived                                    //收到数据
+//    case Disconnected                                   //连接断开
+//    case Connecting                                     //连接中
+//    case Connected                                      //连接成功
+//    case Reconnecting                                   //重连中
+//    case Aborted                                        //中断
+//    case TokenWillExpire                                //token将要过期
+//    case TokenDidExpire                                 //token已经过期
+//    case UnknownError                                   //未知错误
+//}
 /*
  * @brief 播放sd卡时的状态事件
  */

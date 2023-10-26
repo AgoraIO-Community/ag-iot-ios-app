@@ -113,6 +113,39 @@ class AgoraLab {
             }
         }
     }
+    
+//    func updateToken(_ traceId:String, _ userId:String,_ masterAppId:String,_ deviceId:String,_ cname:String, _ rsp:@escaping(Int,String,ActivateNode.Rsp?)->Void){
+//
+////        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8","traceId":"123456"]
+////        let params = ["userId":"18510378892","clientType":"2","masterAppId":"d0177a34373b482a9c4eb4dedcfa586a","pusherId":"d0177a34"]
+////        let paramsDic = ["payload":params]
+//
+//        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8","traceId":traceId]
+//
+//        let nodePayload = AgoraLab.ActivateNode.Payload(clientType: "2", userId: userId, masterAppId: masterAppId, pusherId: pusherId)
+//        let paramsDic = AgoraLab.ActivateNode.Req(payload: nodePayload)
+//
+//        //https://iot-api-gateway.sh.agoralab.co/api  "https://api.sd-rtn.com/agoralink/cn/api"
+//        let url = http + api.nodeActivate
+//        log.i("al reqCall \(url)")
+//
+//        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
+//            .validate()
+//            .responseDecodable(of:ActivateNode.Rsp.self){(dataRsp:AFDataResponse<ActivateNode.Rsp>) in
+//            URLCache.shared.removeAllCachedResponses()
+//            switch dataRsp.result{
+//            case .success(let ret):
+//                if(ret.code != 0){
+//                    log.e("3rd nodeActivate fail \(ret.msg)(\(ret.code))")
+//                }
+//                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret)
+//            case .failure(let error):
+//                log.e("3rd nodeActivate \(url) , detail: \(error) ")
+//                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
+//            }
+//        }
+//    }
+    
 
     func reqUploadIcon(_ token:String,_ image:UIImage,_ traceId:String, _ rsp:@escaping(Int,String,String?)->Void){
         let url = http + api.uploadHeadIcon

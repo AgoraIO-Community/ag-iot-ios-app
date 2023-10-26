@@ -44,12 +44,12 @@ extension UIImageView{
 extension UIButton {
     
     public func setButton(url:String,placeholder:String){
-        let placegholderImage = UIImage(named: placeholder)
-        if url.count > 0 {
-            let urlImage:ImageResource = ImageResource(downloadURL: URL(string: url)!)
-            self.kf.setImage(with: urlImage, for: .normal, placeholder: placegholderImage)
-        } else {
-            self.setImage(placegholderImage, for: .normal)
-        }
+//        let placegholderImage = UIImage(named: placeholder)
+//        if url.count > 0 {
+//            let urlImage:ImageResource = ImageResource(downloadURL: URL(string: url)!)
+//            self.kf.setImage(with: urlImage, for: .normal, placeholder: placegholderImage)
+//        } else {
+//            self.setImage(placegholderImage, for: .normal)
+//        }
     }
 }

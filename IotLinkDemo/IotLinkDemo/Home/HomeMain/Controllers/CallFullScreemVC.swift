@@ -61,6 +61,8 @@ class CallFullScreemVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(receiveFirstVideo), name: Notification.Name(ReceiveFirstVideoFrameNotify), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(remoteHangup), name: Notification.Name(cRemoteHangupNotify), object: nil)
         
+        registerMsgListener()
+        
         
         // Do any additional setup after loading the view.
     }
@@ -80,6 +82,14 @@ class CallFullScreemVC: UIViewController {
         videoView.snp.makeConstraints { make in
             make.top.left.bottom.right.equalTo(view)
         }
+        
+        view.addSubview(accecptButton)
+        accecptButton.snp.makeConstraints { make in
+            make.top.equalTo(videoView.snp.bottom).offset(30)
+            make.left.equalTo(15)
+            make.width.equalTo(80)
+            make.height.equalTo(50)
+        }
     }
     
     lazy var videoView:UIView = {
@@ -89,7 +99,33 @@ class CallFullScreemVC: UIViewController {
         view.layer.masksToBounds = true
         return view
     }()
+    
+    private lazy var accecptButton:UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle("发送数据", for: .normal)
+        button.setTitleColor(UIColor.white, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.backgroundColor = .black
+        button.layer.cornerRadius = 50 * 0.5
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(sendMsgButton), for: .touchUpInside)
+        return button
+    }()
 
+    @objc private func sendMsgButton(){
+        let paramDic = ["key":"value","key1":"value1"]
+        let paramStr = paramDic.convertDictionaryToJSONString()
+        let ret = sdk?.callkitMgr.sendCommand(sessionId: sessionId!, cmd: paramStr, onCmdSendDone: { errCode in
+            debugPrint("onCmdSendDone:\(errCode)")
+        })
+    }
+    
+    func registerMsgListener(){
+        sdk?.callkitMgr.onReceivedCommand(receivedListener: { sessionId, cmd in
+            debugPrint("onReceivedCommand:sessionId:\(sessionId),cmd:\(cmd)")
+            AGToolHUD.showInfo(info: cmd)
+        })
+    }
     
     private func addRightBarButtonItem() {
         navigationItem.leftBarButtonItem=UIBarButtonItem(image: UIImage(named: "doorbell_back")!.withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.plain, target: self, action: #selector(leftBtnDidClick))

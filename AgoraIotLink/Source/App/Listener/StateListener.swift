@@ -6,44 +6,18 @@
 //
 
 import Foundation
+import AgoraRtmKit
 
 class StateListener : NSObject{
 
-
-    func do_Invalid() {
-        app.sdkState = .invalid
-        _statusHandler(.invalid,.none)
-    }
-    
-    func do_Initialized(_ reason : StateChangeReason) {
-        app.sdkState = .initialized
-        _statusHandler(.initialized,reason)
-    }
-    
-    func do_Preparing(_ reason : StateChangeReason) {
-        app.sdkState = .preparing
-        _statusHandler(.preparing,reason)
-    }
-    
-    func do_Runing(_ reason : StateChangeReason) {
-        app.sdkState = .runing
-        _statusHandler(.runing,reason)
-    }
-    
-    func do_Reconnecting(_ reason : StateChangeReason) {
-        app.sdkState = .reconnecting
-        _statusHandler(.reconnecting,reason)
-    }
-    
-    func do_Unpreparing(_ reason : StateChangeReason) {
-        app.sdkState = .unpreparing
-        _statusHandler(.unpreparing,reason)
-    }
-    
-    
-
     let app:Application
     var _statusHandler:(SdkState,StateChangeReason)->Void = {n,s in}
+    var _signalingStatusHandler:(Bool)->Void = {s in}
+    
+    init(_ app:Application){
+        self.app = app;
+    }
+    
     func setStatusHandler(handler:@escaping(SdkState,StateChangeReason)->Void){
         _statusHandler = handler
         app.proxy.cocoaMqtt.waitForListenerDesired(listenterDesired: onMqttListenerDesired)
@@ -72,8 +46,67 @@ class StateListener : NSObject{
         }
 
     }
-    
-    init(_ app:Application){
-        self.app = app;
+
+    func do_Invalid() {
+        app.sdkState = .invalid
+        _statusHandler(.invalid,.none)
     }
+    
+    func do_Initialized(_ reason : StateChangeReason) {
+        app.sdkState = .initialized
+        _statusHandler(.initialized,reason)
+    }
+    
+    func do_Preparing(_ reason : StateChangeReason) {
+        app.sdkState = .loginOnGoing
+        _statusHandler(.loginOnGoing,reason)
+    }
+    
+    func do_Runing(_ reason : StateChangeReason) {
+        app.sdkState = .runing
+        _statusHandler(.runing,reason)
+    }
+    
+    func do_Reconnecting(_ reason : StateChangeReason) {
+        app.sdkState = .reconnecting
+        _statusHandler(.reconnecting,reason)
+    }
+    
+    func do_Unpreparing(_ reason : StateChangeReason) {
+        app.sdkState = .logoutOnGoing
+        _statusHandler(.logoutOnGoing,reason)
+    }
+
+}
+
+extension StateListener{
+    
+    func setSignalingStatusHandler(handler:@escaping(Bool)->Void){
+        _signalingStatusHandler = handler
+        app.proxy.rtm.waitForStatusUpdated(statusUpdated: rtmStatusUpdated)
+    }
+    private func rtmStatusUpdated(state:MessageChannelStatus,msg:String,rtmMsg:AgoraRtmMessage?){
+
+        log.i("onMqttListenerDesired state : \(state.rawValue)")
+        
+        switch state {
+        case .Connecting:
+            break
+        case .Reconnecting:
+            _signalingStatusHandler(false)
+            break
+        case .Connected:
+            _signalingStatusHandler(true)
+            break
+        case .Disconnected:
+            _signalingStatusHandler(false)
+            break
+        case .UnknownError:
+            break
+        default:
+            break
+        }
+
+    }
+    
 }

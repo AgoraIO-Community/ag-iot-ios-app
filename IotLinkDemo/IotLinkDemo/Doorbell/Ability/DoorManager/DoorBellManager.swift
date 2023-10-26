@@ -24,6 +24,12 @@ class DoorBellManager: NSObject {
         super.init()
     }
     
+    //推本地视频到对端 mute: 是否禁止
+    func sendRtmMsg(sessionId:String,msg:String){
+        let ret = sdk?.callkitMgr.sendCommand(sessionId: sessionId, cmd: msg, onCmdSendDone: { errCode in
+            debugPrint("rtm onCmdSendDone :\(errCode)")
+        })
+    }
 
     //设置音量
     func setDeviceVolume(volumeLevel: Int,_ cb:@escaping(Bool,String)->Void){
@@ -33,12 +39,12 @@ class DoorBellManager: NSObject {
     }
     
     //推本地视频到对端 mute: 是否禁止
-    func muteLocalVideo(sessionId:String,mute: Bool,cb:@escaping(Bool,String)->Void){
-        sdk?.callkitMgr.muteLocalVideo(sessionId: sessionId, mute: mute, result: { ec, msg in
-            cb(ec == ErrCode.XOK ? true : false , msg)
-            debugPrint("---msg---\(msg)")
-        })
-    }
+//    func muteLocalVideo(sessionId:String,mute: Bool,cb:@escaping(Bool,String)->Void){
+//        sdk?.callkitMgr.muteLocalVideo(sessionId: sessionId, mute: mute, result: { ec, msg in
+//            cb(ec == ErrCode.XOK ? true : false , msg)
+//            debugPrint("---msg---\(msg)")
+//        })
+//    }
     
     //推本地音频到对端 mute: 是否禁止
     func muteLocalAudio(sessionId:String,mute: Bool,cb:@escaping(Bool,String)->Void){

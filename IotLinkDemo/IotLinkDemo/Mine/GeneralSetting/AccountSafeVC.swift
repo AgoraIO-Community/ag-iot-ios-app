@@ -93,7 +93,7 @@ extension AccountSafeVC{
     //退出登陆
     func doLogOut(){
         
-        sdk?.unprepare()
+        sdk?.logout()
         TDUserInforManager.shared.userSignOut()
         self.tabBarController?.selectedIndex = 0
         self.navigationController?.popToRootViewController(animated: true)

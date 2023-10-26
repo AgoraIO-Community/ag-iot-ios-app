@@ -12,16 +12,21 @@ public class CallSession : NSObject{
     var token = ""
     var cname = ""    //对端nodeId
     var uid:UInt = 0
-//    var peerId = ""
     var version:UInt = 0
     
     var peerUid:UInt = 0                //对端id
     var mPubLocalAudio : Bool = false   //设备端接听后是否立即推送本地音频流
     
     var callType:CallType = .UNKNOWN    //通话类型
+    var msgType:MsgType = .UNKNOWN      //消息类型
     var mSessionId = ""                 //通话Id
     var traceId:UInt = 0                //追踪ID
     var peerNodeId = ""                 //对端nodeId
+    
+    //------rtm信息------
+    var mRtmUid: String = ""             //本地用户的 UserId
+//    var rtm : RtmEngine?                 //当前连接对应的Rtm对象
+    var mRtmToken: String = ""           //要会话的 RTM Token
     
 }
 
@@ -60,10 +65,12 @@ class CallkitManager : ICallkitMgr{
 
     private var app:Application
     private let rtc:RtcEngine
+    private let rtm:RtmEngine
     
     init(app:Application){
         self.app = app
         self.rtc = app.proxy.rtc
+        self.rtm = app.proxy.rtm
 //        self.app.proxy.cocoaMqtt.waitForIncomingDesired(actionDesired: onIcomingDesired)
     }
     
@@ -132,6 +139,7 @@ class CallkitManager : ICallkitMgr{
         log.i("---callDial--发起呼叫---")
         
     }
+ 
     
     func callHangup(sessionId: String, result:@escaping(Int,String)->Void){
         log.i("call callHangup")
@@ -173,9 +181,10 @@ extension CallkitManager{
     }
     
     func mutePeerAudio(sessionId: String, mute: Bool,result:@escaping (Int,String)->Void){
-        DispatchQueue.main.async {
-            self.rtc.mutePeerAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
-        }
+        reNewToken(sessionId)
+//        DispatchQueue.main.async {
+//            self.rtc.mutePeerAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
+//        }
     }
     
     func setVolume(volumeLevel: Int,result:@escaping (Int,String)->Void){
@@ -226,11 +235,63 @@ extension CallkitManager{
         sessionInfor.mSessionId = callSession.mSessionId
         sessionInfor.mPeerNodeId = callSession.cname
         sessionInfor.mLocalNodeId = app.config.userId
+        sessionInfor.uid = callSession.uid
         sessionInfor.mState = CallListenerManager.sharedInstance.getCurrentCallState(sessionId)
         
         return sessionInfor
         
     }
     
+    func reNewToken(_ sessionId: String) {
+        
+        let sessionObj = getSessionInfo(sessionId: sessionId)
+        
+        let curTimestamp:Int = String.dateTimeRounded()
+        
+        
+        let nodeToken = app.sdk.iotAppSdkMgr.mLocalNode?.mToken ?? ""
+        
+        let appId = app.config.masterAppId
+        let headerParam = ["traceId": curTimestamp, "timestamp": curTimestamp, "nodeToken": nodeToken, "method": "refresh-token"] as [String : Any]
+        let payloadParam = ["appId": appId, "deviceId": sessionObj?.mPeerNodeId,"uid":sessionObj?.uid ,"cname": sessionObj?.mPeerNodeId] as [String : Any]
+        let paramDic = ["header":headerParam,"payload":payloadParam]
+        let jsonString = paramDic.convertDictionaryToJSONString()
+        self.app.proxy.cocoaMqtt.publishCallData(sessionId: sessionId,data: jsonString)
+        log.i("---callDial--更新token---")
+        
+    }
+    
+}
+
+extension CallkitManager{
+    
+    //发送信息
+     func sendCommand(sessionId:String,cmd:String,onCmdSendDone: @escaping (_ errCode:Int) -> Void) -> Int{//发送rtm消息
+        return sendGeneralData(sessionId,cmd,onCmdSendDone)
+    }
+    
+    //收到对端Rtm信息
+    func onReceivedCommand(receivedListener: @escaping (_ sessionId:String,_ cmd:String) -> Void){
+        rtm.waitReceivedCommandCallback(receivedListener)
+    }
+    
+    func sendGeneralData(_ sessionId:String, _ param:String,_ cmdListener: @escaping (Int) -> Void)->Int{
+        
+        guard let callSession = CallListenerManager.sharedInstance.getCurrentCallSession(sessionId) else{
+            return ErrCode.XERR_BAD_STATE
+        }
+        
+        guard let data = param.data(using: .utf8) else{ return ErrCode.XERR_INVALID_PARAM}
+        rtm.sendRawGenerlMessage(toPeer: callSession.peerNodeId, data: data, description: "") { errCode, msg in
+            cmdListener(errCode)
+        }
+        return ErrCode.XOK
+    }
+    
+    func getSequenceId()->UInt32{
+        let curSequenceId : UInt32 = app.config.counter.increment()
+        return curSequenceId
+    }
+        
 }
 

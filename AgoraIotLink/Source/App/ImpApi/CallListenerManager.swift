@@ -10,6 +10,7 @@ import UIKit
 class CallListenerManager: NSObject {
 
     static let sharedInstance = CallListenerManager()
+    var app  = Application.shared
 
     var callDict = [String:Any]()
     func startCall(sessionId:String,dialParam: DialParam,result: @escaping (_ errCode:Int,_ sessionId:String,_ peerNodeId:String) -> Void,actionAck:@escaping(ActionAck,_ sessionId:String,_ peerNodeId:String)->Void,memberState:((MemberState,[UInt],String)->Void)?){
@@ -22,6 +23,12 @@ class CallListenerManager: NSObject {
                 self?.hangUp(sessionId)
             }
         }
+        
+        initOther(callLister,sessionId)
+    }
+    
+    func initOther(_ callListen : CallStateListener,_ sessionId:String){
+        //创建其他
     }
     
     func callRequest(_ sessionId:String = "",_ suc:Bool){
@@ -114,6 +121,25 @@ class CallListenerManager: NSObject {
         } else {
             // 没有找到对应的对象
             log.i("getCurrentCallObjet not found sessionId :\(sessionId) ")
+            return nil
+        }
+    }
+    
+    func getCurrentCallObjetWithPeerId(_ peerId:String)->CallStateListener?{
+        
+        if callDict.count > 0{
+            let result = callDict.filter { ($0.value as! CallStateListener).callSession?.peerNodeId == "\(peerId)" }
+            log.i("isCallTaking\(result) :result.count :\(result.count)")
+            if result.count > 0,let callObjet = result.values.first as? CallStateListener{
+                return callObjet
+            }else{
+                // 没有找到对应的对象
+                log.i("getCurrentCallObjet not found sessionId :\(peerId) ")
+                return nil
+            }
+        }else{
+            // 没有找到对应的对象
+            log.i("getCurrentCallObjet not found sessionId :\(peerId) ")
             return nil
         }
     }

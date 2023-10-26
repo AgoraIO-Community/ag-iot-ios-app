@@ -113,6 +113,13 @@ class DoorbellAbilitySimpleLogicView: UIView {
             make.right.equalToSuperview().inset(15.S).priority(.low)
         }
         
+        addSubview(rtmSendMsgBtn)
+        rtmSendMsgBtn.snp.makeConstraints { (make) in
+            make.left.equalTo(10.S)
+            make.centerY.equalToSuperview().offset(25)
+            make.size.equalTo(CGSize.init(width: 60.S, height: 30.S))
+        }
+        
         addSubview(screenShotBtn)
         screenShotBtn.snp.makeConstraints { (make) in
             make.right.equalTo(-10.S)
@@ -192,7 +199,7 @@ class DoorbellAbilitySimpleLogicView: UIView {
         }
         return view
     }()
-    
+
     lazy var screenShotBtn: UIButton = {
         let btn = UIButton()
         btn.setTitleColor(UIColor.white, for: .normal)
@@ -222,6 +229,21 @@ class DoorbellAbilitySimpleLogicView: UIView {
         btn.addTarget(self, action: #selector(fullScreen(btn:)), for: .touchUpInside)
         return btn
     }()
+    
+    lazy var rtmSendMsgBtn: UIButton = {
+        let btn = UIButton()
+        btn.setTitleColor(UIColor.white, for: .normal)
+        btn.backgroundColor = UIColor.lightGray
+        btn.alpha = 0.8
+        btn.layer.cornerRadius = 8.VS
+        btn.layer.masksToBounds = true
+        btn.setTitle("消息".L, for:.normal)
+        btn.titleLabel?.adjustsFontSizeToFitWidth = true
+        btn.titleLabel?.minimumScaleFactor = 0.5
+        btn.tag = 1004
+        btn.addTarget(self, action: #selector(rtmSendMsg(btn:)), for: .touchUpInside)
+        return btn
+    }()
 
 }
 
@@ -234,9 +256,35 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
 
 extension DoorbellAbilitySimpleLogicView{
     
+    //点击发送消息
+    @objc func rtmSendMsg(btn : UIButton){
+        debugPrint("rtmSendMsg：点击")
+        showSendMsgAlert()
+    }
     //点击截图
     @objc func screenShot(btn : UIButton){
         shotScreen()
+    }
+    
+    func showSendMsgAlert(){
+        
+        guard let device = device, device.sessionId != "" else { 
+            AGToolHUD.showInfo(info: "请先呼叫设备")
+            return
+        }
+        
+        AGConfirmEditAlertVC.showTitleTop("请输入要发送的信息", editText: "请输入要发送的信息") {[weak self] msg in
+
+//            let paramDic = ["key":"value","key1":"value1"]
+//            let paramStr = paramDic.convertDictionaryToJSONString()
+            
+            let ret = sdk?.callkitMgr.sendCommand(sessionId: device.sessionId, cmd: msg, onCmdSendDone: { errCode in
+                debugPrint("onCmdSendDone:\(errCode)")
+            })
+            
+            print("showSendMsgAlert：-----\(msg)")
+        }
+        
     }
     
     //点击全屏
@@ -245,8 +293,11 @@ extension DoorbellAbilitySimpleLogicView{
     }
     
     func callPhone(_ btn : UIButton){
-        
+
         guard let device = device, device.sessionId != "" else { return }
+        
+//        DoorBellManager.shared.sendRtmMsg(sessionId: device.sessionId, msg: "hello test rtm msg")
+//        return
         
         var isPermitAudio : Bool = false
         debugPrint("请求通话")
@@ -255,7 +306,7 @@ extension DoorbellAbilitySimpleLogicView{
             isPermitAudio = true
         }
         
-        DoorBellManager.shared.muteLocalVideo(sessionId:device.sessionId,mute: isPermitAudio) {[weak self] success, msg in
+        DoorBellManager.shared.muteLocalAudio(sessionId:device.sessionId,mute: isPermitAudio) {[weak self] success, msg in
             if success{
                 debugPrint("请求通话/或者挂断 成功")
                 let isSelect = !btn.isSelected
@@ -265,23 +316,23 @@ extension DoorbellAbilitySimpleLogicView{
                     //通话结束变声通话置为正常
                     self?.isOnCalling = false
                 }
-                
+
             }
          }
         
-//        DoorBellManager.shared.muteLocalAudio(sessionId:device.sessionId,mute: isPermitAudio) {[weak self] success, msg in
-//            if success{
-//                debugPrint("请求通话/或者挂断 成功")
-//                let isSelect = !btn.isSelected
-//                self?.toolBarView.handelCallSuccess(isSelect)
-//                self?.isOnCalling = true
-//                if isPermitAudio == true {//挂断电话
-//                    //通话结束变声通话置为正常
-//                    self?.isOnCalling = false
-//                }
-//
-//            }
-//         }
+        //        DoorBellManager.shared.muteLocalVideo(sessionId:device.sessionId,mute: isPermitAudio) {[weak self] success, msg in
+        //            if success{
+        //                debugPrint("请求通话/或者挂断 成功")
+        //                let isSelect = !btn.isSelected
+        //                self?.toolBarView.handelCallSuccess(isSelect)
+        //                self?.isOnCalling = true
+        //                if isPermitAudio == true {//挂断电话
+        //                    //通话结束变声通话置为正常
+        //                    self?.isOnCalling = false
+        //                }
+        //
+        //            }
+        //         }
     }
     
     //静音

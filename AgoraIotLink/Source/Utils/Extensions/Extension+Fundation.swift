@@ -52,13 +52,26 @@ public extension String {
     
     static func dateTimeRounded()->Int {
         let timeInterval: TimeInterval = Date().timeIntervalSince1970
-        let timestamp =  Int((timeInterval * 1000.0).rounded()) //Int(timeInterval)
+        let timestamp =  Int((timeInterval).rounded()) //Int(timeInterval)
+        return timestamp
+    }
+    
+    static func dateCurrentTime()->TimeInterval {
+        let timeInterval: TimeInterval = Date().timeIntervalSince1970
+        let timestamp =  timeInterval * 1000.0 //Int(timeInterval)
         return timestamp
     }
     
     static func dateTimeSpace(_ lastTime : Int)->Int {
         let timeInterval: TimeInterval = Date().timeIntervalSince1970
         let timestamp = Int(timeInterval)
+        log.i("dateTimeSpace currentTime:\(timestamp)")
+        return timestamp - lastTime
+    }
+    
+    static func dateTimeSpaceMillion(_ lastTime : TimeInterval)->TimeInterval {
+        let timeInterval: TimeInterval = Date().timeIntervalSince1970
+        let timestamp = timeInterval * 1000.0
         log.i("dateTimeSpace currentTime:\(timestamp)")
         return timestamp - lastTime
     }

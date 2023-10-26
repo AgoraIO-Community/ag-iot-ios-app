@@ -19,6 +19,7 @@ class CallStateListener: NSObject {
     var callMachine : CallStateMachine?
     
     var callSession : CallSession?
+    var timer: Timer? //保活心跳
     
     typealias callResult = (_ errCode:Int,_ sessionId:String,_ peerNodeId:String) -> Void
     typealias callActionAck = (ActionAck,_ sessionId:String,_ peerNodeId:String)->Void
@@ -104,6 +105,7 @@ class CallStateListener: NSObject {
     
     func hangUp(hangUpResult: @escaping (Bool,String) -> Void){
         hangUpRet = hangUpResult
+        stopTimer()
         if self.isIcoming == false{
             endTime()
             self.endReqTime()
@@ -119,6 +121,9 @@ class CallStateListener: NSObject {
             self.do_LEAVEANDDESTROY()
         }
         destory()
+        //todo:
+        //去登出rtm
+        leaveAndDestoryRtm()
     }
     
     func endTime(){
@@ -161,6 +166,8 @@ extension CallStateListener {
         callSession?.uid   = sess.uid
         callSession?.peerUid = 10
         callSession?.callType = sess.callType
+        callSession?.mRtmUid = sess.mRtmUid
+        callSession?.mRtmToken = sess.mRtmToken
     }
     
 }
@@ -168,6 +175,10 @@ extension CallStateListener {
 extension CallStateListener : CallStateMachineListener{
     
     func do_CREATEANDENTER() {
+        
+        //todo:
+        //去登陆rtm
+        creatAndEnterRtm()
 
         let appId = app.config.masterAppId
         let uid = callSession?.uid ?? 0
@@ -206,6 +217,7 @@ extension CallStateListener : CallStateMachineListener{
                 self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
             }
             else if(ret == .Succ){
+                self?.heartbeatTimer()
                 if self?.isIcoming == false{
                     log.i("call reqCall CallForward")
                     self?.callMachine?.handleEvent(.localJoinSuc)
@@ -305,4 +317,93 @@ extension CallStateListener : CallStateMachineListener{
         callMachine = nil
     }
   
+}
+
+extension CallStateListener{//rtm
+    
+    func creatAndEnterRtm(){
+        
+        let rtm = app.proxy.rtm
+        //初始化其他
+        let setting = app.context.rtm.setting
+        let succ = rtm.create(setting)
+        
+        if succ == true{
+            let rtmSession = RtmSession()
+            rtmSession.token = callSession?.mRtmToken ?? ""
+            rtmSession.peerVirtualNumber = callSession?.peerNodeId ?? ""
+            
+            let uid = callSession?.mRtmUid ?? "" //01GW488RS7MXFXX883VTV0EZV7
+            rtm.enter(rtmSession, "\(uid)") { [weak self] ret, msg in
+//                if ret == .Fail{
+//                    self?.callAct(.onDisconnected,self?.callSession?.mSessionId ?? "",ErrCode.XOK)
+//                    self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
+//                }
+            }
+
+        }
+
+    }
+    
+    func leaveAndDestoryRtm(){
+        
+        //断开其他
+        app.proxy.rtm.leave(cb: { succ in
+            if(!succ){
+                log.w("rtm leave fail")
+            }
+        })
+        app.proxy.rtm.destroy();
+    }
+}
+
+extension CallStateListener{
+    
+    func  heartbeatTimer(){
+        timer = Timer()
+        startTimer()
+    }
+    
+    func startTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 8*60*60, target: self, selector: #selector(reNewToken), userInfo: nil, repeats: true)
+    }
+    
+    @objc func reNewToken() {
+        
+        let curTimestamp:Int = String.dateTimeRounded()
+        
+        
+        let nodeToken = app.sdk.iotAppSdkMgr.mLocalNode?.mToken ?? ""
+        
+        let appId = app.config.masterAppId
+        let headerParam = ["traceId": curTimestamp, "timestamp": curTimestamp, "nodeToken": nodeToken, "method": "refresh-token"] as [String : Any]
+        let payloadParam = ["appId": appId, "deviceId": callSession?.peerNodeId ?? "","uid":callSession?.uid ?? 0 ,"cname": callSession?.peerNodeId ?? ""] as [String : Any]
+        let paramDic = ["header":headerParam,"payload":payloadParam]
+        let jsonString = paramDic.convertDictionaryToJSONString()
+        self.app.proxy.cocoaMqtt.publishUpdateTokenData(sessionId:callSession?.mSessionId ?? "", data: jsonString) {[weak self] sess in
+            if let sess = sess{
+                self?.updateToken(sess)
+            }else{
+                log.i("---sess is nil---")
+            }
+        }
+        log.i("---callDial--更新token---")
+        
+    }
+    
+    func updateToken(_ sess : CallSession) {
+        // 在这里实现发送消息的逻辑
+        log.i("send renew msg")
+        let rtm = app.proxy.rtm
+        rtm.renewToken(sess.mRtmToken)
+        app.proxy.rtc.renewToken(sess.token)
+    }
+    
+    func stopTimer() {
+        log.i("RtmEngine timer is nil")
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    
 }

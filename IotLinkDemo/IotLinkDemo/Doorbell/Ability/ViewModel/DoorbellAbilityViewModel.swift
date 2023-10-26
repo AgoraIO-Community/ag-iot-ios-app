@@ -23,45 +23,59 @@ extension DoorBellManager{
             cb(-1,"","")
             return
         }
+        
+        
+        
         let dailParam = DialParam(mPeerNodeId: dev.peerNodeId, mAttachMsg: "attachMsg", mPubLocalAudio: true)
-        callMgr.callDial(dialParam: dailParam,result:{
+        AgoraIotSdk.iotsdk.callkitMgr.callDial(dialParam: dailParam,result:{
             (ec,sessionId,peerNodeId) in
             cb(ec, sessionId, peerNodeId)
         },actionAck: {s,sessionId,peerNodeId in
-            var msg = "未知的设备操作"
-            self.mSessionId = sessionId
-            switch(s){
-                case .RemoteAnswer:msg = "设备接听"
-                case .RemoteHangup:msg = "设备挂断"
-                case .LocalHangup:msg = "本地挂断"
-                case .UnknownAction:msg = "未知行为"
-                case .RemoteVideoReady:msg = "首次收到设备视频"
-                case .CallIncoming:msg = "设备来电"
-                case .RemoteTimeout:msg = "对端超时"
-                
-            }
-            log.i("呼叫事件:\(msg)")
-            if(s == .RemoteHangup){
-                self.members = 0
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
-            }
-            if(s == .RemoteAnswer){
-                self.members = self.members + 1
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
-            }
-            action(sessionId,s)
+            log.i("actionAck:\(s)\(sessionId)\(peerNodeId)")
         },memberState:{s,a,sessionId in
-            if(s == .Exist){self.members = 0}
-            if(s == .Enter){self.members = self.members + 1}
-            if(s == .Leave){self.members = self.members - 1}
-            log.i("demo app member count \(self.members):\(s.rawValue) \(a)")
-            memberState(self.members,sessionId)
-//            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+            log.i("memberState:\(s.rawValue) \(a)\(sessionId)")
         })
         
-        //sdk?.callkitMgr.mutePeerVideo(mute: false, result: { state, msg in
-
+        
+        
+        
+//        let dailParam = DialParam(mPeerNodeId: dev.peerNodeId, mAttachMsg: "attachMsg", mPubLocalAudio: true)
+//        callMgr.callDial(dialParam: dailParam,result:{
+//            (ec,sessionId,peerNodeId) in
+//            cb(ec, sessionId, peerNodeId)
+//        },actionAck: {s,sessionId,peerNodeId in
+//            var msg = "未知的设备操作"
+//            self.mSessionId = sessionId
+//            switch(s){
+//                case .RemoteAnswer:msg = "设备接听"
+//                case .RemoteHangup:msg = "设备挂断"
+//                case .LocalHangup:msg = "本地挂断"
+//                case .UnknownAction:msg = "未知行为"
+//                case .RemoteVideoReady:msg = "首次收到设备视频"
+//                case .CallIncoming:msg = "设备来电"
+//                case .RemoteTimeout:msg = "对端超时"
+//                
+//            }
+//            log.i("呼叫事件:\(msg)")
+//            if(s == .RemoteHangup){
+//                self.members = 0
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+//            }
+//            if(s == .RemoteAnswer){
+//                self.members = self.members + 1
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
+//            }
+//            action(sessionId,s)
+//        },memberState:{s,a,sessionId in
+//            if(s == .Exist){self.members = 0}
+//            if(s == .Enter){self.members = self.members + 1}
+//            if(s == .Leave){self.members = self.members - 1}
+//            log.i("demo app member count \(self.members):\(s.rawValue) \(a)")
+//            memberState(self.members,sessionId)
+////            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cMemberStateUpdated), object: nil, userInfo: ["members":self.members])
 //        })
+        
+
     }
  
     func startPlayback(channelName:String,result:@escaping(Int,String)->Void,stateChanged:@escaping(PlaybackStatus,String)->Void){
@@ -83,6 +97,11 @@ extension DoorBellManager{
             cb(false,"sdk 呼叫服务 未初始化")
             return
         }
+        
+        AgoraIotSdk.iotsdk.callkitMgr.callHangup(sessionId: sessionId, result: { ec, msg in log.i("call Hangup result:\(ec)(\(msg))") })
+                                     
+                                     
+                                     
         members = 0
         iotsdk.callkitMgr.callHangup(sessionId: sessionId, result: { ec, msg in
             log.i("demo app call Hangup result:\(msg)(\(ec))")

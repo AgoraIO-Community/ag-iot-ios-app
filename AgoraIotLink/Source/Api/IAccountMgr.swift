@@ -97,7 +97,7 @@ public class UserInfo : NSObject{
     }
 }
 
-public class LoginParam : NSObject{
+public class LoginParam1 : NSObject{
     //token
     public var tokenType:String = ""
     public var accessToken:String = ""

@@ -91,6 +91,8 @@ class HomePageMainVC: AGBaseVC {
         setUpUI()
         // 监听网络状态
         startListeningNetStatus()
+        // 监听收到的rtm消息
+        setMsgListener()
         
     }
     
@@ -120,17 +122,31 @@ class HomePageMainVC: AGBaseVC {
     func initAgoraIot(){
         log.i("AgoraIotManager app initialize()")
         
+        
+//        let param:InitParam = InitParam()
+//        param.mAppId = TDUserInforManager.shared.curMasterAppId
+//        param.mServerUrl = AgoraIotConfig.slaveServerUrl
+//        let ret = iotsdk.initialize(initParam: param,OnSdkStateListener:{ [weak self] sdkState, reason in
+//            print("OnSdkStateListener:\(sdkState)\(reason)")
+//        }, onSignalingStateChanged:{ isReady in
+//            print("onSignalingStateChanged:\(isReady)")
+//        })
+        
+        
+        
         let param:InitParam = InitParam()
         param.mAppId = TDUserInforManager.shared.curMasterAppId
         param.mServerUrl = AgoraIotConfig.slaveServerUrl
-        
-        
-        if(ErrCode.XOK != iotsdk.initialize(initParam: param,OnSdkStateListener:{ [weak self] sdkState, reason in
+                                            
+        let ret = iotsdk.initialize(initParam: param,OnSdkStateListener:{ [weak self] sdkState, reason in
             self?.handelCommonErrorCode(sdkState,reason)
-            
-        })){
+        }, onSignalingStateChanged:{ isReady in
+            debugPrint("onSignalingStateChanged:\(isReady)")
+        })
+        if(ret != ErrCode.XOK){
             log.e("initialize failed")
         }
+        
     }
     
     //处理通用错误码
@@ -405,6 +421,13 @@ extension HomePageMainVC { //呼叫
         
     }
     
+    func setMsgListener(){
+//        sdk?.callkitMgr.onReceivedCommand(receivedListener: { sessionId, cmd in
+//            debugPrint("onReceivedCommand:sessionId:\(sessionId),cmd:\(cmd)")
+//            AGToolHUD.showInfo(info: cmd)
+//        })
+    }
+    
     func handelUserMembers(_ members:Int,_ sessionId:String){
         let viewTag = getTagFromSessionId(sessionId)
         let cell = getCellWithTag(tag: viewTag)
@@ -509,6 +532,17 @@ extension HomePageMainVC { //呼叫
 extension HomePageMainVC{ //来电
     
     func registerIncomCall(){
+        
+        
+        
+        AgoraIotSdk.iotsdk.callkitMgr.register(incoming: { sessionId,peerNodeId,action  in
+            debugPrint("incoming:\(sessionId)\(peerNodeId)\(action.rawValue)")
+        },memberState:{ s,a,sessionId in
+            log.i("memberState:\(DoorBellManager.shared.members):\(s.rawValue) \(a)\(sessionId)")
+        })
+        
+        
+        
         
         sdk?.callkitMgr.register(incoming: {[weak self] sessionId,peerNodeId,callin  in
             debugPrint("---来电呼叫---\(callin.rawValue)")

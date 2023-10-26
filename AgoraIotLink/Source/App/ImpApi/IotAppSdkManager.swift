@@ -43,7 +43,7 @@ public class IotAppSdkManager: NSObject {
         self.rule = app.rule
     }
     
-    func activeNode(_ preParam: PrepareParam){
+    func activeNode(_ preParam: LoginParam){
         
         app.config.userId = preParam.mUserId
         let mAppId = app.config.masterAppId
@@ -80,23 +80,23 @@ public class IotAppSdkManager: NSObject {
     }
     
     
-    func prepare(preParam: PrepareParam,prepareListener:@escaping(Int,String)->Void)-> Int{
+    func prepare(loginParam: LoginParam,prepareListener:@escaping(Int,String)->Void)-> Int{
         
         if app.sdkState != .initialized{
             log.i("---:\(app.sdkState.rawValue)")
             return ErrCode.XERR_BAD_STATE
         }
-        log.i("---prepare--\(preParam.mUserId)")
+        log.i("---prepare--\(loginParam.mUserId)")
         _onPrepareListener = prepareListener
         app.proxy.cocoaMqtt.waitForPrepareListenerDesired(listenterDesired: onMqttListenerDesired)
-        activeNode(preParam)
+        activeNode(loginParam)
         
         return ErrCode.XOK
     }
 
-    func unprepare() -> Int{
+    func logout() -> Int{
         log.i("------unprepare------")
-        if app.sdkState == .runing || app.sdkState == .reconnecting || app.sdkState == .preparing{
+        if app.sdkState == .runing || app.sdkState == .reconnecting || app.sdkState == .loginOnGoing{
             app.proxy.cocoaMqtt.disconnect()
             app.status.do_Initialized(.none)
             return ErrCode.XOK

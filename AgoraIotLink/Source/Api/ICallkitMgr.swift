@@ -85,6 +85,9 @@ public class SessionInfo : NSObject{
     public var mPeerNodeId:String = ""  //对端设备的 NodeId
     public var mState:CallState = .idle //当前会话状态
     
+    
+    public var uid:UInt = 0
+    
 }
 
 /*
@@ -180,14 +183,6 @@ public protocol ICallkitMgr {
      * @return 错误码，XOK--设置成功； XERR_INVALID_PARAM--没有找到该会话； XERR_UNSUPPORTED--设置失败
      */
     func setPeerVideoView(sessionId:String, peerView: UIView?) -> Int
-
-    /*
-     * @brief 禁止/启用 本地视频推流到对端
-     * @param sessionId : 会话唯一标识
-     * @param mute:是否禁止
-     * @param result: (参数1:错误码，参数2:提示信息) 错误码，XOK--设置成功； XERR_INVALID_PARAM--没有找到该会话； XERR_UNSUPPORTED--设置失败
-     */
-    func muteLocalVideo(sessionId:String, mute: Bool,result:@escaping(Int,String)->Void)
     
     /*
      * @brief 禁止/启用 本地音频推流到对端
@@ -261,4 +256,21 @@ public protocol ICallkitMgr {
      * @return 错误码，XOK--设置成功； XERR_UNSUPPORTED--设置失败
      */
     func setRtcPrivateParam(privateParam : String)->Int
+    
+    
+    /*
+     * @brief  注册收到对端rtm消息监听
+     * @return 错误码，XOK--设置成功； XERR_UNSUPPORTED--设置失败  
+     * @param receivedListener: sessionId: 会话唯一标识 cmd: 收到的命令数据
+     */
+    func onReceivedCommand(receivedListener: @escaping (_ sessionId:String,_ cmd:String) -> Void)
+    
+    /*
+     * @brief 发送rtm消息
+     * @param  cmd: 发送的命令数据
+     * @return 错误码，XOK--设置成功； XERR_UNSUPPORTED--设置失败  cmd: 发送的命令数据
+     * @param cmdListener: 命令完成回调 错误码，XOK--设置成功； XERR_UNSUPPORTED--设置失败 sessionId: 会话唯一标识 cmd: 发送的命令数据
+     */
+    func sendCommand(sessionId:String,cmd:String,onCmdSendDone: @escaping (_ errCode:Int) -> Void) -> Int
+    
 }

@@ -62,6 +62,18 @@ extension String{
             return  Dictionary<String, Any>()
         }
     }
+    
+    static func getDictionaryFromJSONString(jsonString:String) ->NSDictionary{
+        let jsonData:Data = jsonString.data(using: .utf8)!
+        let dict = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
+        if dict != nil {
+            if let dictresult = dict as? NSDictionary{
+                return dictresult
+            }
+            return NSDictionary()
+        }
+        return NSDictionary()
+    }
 }
 
 extension Dictionary{
@@ -78,6 +90,22 @@ extension Dictionary{
         } catch {
             print("Error converting dictionary to JSON: \(error.localizedDescription)")
         }
+        return jsonStr
+        
+    }
+
+}
+
+extension Data{
+    
+    public func convertDataToJSONString()->String {
+        
+        var jsonStr : String = ""
+        if let jsonString = String(data: self, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) {
+            jsonStr = jsonString
+            log.i("convertDictionaryToJSONString:\(jsonString)\n")
+        }
+        
         return jsonStr
         
     }
