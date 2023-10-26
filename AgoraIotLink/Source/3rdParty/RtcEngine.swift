@@ -17,9 +17,22 @@ class RtcEngine : NSObject{
     private var isRecording : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
     private var _onImageCaptured:(Int,String,UIImage?)->Void = {ec,msg,img in}
     
+    private var  _onMFirstRemoteVideoDecodedAction : (RtcPeerAction,UInt)->Void = {b,u in log.i("onMFirstRemoteVideoDecodedAction init")} //自管理首帧返回回调
+    private var  isMFirstRemoteVideoCb : Bool = false  //是否自管理首帧已返回
+    
     var curChannel : String = ""
     
     var frameCount : Int = 0
+    
+    //注册首帧返回自管理回调监听
+    func waitForMFirstRemoteVideoCbListern(_ mFirstRemoteVideoAction:@escaping(RtcPeerAction,UInt)->Void){
+        _onMFirstRemoteVideoDecodedAction = mFirstRemoteVideoAction
+    }
+    
+    //设置是否已回调首帧返回
+    func setIsMFirstRemoteVideoCbValue(_ isCb : Bool){
+        isMFirstRemoteVideoCb = isCb
+    }
  
     func setAudioEffect(_ effectId:AudioEffectId,cb:@escaping (Int,String)->Void){
 
@@ -145,6 +158,12 @@ extension RtcEngine : AgoraVideoFrameDelegate{
 ////            log.i("onRenderVideoFrame:count:\(frameCount) uid:\(uid)")
 //        }
         
+        if isMFirstRemoteVideoCb == false {
+            log.i("onRenderVideoFrame: mFirstRemoteVideoDecodedAction uid:\(uid)")
+            _onMFirstRemoteVideoDecodedAction(.VideoReady,uid)
+            isMFirstRemoteVideoCb = true
+        }
+        
         if  videoRecordM.videoW == 0{
             videoRecordM.videoW = videoFrame.width
             videoRecordM.videoH = videoFrame.height
@@ -159,7 +178,7 @@ extension RtcEngine : AgoraVideoFrameDelegate{
 
             if(videoFrame.type == 12){//CVPixelBufferRef
 
-                log.i("rtc capture frame is CVPixelBufferRef")
+//                log.i("rtc capture frame is CVPixelBufferRef")
 
                 if let buffer = videoFrame.pixelBuffer{
                     videoRecordM.videoWithSampleBuffer(buffer)
@@ -170,7 +189,7 @@ extension RtcEngine : AgoraVideoFrameDelegate{
 
             }else if(videoFrame.type == 1){
 
-                log.i("rtc capture frame is I420")
+//                log.i("rtc capture frame is I420")
 
                 let  buffer : Unmanaged<CVPixelBuffer> = Utils.i420(toPixelBuffer:videoFrame.yBuffer!, srcU: videoFrame.uBuffer!, srcV: videoFrame.vBuffer!,yStride: Int32(videoFrame.yStride), uStride:Int32(videoFrame.uStride), vStride:Int32(videoFrame.vStride), width: Int32(videoFrame.width), height: Int32(videoFrame.height))
                 _ = buffer.takeUnretainedValue()

@@ -42,7 +42,7 @@ class VideoRecordManager: NSObject {
     func videoWithSampleBuffer(_ buffer : CVPixelBuffer){
         
         index += 1
-        debugPrint("index:\(index)")
+//        debugPrint("index:\(index)")
         writeManager?.appendSampleBuffer(sampleBuffer: buffer, audioBuffer: nil, mediaType: .video,index: index)
         
 //        let factory = CMSampleBuffer.Factory()

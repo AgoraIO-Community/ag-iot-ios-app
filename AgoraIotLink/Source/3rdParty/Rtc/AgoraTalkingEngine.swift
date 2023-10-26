@@ -83,6 +83,11 @@ class AgoraTalkingEngine: NSObject {
         
         _onPeerAction = peerAction
         _memberState = memberState
+        rtc.waitForMFirstRemoteVideoCbListern {[weak self] act, uid in
+            DispatchQueue.main.async{
+                self?._onPeerAction(act,uid)
+            }
+        }
         
         let tempCon = AgoraRtcConnection()
         tempCon.channelId = channelInfo.cName
@@ -334,6 +339,9 @@ extension AgoraTalkingEngine{
         if(ret != 0){
             log.w("rtc mutePeerVideo(\(mute)) peerUid:\(channelInfo?.peerUid ?? 0) faile:\(ret)")
         }
+        if mute == true {//停止拉流，则自管理首帧回调参数设置为false
+            rtc.setIsMFirstRemoteVideoCbValue(false)
+        }
         ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     
@@ -459,8 +467,8 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoDecodedOfUid uid: UInt, size: CGSize, elapsed: Int) {
         log.i("rtc firstRemoteVideoDecodedOfUid first video frame decoded： \(uid)")
-  
-        _onPeerAction(.VideoReady,uid)
+        //使用自管理首帧回调，此处注释
+//        _onPeerAction(.VideoReady,uid)
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteAudioFrameOfUid uid: UInt, elapsed: Int) {

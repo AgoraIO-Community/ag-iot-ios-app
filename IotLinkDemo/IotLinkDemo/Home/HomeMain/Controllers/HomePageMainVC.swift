@@ -362,9 +362,9 @@ extension HomePageMainVC { //呼叫设备
             self?.handelUserMembers(members,sessionId)
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4){
-            self.disconnectDevice(connectResult.mSessionId)
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4){
+//            self.disconnectDevice(connectResult.mSessionId)
+//        }
         
  
     }
@@ -436,7 +436,7 @@ extension HomePageMainVC { //呼叫设备
         cell.configPeerView(sessionId)
         DoorBellManager.shared.previewStart(sessionId: sessionId) {[weak self] sessionId, videoWidth, videoHeight in
             
-            debugPrint("获取到首帧")
+            debugPrint("previewStart：获取到首帧")
 //            let cell = self?.getCurrentCellWithTag(sessionId)
 //            cell?.configPeerView(sessionId)
 //            cell?.handelCallTipType(.playing)

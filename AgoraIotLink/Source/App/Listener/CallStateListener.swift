@@ -272,7 +272,6 @@ extension CallStateListener : CallStateMachineListener{
             else if(act == .VideoReady){
                 log.i("listener VideoReady uid:\(uid)")
                 let timeSpace = String.dateCurrentTime() - CallListenerManager.sharedInstance.startTime
-                log.i("-------------listener VideoReady timeSpace:\(timeSpace)")
                 if(self.callSession?.peerUid == uid){
                     if self.isIcoming == false{//主动呼叫
                         self.preViewlistener(self.callSession?.mSessionId ?? "",0,0)
