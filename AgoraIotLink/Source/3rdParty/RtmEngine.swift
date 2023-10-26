@@ -169,8 +169,12 @@ class RtmEngine : NSObject{
         }
     }
     
-    func renewToken(_ token:String){//刷新token
-        log.i("rtm renewToken:\(token)")
+    func renewToken(_ token:String, _ peerNodeId:String){//刷新token
+        log.i("rtm renewToken:\(token) peerNodeId:\(peerNodeId)")
+        if peerNodeId != "" {//如果换了设备，则需要重新赋值peerNodeId，若当前设备token过期，则只需要刷新token
+            curSession?.peerVirtualNumber = peerNodeId
+        }
+        curSession?.token = token
         kit?.renewToken(token,completion: { token, errorCode in
             log.i("rtm renewToken result ret:\(errorCode)")
         })

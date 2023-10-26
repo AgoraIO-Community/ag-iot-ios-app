@@ -146,9 +146,9 @@ class CallListenerManager {
     }
     
     func renewRtmToken(_ rtmToken : String){
-        //rtm 更新token
+        //rtm 更新token，属于同一个设备token过期，只需要传token进行刷新
         let rtm = app.proxy.rtm
-        rtm.renewToken(rtmToken)
+        rtm.renewToken(rtmToken,"")
     }
 
     func isTaking(_ peerNodeId : String)->Bool{

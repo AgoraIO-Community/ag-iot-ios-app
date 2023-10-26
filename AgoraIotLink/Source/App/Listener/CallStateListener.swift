@@ -352,10 +352,12 @@ extension CallStateListener{//rtm
     
     func renewRtmToken(){
         let token = callSession?.mRtmToken ?? ""
-        log.i("renewRtmToken:token\(token)")
+        let peerNodeId = callSession?.peerNodeId ?? ""
+        log.i("renewRtmToken:token\(token) peerNodeId：\(peerNodeId)")
         //rtm 更新token
         let rtm = app.proxy.rtm
-        rtm.renewToken(token)
+        //rtm 更新token，可能重新连接不同的设备，peerNodeId也需要传入进行更行
+        rtm.renewToken(token,peerNodeId)
     }
     
     func registerRtmStatusLister(){
