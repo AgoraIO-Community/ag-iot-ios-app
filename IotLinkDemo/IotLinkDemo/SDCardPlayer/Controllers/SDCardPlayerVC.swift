@@ -314,6 +314,11 @@ class SDCardPlayerVC: AGBaseVC {
         let sessionId = TDUserInforManager.shared.curSessionId
         return (sdk?.deviceSessionMgr.getDevMediaMgr(sessionId: sessionId))!
     }
+    
+    func getDevControlMgr()->IDevControllerMgr{
+        let sessionId = TDUserInforManager.shared.curSessionId
+        return (sdk?.deviceSessionMgr.getDevController(sessionId: sessionId))!
+    }
 
 
 }
@@ -362,6 +367,12 @@ extension SDCardPlayerVC{
     
     func sendCmdSDQueryTimeList(sessionId:String = "", cb:@escaping(Int)->Void){
    
+//        let controlMgr = getDevControlMgr()
+//        controlMgr.sendCmdPtzReset { errCode, msg in
+//            print("sendCmdPtzCtrl---:\(errCode)---:\(msg)")
+//            cb(errCode)
+//        }
+        
         let mediaMgr = getDevMediaMgr()
         mediaMgr.queryEventTimeline(onQueryEventListener: { errCode, list in
             print("sendCmdSDQueryTimeList---:\(errCode)---:\(list)")

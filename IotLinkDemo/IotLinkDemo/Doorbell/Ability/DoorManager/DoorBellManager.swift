@@ -174,12 +174,12 @@ class DoorBellManager: NSObject {
     //云台命令 仅在通话状态下才能调用
     func sendCmdPtzCtrl(sessionId:String = "", cb:@escaping(Int,String)->Void){
         let controlMgr = getDevControlMgr(sessionId)
-        controlMgr.sendCmdPtzCtrl(action: 0, direction: 1, speed: 1) { errCode, msg in
-            print("sendCmdPtzCtrl---:\(errCode)")
-            cb(errCode,msg as! String)
-        }
+//        controlMgr.sendCmdPtzCtrl(action: 0, direction: 1, speed: 1) { errCode, msg in
+//            print("sendCmdPtzCtrl---:\(errCode)")
+//            cb(errCode,msg as! String)
+//        }
         controlMgr.sendCmdPtzReset(cmdListener: cb)
-        controlMgr.sendCmdSdcardFmt(cmdListener: cb)
+//        controlMgr.sendCmdSdcardFmt(cmdListener: cb)
     }
     
     //云台命令 发送自定义数据

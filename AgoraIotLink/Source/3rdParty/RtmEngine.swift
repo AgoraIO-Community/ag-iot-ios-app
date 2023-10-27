@@ -57,11 +57,13 @@ class RtmEngine : NSObject{
     
     var app  = Application.shared
 //    private var config:Config
-//    var timerTimeout: Timer?
+    var timerTimeout: Timer?                       //超时定时器
+    let commandTimeOut   : TimeInterval = 10*1000  //命令超时时间 ms
+    let commandCheckTime : TimeInterval = 4        //命令检测时间 s
     
     private var kit:AgoraRtmKit? = nil
     private var state:RtmStatus  = .IDLED
-    var timer: Timer?
+    var timer: Timer?             //心跳定时器
     var curSession: RtmSession?
 
     
@@ -155,15 +157,17 @@ class RtmEngine : NSObject{
         log.i("rtm try enter with token:\(sess.token),local:\(uid)")
         self.state = .ENTERING
         curSession = sess
-        kit?.login(byToken: sess.token, user: uid) { err in
-            self.sendLoginCallback(err,{tr,msg in
+        kit?.login(byToken: sess.token, user: uid) {[weak self] err in
+            self?.sendLoginCallback(err,{tr,msg in
                 if(tr == TaskResult.Succ){
-                    self.state = .ENTERED
+                    self?.state = .ENTERED
                 }else{
-                    self.state = .CREATED
+                    self?.state = .CREATED
                 }
                 log.i("rtm try enter result:\(tr) msg:\(msg)")
-                self.heartbeatTimer()
+                self?.heartbeatTimer()
+                self?.timeOutTimer()
+                
                 cb(tr,msg)
             })
         }
@@ -211,6 +215,7 @@ class RtmEngine : NSObject{
 //        _completionDicBlocks = nil
         
         stopTimer()
+        stopTimerOut()
         
         if(state != .ENTERED){
             log.e("rtm state : \(String(describing: state)) error for leave()")
@@ -571,7 +576,6 @@ extension RtmEngine : AgoraRtmDelegate{
 extension RtmEngine{
     
     func  heartbeatTimer(){
-        timer = Timer()
         startTimer()
     }
     
@@ -593,7 +597,7 @@ extension RtmEngine{
         let jsonString = paramDic.convertDictionaryToJSONString()
         let data:Data = jsonString.data(using: .utf8) ?? Data()
         sendRawMessage(sequenceId: "\(curSequenceId)", toPeer: peer, data: data, description: "") { code, msg in
-            log.i("RtmEnginesendStringMessage")
+            log.i("RtmEngine sendHeartBeatMessage suc")
         }
     }
     
@@ -605,41 +609,47 @@ extension RtmEngine{
     
 }
 
-//extension RtmEngine{
-//
-//    func  timeOutTimer(){
-//        timerTimeout = Timer()
-//        startTimeOut()
-//    }
-//
-//    func startTimeOut() {
-//        timerTimeout = Timer.scheduledTimer(timeInterval: 20, target: self, selector: #selector(handelTimeOut), userInfo: nil, repeats: true)
-//    }
-//
-//    @objc func handelTimeOut() {
-//        // 在这里实现发送消息的逻辑
-//        log.i("send heartbeat msg")
-//        handelRtmMsgTimeout()
-//
-//    }
-//
-//    func handelRtmMsgTimeout(){
-//        guard let completionMsgObjs = _completionMsgObjs else{ return }
-//        for (key,obj) in completionMsgObjs{
-//            let lastTime = obj.timeStamp
-//            let timeSpace = String.dateTimeSpaceMillion(lastTime)
-//            if timeSpace > 10{
-//                let callBack = obj.msgObj
-//                callBack(0,"resut string")
-//                _completionMsgObjs?["\(key)"] = nil
-//            }
-//        }
-//    }
-//
-//    func stopTimerOut() {
-//        log.i("RtmEngine timer is nil")
-//        timerTimeout?.invalidate()
-//        timerTimeout = nil
-//    }
-//
-//}
+extension RtmEngine{//超时处理
+
+    func  timeOutTimer(){
+        startTimeOut()
+    }
+
+    func startTimeOut() {
+        timerTimeout = Timer.scheduledTimer(timeInterval: commandCheckTime, target: self, selector: #selector(handelTimeOut), userInfo: nil, repeats: true)
+    }
+
+    @objc func handelTimeOut() {
+        // 在这里实现发送消息的逻辑
+        handelRtmMsgTimeout()
+
+    }
+
+    func handelRtmMsgTimeout(){
+        
+        guard _completionMsgObjs.count > 0 else{ return }
+        
+        var keysToRemove: [String] = []
+        for (key,obj) in _completionMsgObjs{
+            let lastTime = obj.timeStamp
+            let timeSpace = String.dateTimeSpaceMillion(lastTime)
+            if timeSpace > commandTimeOut{
+                let callBack = obj.msgObj
+                callBack(ErrCode.XERR_TIMEOUT,"resut TimeOut")
+                keysToRemove.append(key)
+            }
+        }
+        
+        for key in keysToRemove {
+            _completionMsgObjs.removeValue(forKey: key)
+        }
+        
+    }
+
+    func stopTimerOut() {
+        log.i("RtmEngine timerOut is nil")
+        timerTimeout?.invalidate()
+        timerTimeout = nil
+    }
+
+}

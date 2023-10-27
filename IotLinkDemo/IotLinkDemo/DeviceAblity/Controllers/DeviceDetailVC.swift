@@ -162,6 +162,7 @@ class DeviceDetailVC: AGBaseVC {
         print("releasePlayer:调用了")
         let ret = sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId)
         print("------ret:\(String(describing: ret))")
+        backAction()
     }
     
     func backAction(){
