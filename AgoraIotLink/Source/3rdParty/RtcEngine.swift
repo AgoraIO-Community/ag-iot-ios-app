@@ -22,7 +22,7 @@ class RtcEngine : NSObject{
     
     var curChannel : String = ""
     
-    var frameCount : Int = 0
+//    var frameCount : Int = 0
     
     //注册首帧返回自管理回调监听
     func waitForMFirstRemoteVideoCbListern(_ mFirstRemoteVideoAction:@escaping(RtcPeerAction,UInt)->Void){

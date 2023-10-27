@@ -211,7 +211,8 @@ class AgoraTalkingEngine: NSObject {
             log.i("leaveChannelEx:\(stats)")
         })
         clearObject()
-        rtc.frameCount = 0
+//        rtc.frameCount = 0
+        rtc.setIsMFirstRemoteVideoCbValue(false)
         _onEnterChannel?.invoke(args:(.Abort,"leaveChannel"))
         log.i("rtc try leaveChannel ..ret:\(String(describing: ret))")
         cb(true)
