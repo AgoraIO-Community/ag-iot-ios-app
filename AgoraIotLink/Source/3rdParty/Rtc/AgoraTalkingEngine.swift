@@ -83,11 +83,10 @@ class AgoraTalkingEngine: NSObject {
         
         _onPeerAction = peerAction
         _memberState = memberState
-        rtc.waitForMFirstRemoteVideoCbListern {[weak self] act, uid in
-            DispatchQueue.main.async{
-                self?._onPeerAction(act,uid)
-            }
-        }
+        //注册首帧回调的监听
+        registerMFirstRemoteVideoListern()
+        //避免已加入的频道未退出又重新进入新的频道时无首帧回调
+        rtc.setIsMFirstRemoteVideoCbValue(channelInfo.cName,false)
         
         let tempCon = AgoraRtcConnection()
         tempCon.channelId = channelInfo.cName
@@ -108,6 +107,14 @@ class AgoraTalkingEngine: NSObject {
     
     func getRtcObject() -> AgoraRtcEngineKit {
         return AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit()
+    }
+    
+    func registerMFirstRemoteVideoListern(){
+        rtc.waitForMFirstRemoteVideoCbListern {[weak self] act, uid in
+            DispatchQueue.main.async{
+                self?._onPeerAction(act,uid)
+            }
+        }
     }
     
     func renewToken(_ rtcToken : String){
@@ -211,8 +218,7 @@ class AgoraTalkingEngine: NSObject {
             log.i("leaveChannelEx:\(stats)")
         })
         clearObject()
-//        rtc.frameCount = 0
-        rtc.setIsMFirstRemoteVideoCbValue(false)
+        rtc.setIsMFirstRemoteVideoCbValue("",false)
         _onEnterChannel?.invoke(args:(.Abort,"leaveChannel"))
         log.i("rtc try leaveChannel ..ret:\(String(describing: ret))")
         cb(true)
@@ -336,13 +342,17 @@ extension AgoraTalkingEngine{
             return
         }
         
+        if mute == false{
+            //注册首帧回调的监听，保证每次拉流都有最新首帧监听回调
+            registerMFirstRemoteVideoListern()
+            rtc.setIsMFirstRemoteVideoCbValue(channelInfo?.cName ?? "",false)
+        }
+        
         let ret = rtcKit.muteRemoteVideoStreamEx(channelInfo?.peerUid ?? 0, mute: mute, connection: connection)
         if(ret != 0){
             log.w("rtc mutePeerVideo(\(mute)) peerUid:\(channelInfo?.peerUid ?? 0) faile:\(ret)")
         }
-        if mute == true {//停止拉流，则自管理首帧回调参数设置为false
-            rtc.setIsMFirstRemoteVideoCbValue(false)
-        }
+        
         ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     

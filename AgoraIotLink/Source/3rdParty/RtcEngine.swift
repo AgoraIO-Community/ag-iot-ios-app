@@ -30,7 +30,8 @@ class RtcEngine : NSObject{
     }
     
     //设置是否已回调首帧返回
-    func setIsMFirstRemoteVideoCbValue(_ isCb : Bool){
+    func setIsMFirstRemoteVideoCbValue(_ channel:String,_ isCb : Bool){
+        self.curChannel = channel
         isMFirstRemoteVideoCb = isCb
     }
  
@@ -158,10 +159,14 @@ extension RtcEngine : AgoraVideoFrameDelegate{
 ////            log.i("onRenderVideoFrame:count:\(frameCount) uid:\(uid)")
 //        }
         
-        if isMFirstRemoteVideoCb == false {
+        if isMFirstRemoteVideoCb == false && channelId == curChannel {
             log.i("onRenderVideoFrame: mFirstRemoteVideoDecodedAction uid:\(uid)")
             _onMFirstRemoteVideoDecodedAction(.VideoReady,uid)
             isMFirstRemoteVideoCb = true
+        }
+        
+        if channelId != curChannel{//如果不是当前频道的视频帧，则返回
+            return true
         }
         
         if  videoRecordM.videoW == 0{
@@ -170,10 +175,6 @@ extension RtcEngine : AgoraVideoFrameDelegate{
             debugPrint("onRenderVideoFrame:width:\(videoFrame.width)height:\(videoFrame.height)")
         }
         
-        if channelId != curChannel{//如果不是当前频道的视频帧，则返回
-//            log.e("onRenderVideoFrame channelId:\(channelId)")
-            return true
-        }
         if (isRecording.getValue()){
 
             if(videoFrame.type == 12){//CVPixelBufferRef

@@ -32,8 +32,6 @@ class MediaStateListener: NSObject {
     
     var callMemState:callMemberState = {sessionId,m,c in log.w("callMemState callMemberState not inited")}
     var interCallAct:callInterActionAck = {ack,sessionId,peerNodeId in log.w("interCallAct callActionAck not inited")}
-    var preViewlistener:PreviewListener = {sessionId,width,height in log.w("'_preViewlistener' callback not registered,please register it with 'PreviewListener'")}
-    
     
     init(dialParam: CallSession,peerDisplayView:UIView?, actionAck:@escaping(MediaCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?) {
         super.init()
@@ -44,9 +42,6 @@ class MediaStateListener: NSObject {
         
     }
     
-    func registerPreViewListener(previewListener: @escaping (String, Int, Int) -> Void){
-        self.preViewlistener = previewListener
-    }
     
     func startCall(_ dialParam: CallSession){
         
@@ -169,7 +164,6 @@ extension MediaStateListener : CallStateMachineListener{
                 if(self.callSession?.peerUid == uid){
                     self.endTime()
                     self.callAct(.onFirstFrame,self.callSession?.mSessionId ?? "",ErrCode.XOK)
-                    self.preViewlistener(self.callSession?.mSessionId ?? "",0,0)
 
                 }
             }
