@@ -152,7 +152,7 @@ class HomePageMainVC: AGBaseVC {
     //处理通用错误码
     func handelCommonErrorCode(_ sdkState : SdkState, _ reason : StateChangeReason) {
         
-        if sdkState == .runing {
+        if sdkState == .running {
             debugPrint("mqtt runing")
             if TDUserInforManager.shared.isLogin == true {
                 AGToolHUD.showInfo(info: "网络重连成功")

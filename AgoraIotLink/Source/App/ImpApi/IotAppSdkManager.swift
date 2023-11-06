@@ -96,7 +96,7 @@ public class IotAppSdkManager: NSObject {
 
     func logout() -> Int{
         log.i("------unprepare------")
-        if app.sdkState == .runing || app.sdkState == .reconnecting || app.sdkState == .loginOnGoing{
+        if app.sdkState == .running || app.sdkState == .reconnecting || app.sdkState == .loginOnGoing{
             app.proxy.cocoaMqtt.disconnect()
             app.status.do_Initialized(.none)
             return ErrCode.XOK

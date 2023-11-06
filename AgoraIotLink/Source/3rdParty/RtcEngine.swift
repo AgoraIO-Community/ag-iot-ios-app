@@ -206,6 +206,15 @@ class RtcEngine : NSObject{
         peerEntered = false
     }
     
+    func renewToken(_ rtcToken : String){
+        log.i("rtc renewToken:")
+        guard let rtc = engine else{
+            log.e("rtc engine is nil")
+            return
+        }
+        rtc.renewToken(rtcToken)
+    }
+    
     func setupLocalView(localView:UIView?,uid:UInt)->Int{
         log.i("rtc is setting up local canvas")
         guard let rtc = engine else{

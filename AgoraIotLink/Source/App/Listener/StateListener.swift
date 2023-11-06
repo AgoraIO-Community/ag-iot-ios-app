@@ -63,8 +63,8 @@ class StateListener : NSObject{
     }
     
     func do_Runing(_ reason : StateChangeReason) {
-        app.sdkState = .runing
-        _statusHandler(.runing,reason)
+        app.sdkState = .running
+        _statusHandler(.running,reason)
     }
     
     func do_Reconnecting(_ reason : StateChangeReason) {

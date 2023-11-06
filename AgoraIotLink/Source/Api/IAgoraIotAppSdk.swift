@@ -47,7 +47,7 @@ public class LoginParam : NSObject{
     case invalid        // SDK未初始化
     case initialized    // SDK初始化完成，但还未就绪
     case loginOnGoing   // SDK正在就绪中
-    case runing         // SDK就绪完成，可以正常使用
+    case running         // SDK就绪完成，可以正常使用
     case reconnecting   // SDK正在内部重连中，暂时不可用
     case logoutOnGoing  // SDK正在注销处理，完成后切换到初始化完成状态
 }
