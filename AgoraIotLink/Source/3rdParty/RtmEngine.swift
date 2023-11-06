@@ -56,7 +56,6 @@ import AgoraRtmKit
 class RtmEngine : NSObject{
     
     var app  = Application.shared
-//    private var config:Config
     var timerTimeout: Timer?                       //超时定时器
     let commandTimeOut   : TimeInterval = 10*1000  //命令超时时间 ms
     let commandCheckTime : TimeInterval = 4        //命令检测时间 s
@@ -68,7 +67,6 @@ class RtmEngine : NSObject{
 
     
     init(cfg:Config) {
-//        self.config = cfg
         self.state = .IDLED
     }
     

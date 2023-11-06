@@ -203,17 +203,14 @@ extension CallStateListener : CallStateMachineListener{
                 self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
             }
             else if(ret == .Succ){
-                let timeSpace = String.dateCurrentTime() - CallListenerManager.sharedInstance.startConnectTime
-                log.i("-------------talkingEngine joinSuccess timeSpace:\(timeSpace)")
-                
-                CallListenerManager.sharedInstance.startTime = String.dateCurrentTime()
+                self?.callAct(.onConnectDone,self?.callSession?.mSessionId ?? "",ErrCode.XOK)
                 if self?.isIcoming == false{//主动呼叫
                     log.i("call reqCall CallForward")
                     self?.callMachine?.handleEvent(.localJoinSuc)
-                    self?.callRcbTime?.schedule(time:self?.app.config.calloutTimeOut ?? 30,timeout: {
+                    self?.callRcbTime?.schedule(time:self?.app.config.calloutTimeOut ?? 5,timeout: {
                         log.i("call reqCall ring remote timeout")
                         self?.callMachine?.handleEvent(.endCall)
-                        self?.callAct(.onError,self?.callSession?.mSessionId ?? "",ErrCode.XERR_CALLKIT_DIAL)
+//                        self?.callAct(.onError,self?.callSession?.mSessionId ?? "",ErrCode.XERR_CALLKIT_DIAL)
                         self?.interCallAct(.RemoteHangup,self?.callSession?.mSessionId ?? "",self?.callSession?.peerNodeId ?? "")
                     })
                 }else{
@@ -233,20 +230,11 @@ extension CallStateListener : CallStateMachineListener{
         peerAction: {act,uid in
             if(act == .Enter){
                 
-//                todo:
-//                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 60){
-//                    log.i("token过期模拟 1分钟")
-//                    self.callAct(.onSessionTokenWillExpire,self.callSession?.mSessionId ?? "",ErrCode.XOK)
-//                }
-                
                 log.i("listener Enter uid:\(uid)")
                 if(self.callSession?.peerUid == uid){
-                    let timeSpace = String.dateCurrentTime() - CallListenerManager.sharedInstance.startTime
-//                    log.i("-------------listener Enter timeSpace:\(timeSpace)")
                     if self.isIcoming == false{//主动呼叫
                         self.endTime()
                         self.callMachine?.handleEvent(.peerOnline)
-                        self.callAct(.onConnectDone,self.callSession?.mSessionId ?? "",ErrCode.XOK)
                     }else{
                         self.callMachine?.handleEvent(.peerOnline)
                         if self.incomeRcbTime != nil{

@@ -31,7 +31,7 @@ class Config {
     
     var logFilePath : String? = nil
     
-    let calloutTimeOut:Double = 30 //呼叫超时时间
+    let calloutTimeOut:Double = 5 //呼叫超时时间
     let inComingTimeOut:Double = 30 //来电超时时间
     var appId:String{get{return _appId}set{_appId = newValue}}
     
