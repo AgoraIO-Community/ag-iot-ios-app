@@ -204,10 +204,10 @@ class AgoraLab {
                         ec = ErrCode.XERR_CALLKIT_LOCAL_BUSY
                     }
                     if(ret.code == 100011){//aws设备影子更新失败
-                        ec = ErrCode.XERR_CALLKIT_UPDATE_SHADOW_FAIL
+//                        ec = ErrCode.XERR_CALLKIT_UPDATE_SHADOW_FAIL
                     }
                     if(ret.code == 100012){//生成rtc token错误
-                        ec = ErrCode.XERR_CALLKIT_CREAT_RTCTOKEN_FAIL
+//                        ec = ErrCode.XERR_CALLKIT_CREAT_RTCTOKEN_FAIL
                     }
                     rsp(ret.code == 0 ? ErrCode.XOK : ec,"dial number recv:\(ret.msg)(\(ret.code))",ret)
                 case .failure(let error):

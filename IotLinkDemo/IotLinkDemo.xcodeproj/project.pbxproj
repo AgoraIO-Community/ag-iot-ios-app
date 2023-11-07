@@ -2078,7 +2078,7 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1114;
+				CURRENT_PROJECT_VERSION = 1115;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -2206,7 +2206,7 @@
 					"-weak_framework",
 					"\"SwiftUI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.agora.Iot.AgoraIoT;
+				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iot.iotsdk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
@@ -2229,7 +2229,7 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1114;
+				CURRENT_PROJECT_VERSION = 1115;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -2357,7 +2357,7 @@
 					"-weak_framework",
 					"\"SwiftUI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.agora.Iot.AgoraIoT;
+				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iot.iotsdk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;

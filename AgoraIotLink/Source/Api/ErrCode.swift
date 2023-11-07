@@ -51,6 +51,22 @@ public class ErrCode : NSObject{
     @objc public static let XERR_HTTP_RESP_CODE = -10019                ///< 服务返回错误
     @objc public static let XERR_HTTP_RESP_DATA = -10020                ///< 服务器返回的没有有效的响应数据
     @objc public static let  XERR_NOT_AUTHORIZED = -10021               ///< 由于账号或密码不对，MQTT连接服务器失败
+    
+    //
+    // 呼叫系统相关错误
+    //
+    @objc public static let XERR_CALLKIT_BASE = -40000
+    @objc public static let XERR_CALLKIT_TIMEOUT = -40001                ///< 呼叫超时无响应
+    @objc public static let XERR_CALLKIT_DIAL = -40002                   ///< 呼叫拨号失败
+    @objc public static let XERR_CALLKIT_HANGUP = -40003                 ///< 呼叫挂断失败
+    @objc public static let XERR_CALLKIT_ANSWER = -40004                 ///< 呼叫接听失败
+    @objc public static let XERR_CALLKIT_REJECT = -40005                 ///< 呼叫拒绝失败
+    @objc public static let XERR_CALLKIT_PEER_BUSY = -40006              ///< 对端忙
+    @objc public static let XERR_CALLKIT_LOCAL_BUSY = -40007             ///< 本地端忙
+    @objc public static let XERR_CALLKIT_ERR_OPT = -40008                ///< 不支持的错误操作
+    
+    
+    
     //
     //
     // 账号相关错误
@@ -69,25 +85,6 @@ public class ErrCode : NSObject{
     @objc public static let XERR_ACCOUNT_GETCODE = -30011;               ///< 获取验证码失败
     @objc public static let XERR_ACCOUNT_USRINFO_QUERY = -30013;         ///< 查询用户信息失败
     @objc public static let XERR_ACCOUNT_USRINFO_UPDATE = -30014;        ///< 更新用户信息失败
-    //
-    // 呼叫系统相关错误
-    //
-    @objc public static let XERR_CALLKIT_BASE = -40000
-    @objc public static let XERR_CALLKIT_TIMEOUT = -40001                ///< 呼叫超时无响应
-    @objc public static let XERR_CALLKIT_DIAL = -40002                   ///< 呼叫拨号失败
-    @objc public static let XERR_CALLKIT_HANGUP = -40003                 ///< 呼叫挂断失败
-    @objc public static let XERR_CALLKIT_ANSWER = -40004                 ///< 呼叫接听失败
-    @objc public static let XERR_CALLKIT_REJECT = -40005                 ///< 呼叫拒绝失败
-    @objc public static let XERR_CALLKIT_PEER_BUSY = -40006              ///< 对端忙
-    @objc public static let XERR_CALLKIT_PEERTIMEOUT = -40007            ///< 对端超时无响应
-    @objc public static let XERR_CALLKIT_LOCAL_BUSY = -40008             ///< 本地端忙
-    @objc public static let XERR_CALLKIT_ERR_OPT = -40009                ///< 不支持的错误操作
-    @objc public static let XERR_CALLKIT_PEER_UNREG = -40010             ///< 对端未注册
-    @objc public static let XERR_CALLKIT_NO_APPID = -40011               ///< 未上报appid
-    @objc public static let XERR_CALLKIT_SAME_ID = -40012                ///< 主叫和被叫同一个id
-    @objc public static let XERR_CALLKIT_APPID_DIFF = -4001              ///< 主控和被控方app id不一致
-    @objc public static let XERR_CALLKIT_UPDATE_SHADOW_FAIL = -40013     ///<aws设备影子更新失败
-    @objc public static let XERR_CALLKIT_CREAT_RTCTOKEN_FAIL = -40014    ///<生成rtc token错误
     //
     // 设备管理相关错误
     //
