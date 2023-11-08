@@ -201,6 +201,10 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
         return mgr.stop(fileId: fileId)
     }
     
+    @objc public func stopGlobal() -> Int {
+        return mgr.stopGlobal()
+    }
+    
     @objc public func pause() -> Int {
         return mgr.pause()
     }

@@ -55,18 +55,15 @@ import Foundation
     @objc public var mStartTimestamp: UInt64 = 0                //录制开始时间，单位秒
     @objc public var mStopTimestamp: UInt64 = 0                 //录制结束时间，单位秒
     @objc public var mType: Int = 0                             //文件类型：0-文件、1-文件夹
-    @objc public var mEventList: Array<DevEventItem>            //是 EventItem结构的数组
     
     @objc public init(mFileId:String ,
                 mStartTimestamp:UInt64,
                 mStopTimestamp:UInt64,
-                mType:Int,
-                      mEventList:Array<DevEventItem>){
+                mType:Int){
         self.mFileId = mFileId
         self.mStartTimestamp = mStartTimestamp
         self.mStopTimestamp = mStopTimestamp
         self.mType = mType
-        self.mEventList = mEventList
     }
 }
 
@@ -301,6 +298,12 @@ import Foundation
      * @return 错误码
      */
     func stop(fileId: String)->Int
+    
+    /**
+    * @brief 停止时间轴播放，成功后切换到 DEVPLAYER_STATE_STOPPED 状态
+    * @return 错误码
+    */
+   func stopGlobal()->Int
     
     
     /**

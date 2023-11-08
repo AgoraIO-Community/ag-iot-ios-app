@@ -56,10 +56,10 @@ class IDevMediaManager : IDevMediaMgr{
         let commanId:String = "sd_query_record_group"
         let payloadParam = ["begin": queryParam.mBeginTimestamp,"end": queryParam.mEndTimestamp] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
-        sendGeneralDicData(paramDic, curTimestamp) { [weak self] errCode, result in
-            log.i("queryMediaGroupList code = \(errCode) resultString:\(result)")
-            if errCode == 0 {
-                queryListener(errCode,(self?.getDevMediaGroupResult(result))!)
+        sendGeneralDicData(paramDic, curTimestamp) { [weak self] errCode, resutDic in
+            log.i("queryMediaGroupList code = \(errCode) resultString:\(resutDic)")
+            if errCode == 0,let result = self?.getDevMediaGroupResult(resutDic)  {
+                queryListener(errCode,result)
             } else {
                 queryListener(errCode,[])
             }
@@ -70,8 +70,8 @@ class IDevMediaManager : IDevMediaMgr{
         
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:String = "sd_delete_record_group"
-        let payloadParam = ["fileIdList":deletingList] as [String : Any]
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
+//        let payloadParam = ["arr":deletingList] as [String : Any]
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": deletingList] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
             log.i("deleteMediaList resutArray:\(resutArray)")
             let fileList = resutArray["arr"] as? [Dictionary<String, Any>]
@@ -94,10 +94,10 @@ class IDevMediaManager : IDevMediaMgr{
         let commanId:String = "sd_query_record_file"
         let payloadParam = ["begin": queryParam.mBeginTimestamp,"end": queryParam.mEndTimestamp] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
-        sendGeneralDicData(paramDic, curTimestamp) { [weak self] errCode, resutArray in
-            log.i("queryMediaList resutArray:\(resutArray)")
-            if errCode == 0 {
-                queryListener(errCode,(self?.getDevMediaItemResult(resutArray))!)
+        sendGeneralDicData(paramDic, curTimestamp) { [weak self] errCode, resutDic in
+            log.i("queryMediaList resutDic:\(resutDic)")
+            if errCode == 0,let result = self?.getDevMediaItemResult(resutDic) {
+                queryListener(errCode, result)
             } else {
                 queryListener(errCode,[])
             }
@@ -111,9 +111,13 @@ class IDevMediaManager : IDevMediaMgr{
         let commanId:String = "sd_delete_record_file"
         let payloadParam = ["fileIdList":deletingList] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
-        sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
-            log.i("deleteMediaList resutArray:\(resutArray)")
-            deleteListener(errCode,(self?.getDeleteMediaResult(resutArray))!)
+        sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutDic in
+            log.i("deleteMediaList resutDic:\(resutDic)")
+            if errCode == 0,let result = self?.getDeleteMediaResult(resutDic) {
+                deleteListener(errCode, result)
+            } else {
+                deleteListener(errCode,[])
+            }
         }
 
     }
@@ -179,7 +183,7 @@ class IDevMediaManager : IDevMediaMgr{
     
         let curState = getPlayingState()
         playClock.setRunSpeed(playSpeed)
-        playClock.stopWithProgress(TimeInterval(startPos))
+        playClock.stopWithProgress(TimeInterval(startPos*1000))
 
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:String = "sd_play_video"
@@ -187,27 +191,38 @@ class IDevMediaManager : IDevMediaMgr{
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
             if curState == .stopped{
-                log.i("play(fileId）receive Msg:\(resultDic)")
+                log.i("play(fileId）receive Msg:\(resultDic)， errorcode：\(errCode)")
                 self?.startSDCardCall(errCode,resultDic)
             }else{
                 log.i("re play fileId:\(resultDic)")
-                self?.playClock.setProgress(TimeInterval(startPos))
+                self?.playClock.setProgress(TimeInterval(startPos*1000))
             }
         }
         return ErrCode.XOK
     }
     
     func stop(fileId: String) -> Int {
+        CallListenerManager.sharedInstance.hunUpSDCard { isSuc in }
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:String = "sd_stop_video"
         let payloadParam = ["id":fileId] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId , "param":payloadParam] as [String : Any]
         sendGeneralStringData(paramDic, curTimestamp) { errCode, resutArray in
-            if errCode == 0{
-                CallListenerManager.sharedInstance.hunUpSDCard { isSuc in }
-            }
+            if errCode == 0{ }
             log.i("stop:\(resutArray)")
             
+        }
+        return ErrCode.XOK
+    }
+    
+    func stopGlobal() -> Int {
+        CallListenerManager.sharedInstance.hunUpSDCard { isSuc in }
+        let curTimestamp:UInt32 = getSequenceId()
+        let commanId:String = "sd_stop_timeline_video"
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId ] as [String : Any]
+        sendGeneralStringData(paramDic, curTimestamp) { errCode, resutArray in
+            if errCode == 0{ }
+            log.i("stopGlobal:\(resutArray)")
         }
         return ErrCode.XOK
     }
@@ -267,12 +282,16 @@ class IDevMediaManager : IDevMediaMgr{
         let curTimestamp : UInt32 = getSequenceId()
         
         let commanId:String = "sd_download_record_file"
-        let payloadParam = ["fileIdList":filedIdList] as [String : Any]
+        let payloadParam = ["arr":filedIdList] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         
-        sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
-            log.i("DownloadMediaList resutArray:\(resutArray)")
-            onDownloadListener(errCode,(self?.getDownloadMediaResult(resutArray))!)
+        sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutDic in
+            log.i("DownloadMediaList resutDic:\(resutDic)")
+            if errCode == 0,let result = self?.getDownloadMediaResult(resutDic) {
+                onDownloadListener(errCode, result)
+            } else {
+                onDownloadListener(errCode,[])
+            }
         }
         
     }
@@ -287,7 +306,7 @@ class IDevMediaManager : IDevMediaMgr{
         sendGeneralDicData(paramDic, curTimestamp) { errCode, resutDic in
             log.i("queryEventTimeline resutArray:\(resutDic)")
             guard let timeList = resutDic["arr"] as? [UInt64] else{
-                onQueryEventListener(errCode,[0])
+                onQueryEventListener(errCode,[])
                 return
             }
             onQueryEventListener(errCode,timeList)
@@ -423,12 +442,13 @@ extension IDevMediaManager{
     
     func getDevMediaGroupResult(_ dic:Dictionary<String, Any>)->[DevMediaGroupItem]{
         guard let fileList = dic["arr"] as? [Dictionary<String, Any>] else{
-            return [DevMediaGroupItem(mStartTime: 0, mStopTime: 0, mPicUrl: "")]
+            // fix: 当存储卡中没有数据时，返回的数组应该为空
+            return []
         }
         var resultArray = [DevMediaGroupItem]()
         for item in fileList{
             let groupItem = DevMediaGroupItem(mStartTime: item["start"] as? UInt64 ?? 0, mStopTime: item["stop"] as? UInt64 ?? 0, mPicUrl: item["pic"] as? String ?? "")
-            resultArray.append(groupItem)
+            resultArray.insert(groupItem, at: 0)
         }
         return resultArray
     }
@@ -461,7 +481,7 @@ extension IDevMediaManager{
                 let endTime: UInt64 = startTime + duration
                 count = 0;
                 hexStr = ""
-                let medisItem = DevMediaItem.init(mFileId: "", mStartTimestamp: startTime, mStopTimestamp: endTime, mType: 0, mEventList: [])
+                let medisItem = DevMediaItem.init(mFileId: "\(startTime)_\(endTime)", mStartTimestamp: startTime, mStopTimestamp: endTime, mType: 0)
                 resultArray.append(medisItem)
             }
             count += 1
