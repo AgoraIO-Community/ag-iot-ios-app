@@ -29,6 +29,8 @@ class DeviceDetailVC: AGBaseVC {
     var curTraceId : UInt = 0//用来过滤多余的返回数据
     var curSessionId : String = ""
 
+    private var sDQueryPCtrlCallback:((Int,[DevMediaItem])->Void)? = {a,c in log.w("sDQueryPCtrlCallback not inited")}
+    
     lazy var topView:MainTopView = {
         let topView = MainTopView()
         topView.clickAddButtonAction = {[weak self] in
@@ -163,10 +165,11 @@ class DeviceDetailVC: AGBaseVC {
         let ret = sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId)
         print("------ret:\(String(describing: ret))")
         backAction()
+        sendCmdSDQueryPCtrl(cb: { code, result in })
     }
     
     func backAction(){
-        sdk?.release()
+//        sdk?.release()
         navigationController?.popViewController(animated: true)
     }
     
@@ -414,8 +417,18 @@ extension DeviceDetailVC { //呼叫设备
         
         let conResult = doorbellVM.connectDevice(connectParam) { [weak self] sessionId, act in
 
+            TDUserInforManager.shared.curSessionId = sessionId
             if(act == .onConnectDone){
+                debugPrint("connectDevice:连接完成")
                 self?.previewStart(sessionId: sessionId)
+                
+                
+//                self?.sendCmdSDQueryPCtrl(cb: { code, result in
+//                    
+//                })
+                
+            }else if(act == .onDisconnected){
+                debugPrint("connectDevice:连接断开")
             }
             
 //            cell?.handelCallStateText(true)
@@ -436,6 +449,26 @@ extension DeviceDetailVC { //呼叫设备
         if conResult.mErrCode == 0, conResult.mSessionId != ""{
             curSessionId = conResult.mSessionId
         }
+    }
+    
+    
+    func sendCmdSDQueryPCtrl(sessionId:String = "", cb:@escaping(Int,[DevMediaItem])->Void){
+   
+        var mediaMgr = getDevMediaMgr()
+        let param = QueryParam(mFileId: "0", mBeginTimestamp: 0, mEndTimestamp: 20)
+        mediaMgr?.queryMediaList(queryParam: param) { errCode, mediaList in
+            print("sendCmdSDQueryPCtrl:\(mediaList)")
+        }
+        
+//        mediaMgr?.queryMediaList(queryParam: param, queryListener: sDQueryPCtrlCallback!)
+//        mediaMgr = nil
+//        sDQueryPCtrlCallback = nil
+    
+    }
+    
+    func getDevMediaMgr()->IDevMediaMgr?{
+        let sessionId = TDUserInforManager.shared.curSessionId
+        return (sdk?.deviceSessionMgr.getDevMediaMgr(sessionId: sessionId))
     }
     
     func handelUserMembers(_ members:Int,_ sessionId:String){

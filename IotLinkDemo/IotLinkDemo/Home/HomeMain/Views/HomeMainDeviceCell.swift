@@ -65,6 +65,11 @@ class HomeMainDeviceCell: UITableViewCell {
         }
         logicView.logicFullScreenBlock = { [weak self] in
             self?.fullScreenBlock?(self?.indexPath ?? IndexPath(row: 0, section: 0))
+//            self?.configPeerView(self?.device?.sessionId ?? "")
+//            let  callkitMgr = (self?.sdk?.deviceSessionMgr.getDevPreviewMgr(sessionId: self?.device?.sessionId ?? ""))!
+//            let statusCode : Int = callkitMgr.setPeerVideoView(peerView: nil) ?? 0
+            
+            
         }
         
         return logicView

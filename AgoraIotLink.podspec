@@ -47,28 +47,31 @@ TODO: Add long description of the pod here.
   
   # s.vendored_frameworks ='AgoraIotSdk/Libs/*.framework','AgoraIotSdk/Libs/*.xcframework'
   
-  s.dependency 'Alamofire','5.6.0'
-#  s.dependency 'AWSMobileClient','2.27.6'
-#  s.dependency 'AWSIoT','2.27.6'
+#  s.dependency 'Alamofire','5.6.0'
 #'AgoraRtcEngine_iOS','4.2.0'     #'4.0.0-rc.1'#可解决4.0.1 jpeg视频收不到流问题
-#  'AgoraRtcEngine_iOS/RtcBasic'
-  s.dependency 'EMPush'
-  s.dependency 'AgoraRtcEngine_iOS', '4.2.0'
+
+  
+  #本地引入库的方式引入rtc
+#  s.vendored_frameworks = 'AgoraIotLink/AgoraRtc_iOS/*.xcframework','AgoraIotLink/ijk/IJKMediaFramework.framework'
+
+
+  s.dependency 'AgoraRtcEngine_iOS/RtcBasic', '4.2.0'
+  s.dependency 'AgoraRtcEngine_iOS/AIAEC', '4.2.0'
+  s.dependency 'AgoraRtcEngine_iOS/AINS', '4.2.0'
+  s.dependency 'AgoraRtcEngine_iOS/VideoCodecDec', '4.2.0'
+  s.dependency 'AgoraRtcEngine_iOS/VideoCodecEnc', '4.2.0'
+  
+  
   s.dependency 'AgoraRtm_iOS','1.5.0'
-  s.vendored_frameworks = 'AgoraIotLink/IJK/IJKMediaFramework.framework'
-#  s.dependency  'SJBaseVideoPlayer'
-#  s.dependency  'SJVideoPlayer'
+  s.vendored_frameworks = 'AgoraIotLink/ijk/IJKMediaFramework.framework'
   
   s.frameworks  = "AudioToolbox", "AVFoundation", "CoreGraphics", "CoreMedia", "CoreVideo", "MobileCoreServices", "OpenGLES", "QuartzCore", "VideoToolbox", "MediaPlayer"
   s.libraries   = "bz2", "z", "stdc++"
   
   
-#  s.ios.vendored_frameworks = 'AgoraIotLink/ijk/IJKMediaFramework.framework'
-#
-#  s.frameworks  = "AudioToolbox", "AVFoundation", "CoreGraphics", "CoreMedia", "CoreVideo", "MobileCoreServices", "OpenGLES", "QuartzCore", "VideoToolbox", "MediaPlayer"
-#  s.libraries   = "bz2", "z", "stdc++"
-  
-  
+#  s.dependency  'SJBaseVideoPlayer'
+#  s.dependency  'SJVideoPlayer'
+
 #  s.subspec 'SJBaseVideoPlayer'do | ss |
 #     ss.source_files = '../libs/SJBaseVideoPlayer/**/*.{swift,h,m}'
 #  end

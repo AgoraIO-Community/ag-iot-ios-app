@@ -220,11 +220,23 @@ extension DoorbellAbilitySimpleLogicView{
     
     //点击截图
     @objc func screenShot(btn : UIButton){
+//        guard let device = device, device.sessionId != "" else { return }
+//        DoorBellManager.shared.previewStart(sessionId: device.sessionId) {[weak self] sessionId, videoWidth, videoHeight in
+//            debugPrint("start:收到首帧")
+//        }
+//        return
+        
         shotScreen()
     }
     
     //点击全屏
     @objc func fullScreen(btn : UIButton){
+//        guard let device = device, device.sessionId != "" else { return }
+//        DoorBellManager.shared.previewStop(sessionId: device.sessionId) { suc, msg in
+//            debugPrint("previewStop:回调")
+//        }
+//        return
+        
         logicFullScreenBlock?()
     }
     
@@ -275,6 +287,9 @@ extension DoorbellAbilitySimpleLogicView{
                 btn.isSelected = !btn.isSelected
             }
          }
+        
+        logicFullScreenBlock?()
+       
 
     }
     

@@ -13,29 +13,6 @@ class CallListenerManager {
     var app  = Application.shared
     var mediaLister : MediaStateListener?
     
-    //todo:
-    var startConnectTime : TimeInterval = 0
-    var startTime : TimeInterval = 0
-    var endTime   : TimeInterval = 0
-    
-//    struct Static
-//    {
-//        static var instance: CallListenerManager?
-//    }
-//
-//    class var sharedInstance: CallListenerManager
-//    {
-//        if Static.instance == nil
-//        {
-//            Static.instance = CallListenerManager()
-//        }
-//
-//        return Static.instance!
-//    }
-//
-    static func destroy() {
-//        CallListenerManager.Static.instance = nil
-     }
     
     var callDict = [String:Any]()
     func startCall(sessionId:String,dialParam: ConnectParam,actionAck:@escaping(SessionCallback,_ sessionId:String,_ errCode:Int)->Void,memberState:((MemberState,[UInt],String)->Void)?){

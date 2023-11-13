@@ -259,7 +259,6 @@ extension CallStateListener : CallStateMachineListener{
             }
             else if(act == .VideoReady){
                 log.i("listener VideoReady uid:\(uid)")
-                let timeSpace = String.dateCurrentTime() - CallListenerManager.sharedInstance.startTime
                 if(self.callSession?.peerUid == uid){
                     if self.isIcoming == false{//主动呼叫
                         self.preViewlistener(self.callSession?.mSessionId ?? "",0,0)
@@ -340,7 +339,7 @@ extension CallStateListener{//rtm
     func renewRtmToken(){
         let token = callSession?.mRtmToken ?? ""
         let peerNodeId = callSession?.peerNodeId ?? ""
-        log.i("renewRtmToken:token\(token) peerNodeId：\(peerNodeId)")
+        log.i("renewRtmToken:peerNodeId：\(peerNodeId)")
         //rtm 更新token
         let rtm = app.proxy.rtm
         //rtm 更新token，可能重新连接不同的设备，peerNodeId也需要传入进行更行

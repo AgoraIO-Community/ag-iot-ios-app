@@ -10,11 +10,8 @@ class IDeviceSessionManager : IDeviceSessionMgr{
 
     func connect(connectParam: ConnectParam, sessionCallback: @escaping (SessionCallback, String, Int) -> Void, memberState: ((MemberState, [UInt], String) -> Void)?)->ConnectResult {
         
-        CallListenerManager.sharedInstance.startConnectTime = String.dateCurrentTime()
-        
         if CallListenerManager.sharedInstance.isCallTaking(connectParam.mPeerDevId) == true{
             log.i("---connect--device is already---:\(connectParam.mPeerDevId)")
-//            sessionCallback(.onError,"",ErrCode.XERR_CALLKIT_LOCAL_BUSY)
             let result = ConnectResult(mSessionId: "", mErrCode:ErrCode.XERR_CALLKIT_LOCAL_BUSY)
             return result
         }

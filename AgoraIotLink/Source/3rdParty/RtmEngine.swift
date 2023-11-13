@@ -152,7 +152,7 @@ class RtmEngine : NSObject{
     
     
     func enter(_ sess:RtmSession,_ uid:String,_ cb:@escaping (TaskResult,String)->Void){
-        log.i("rtm try enter with token:\(sess.token),local:\(uid)")
+        log.i("rtm try enter with loca uid:\(uid)")
         self.state = .ENTERING
         curSession = sess
         kit?.login(byToken: sess.token, user: uid) {[weak self] err in
@@ -172,7 +172,7 @@ class RtmEngine : NSObject{
     }
     
     func renewToken(_ token:String, _ peerNodeId:String){//刷新token
-        log.i("rtm renewToken:\(token) peerNodeId:\(peerNodeId)")
+        log.i("rtm renewToken peerNodeId:\(peerNodeId)")
         if peerNodeId != "" {//如果换了设备，则需要重新赋值peerNodeId，若当前设备token过期，则只需要刷新token
             curSession?.peerVirtualNumber = peerNodeId
         }

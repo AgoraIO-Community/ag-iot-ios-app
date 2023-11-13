@@ -36,6 +36,9 @@ target 'IotLinkDemo' do
   pod 'SwiftyRSA','1.7.0'
   pod 'CocoaMQTT','2.1.3'
   pod 'SDWebImage'
+  pod 'Alamofire','5.6.0'
+  
+#  pod 'AgoraRtcEngine_iOS', '4.2.0', :subspecs => ['RtcBasic']
   
   #--------AgoraIotLink--------
   pod 'AgoraIotLink',:path=>'../'
