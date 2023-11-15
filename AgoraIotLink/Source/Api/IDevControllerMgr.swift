@@ -46,6 +46,13 @@ import Foundation
     func sendCmdDevReset(cmdListener: @escaping (_ errCode:Int,_ result:String) -> Void)
     
     /**
+     * @brief 发送[通知sd卡上报当前状态]命令
+     * @param cmdListener: 命令完成回调
+     * @return 返回错误码
+     */
+    func sendCmdSdUpdateCurrentState(cmdListener: @escaping (_ errCode:Int,_ result:String) -> Void)
+    
+    /**
      * @brief 发送定制化的命令数据
      * @param customizeData: 上层自定义数据
      * @param cmdListener: 命令完成回调(errCode 返回错误码, result 返回数据)

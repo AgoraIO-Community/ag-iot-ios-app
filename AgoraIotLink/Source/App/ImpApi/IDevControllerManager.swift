@@ -52,8 +52,15 @@ class IDevControllerManager : IDevControllerMgr{
         let commanId:String = "sd_format"
         let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
         sendGeneralData(paramDic, curSequenceId,cmdListener)
- 
+    }
+    
+    func sendCmdSdUpdateCurrentState(cmdListener: @escaping (Int,String) -> Void){//通知SD卡上报当前状态
         
+        let curSequenceId : UInt32 = getSequenceId()
+        
+        let commanId:String = "sd_update_current_state"
+        let paramDic = ["sequenceId": curSequenceId, "commandId": commanId] as [String : Any]
+        sendGeneralData(paramDic, curSequenceId,cmdListener)
     }
     
     func sendCmdDevReset(cmdListener: @escaping (Int, String) -> Void) {//设备重启

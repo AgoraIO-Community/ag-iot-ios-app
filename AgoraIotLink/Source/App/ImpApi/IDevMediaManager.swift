@@ -70,8 +70,8 @@ class IDevMediaManager : IDevMediaMgr{
         
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:String = "sd_delete_record_group"
-//        let payloadParam = ["arr":deletingList] as [String : Any]
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": deletingList] as [String : Any]
+        let payloadParam = ["arr":deletingList] as [String : Any]
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
             log.i("deleteMediaList resutArray:\(resutArray)")
             let fileList = resutArray["arr"] as? [Dictionary<String, Any>]
@@ -109,7 +109,7 @@ class IDevMediaManager : IDevMediaMgr{
         
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:String = "sd_delete_record_file"
-        let payloadParam = ["fileIdList":deletingList] as [String : Any]
+        let payloadParam = ["arr":deletingList] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resutDic in
             log.i("deleteMediaList resutDic:\(resutDic)")

@@ -114,7 +114,7 @@ public class IDevPreviewManager : NSObject,IDevPreviewMgr{
 }
 
 public class IDevControllerManager : NSObject,IDevControllerMgr{
-
+    
     @objc public func sendCmdPtzCtrl(action: Int, direction: Int, speed: Int, cmdListener: @escaping (Int, String) -> Void) {
         return mgr.sendCmdPtzCtrl(action: action, direction: direction, speed: speed, cmdListener: cmdListener)
     }
@@ -129,6 +129,10 @@ public class IDevControllerManager : NSObject,IDevControllerMgr{
     
     @objc public func sendCmdDevReset(cmdListener: @escaping (Int, String) -> Void) {
         return mgr.sendCmdDevReset(cmdListener: cmdListener)
+    }
+    
+    @objc public func sendCmdSdUpdateCurrentState(cmdListener: @escaping (Int,String) -> Void){
+        return mgr.sendCmdSdUpdateCurrentState(cmdListener: cmdListener)
     }
     
     @objc public func sendCmdCustomize(customizeData: String, cmdListener: @escaping (Int, String) -> Void) {
