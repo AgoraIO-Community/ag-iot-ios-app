@@ -31,6 +31,33 @@ class DeviceDetailVC: AGBaseVC {
 
     private var sDQueryPCtrlCallback:((Int,[DevMediaItem])->Void)? = {a,c in log.w("sDQueryPCtrlCallback not inited")}
     
+    
+    private var originalTransform: CGAffineTransform! // 保存原始的变换
+    
+    
+    
+    //是否横屏
+    var isHorizonFull : Bool = false
+    
+    
+    override var shouldAutorotate: Bool {
+        return true
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask{
+        if isHorizonFull == true {
+            return .landscapeRight
+        }else{
+            return .portrait
+        }
+    }
+
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation{
+        return .portrait
+    }
+    
+    
+    
     lazy var topView:MainTopView = {
         let topView = MainTopView()
         topView.clickAddButtonAction = {[weak self] in
@@ -101,19 +128,44 @@ class DeviceDetailVC: AGBaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        checkLoginState()
-        addObserver()
+//        addObserver()
         addCustomBarButtonItem()
         setUpUI()
 //        initAgoraIot()
-        requestConDeviceParam()
-        // 监听网络状态
-        startListeningNetStatus()
-        loadPreConfig()
+        
+        //todo:拉流
+//        requestConDeviceParam()
+//        // 监听网络状态
+//        startListeningNetStatus()
+//        loadPreConfig()
+        
+        
+        
+//        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture(_:)))
+//        simplePeerView.addGestureRecognizer(pinchGesture)
+//        originalTransform = simplePeerView.transform // 保存原始的变换
+        
+        
+        let mediaMgr = getDevMediaMgr()
+        let ret = mediaMgr?.setDisplayView(displayView: simplePeerView)
+        sendCmdSDPlayCtrl()
+        
+        
         
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 //            self.requestConDeviceParam()
 //        }
     }
+    
+    @objc func handlePinchGesture(_ gesture: UIPinchGestureRecognizer) {
+            guard let view = gesture.view else { return }
+
+            if gesture.state == .changed {
+                view.transform = view.transform.scaledBy(x: gesture.scale, y: gesture.scale)
+                gesture.scale = 1.0
+            }
+    }
+    
     
     private func addCustomBarButtonItem() {
         navigationItem.leftBarButtonItem=UIBarButtonItem(image: UIImage(named: "doorbell_back")!.withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.plain, target: self, action: #selector(leftBtnDidClick))
@@ -162,10 +214,11 @@ class DeviceDetailVC: AGBaseVC {
     func releasePlayer(){
         
         print("releasePlayer:调用了")
-        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId)
-        print("------ret:\(String(describing: ret))")
+        sendCmdSDStopCtrl()
+//        let ret = sdk?.deviceSessionMgr.disconnect(sessionId:curSessionId)
+//        print("------ret:\(String(describing: ret))")
         backAction()
-        sendCmdSDQueryPCtrl(cb: { code, result in })
+//        sendCmdSDQueryPCtrl(cb: { code, result in })
     }
     
     func backAction(){
@@ -229,6 +282,7 @@ class DeviceDetailVC: AGBaseVC {
             make.left.right.equalToSuperview()
             make.height.equalTo(220)
         }
+        
     }
     
     // 监听网络状态
@@ -451,6 +505,19 @@ extension DeviceDetailVC { //呼叫设备
         }
     }
     
+    func sendCmdSDPlayCtrl(){
+   
+        let mediaMgr = getDevMediaMgr()
+        let ret = mediaMgr?.play(fileId: "file_id1", startPos: 0, playSpeed: 1, playingCallListener: self)
+        
+    }
+    
+    func sendCmdSDStopCtrl(){
+   
+        let mediaMgr = getDevMediaMgr()
+        mediaMgr?.stop()
+        
+    }
     
     func sendCmdSDQueryPCtrl(sessionId:String = "", cb:@escaping(Int,[DevMediaItem])->Void){
    
@@ -569,8 +636,6 @@ extension DeviceDetailVC{
     
     func goToFullVC(indexPath : IndexPath){//跳转全屏页
         
-        initAgoraIot()
-        return
         
 //        let device = mDevicesArray[indexPath.row]
 //        let cell = tableView.cellForRow(at: indexPath) as! HomeMainDeviceCell
@@ -615,16 +680,72 @@ extension DeviceDetailVC{ //设备删除，添加
     
     // 添加设备
     @objc private func addDevice(){
-        print("点击添加设备")
-        guard isDeviceEditing() == false else {
-            AGToolHUD.showInfo(info: "请将删除操作完成，再进行添加!")
-            return
+        print("点击恢复")
+        
+        UIView.animate(withDuration: 0.3) {
+            self.simplePeerView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
         }
-        AGEditAlertVC.showTitleTop("添加设备", editText: "",alertType:.modifyDeviceName ) {[weak self] nodeId in
-            self?.addDeviceToArray(nodeId)
-            print("-----\(nodeId)")
+        
+        simplePeerView.snp.updateConstraints{ make in
+            make.top.equalToSuperview().offset(100)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(220)
+        }
+        
+        
+
+        
+        
+        
+//        isHorizonFull = true
+        
+        
+//        guard isDeviceEditing() == false else {
+//            AGToolHUD.showInfo(info: "请将删除操作完成，再进行添加!")
+//            return
+//        }
+//        AGEditAlertVC.showTitleTop("添加设备", editText: "",alertType:.modifyDeviceName ) {[weak self] nodeId in
+//            self?.addDeviceToArray(nodeId)
+//            print("-----\(nodeId)")
+//        }
+    }
+    
+    //------屏幕转屏------
+    func changeToUnkonw(){
+        
+        let value = UIInterfaceOrientation.unknown.rawValue
+        if UIDevice.current.responds(to: #selector(setValue(_:forKey:))) {
+            UIDevice.current.setValue(value, forKey: "orientation")
+        }
+        
+    }
+    
+    func changeToVertical(){
+        
+        changeToUnkonw()
+        let value = UIInterfaceOrientation.portrait.rawValue
+        if UIDevice.current.responds(to: #selector(setValue(_:forKey:))) {
+            UIDevice.current.setValue(value, forKey: "orientation")
         }
     }
+    
+    func changeToHorizon(){
+        
+        changeToUnkonw()
+        let value = UIInterfaceOrientation.landscapeRight.rawValue
+        if UIDevice.current.responds(to: #selector(setValue(_:forKey:))) {
+            UIDevice.current.setValue(value, forKey: "orientation")
+//            UINavigationController.attemptRotationToDeviceOrientation()
+         }
+        
+    }
+    
+    
+    
+    
+    
+    
+    
     
     func addDeviceToArray(_ nodeId : String){
         
@@ -758,7 +879,7 @@ extension DeviceDetailVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
     func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
         let customView = UIView()
         let titleLabel = UILabel()
-        titleLabel.text = "暂无设备"
+        titleLabel.text = ""
         titleLabel.textColor = UIColor(hexRGB: 0x000000, alpha: 0.5)
         titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         customView.addSubview(titleLabel)
@@ -768,7 +889,7 @@ extension DeviceDetailVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
         }
         
         let button = UIButton(type: .custom)
-        button.setTitle("添加设备", for: .normal)
+        button.setTitle("恢复", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         button.setTitleColor(UIColor(hexRGB: 0x25DEDE), for: .normal)
         button.addTarget(self, action: #selector(addDevice), for: .touchUpInside)
@@ -794,4 +915,34 @@ extension DeviceDetailVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
         initAgoraIot()
 //        getDevicesArray()
     }
+}
+
+extension DeviceDetailVC: IPlayingCallbackListener {
+    
+    func onDevMediaOpenDone(fileId: String, errCode: Int) {
+        
+    }
+    
+    func onDevMediaPlayingDone(fileId: String) {
+        
+    }
+    
+    func onDevMediaPauseDone(fileId: String, errCode: Int) {
+        
+    }
+    
+    func onDevMediaResumeDone(fileId: String, errCode: Int) {
+        
+    }
+    
+    func onDevMediaSeekDone(fileId: String, errCode: Int, targetPos: UInt64, seekedPos: UInt64) {
+        
+    }
+    
+    func onDevPlayingError(fileId: String, errCode: Int) {
+        
+    }
+    
+    
+    
 }
