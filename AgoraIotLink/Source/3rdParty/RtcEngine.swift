@@ -128,10 +128,10 @@ extension RtcEngine{
     func videoRecoredHanle(_ isStart : Bool){
         
         if isStart == true{
-            debugPrint("videoRecoredHanle：开始录屏")
+            log.i("videoRecoredHanle：startRecored")
             videoRecordM.startWriter()
         }else{
-            debugPrint("videoRecoredHanle：停止录屏")
+            log.i("videoRecoredHanle：stopRecored")
             videoRecordM.stopWriter()
         }
         

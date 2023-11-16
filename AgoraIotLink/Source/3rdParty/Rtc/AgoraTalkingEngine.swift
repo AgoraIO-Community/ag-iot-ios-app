@@ -416,7 +416,7 @@ extension AgoraTalkingEngine{
     
     func startRecord(outFilePath:String,result: @escaping (Int, String) -> Void){
         
-        log.i("rtc try capturePeerVideoFrame ...")
+        log.i("rtc try startRecord ...")
         if(!peerEntered){
             log.i("startRecord: rtc peer not entered for capture")
             result(ErrCode.XERR_BAD_STATE,"rtc peer not joined")
@@ -428,6 +428,7 @@ extension AgoraTalkingEngine{
     }
 
     func stopRecord(result: @escaping (Int, String) -> Void){
+        log.i("rtc try stopRecord ...")
         
         rtc.stopRecord(channel: channelInfo?.cName ?? "", result: result)
 
@@ -453,13 +454,12 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
         log.i("rtc remote user didOfflineOfUid \(uid)")
         if uid == channelInfo?.peerUid{//只有设备端离线，状态才改变
             peerEntered = false
+            rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
+                log.i("didOfflineOfUid:stopRecord")
+            }
         }
         _onPeerAction(.Leave,uid)
         _memberState(.Leave,[uid])
-        rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
-            log.i("didOfflineOfUid:stopRecord")
-        }
-
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
@@ -487,11 +487,13 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, tokenPrivilegeWillExpire token: String) {
+        //Token 将在30s内过期回调
         log.w("rtc tokenPrivilegeWillExpire token:\(token)")
         _tokenWillExpire()
     }
 
     func rtcEngineRequestToken(_ engine: AgoraRtcEngineKit) {
+        //Token 已过期回调
         log.i("rtc rtcEngineRequestToken)")
         peerEntered = false
         _onPeerAction(.Leave,channelInfo?.peerUid ?? 0)
@@ -499,6 +501,7 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
         rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
             log.i("rtcEngineRequestToken:stopRecord")
         }
+
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode) {
