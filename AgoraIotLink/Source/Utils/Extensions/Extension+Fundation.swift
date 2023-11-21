@@ -56,6 +56,12 @@ public extension String {
         return timestamp
     }
     
+    static func dateCurrentIntTime()->Int {
+        let timeInterval: TimeInterval = Date().timeIntervalSince1970
+        let timestamp =  Int(timeInterval * 1000.0)
+        return timestamp
+    }
+    
     static func dateCurrentTime()->TimeInterval {
         let timeInterval: TimeInterval = Date().timeIntervalSince1970
         let timestamp =  timeInterval * 1000.0 //Int(timeInterval)

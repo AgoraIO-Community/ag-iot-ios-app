@@ -39,15 +39,18 @@ import AgoraRtmKit
 @objc public class RtmMsgObj : NSObject{
     
     @objc public var sequenceId: String = ""            //标记Id
+    @objc public var playingId: String = ""             //标记SD卡播放Id
     @objc public var  timeStamp: TimeInterval = 0       //标记时间戳
-    public typealias ReaultAck = (Int,Any)->Void     //返回类型，字符串
-    @objc public var msgObj :ReaultAck = {a,c in log.w("msgObj not inited")}
+    public typealias ReaultAck = (Int,String,Any)->Void     //返回类型，字符串
+    @objc public var msgObj :ReaultAck = {c,p,a in log.w("msgObj not inited")}
     
     @objc public init(sequenceId:String ,
+                      playingId:String ,
                       timeStamp:TimeInterval,
                       msgObj:@escaping ReaultAck
     ){
         self.sequenceId = sequenceId
+        self.playingId = playingId
         self.timeStamp = timeStamp
         self.msgObj = msgObj
     }
@@ -64,6 +67,13 @@ class RtmEngine : NSObject{
     private var state:RtmStatus  = .IDLED
     var timer: Timer?             //心跳定时器
     var curSession: RtmSession?
+    
+    var curPlayingId: String = ""        //当前SD卡播放ID
+    //--------sdcard播放及停止命令--------
+    let  sd_play_video: String = "sd_play_video"
+    let  sd_play_timeline_video: String = "sd_play_timeline_video"
+    let  sd_stop_video: String = "sd_stop_video"
+    let  sd_stop_timeline_video: String = "sd_stop_timeline_video"
 
     
     init(cfg:Config) {
@@ -293,12 +303,21 @@ class RtmEngine : NSObject{
         }
     }
     
+    private func sendCallStringback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,String)->Void){
+        let reMsg = getRtmSendMsg(e)
+        if(reMsg.errCode != ErrCode.XOK){
+            log.e("rtm send string message result:\(reMsg.msg)(\(reMsg) sequenceId:\(sequenceId))")
+            _completionMsgObjs[sequenceId] = nil
+            cb(reMsg.errCode,reMsg.msg)
+        }
+    }
+    
     private func setCallDicback(_ sequenceId:String,_ cb:@escaping(Int,Dictionary<String, Any>)->Void){
 
-        log.i("setCallDicback 开始 cb:\(String(describing: cb))")
-        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId, timeStamp: String.dateCurrentTime()) { code, result in
+        log.i("setCallDicback start")
+        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId,playingId: "", timeStamp: String.dateCurrentTime()) { code,playId,result in
             if let strResult = result as? Dictionary<String, Any>{
-                log.i("setCallDicback 结果)")
+                log.i("setCallDicback result:\(result)")
                 cb(code,strResult)
             }else{
                 cb(code,[:])
@@ -309,21 +328,12 @@ class RtmEngine : NSObject{
         
     }
     
-    private func sendCallStringback(_ sequenceId:String, _ e:AgoraRtmSendPeerMessageErrorCode,_ cb:@escaping(Int,String)->Void){
-        let reMsg = getRtmSendMsg(e)
-        if(reMsg.errCode != ErrCode.XOK){
-            log.e("rtm send string message result:\(reMsg.msg)(\(reMsg) sequenceId:\(sequenceId))")
-            _completionMsgObjs[sequenceId] = nil
-            cb(reMsg.errCode,reMsg.msg)
-        }
-    }
-    
     private func setCallStringback(_ sequenceId:String,_ cb:@escaping(Int,String)->Void){
 
-        log.i("setCallStringback 开始 cb:\(String(describing: cb))")
-        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId, timeStamp: String.dateCurrentTime()) { code, result in
+        log.i("setCallStringback start")
+        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId,playingId: "", timeStamp: String.dateCurrentTime()) { code,playId, result in
             if let strResult = result as? String{
-                log.i("setCallStringback 结果)")
+                log.i("setCallStringback result code:\(code)")
                 cb(code,strResult)
             }
         }
@@ -331,41 +341,14 @@ class RtmEngine : NSObject{
         log.i("setCallStringback  sequenceId:\(sequenceId) _completionBlocks:\(String(describing: _completionMsgObjs)) count:\(String(describing: _completionMsgObjs.count))")
         
     }
-    
-    func sendStringMessage(sequenceId:String, toPeer:String,message:String,cb:@escaping(Int,String)->Void){
-        guard let kit = kit else{
-            log.e("rtm engine is nil")
-            cb(ErrCode.XERR_BAD_STATE,"rtm not initialized")
-            return
-        }
-//        if(message.count >= config.maxRtmPackage){
-//            log.e("rtm package size(\(message.count) exceeds limit(\(config.maxRtmPackage)")
-//            cb(ErrCode.XERR_BUFFER_OVERFLOW,"rtm msg length overflow")
-//            return
-//        }
-        let package = AgoraRtmMessage(text: message)
-        let option = AgoraRtmSendMessageOptions()
-        option.enableOfflineMessaging = false
-        option.enableHistoricalMessaging = false
-        kit.send(package, toPeer: toPeer, sendMessageOptions: option) { ec in
-            if ec != .ok{
-                self.sendCallStringback(sequenceId,ec,cb)
-            }
-        }
-        setCallStringback(sequenceId, cb)
-        
-    }
+
     func sendRawMessage(sequenceId:String, toPeer:String,data:Data,description:String,cb:@escaping(Int,String)->Void){
         guard let kit = kit else{
             log.e("rtm engine is nil")
             cb(ErrCode.XERR_BAD_STATE,"rtm not initialized")
             return
         }
-//        if(data.count >= config.maxRtmPackage){
-//            log.e("rtm package size(\(data.count) exceeds limit(\(config.maxRtmPackage)")
-//            cb(ErrCode.XERR_BUFFER_OVERFLOW,"rtm msg length overfloat")
-//            return
-//        }
+
         let package = AgoraRtmRawMessage(rawData: data, description: description)
         let option = AgoraRtmSendMessageOptions()
         option.enableOfflineMessaging = false
@@ -384,11 +367,7 @@ class RtmEngine : NSObject{
             cb(ErrCode.XERR_BAD_STATE,[:])
             return
         }
-//        if(data.count >= config.maxRtmPackage){
-//            log.e("rtm package size(\(data.count) exceeds limit(\(config.maxRtmPackage)")
-//            cb(ErrCode.XERR_BUFFER_OVERFLOW,[:])
-//            return
-//        }
+
         let package = AgoraRtmRawMessage(rawData: data, description: description)
         let option = AgoraRtmSendMessageOptions()
         option.enableOfflineMessaging = false
@@ -441,6 +420,8 @@ class RtmEngine : NSObject{
                 }
                 // 根据sequenceId获取对应的闭包
                 let cbMsgObj = _completionMsgObjs["\(sequenceId)"]
+                // 获取SD卡回看中的playingId，若是其他控制命令，该字段为空
+                let playingId = cbMsgObj?.playingId ?? ""
    
                
                 //判断是否正确返回，code = 0
@@ -450,7 +431,7 @@ class RtmEngine : NSObject{
                         log.e("handelReceivedData: cbBlock nil )")
                         return
                     }
-                    cbBlock(dict["code"] as? Int ?? -1, "fail")
+                    cbBlock(dict["code"] as? Int ?? -1,playingId,"fail")
                     _completionMsgObjs["\(sequenceId)"] = nil
                     return
                 }
@@ -463,7 +444,7 @@ class RtmEngine : NSObject{
                             log.e("handelReceivedData: cbBlock nil )")
                             return
                         }
-                        cbBlock(code, resultDic)
+                        cbBlock(code,playingId, resultDic)
                         self?._completionMsgObjs["\(sequenceId)"] = nil
                     }
                 }else{
@@ -472,7 +453,7 @@ class RtmEngine : NSObject{
                             log.e("handelReceivedData: cbBlock nil )")
                             return
                         }
-                        cbBlock(code, "success")
+                        cbBlock(code,playingId,"success")
                         self?._completionMsgObjs["\(sequenceId)"] = nil
                     }
                     
@@ -482,41 +463,118 @@ class RtmEngine : NSObject{
                 log.e("rtm message type cast error")
             }
         }
-//        else if (message.type == .text){
-//
-//            let dict = String.getDictionaryFromJSONString(jsonString: message.text)
-//            log.i("handelReceivedData type:text dict: \(dict)")
-//            guard let sequenceId = dict["sequenceId"] as? UInt else {
-//                log.e("handelReceivedData: dict:\(dict))")
-//                return
-//            }
-//            // 根据sequenceId获取对应的闭包
-//            let completionBlock = _completionBlocks?["\(sequenceId)"]
-//            let completionDicBlock = _completionDicBlocks?["\(sequenceId)"]
-//
-//            guard let code = dict["code"] as? Int, code == 0 else{
-//                log.e("handelReceivedData: dict:\(dict))")
-//                completionBlock?(ErrCode.XERR_UNKNOWN, "")
-//                return
-//            }
-//
-//            if let resultDic = dict["data"] as? [String:Any] {
-//                DispatchQueue.main.async {
-//                    completionDicBlock?(ErrCode.XOK,resultDic)
-//                }
-//                _completionDicBlocks?["\(sequenceId)"] = nil
-//            }else{
-//                DispatchQueue.main.async {
-//                    completionBlock?(ErrCode.XOK, "success")
-//                }
-//                _completionBlocks?["\(sequenceId)"] = nil
-//            }
-//        }
         else{
             log.w("rtm unhandled messate type \(message.type)")
         }
         
     }
+
+}
+
+//sdCard播放命令相关
+extension RtmEngine{
+    
+    private func isSDPlayAction(_ cmdId: String)->Bool{
+        
+//        if cmdId == 2006  {
+//            return true
+//        }
+        if cmdId == sd_play_video || cmdId == sd_play_timeline_video{
+            return true
+        }
+        return false
+    }
+    
+    private func isSDStopAction(_ cmdId: String)->Bool{
+        
+//        if cmdId == 2007 {
+//            return true
+//        }
+        if cmdId == sd_stop_video || cmdId == sd_stop_timeline_video{
+            return true
+        }
+        return false
+    }
+    
+    private func isSDCurrentPlaying(_ playId: String)->Bool{
+        if  playId == curPlayingId {
+            return true
+        }
+        return false
+    }
+    
+    private func setCallMediaSDCardback(_ sequenceId:String,_ cmdId:String, _ cb:@escaping(Int,Dictionary<String, Any>)->Void){
+
+        log.i("setCallMediaSDCardback 开始 sequenceId:\(sequenceId)  cmdId:\(cmdId))")
+        var playingId = curPlayingId
+        
+        if isSDPlayAction(cmdId) == true  {
+            let curTimestamp:Int = String.dateCurrentIntTime()
+            playingId = "\(curTimestamp)" + "&" + "\(sequenceId)"
+            curPlayingId = playingId
+            log.i("curSDCardPlayingId:\(curPlayingId)")
+        }
+        if isSDStopAction(cmdId) == true {
+            playingId = ""
+            curPlayingId = ""
+        }
+        
+        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId,playingId: playingId, timeStamp: String.dateCurrentTime()) {[weak self] code,playId, result in
+            
+            guard self?.isSDCurrentPlaying(playId) == true else {
+                log.i("not current sdcard playing--- playId:\(playId) curSDCardPlayingId:\(String(describing: self?.curPlayingId))--- code:\(code) result:\(result)")
+                return
+            }
+            if let strResult = result as? Dictionary<String, Any>{
+                log.i("setCallMediaSDCardback result dic")
+                cb(code,strResult)
+            }else if let strResult = result as? String{
+                log.i("setCallMediaSDCardback result string")
+                cb(code,[:])
+            }else{
+                cb(code,[:])
+            }
+        }
+        _completionMsgObjs[sequenceId] = rtmMsgObj
+        log.i("setCallDicback  sequenceId:\(sequenceId) _completionBlocks:\(String(describing: _completionMsgObjs)) count:\(String(describing: _completionMsgObjs.count))")
+        
+    }
+    
+    func sendMediaSDPlayMessage(sequenceId:String, toPeer:String,param:[String:Any],description:String,cb:@escaping(Int,Dictionary<String, Any>)->Void){
+        guard let kit = kit else{
+            log.e("rtm engine is nil")
+            cb(ErrCode.XERR_BAD_STATE,[:])
+            return
+        }
+        
+//        guard let cmdId = param["commandId"] as? Int else {
+//            log.e("commandId is nil")
+//            cb(ErrCode.XERR_INVALID_PARAM,[:])
+//            return
+//        }
+        
+        guard let cmdId = param["commandId"] as? String else {
+            log.e("commandId is nil")
+            cb(ErrCode.XERR_INVALID_PARAM,[:])
+            return
+        }
+        
+        setCallMediaSDCardback(sequenceId,cmdId,cb)
+        
+        let jsonString = param.convertDictionaryToJSONString()
+        let data:Data = jsonString.data(using: .utf8) ?? Data()
+        
+        let package = AgoraRtmRawMessage(rawData: data, description: description)
+        let option = AgoraRtmSendMessageOptions()
+        option.enableOfflineMessaging = false
+        option.enableHistoricalMessaging = false
+        kit.send(package, toPeer: toPeer, sendMessageOptions: option) { ec in
+            if ec != .ok{
+                self.sendCallDicback(sequenceId,ec,cb)
+            }
+        }
+    }
+    
 }
 
 extension RtmEngine : AgoraRtmDelegate{
@@ -582,6 +640,7 @@ extension RtmEngine{
     }
 
     @objc func sendMessage() {
+        
         // 在这里实现发送消息的逻辑
         log.i("send heartbeat msg")
         guard let peer =  curSession?.peerVirtualNumber else{
@@ -633,7 +692,8 @@ extension RtmEngine{//超时处理
             let timeSpace = String.dateTimeSpaceMillion(lastTime)
             if timeSpace > commandTimeOut{
                 let callBack = obj.msgObj
-                callBack(ErrCode.XERR_TIMEOUT,"resut TimeOut")
+                let playingId = obj.playingId
+                callBack(ErrCode.XERR_TIMEOUT,playingId,"resut TimeOut")
                 keysToRemove.append(key)
             }
         }

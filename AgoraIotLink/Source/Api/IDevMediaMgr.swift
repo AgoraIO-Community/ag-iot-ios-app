@@ -1,3 +1,4 @@
+
 //
 //  IDevMediaMgr.swift
 //  AgoraIotLink
@@ -256,6 +257,20 @@ import Foundation
      */
     func getMediaCoverData(imgUrlList:[String],cmdListener: @escaping (_ errCode:Int, _ result:Any) -> Void)
     
+    /**
+     * @brief 根据媒体文件的filedId来下载设备端多个文件，该方法是异步调用，通过回调返回下载结果
+     * @param filedIdList: 要下载的 媒体文件filedId的列表,fileid建议为文件的绝对路径
+     * @param OnDownloadListener : 下载结果回调监听器
+     * @return 返回错误码
+     */
+    func DownloadFileList(filedIdList:[String], onDownloadListener: @escaping (Int,[DevFileDownloadResult]) -> Void)
+    
+    /**
+     * @brief 查询事件分布，该方法是异步调用，通过回调返回查询结果
+     * @param OnQueryEventListener : 查询结果回调监听器(errCode : 查询结果错误码，0标识查询成功,videoTimeList : 视频时间戳列表)
+     * @return 返回错误码
+     */
+    func queryEventTimeline(onQueryEventListener: @escaping (_ errCode:Int, _ videoTimeList : [UInt64]) -> Void)
     
     /**
      * @brief 设置播放器视频帧显示控件
@@ -339,20 +354,5 @@ import Foundation
       */
     func setAudioMute(mute:Bool,result:@escaping (Int,String)->Void)
     
-    /**
-     * @brief 根据媒体文件的filedId来下载设备端多个文件，该方法是异步调用，通过回调返回下载结果
-     * @param filedIdList: 要下载的 媒体文件filedId的列表,fileid建议为文件的绝对路径
-     * @param OnDownloadListener : 下载结果回调监听器
-     * @return 返回错误码
-     */
-    func DownloadFileList(filedIdList:[String], onDownloadListener: @escaping (Int,[DevFileDownloadResult]) -> Void)
-    
-    /**
-     * @brief 查询事件分布，该方法是异步调用，通过回调返回查询结果
-     * @param OnQueryEventListener : 查询结果回调监听器(errCode : 查询结果错误码，0标识查询成功,videoTimeList : 视频时间戳列表)
-     * @return 返回错误码
-     */
-    func queryEventTimeline(onQueryEventListener: @escaping (_ errCode:Int, _ videoTimeList : [UInt64]) -> Void)
-    
-    
+
 }

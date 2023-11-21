@@ -54,7 +54,7 @@ class IDevMediaManager : IDevMediaMgr{
     func queryMediaGroupList(queryParam: QueryParam, queryListener: @escaping (Int, [DevMediaGroupItem]) -> Void) {
         let curTimestamp:UInt32 = getSequenceId()
         let commanId:String = "sd_query_record_group"
-        let payloadParam = ["begin": queryParam.mBeginTimestamp,"end": queryParam.mEndTimestamp] as [String : Any]
+        let payloadParam = ["begin": queryParam.mBeginTimestamp,"end": queryParam.mEndTimestamp, "type": 0] as [String : Any]
         let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
         sendGeneralDicData(paramDic, curTimestamp) { [weak self] errCode, resutDic in
             log.i("queryMediaGroupList code = \(errCode) resultString:\(resutDic)")
@@ -135,148 +135,6 @@ class IDevMediaManager : IDevMediaMgr{
         
     }
     
-    func playTimeline(globalStartTime: UInt64, playSpeed: Int, playingCallListener: IPlayingCallbackListener)->Int {
-        
-        playStateListener = playingCallListener
-        
-        let curState = getPlayingState()
-        playClock.setRunSpeed(playSpeed)
-        playClock.stopWithProgress(TimeInterval(globalStartTime))
-        
-        let curTimestamp:UInt32 = getSequenceId()
-        let commanId:String = "sd_play_timeline_video"
-        let payloadParam = ["begin":globalStartTime,"rate":playSpeed] as [String : Any]
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
-        sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
-            if curState == .stopped{
-                self?.startSDCardCall(errCode,resultDic)
-            }
-            log.i("play globalStartTime: \(resultDic)")
-            
-        }
-        return ErrCode.XOK
-        
-    }
-    
-    func getCurrentTimelineOffset(queryTimeLineOffsetListener: @escaping (Int,UInt64)->Void) {
-        
-        let curState = getPlayingState()
-        let curTimestamp:UInt32 = getSequenceId()
-        let commanId:String = "sd_get_current_timeline_offset"
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId,] as [String : Any]
-        
-        sendGeneralDicData(paramDic, curTimestamp) { [weak self] errCode, resutDic in
-            log.i("getCurrentTimelineOffset code = \(errCode) resutDic:\(resutDic)")
-            guard let offset = resutDic["offset"] as? UInt64 else{
-                queryTimeLineOffsetListener(errCode,0)
-                return
-            }
-            queryTimeLineOffsetListener(errCode,offset)
-        }
-    }
-
-    func play(fileId: String, startPos: UInt64, playSpeed: Int, playingCallListener: IPlayingCallbackListener)->Int {
-        
-        log.i("play(fileId）send Msg:\(fileId) startPos:\(startPos)")
-        
-        playStateListener = playingCallListener
-    
-        let curState = getPlayingState()
-        playClock.setRunSpeed(playSpeed)
-        playClock.stopWithProgress(TimeInterval(startPos*1000))
-
-        let curTimestamp:UInt32 = getSequenceId()
-        let commanId:String = "sd_play_video"
-        let payloadParam = ["id":fileId,"offset":startPos,"rate":playSpeed] as [String : Any]
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
-        sendGeneralDicData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
-            if curState == .stopped{
-                log.i("play(fileId）receive Msg:\(resultDic)， errorcode：\(errCode)")
-                self?.startSDCardCall(errCode,resultDic)
-            }else{
-                log.i("re play fileId:\(resultDic)")
-                self?.playClock.setProgress(TimeInterval(startPos*1000))
-            }
-        }
-        return ErrCode.XOK
-    }
-    
-    func stop(fileId: String) -> Int {
-        CallListenerManager.sharedInstance.hunUpSDCard { isSuc in }
-        let curTimestamp:UInt32 = getSequenceId()
-        let commanId:String = "sd_stop_video"
-        let payloadParam = ["id":fileId] as [String : Any]
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId , "param":payloadParam] as [String : Any]
-        sendGeneralStringData(paramDic, curTimestamp) { errCode, resutArray in
-            if errCode == 0{ }
-            log.i("stop:\(resutArray)")
-            
-        }
-        return ErrCode.XOK
-    }
-    
-    func stopGlobal() -> Int {
-        CallListenerManager.sharedInstance.hunUpSDCard { isSuc in }
-        let curTimestamp:UInt32 = getSequenceId()
-        let commanId:String = "sd_stop_timeline_video"
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId ] as [String : Any]
-        sendGeneralStringData(paramDic, curTimestamp) { errCode, resutArray in
-            if errCode == 0{ }
-            log.i("stopGlobal:\(resutArray)")
-        }
-        return ErrCode.XOK
-    }
-    
-    func pause() -> Int {//暂停sd卡存播放
-        
-        if getPlayingState() != .playing{
-            return ErrCode.XERR_BAD_STATE
-        }
-         
-        let curTimestamp:UInt32 = getSequenceId()
-        let commanId:String = "sd_pause_video"
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
-        CallListenerManager.sharedInstance.pausingSDCardPlay()
-        sendGeneralStringData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
-            log.i("pause:\(resutArray)")
-            if errCode == ErrCode.XOK{
-                self?.playClock.stop()
-                CallListenerManager.sharedInstance.pausedSDCardPlay()
-                self?.playStateListener?.onDevMediaPauseDone(fileId: "", errCode: ErrCode.XOK)
-            }else{
-                CallListenerManager.sharedInstance.resumedSDCardPlay()
-                self?.playStateListener?.onDevMediaPauseDone(fileId: "", errCode: errCode)
-            }
-            
-        }
-        return ErrCode.XOK
-    }
-    
-    func resume() -> Int {//暂停后的恢复播放
-        if getPlayingState() != .paused{
-            return ErrCode.XERR_BAD_STATE
-        }
-        
-        let curTimestamp:UInt32 = getSequenceId()
-        let commanId:String = "sd_resume_video"
-        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
-        CallListenerManager.sharedInstance.resumeingSDCardPlay()
-        sendGeneralStringData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
-            log.i("resume:\(resutArray)")
-
-            if errCode == ErrCode.XOK{
-                self?.playClock.start()
-                CallListenerManager.sharedInstance.resumedSDCardPlay()
-                self?.playStateListener?.onDevMediaResumeDone(fileId: "", errCode: ErrCode.XOK)
-            }else{
-                CallListenerManager.sharedInstance.resumedSDCardPlay()
-                self?.playStateListener?.onDevMediaResumeDone(fileId: "", errCode: errCode)
-            }
-            
-        }
-        return ErrCode.XOK
-    }
-    
     func DownloadFileList(filedIdList:[String], onDownloadListener: @escaping (Int,[DevFileDownloadResult]) -> Void){
         
         let curTimestamp : UInt32 = getSequenceId()
@@ -313,6 +171,149 @@ class IDevMediaManager : IDevMediaMgr{
         }
     }
     
+    //------以下命令和sd卡播放相关------
+    func playTimeline(globalStartTime: UInt64, playSpeed: Int, playingCallListener: IPlayingCallbackListener)->Int {
+        
+        playStateListener = playingCallListener
+        
+        let curState = getPlayingState()
+        playClock.setRunSpeed(playSpeed)
+        playClock.stopWithProgress(TimeInterval(globalStartTime))
+        
+        let curTimestamp:UInt32 = getSequenceId()
+        let commanId:String = "sd_play_timeline_video"
+        let payloadParam = ["begin":globalStartTime,"rate":playSpeed] as [String : Any]
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
+        sendGeneralMediaPlayData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
+            if curState == .stopped{
+                self?.startSDCardCall(errCode,resultDic)
+            }
+            log.i("play globalStartTime: \(resultDic)")
+            
+        }
+        return ErrCode.XOK
+        
+    }
+    
+    func getCurrentTimelineOffset(queryTimeLineOffsetListener: @escaping (Int,UInt64)->Void) {
+        
+        let curState = getPlayingState()
+        let curTimestamp:UInt32 = getSequenceId()
+        let commanId:String = "sd_get_current_timeline_offset"
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId,] as [String : Any]
+        
+        sendGeneralMediaPlayData(paramDic, curTimestamp) { [weak self] errCode, resutDic in
+            log.i("getCurrentTimelineOffset code = \(errCode) resutDic:\(resutDic)")
+            guard let offset = resutDic["offset"] as? UInt64 else{
+                queryTimeLineOffsetListener(errCode,0)
+                return
+            }
+            queryTimeLineOffsetListener(errCode,offset)
+        }
+    }
+
+    func play(fileId: String, startPos: UInt64, playSpeed: Int, playingCallListener: IPlayingCallbackListener)->Int {
+        
+        log.i("play(fileId）send Msg:\(fileId) startPos:\(startPos)")
+        
+        playStateListener = playingCallListener
+    
+        let curState = getPlayingState()
+        playClock.setRunSpeed(playSpeed)
+        playClock.stopWithProgress(TimeInterval(startPos*1000))
+
+        let curTimestamp:UInt32 = getSequenceId()
+        let commanId:String = "sd_play_video"
+        let payloadParam = ["id":fileId,"offset":startPos,"rate":playSpeed] as [String : Any]
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId, "param": payloadParam] as [String : Any]
+        sendGeneralMediaPlayData(paramDic, curTimestamp) {[weak self] errCode, resultDic in
+            if curState == .stopped{
+                log.i("play(fileId）receive Msg:\(resultDic)， errorcode：\(errCode)")
+                self?.startSDCardCall(errCode,resultDic)
+            }else{
+                log.i("re play fileId:\(resultDic)")
+                self?.playClock.setProgress(TimeInterval(startPos*1000))
+            }
+        }
+        return ErrCode.XOK
+    }
+    
+    func stop(fileId: String) -> Int {
+        CallListenerManager.sharedInstance.hunUpSDCard { isSuc in }
+        let curTimestamp:UInt32 = getSequenceId()
+        let commanId:String = "sd_stop_video"
+        let payloadParam = ["id":fileId] as [String : Any]
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId , "param":payloadParam] as [String : Any]
+        sendGeneralMediaPlayData(paramDic, curTimestamp) { errCode, resutArray in
+            if errCode == 0{ }
+            log.i("stop:\(errCode)")
+            
+        }
+        return ErrCode.XOK
+    }
+    
+    func stopGlobal() -> Int {
+        CallListenerManager.sharedInstance.hunUpSDCard { isSuc in }
+        let curTimestamp:UInt32 = getSequenceId()
+        let commanId:String = "sd_stop_timeline_video"
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId ] as [String : Any]
+        sendGeneralMediaPlayData(paramDic, curTimestamp) { errCode, resutArray in
+            if errCode == 0{ }
+            log.i("stopGlobal:\(errCode)")
+        }
+        return ErrCode.XOK
+    }
+    
+    func pause() -> Int {//暂停sd卡存播放
+        
+        if getPlayingState() != .playing{
+            return ErrCode.XERR_BAD_STATE
+        }
+         
+        let curTimestamp:UInt32 = getSequenceId()
+        let commanId:String = "sd_pause_video"
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
+        CallListenerManager.sharedInstance.pausingSDCardPlay()
+        sendGeneralMediaPlayData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
+            log.i("pause:\(errCode)")
+            if errCode == ErrCode.XOK{
+                self?.playClock.stop()
+                CallListenerManager.sharedInstance.pausedSDCardPlay()
+                self?.playStateListener?.onDevMediaPauseDone(fileId: "", errCode: ErrCode.XOK)
+            }else{
+                CallListenerManager.sharedInstance.resumedSDCardPlay()
+                self?.playStateListener?.onDevMediaPauseDone(fileId: "", errCode: errCode)
+            }
+            
+        }
+        return ErrCode.XOK
+    }
+    
+    func resume() -> Int {//暂停后的恢复播放
+        if getPlayingState() != .paused{
+            return ErrCode.XERR_BAD_STATE
+        }
+        
+        let curTimestamp:UInt32 = getSequenceId()
+        let commanId:String = "sd_resume_video"
+        let paramDic = ["sequenceId": curTimestamp, "commandId": commanId] as [String : Any]
+        CallListenerManager.sharedInstance.resumeingSDCardPlay()
+        sendGeneralMediaPlayData(paramDic, curTimestamp) {[weak self] errCode, resutArray in
+            log.i("resume:\(errCode)")
+
+            if errCode == ErrCode.XOK{
+                self?.playClock.start()
+                CallListenerManager.sharedInstance.resumedSDCardPlay()
+                self?.playStateListener?.onDevMediaResumeDone(fileId: "", errCode: ErrCode.XOK)
+            }else{
+                CallListenerManager.sharedInstance.resumedSDCardPlay()
+                self?.playStateListener?.onDevMediaResumeDone(fileId: "", errCode: errCode)
+            }
+            
+        }
+        return ErrCode.XOK
+    }
+
     func setDisplayView(displayView: UIView?)->Int {
 
         self.peerDisplayView = displayView
@@ -351,6 +352,7 @@ class IDevMediaManager : IDevMediaMgr{
 
 extension IDevMediaManager{
     
+    //与SD卡播放无关的查询命令发送
     func sendGeneralDicData(_ paramDic:[String:Any],_ sequenceId:UInt32,_ cmdListener: @escaping (Int, Dictionary<String, Any>) -> Void){
         
         guard let peer =  rtm.curSession?.peerVirtualNumber else{
@@ -363,20 +365,15 @@ extension IDevMediaManager{
         rtm.sendRawMessageDic(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
     }
     
-    func sendGeneralStringData(_ paramDic:[String:Any],_ sequenceId:UInt32,_ cmdListener: @escaping (Int, String) -> Void){
+    //与SD卡播放相关的命令发送
+    func sendGeneralMediaPlayData(_ paramDic:[String:Any],_ sequenceId:UInt32,_ cmdListener: @escaping (Int, Dictionary<String, Any>) -> Void){
         
         guard let peer =  rtm.curSession?.peerVirtualNumber else{
             log.i("peerVirtualNumber is nil")
             return
         }
         
-        let jsonString = paramDic.convertDictionaryToJSONString()
-        let data:Data = jsonString.data(using: .utf8) ?? Data()
-        rtm.sendRawMessage(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
-        
-//        let jsonString = paramDic.convertDictionaryToJSONString()
-//        rtm.sendStringMessage(sequenceId: "\(sequenceId)", toPeer: peer, message: jsonString, cb: cmdListener)
-        
+        rtm.sendMediaSDPlayMessage(sequenceId: "\(sequenceId)", toPeer: peer, param: paramDic, description: "\(sequenceId)",cb: cmdListener)
     }
     
     func getSequenceId()->UInt32{
@@ -551,3 +548,4 @@ extension IDevMediaManager{
     
     
 }
+
