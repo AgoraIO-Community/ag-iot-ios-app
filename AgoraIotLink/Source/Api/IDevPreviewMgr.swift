@@ -117,10 +117,17 @@
      * @param result: 调用该接口是否成功
      */
     func mutePeerAudio(mute: Bool,result:@escaping(Int,String)->Void)
+    
+    /*
+      * @brief 设置本地推流的语音音量
+      * @param volume: 设置的语音音量，范围 [0, 400], 默认100(原始音量)，自带增益保护
+      * @return 错误码
+     */
+    func setLocalAudioVolume(volume: Int,result:@escaping(Int,String)->Void)
 
     /*
      * @brief 设置音频播放的音量
-     * @param volumeLevel: 音量级别
+     * @param volumeLevel: 音量级别，取值范围为 [0,400]。默认值为 100，表示原始音量
      * @param result: 调用该接口是否成功
      */
     func setPlaybackVolume(volumeLevel: Int,result:@escaping(Int,String)->Void)

@@ -59,9 +59,9 @@ class RtcEngine : NSObject{
         ret == 0 ? cb(ErrCode.XOK,"switch audio effect succ") : cb(ErrCode.XERR_UNKNOWN,"switch audio effect fail:" + String(ret))
     }
     
-    func setVolume(_ vol: Int,cb:@escaping (Int,String)->Void){
+    func setPlaybackVolume(_ volume: Int,cb:@escaping (Int,String)->Void){
         let rtcKit = getRtcObject()
-        let ret = rtcKit.setEffectsVolume(vol)
+        let ret = rtcKit.adjustPlaybackSignalVolume(volume)
         return ret == 0 ? cb(ErrCode.XOK,"unimplemented") : cb(ErrCode.XERR_UNSUPPORTED,"unimplemented")
     }
     
@@ -70,10 +70,10 @@ class RtcEngine : NSObject{
         let rtcKit = getRtcObject()
         let ret = rtcKit.setParameters(paramString)
         cb(Int(ret))
-        
     }
  
     func getRtcObject() -> AgoraRtcEngineKit {
+        
         return AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit()
     }
  

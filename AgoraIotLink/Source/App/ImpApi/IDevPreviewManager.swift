@@ -160,9 +160,19 @@ extension IDevPreviewManager{
         }
     }
     
+    func setLocalAudioVolume(volume: Int,result:@escaping (Int,String)->Void){
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("mutePeerAudio: talkingKit is nil")
+            return
+        }
+        DispatchQueue.main.async {
+            talkingKit.adjustRecordingSignalVolume(volume, cb: {ec,msg in self.asyncResult(ec, msg,result)})
+        }
+    }
+    
     func setPlaybackVolume(volumeLevel: Int,result:@escaping (Int,String)->Void){
         DispatchQueue.main.async {
-            self.rtc.setVolume(volumeLevel, cb: {ec,msg in self.asyncResult(ec, msg,result)})
+            self.rtc.setPlaybackVolume(volumeLevel, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
     }
     

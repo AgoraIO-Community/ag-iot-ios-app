@@ -77,6 +77,10 @@ public class IDevPreviewManager : NSObject,IDevPreviewMgr{
         return mgr.mutePeerAudio(mute: mute, result: result)
     }
     
+    @objc public func setLocalAudioVolume(volume: Int, result: @escaping (Int, String) -> Void) {
+        return mgr.setLocalAudioVolume(volume: volume, result: result)
+    }
+    
     @objc public func setPlaybackVolume(volumeLevel: Int, result: @escaping (Int, String) -> Void) {
         return mgr.setPlaybackVolume(volumeLevel: volumeLevel, result: result)
     }

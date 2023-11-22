@@ -370,7 +370,19 @@ extension AgoraTalkingEngine{
         ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     
-    
+    func adjustRecordingSignalVolume(_ volume:Int,cb:@escaping (Int,String)->Void){
+            
+         guard let rtcKit = rtcKit else {
+            log.e("rtc engine is nil")
+            cb(ErrCode.XERR_BAD_STATE,"\(volume) fail")
+            return
+         }
+            
+         let ret = rtcKit.adjustRecordingSignalVolumeEx(volume, connection: connection)
+            
+         ret == 0 ? cb(ErrCode.XOK,"adjust \(volume) succ") : cb(ErrCode.XERR_UNKNOWN,"adjust \(volume) fail:" + String(ret))
+            
+    }
     
     private func resetNetStatus(){
         _networkStatus.totalDuration       = 0
