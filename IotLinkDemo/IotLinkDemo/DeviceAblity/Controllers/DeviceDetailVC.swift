@@ -515,7 +515,7 @@ extension DeviceDetailVC { //呼叫设备
     func sendCmdSDStopCtrl(){
    
         let mediaMgr = getDevMediaMgr()
-        mediaMgr?.stop()
+//        mediaMgr?.stop()
         
     }
     

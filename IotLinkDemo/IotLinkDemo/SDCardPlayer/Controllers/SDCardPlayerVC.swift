@@ -205,10 +205,10 @@ class SDCardPlayerVC: AGBaseVC {
         let mediaMgr = getDevMediaMgr()
         // 更新进度条的进度
         let curTime = mediaMgr.getPlayingProgress()
-        print("更新进度条:  curTime:\(curTime)")
+//        print("更新进度条:  curTime:\(curTime)")
         let progress = Double(curTime)/Double(60000)
-        print("更新进度条:  progress:\(progress)")
-        print("index : \(index)")
+//        print("更新进度条:  progress:\(progress)")
+//        print("index : \(index)")
         progressSlider.value = Float(progress)
         if progress >= 0.99{
             if playbackTimer != nil {
@@ -390,7 +390,7 @@ extension SDCardPlayerVC{
     
     func sendCmdSDStopCtrl(){
    
-//        let mediaMgr = getDevMediaMgr()
+        let mediaMgr = getDevMediaMgr()
 //        mediaMgr.stop()
         
     }

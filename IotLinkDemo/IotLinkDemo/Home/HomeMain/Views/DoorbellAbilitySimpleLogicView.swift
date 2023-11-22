@@ -275,21 +275,33 @@ extension DoorbellAbilitySimpleLogicView{
             isShutAudio = false
         }
         
+        
+        if isShutAudio == true {
+            DoorBellManager.shared.previewStop(sessionId: device.sessionId) { success, msg in
+                if success{
+                    log.i("禁止拉流成功")
+                    btn.isSelected = !btn.isSelected
+                }
+            }
+        }else{
+            DoorBellManager.shared.previewStart(sessionId: device.sessionId, previewListener: { sessionId, w,h  in
+                log.i("拉流成功")
+                btn.isSelected = !btn.isSelected
+            })
+        }
+        
 //        DoorBellManager.shared.mutePeerAudio(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
 //            if success{
 //                log.i("设置静音成功")
 //                btn.isSelected = !btn.isSelected
 //            }
 //         }
-        DoorBellManager.shared.mutePeerVideo(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
-            if success{
-                log.i("设置视频成功")
-                btn.isSelected = !btn.isSelected
-            }
-         }
-        
-        logicFullScreenBlock?()
-       
+//        DoorBellManager.shared.mutePeerVideo(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
+//            if success{
+//                log.i("设置视频成功")
+////                btn.isSelected = !btn.isSelected
+//            }
+//         }
 
     }
     
@@ -335,6 +347,7 @@ extension DoorbellAbilitySimpleLogicView{
         toolBarView.handelCallSuccess(false)
         toolBarView.handleChangeSoundSuccess(false)
         toolBarView.handleRecordScreenBtnSuccess(false)
+        self.startRecord = false
     }
 }
 

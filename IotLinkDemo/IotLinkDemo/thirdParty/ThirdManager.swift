@@ -75,7 +75,7 @@ class ThirdAccountManager{
         static let  nodeActivate = "/iot-core/v2/secret-node/user/activate"
         
         //获取连接设备参数
-        static let  connectDevice = "/open-api/v2/iot-core/connect-device"
+        static let  connectDevice = "/iot/link/open-api/v2/iot-core/connect-device"
         
         
         struct Rsp:Decodable{
@@ -453,7 +453,7 @@ class ThirdAccountManager{
         }
         let header:HTTPHeaders = ["Authorization":"Basic \(base64LoginString)","Content-Type":"application/json;charset=utf-8"]
         let paramsDic = ["appId":keyCenter.AppId,"deviceNo":keyCenter.deviceId,"userId":"F6F0CF370FD68850C10AF3F8A2700563"]
-        let url = "https://api-test.sd-rtn.com/iot/cn" + api.connectDevice
+        let url = "https://api-test.sd-rtn.com/" + api.connectDevice //"https://api-test.sd-rtn.com/iot/cn"
         
 //        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in
 //
