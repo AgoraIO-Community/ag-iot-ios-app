@@ -25,7 +25,7 @@ open class Application{
         }
         
         Logger.shared.setLogFilePath(initParam.logFilePath ?? "")
-//        Logger.shared.removeAllAsync() //清除之前的日志文件
+        Logger.shared.removeAllAsync() //清除之前的日志文件
         
         let tempAppId = initParam.rtcAppId.substring(to: 1) + "*********************" + initParam.rtcAppId.substring(from: initParam.rtcAppId.count - 1)
         let projectId = initParam.projectId.substring(to: 1) + "*******" + initParam.projectId.substring(from: initParam.projectId.count - 1)

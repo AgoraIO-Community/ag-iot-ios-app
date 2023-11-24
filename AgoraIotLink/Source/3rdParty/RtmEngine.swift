@@ -219,6 +219,7 @@ class RtmEngine : NSObject{
         _customDataReceiveBack = nil
         _enterCallback = nil
         curSession = nil
+        curPlayingId = ""
 //        _completionBlocks = nil
 //        _completionDicBlocks = nil
         
@@ -242,19 +243,6 @@ class RtmEngine : NSObject{
                 cb(false)
             }
         }
-        
-            
-//            self?.sendLogoutCallback(err, cb)
-//            log.i("rtm try leaveChannel kit logout finished ...")
-            
-//            guard let strongSelf = self else{
-//                log.i("rtm try leaveChannel kit logout self nil ...")
-//                return
-//            }
-//            DispatchQueue.main.async {
-//                strongSelf.sendLogoutCallback(err, cb)
-//            }
-        
         
     }
     

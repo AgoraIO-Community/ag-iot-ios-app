@@ -33,7 +33,7 @@ class AgoraRtcEngineMgr: NSObject {
             return nil
         }
         if(setting.logFilePath != ""){
-            rtc.setLogFilter(AgoraLogFilter.info.rawValue)
+            rtc.setLogFilter(AgoraLogFilter.error.rawValue)
             rtc.setLogFile(setting.logFilePath)
         }
 
