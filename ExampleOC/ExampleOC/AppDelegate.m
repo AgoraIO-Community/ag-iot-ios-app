@@ -70,9 +70,9 @@
     
     
     
-    [[IotSdk.shared getVodPlayerMgr] openWithMediaUrl:@"" callback:^(NSInteger, UIView * _Nonnull) {
-        
-    }];
+//    [[IotSdk.shared getVodPlayerMgr] openWithMediaUrl:@"" callback:^(NSInteger, UIView * _Nonnull) {
+//        
+//    }];
 }
 
 -(void)sendControlCommand{//发送控制命令

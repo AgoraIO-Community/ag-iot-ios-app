@@ -242,51 +242,51 @@ public class IDevMediaManager : NSObject,IDevMediaMgr{
     
 }
 
-public class IVodPlayerManager : NSObject,IVodPlayerMgr{
-    
-    @objc public func open(mediaUrl: String, callback: @escaping (Int, UIView) -> Void) {
-        return mgr.open(mediaUrl: mediaUrl, callback: callback)
-    }
-    
-    @objc public func close() {
-        return mgr.close()
-    }
-    
-    @objc public func getPlayingProgress() -> Double {
-        return mgr.getPlayingProgress()
-    }
-    
-    @objc public func getPlayDuration() -> Double {
-        return mgr.getPlayDuration()
-    }
-    
-    public func getCurrentPlaybackTime() -> Double {
-        return mgr.getCurrentPlaybackTime()
-    }
-    
-    @objc public func play() {
-        return mgr.play()
-    }
-    
-    @objc public func pause() {
-        return mgr.pause()
-    }
-    
-    @objc public func stop() {
-        return mgr.stop()
-    }
-    
-    @objc public func seek(seekPos: Double) {
-        return mgr.seek(seekPos: seekPos)
-    }
-    
-    public init(mgr:IVodPlayerMgr) {
-        self.mgr = mgr
-    }
-    
-    let mgr:IVodPlayerMgr
-    
-}
+//public class IVodPlayerManager : NSObject,IVodPlayerMgr{
+//    
+//    @objc public func open(mediaUrl: String, callback: @escaping (Int, UIView) -> Void) {
+//        return mgr.open(mediaUrl: mediaUrl, callback: callback)
+//    }
+//    
+//    @objc public func close() {
+//        return mgr.close()
+//    }
+//    
+//    @objc public func getPlayingProgress() -> Double {
+//        return mgr.getPlayingProgress()
+//    }
+//    
+//    @objc public func getPlayDuration() -> Double {
+//        return mgr.getPlayDuration()
+//    }
+//    
+//    public func getCurrentPlaybackTime() -> Double {
+//        return mgr.getCurrentPlaybackTime()
+//    }
+//    
+//    @objc public func play() {
+//        return mgr.play()
+//    }
+//    
+//    @objc public func pause() {
+//        return mgr.pause()
+//    }
+//    
+//    @objc public func stop() {
+//        return mgr.stop()
+//    }
+//    
+//    @objc public func seek(seekPos: Double) {
+//        return mgr.seek(seekPos: seekPos)
+//    }
+//    
+//    public init(mgr:IVodPlayerMgr) {
+//        self.mgr = mgr
+//    }
+//    
+//    let mgr:IVodPlayerMgr
+//    
+//}
 
 public class IotSdk: NSObject {
     
@@ -317,8 +317,8 @@ public class IotSdk: NSObject {
         return IDeviceSessionManager(mgr:iotsdk.deviceSessionMgr)
     }
     
-    @objc public func getVodPlayerMgr()->IVodPlayerManager{
-        return IVodPlayerManager(mgr:iotsdk.vodPlayerMgr)
-    }
+//    @objc public func getVodPlayerMgr()->IVodPlayerManager{
+//        return IVodPlayerManager(mgr:iotsdk.vodPlayerMgr)
+//    }
 
 }

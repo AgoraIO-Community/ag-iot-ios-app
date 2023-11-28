@@ -63,7 +63,7 @@ open class IotAppSdk : IAgoraIotAppSdk{
     private  var _iotAppSdkManager : IotAppSdkManager? = nil
     
     private var _deviceSessionManager: IDeviceSessionMgr? = nil
-    private var _vodPlayerManager    : IVodPlayerMgr? = nil
+//    private var _vodPlayerManager    : IVodPlayerMgr? = nil
     
 //    private var _callkitManager: CallkitManager? = nil
 //    private var _accountManager : IAccountMgr? = nil
@@ -87,13 +87,13 @@ open class IotAppSdk : IAgoraIotAppSdk{
         
     }}
     
-    public var vodPlayerMgr: IVodPlayerMgr{get{
-        if(_vodPlayerManager == nil){
-            _vodPlayerManager = IVodPlayerManager()
-        }
-        return _vodPlayerManager!
-        
-    }}
+//    public var vodPlayerMgr: IVodPlayerMgr{get{
+//        if(_vodPlayerManager == nil){
+//            _vodPlayerManager = IVodPlayerManager()
+//        }
+//        return _vodPlayerManager!
+//        
+//    }}
     
     
     
