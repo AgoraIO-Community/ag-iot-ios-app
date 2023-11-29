@@ -43,10 +43,12 @@ open class IotAppSdk : IAgoraIotAppSdk{
         _iotAppSdkManager = nil
         app!.release()
         
-//        _deviceSessionManager = nil
-//        _vodPlayerManager = nil
-//        app = nil
     }
+    
+    public func registerLogListener(callback: @escaping (Int, String) -> Void) {
+        app?.registerLogListener(callback: callback)
+    }
+    
     
     func leaveRtm(){
         log.i("leaveRtm:")

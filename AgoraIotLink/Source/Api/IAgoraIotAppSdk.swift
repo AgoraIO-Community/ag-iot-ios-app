@@ -57,6 +57,12 @@ public protocol IAgoraIotAppSdk {
      * @brief 获取设备连接管理接口
      */
     var deviceSessionMgr: IDeviceSessionMgr{get}
+
+    /*
+     * @brief 输出SDK打印日志log
+     * @param callback：回调SDK打印的日志，参数1:日志级别,参数2:日志内容
+     */
+    func registerLogListener(callback:@escaping(Int,String)->Void)
     
     /*
      * @brief 获取云录播放器管理接口

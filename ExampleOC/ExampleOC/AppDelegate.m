@@ -120,7 +120,11 @@
     initParam.rtcAppId = @"67f4672937984023bf378863a6c1450e";
     initParam.projectId =@"4OJG85tCF";
     [IotSdk.shared initializeWithInitParam:initParam callback:(self)];
-
+    
+    [IotSdk.shared registerLogListenerWithCallback:^(NSInteger level, NSString * logText) {
+        
+    }];
+    
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     self.window.backgroundColor = UIColor.whiteColor;
     

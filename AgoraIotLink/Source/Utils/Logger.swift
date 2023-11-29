@@ -50,6 +50,7 @@ public class Logger: NSObject {
     public var ouput: LoggerOutput = .debuggerConsole
     public var showThread: Bool = false
     public var logFilePath: String = ""
+    private var _logCallback:((Int,String)->Void)? = nil
     
     // MARK: - Init
     private let isolationQueue = DispatchQueue(label: "com.crafttang.isolation", qos: .background)
@@ -127,6 +128,10 @@ public class Logger: NSObject {
         logFilePath = filePath
     }
     
+    func registerLogListener(callback:@escaping(Int,String)->Void){
+        _logCallback = callback
+    }
+    
     func removeAllAsync() {
         guard let url = logUrl else { return }
         DispatchQueue.global(qos: .userInitiated).async {
@@ -148,6 +153,9 @@ public class Logger: NSObject {
         
         let _fileName = fileName.split(separator: "/")
         let text = "\(level.name):\(showThread ? thread.description : "")\(tag ?? ""): \(message) at \(_fileName.last ?? "?")(\(lineNumber))"
+        
+        //返回日志到应用层
+        _logCallback?(level.rawValue,text)
         
         switch self.ouput {
             case .fileOnly:

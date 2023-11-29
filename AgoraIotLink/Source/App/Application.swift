@@ -94,6 +94,9 @@ open class Application{
         
     }
     
+    func registerLogListener(callback:@escaping(Int,String)->Void){
+        Logger.shared.registerLogListener(callback: callback)
+    }
     
 }
 

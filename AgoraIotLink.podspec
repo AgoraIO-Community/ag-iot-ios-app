@@ -63,10 +63,10 @@ TODO: Add long description of the pod here.
   
   
   s.dependency 'AgoraRtm_iOS','1.5.0'
-#  s.vendored_frameworks = 'AgoraIotLink/ijk/IJKMediaFramework.framework'
-#  
-#  s.frameworks  = "AudioToolbox", "AVFoundation", "CoreGraphics", "CoreMedia", "CoreVideo", "MobileCoreServices", "OpenGLES", "QuartzCore", "VideoToolbox", "MediaPlayer"
-#  s.libraries   = "bz2", "z", "stdc++"
+  s.vendored_frameworks = 'AgoraIotLink/ijk/IJKMediaFramework.framework'
+  
+  s.frameworks  = "AudioToolbox", "AVFoundation", "CoreGraphics", "CoreMedia", "CoreVideo", "MobileCoreServices", "OpenGLES", "QuartzCore", "VideoToolbox", "MediaPlayer"
+  s.libraries   = "bz2", "z", "stdc++"
   
   
 #  s.dependency  'SJBaseVideoPlayer'

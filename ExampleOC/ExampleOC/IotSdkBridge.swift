@@ -312,6 +312,16 @@ public class IotSdk: NSObject {
     @objc func deinitialize(){
         return iotsdk.release()
     }
+    
+    
+    /*
+     * @brief 输出SDK打印日志log
+     * @param callback：回调SDK打印的日志，参数1:日志级别,参数2:日志内容
+     */
+    @objc func registerLogListener(callback:@escaping(Int,String)->Void){
+        return iotsdk.registerLogListener(callback: callback)
+    }
+
 
     @objc public func getDeviceSessionMgr()->IDeviceSessionManager{
         return IDeviceSessionManager(mgr:iotsdk.deviceSessionMgr)
