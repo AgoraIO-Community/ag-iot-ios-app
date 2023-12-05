@@ -32,8 +32,8 @@ class AgoraRtcEngineMgr: NSObject {
             log.e("rtc create engine failed");
             return nil
         }
+        rtc.setLogFilter(AgoraLogFilter.error.rawValue)
         if(setting.logFilePath != ""){
-            rtc.setLogFilter(AgoraLogFilter.error.rawValue)
             rtc.setLogFile(setting.logFilePath)
         }
 
@@ -51,6 +51,10 @@ class AgoraRtcEngineMgr: NSObject {
         rtc.setEnableSpeakerphone(true)
         rtc.setClientRole(.broadcaster)
         rtc.setChannelProfile(.liveBroadcasting)
+        
+        //设置音频场景为gameStreaming，解决开麦和禁麦时声音忽大忽小的问题
+        rtc.setAudioScenario(.meeting)
+        
         
         return rtcKit
     }
