@@ -52,18 +52,18 @@ TODO: Add long description of the pod here.
 
   
   #本地引入库的方式引入rtc
-#  s.vendored_frameworks = 'AgoraIotLink/AgoraRtc_iOS/*.xcframework','AgoraIotLink/ijk/IJKMediaFramework.framework'
+  s.vendored_frameworks = 'AgoraIotLink/AgoraRtc_iOS/*.xcframework','AgoraIotLink/ijk/IJKMediaFramework.framework'
 
 
-  s.dependency 'AgoraRtcEngine_iOS/RtcBasic', '4.2.0'
-  s.dependency 'AgoraRtcEngine_iOS/AIAEC', '4.2.0'
-  s.dependency 'AgoraRtcEngine_iOS/AINS', '4.2.0'
-  s.dependency 'AgoraRtcEngine_iOS/VideoCodecDec', '4.2.0'
-  s.dependency 'AgoraRtcEngine_iOS/VideoCodecEnc', '4.2.0'
+#  s.dependency 'AgoraRtcEngine_iOS/RtcBasic', '4.2.0'
+#  s.dependency 'AgoraRtcEngine_iOS/AIAEC', '4.2.0'
+#  s.dependency 'AgoraRtcEngine_iOS/AINS', '4.2.0'
+#  s.dependency 'AgoraRtcEngine_iOS/VideoCodecDec', '4.2.0'
+#  s.dependency 'AgoraRtcEngine_iOS/VideoCodecEnc', '4.2.0'
   
   
   s.dependency 'AgoraRtm_iOS','1.5.0'
-  s.vendored_frameworks = 'AgoraIotLink/ijk/IJKMediaFramework.framework'
+#  s.vendored_frameworks = 'AgoraIotLink/ijk/IJKMediaFramework.framework'
   
   s.frameworks  = "AudioToolbox", "AVFoundation", "CoreGraphics", "CoreMedia", "CoreVideo", "MobileCoreServices", "OpenGLES", "QuartzCore", "VideoToolbox", "MediaPlayer"
   s.libraries   = "bz2", "z", "stdc++"
