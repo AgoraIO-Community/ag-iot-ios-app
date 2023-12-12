@@ -13,7 +13,9 @@ import Alamofire
 import MJRefresh
 import SVProgressHUD
 import SwiftDate
+import IJKMediaFramework
 
+import IMICoreFoundation
 
 // 网络监测通知
 let cNetChangeNotify = "cNetChangeNotify"
@@ -33,6 +35,7 @@ class HomePageMainVC: AGBaseVC {
     var curIndex : IndexPath?
     var curTraceId : UInt = 0//用来过滤多余的返回数据
 
+    var player:IJKFFMoviePlayerController?
 
     lazy var topView:MainTopView = {
         let topView = MainTopView()
@@ -88,6 +91,11 @@ class HomePageMainVC: AGBaseVC {
         checkLoginState()
         addObserver()
         setUpUI()
+        
+        //测试创米的调用
+        IMICodec.init(flag: 0, with: nil)
+        IMIMediaPlayer.init(flag: .input)
+        
         // 监听网络状态
         startListeningNetStatus()
 //        loadPreConfig()
@@ -532,6 +540,7 @@ extension HomePageMainVC{ //设备删除，添加
     
     // 添加设备
     @objc private func addDevice(){
+        
         print("点击添加设备")
         guard isDeviceEditing() == false else {
             AGToolHUD.showInfo(info: "请将删除操作完成，再进行添加!")
@@ -554,11 +563,14 @@ extension HomePageMainVC{ //设备删除，添加
     
     // 开始编辑
     private func beginEditList() {
-        for data in mDevicesArray {
-            data.canEdit = true
-        }
-        showSelectAllView()
-        tableView.reloadData()
+        
+        open(mediaUrl:"https://pro-stream-media.s3.cn-north-1.jdcloud-oss.com/iot-seven/5552f4d35f11cc50a258f2980fe2513e/537371700819892394_1702002978879_1037302373.m3u8?agora-key=MGFkOGY2MTUwMjMxMDY3NQ==")
+        
+//        for data in mDevicesArray {
+//            data.canEdit = true
+//        }
+//        showSelectAllView()
+//        tableView.reloadData()
     }
     
     // 结束编辑
@@ -589,6 +601,7 @@ extension HomePageMainVC{ //设备删除，添加
     }
     
     private func didClickDeleteButton()  {
+        
         // 选中的数量大于0
         if selectedIsNotEmpty() {
             selectAllView.disabled = true
@@ -712,3 +725,92 @@ extension HomePageMainVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
     }
 }
 
+
+
+extension HomePageMainVC{ //ijk播放裸库测试
+    
+    
+    func open(mediaUrl: String) {
+        
+        IJKFFMoviePlayerController.setLogReport(false)
+        IJKFFMoviePlayerController.setLogLevel(k_IJK_LOG_ERROR)
+        
+        var url:URL?
+        if mediaUrl.hasPrefix("http") || mediaUrl.hasPrefix("rtmp") {
+            url = URL(string: mediaUrl)
+        }
+        else {
+            url = URL(fileURLWithPath: mediaUrl)
+        }
+        
+        guard let url = url else {
+            return
+        }
+        
+        guard let options = IJKFFOptions.byDefault() else {
+            return
+        }
+        
+        self.player = IJKFFMoviePlayerController.init(contentURL: url, with: options)
+        self.player?.view.autoresizingMask = [.flexibleWidth,.flexibleHeight]
+        self.player?.scalingMode = .aspectFit
+        self.player?.shouldAutoplay = false
+        
+//        self.view.addSubview((self.player?.view)!)
+//        self.player?.view.snp.makeConstraints({ make in
+//            make.top.equalTo(100)
+//            make.left.right.equalToSuperview()
+//            make.bottom.equalTo(-100)
+//        })
+        installObserver()
+        prepareToPlay()
+         
+    }
+    
+    func prepareToPlay() {
+        
+        print("prepareToPlay: crurent thread：\(Thread.current)")
+        self.player?.prepareToPlay()
+        
+//        DispatchQueue.global().async {
+//            print("prepareToPlay: 当前线程：\(Thread.current)")
+//            self.player?.prepareToPlay()
+//        }
+        
+    }
+    
+    func play() {
+        
+        print("play------")
+        self.player?.play()
+        self.player?.playbackRate = 1.0
+        
+//        let progressValue = self.player?.currentPlaybackTime/self.player?.duration
+    }
+    
+    func installObserver(){
+        NotificationCenter.default.addObserver(self, selector: #selector(mediaIsPreparedToPlayDidChange), name: NSNotification.Name.IJKMPMediaPlaybackIsPreparedToPlayDidChange, object: nil)
+    }
+    
+    func stop() {
+        self.player?.stop()
+        DispatchQueue.global().async {}
+        self.player?.shutdown()
+        self.player?.view.removeFromSuperview()
+        self.player = nil
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc func mediaIsPreparedToPlayDidChange(notification:NSNotification){
+        print("ijk mediaIsPreparedToPlayDidChange")
+        self.view.addSubview((self.player?.view)!)
+        self.player?.view.snp.makeConstraints({ make in
+            make.top.equalTo(350)
+            make.left.equalTo(0)
+            make.right.equalTo(0)
+            make.bottom.equalTo(-80)
+        })
+        
+        self.play()
+    }
+}

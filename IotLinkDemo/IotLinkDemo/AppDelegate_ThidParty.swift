@@ -45,6 +45,10 @@ extension AppDelegate{
             log.e("initialize failed")
         }
         
+        sdk?.registerLogListener(callback: { level, logTest in
+            print("🐶🐶🐶registerLogListener: level:\(level) log:\(logTest)\n")
+        })
+        
         
         
         

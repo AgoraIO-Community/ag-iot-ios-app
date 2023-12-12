@@ -24,10 +24,10 @@ class VodPlayerMainVC: AGBaseVC {
     }
     
     func setUpUI(){
-        // 设置进度条
-        progressSlider = UISlider(frame: CGRect(x: 30, y: view.bounds.height - 300, width: view.bounds.width-60, height: 30))
-        progressSlider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
-        view.addSubview(progressSlider)
+//        // 设置进度条
+//        progressSlider = UISlider(frame: CGRect(x: 30, y: view.bounds.height - 300, width: view.bounds.width-60, height: 30))
+//        progressSlider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
+//        view.addSubview(progressSlider)
         
         view.addSubview(vodDisplayView)
         vodDisplayView.snp.makeConstraints { make in
@@ -62,85 +62,85 @@ class VodPlayerMainVC: AGBaseVC {
         btn.setTitle("播放", for:.normal)
         btn.setTitle("暂停", for:.selected)
         btn.tag = 1002
-        btn.addTarget(self, action: #selector(playClick(btn:)), for: .touchUpInside)
+//        btn.addTarget(self, action: #selector(playClick(btn:)), for: .touchUpInside)
         return btn
     }()
 
 }
 
-extension VodPlayerMainVC{
-    
-    func openVodPlayer(){
-        
-        //https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8
-        AGToolHUD.showNetWorkWait()
-        sdk?.vodPlayerMgr.open(mediaUrl: "http://cloud-store-test.s3.cn-east-1.jdcloud-oss.com/ts-muxer.m3u8", callback: { [weak self] errCode, displayView in
-            AGToolHUD.disMiss()
-            self?.setDisPlayView(displayView)
-            sdk?.vodPlayerMgr.play()
-            self?.isOpen = true
-        })
-        
-//        let vFrame = CGRect(x: 0, y: 0, width: ScreenWidth, height: 200)
-//        sdk?.vodPlayerMgr.setDisplayView(vodDisplayView, vFrame)
-        
-    }
-    
-    @objc func playClick(btn : UIButton){
-        if btn.isSelected == false {
-            if isOpen == false {
-                openVodPlayer()
-            }else{
-                sdk?.vodPlayerMgr.play()
-            }
-            // 启动 Timer 每秒钟更新一次进度条
-            playbackTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateProgressBar), userInfo: nil, repeats: true)
-        }else{
-            
-            sdk?.vodPlayerMgr.pause()
-            playbackTimer?.invalidate()
-            playbackTimer = nil
-            
-//            sdk?.vodPlayerMgr.stop()
-//            sdk?.vodPlayerMgr.close()
-//            isOpen = false
-     
-        }
-        btn.isSelected = !btn.isSelected
-    }
-    
-    @objc private func updateProgressBar() {
-
-        // 更新进度条的进度
-        let progress = (sdk?.vodPlayerMgr.getPlayingProgress())!
-        progressSlider.value = Float(progress)
-        if progress >= 1{
-            if playbackTimer != nil {
-                playbackTimer?.invalidate()
-                playbackTimer = nil
-            }
-            playBtn.isSelected = !playBtn.isSelected
-        }
-        print("更新进度条:  progress:\(progress)")
-        
-    }
-
-    
-    // 监听进度条值的变化
-    @objc func progressSliderValueChanged(_ slider: UISlider) {
-        let duration = (sdk?.vodPlayerMgr.getPlayDuration())!
-        let targetTime  = Double(slider.value) * duration
-        let ret = sdk?.vodPlayerMgr.seek(seekPos: targetTime)
- 
-    }
-    
-    func setDisPlayView(_ displayView:UIView){
-        vodDisplayView.addSubview(displayView)
-        displayView.snp.makeConstraints { make in
-            make.top.equalTo(0)
-            make.left.right.equalTo(0)
-            make.height.equalTo(200)
-        }
-    }
-    
-}
+//extension VodPlayerMainVC{
+//    
+//    func openVodPlayer(){
+//        
+//        //https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8
+//        AGToolHUD.showNetWorkWait()
+//        sdk?.vodPlayerMgr.open(mediaUrl: "http://cloud-store-test.s3.cn-east-1.jdcloud-oss.com/ts-muxer.m3u8", callback: { [weak self] errCode, displayView in
+//            AGToolHUD.disMiss()
+//            self?.setDisPlayView(displayView)
+//            sdk?.vodPlayerMgr.play()
+//            self?.isOpen = true
+//        })
+//        
+////        let vFrame = CGRect(x: 0, y: 0, width: ScreenWidth, height: 200)
+////        sdk?.vodPlayerMgr.setDisplayView(vodDisplayView, vFrame)
+//        
+//    }
+//    
+//    @objc func playClick(btn : UIButton){
+//        if btn.isSelected == false {
+//            if isOpen == false {
+//                openVodPlayer()
+//            }else{
+//                sdk?.vodPlayerMgr.play()
+//            }
+//            // 启动 Timer 每秒钟更新一次进度条
+//            playbackTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateProgressBar), userInfo: nil, repeats: true)
+//        }else{
+//            
+//            sdk?.vodPlayerMgr.pause()
+//            playbackTimer?.invalidate()
+//            playbackTimer = nil
+//            
+////            sdk?.vodPlayerMgr.stop()
+////            sdk?.vodPlayerMgr.close()
+////            isOpen = false
+//     
+//        }
+//        btn.isSelected = !btn.isSelected
+//    }
+//    
+//    @objc private func updateProgressBar() {
+//
+//        // 更新进度条的进度
+//        let progress = (sdk?.vodPlayerMgr.getPlayingProgress())!
+//        progressSlider.value = Float(progress)
+//        if progress >= 1{
+//            if playbackTimer != nil {
+//                playbackTimer?.invalidate()
+//                playbackTimer = nil
+//            }
+//            playBtn.isSelected = !playBtn.isSelected
+//        }
+//        print("更新进度条:  progress:\(progress)")
+//        
+//    }
+//
+//    
+//    // 监听进度条值的变化
+//    @objc func progressSliderValueChanged(_ slider: UISlider) {
+//        let duration = (sdk?.vodPlayerMgr.getPlayDuration())!
+//        let targetTime  = Double(slider.value) * duration
+//        let ret = sdk?.vodPlayerMgr.seek(seekPos: targetTime)
+// 
+//    }
+//    
+//    func setDisPlayView(_ displayView:UIView){
+//        vodDisplayView.addSubview(displayView)
+//        displayView.snp.makeConstraints { make in
+//            make.top.equalTo(0)
+//            make.left.right.equalTo(0)
+//            make.height.equalTo(200)
+//        }
+//    }
+//    
+//}

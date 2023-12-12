@@ -362,9 +362,9 @@ extension DeviceDetailVC: UITableViewDelegate, UITableViewDataSource {
 extension DeviceDetailVC { //vodPlayer
     
     func openVodPlayer(){
-        sdk?.vodPlayerMgr.open(mediaUrl: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8", callback: { [weak self] errCode, displayView in
-            self?.setDisPlayView(displayView)
-        })
+//        sdk?.vodPlayerMgr.open(mediaUrl: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8", callback: { [weak self] errCode, displayView in
+//            self?.setDisPlayView(displayView)
+//        })
         
 //        view.addSubview(vodDisplayView)
 //        vodDisplayView.snp.makeConstraints { make in

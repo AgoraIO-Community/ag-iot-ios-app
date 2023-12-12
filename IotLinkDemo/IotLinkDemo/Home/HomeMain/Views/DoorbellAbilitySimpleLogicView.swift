@@ -276,26 +276,26 @@ extension DoorbellAbilitySimpleLogicView{
         }
         
         
-        if isShutAudio == true {
-            DoorBellManager.shared.previewStop(sessionId: device.sessionId) { success, msg in
-                if success{
-                    log.i("禁止拉流成功")
-                    btn.isSelected = !btn.isSelected
-                }
-            }
-        }else{
-            DoorBellManager.shared.previewStart(sessionId: device.sessionId, previewListener: { sessionId, w,h  in
-                log.i("拉流成功")
-                btn.isSelected = !btn.isSelected
-            })
-        }
-        
-//        DoorBellManager.shared.mutePeerAudio(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
-//            if success{
-//                log.i("设置静音成功")
-//                btn.isSelected = !btn.isSelected
+//        if isShutAudio == true {
+//            DoorBellManager.shared.previewStop(sessionId: device.sessionId) { success, msg in
+//                if success{
+//                    log.i("禁止拉流成功")
+//                    btn.isSelected = !btn.isSelected
+//                }
 //            }
-//         }
+//        }else{
+//            DoorBellManager.shared.previewStart(sessionId: device.sessionId, previewListener: { sessionId, w,h  in
+//                log.i("拉流成功")
+//                btn.isSelected = !btn.isSelected
+//            })
+//        }
+        
+        DoorBellManager.shared.mutePeerAudio(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
+            if success{
+                log.i("设置静音成功")
+                btn.isSelected = !btn.isSelected
+            }
+         }
 //        DoorBellManager.shared.mutePeerVideo(sessionId:device.sessionId ,mute: isShutAudio) { success, msg in
 //            if success{
 //                log.i("设置视频成功")
@@ -356,9 +356,9 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
     
     func recordScreenPre(){
         
-//        //测试文件转码下载
+        //测试文件转码下载
 //        openDownLoadManger()
-        
+
         //todo:暂时注释
         if fetchPHAuthorization() == true{
             recordScreen()
@@ -404,9 +404,9 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         let pathString = getTempVideoUrl()
         cvtParam.mDstFilePath = pathString
         //"https://stream-media.s3.cn-north-1.jdcloud-oss.com/0000000/output.m3u8"
-        cvtParam.mSrcFileUrl = "https://stream-media.s3.cn-north-1.jdcloud-oss.com/0000000/output.m3u8"
+        cvtParam.mSrcFileUrl = "https://stream-media.s3.cn-north-1.jdcloud-oss.com/iot-seven/ae9c86ac79816978b3031391670c99e8/868361698116937322_1700704010834_2140881274.m3u8?agora-key=OTYyZjcxZWVlMWYyNjEwMQ=="
         AvConverManager.shared()?.convert(with:cvtParam, onMediaCvtOpenDoneBlock: { reParam, errCode in
-            debugPrint("openDownLoadManger:文件打开成功")
+            debugPrint("openDownLoadManger:文件打开完成:\(errCode)")
         }, onMediaConvertingDoneBlock: { reParam, durtion in
             debugPrint("openDownLoadManger:文件转换完成")
         }, onMediaConvertingError: { reParam, errCode in
@@ -543,3 +543,4 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
      }
     
 }
+
