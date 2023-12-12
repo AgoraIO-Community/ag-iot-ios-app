@@ -39,17 +39,20 @@ import AgoraRtmKit
 @objc public class RtmMsgObj : NSObject{
     
     @objc public var sequenceId: String = ""            //标记Id
+    @objc public var cmdName: String = ""               //cmd name
     @objc public var playingId: String = ""             //标记SD卡播放Id
     @objc public var  timeStamp: TimeInterval = 0       //标记时间戳
     public typealias ReaultAck = (Int,String,Any)->Void     //返回类型，字符串
     @objc public var msgObj :ReaultAck = {c,p,a in log.w("msgObj not inited")}
     
     @objc public init(sequenceId:String ,
+                      cmdName:String,
                       playingId:String ,
                       timeStamp:TimeInterval,
                       msgObj:@escaping ReaultAck
     ){
         self.sequenceId = sequenceId
+        self.cmdName = cmdName
         self.playingId = playingId
         self.timeStamp = timeStamp
         self.msgObj = msgObj
@@ -219,7 +222,6 @@ class RtmEngine : NSObject{
         _customDataReceiveBack = nil
         _enterCallback = nil
         curSession = nil
-        curPlayingId = ""
 //        _completionBlocks = nil
 //        _completionDicBlocks = nil
         
@@ -243,6 +245,19 @@ class RtmEngine : NSObject{
                 cb(false)
             }
         }
+        
+            
+//            self?.sendLogoutCallback(err, cb)
+//            log.i("rtm try leaveChannel kit logout finished ...")
+            
+//            guard let strongSelf = self else{
+//                log.i("rtm try leaveChannel kit logout self nil ...")
+//                return
+//            }
+//            DispatchQueue.main.async {
+//                strongSelf.sendLogoutCallback(err, cb)
+//            }
+        
         
     }
     
@@ -300,10 +315,10 @@ class RtmEngine : NSObject{
         }
     }
     
-    private func setCallDicback(_ sequenceId:String,_ cb:@escaping(Int,Dictionary<String, Any>)->Void){
+    private func setCallDicback(_ sequenceId:String,_ cmdName:String, _ cb:@escaping(Int,Dictionary<String, Any>)->Void){
 
         log.i("setCallDicback start")
-        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId,playingId: "", timeStamp: String.dateCurrentTime()) { code,playId,result in
+        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId,cmdName: cmdName,playingId: "", timeStamp: String.dateCurrentTime()) { code,playId,result in
             if let strResult = result as? Dictionary<String, Any>{
                 log.i("setCallDicback result:\(result)")
                 cb(code,strResult)
@@ -316,10 +331,10 @@ class RtmEngine : NSObject{
         
     }
     
-    private func setCallStringback(_ sequenceId:String,_ cb:@escaping(Int,String)->Void){
+    private func setCallStringback(_ sequenceId:String,_ cmdName:String, _ cb:@escaping(Int,String)->Void){
 
         log.i("setCallStringback start")
-        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId,playingId: "", timeStamp: String.dateCurrentTime()) { code,playId, result in
+        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId,cmdName: cmdName,playingId: "", timeStamp: String.dateCurrentTime()) { code,playId, result in
             if let strResult = result as? String{
                 log.i("setCallStringback result code:\(code)")
                 cb(code,strResult)
@@ -330,7 +345,7 @@ class RtmEngine : NSObject{
         
     }
 
-    func sendRawMessage(sequenceId:String, toPeer:String,data:Data,description:String,cb:@escaping(Int,String)->Void){
+    func sendRawMessage(sequenceId:String,cmdName:String, toPeer:String,data:Data,description:String,cb:@escaping(Int,String)->Void){
         guard let kit = kit else{
             log.e("rtm engine is nil")
             cb(ErrCode.XERR_BAD_STATE,"rtm not initialized")
@@ -346,10 +361,10 @@ class RtmEngine : NSObject{
                 self.sendCallStringback(sequenceId,ec,cb)
             }
         }
-        setCallStringback(sequenceId, cb)
+        setCallStringback(sequenceId,cmdName, cb)
     }
     
-    func sendRawMessageDic(sequenceId:String, toPeer:String,data:Data,description:String,cb:@escaping(Int,Dictionary<String, Any>)->Void){
+    func sendRawMessageDic(sequenceId:String,cmdName:String, toPeer:String,data:Data,description:String,cb:@escaping(Int,Dictionary<String, Any>)->Void){
         guard let kit = kit else{
             log.e("rtm engine is nil")
             cb(ErrCode.XERR_BAD_STATE,[:])
@@ -365,7 +380,7 @@ class RtmEngine : NSObject{
                 self.sendCallDicback(sequenceId,ec,cb)
             }
         }
-        setCallDicback(sequenceId, cb)
+        setCallDicback(sequenceId,cmdName, cb)
     }
     
     func sendRawMessageCustomData(toPeer:String,data:Data,description:String,cb:@escaping(Int,String)->Void){
@@ -507,7 +522,7 @@ extension RtmEngine{
             curPlayingId = ""
         }
         
-        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId,playingId: playingId, timeStamp: String.dateCurrentTime()) {[weak self] code,playId, result in
+        let rtmMsgObj = RtmMsgObj(sequenceId: sequenceId,cmdName: "",playingId: playingId, timeStamp: String.dateCurrentTime()) {[weak self] code,playId, result in
             
             guard self?.isSDCurrentPlaying(playId) == true else {
                 log.i("not current sdcard playing--- playId:\(playId) curSDCardPlayingId:\(String(describing: self?.curPlayingId))--- code:\(code) result:\(result)")
@@ -641,7 +656,7 @@ extension RtmEngine{
         let paramDic = [:] as [String : Any]
         let jsonString = paramDic.convertDictionaryToJSONString()
         let data:Data = jsonString.data(using: .utf8) ?? Data()
-        sendRawMessage(sequenceId: "\(curSequenceId)", toPeer: peer, data: data, description: "") { code, msg in
+        sendRawMessage(sequenceId: "\(curSequenceId)",cmdName: "", toPeer: peer, data: data, description: "") { code, msg in
             log.i("RtmEngine sendHeartBeatMessage suc")
         }
     }
@@ -678,7 +693,11 @@ extension RtmEngine{//超时处理
         for (key,obj) in _completionMsgObjs{
             let lastTime = obj.timeStamp
             let timeSpace = String.dateTimeSpaceMillion(lastTime)
-            if timeSpace > commandTimeOut{
+            var timeOut:TimeInterval = commandTimeOut
+            if (obj.cmdName == "sd_download_record_file") { // 视频下载延迟50秒
+                timeOut = 60 * 1000;
+            }
+            if timeSpace > timeOut{
                 let callBack = obj.msgObj
                 let playingId = obj.playingId
                 callBack(ErrCode.XERR_TIMEOUT,playingId,"resut TimeOut")
@@ -699,3 +718,4 @@ extension RtmEngine{//超时处理
     }
 
 }
+

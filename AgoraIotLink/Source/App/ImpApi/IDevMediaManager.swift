@@ -1,3 +1,4 @@
+
 //
 //  IDevMediaManager.swift
 //  AgoraIotLink
@@ -359,10 +360,10 @@ extension IDevMediaManager{
             log.i("peerVirtualNumber is nil")
             return
         }
-        
+        let cmdName:String = paramDic["commandId"] as? String ?? "";
         let jsonString = paramDic.convertDictionaryToJSONString()
         let data:Data = jsonString.data(using: .utf8) ?? Data()
-        rtm.sendRawMessageDic(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
+        rtm.sendRawMessageDic(sequenceId: "\(sequenceId)",cmdName: cmdName, toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
     }
     
     //与SD卡播放相关的命令发送

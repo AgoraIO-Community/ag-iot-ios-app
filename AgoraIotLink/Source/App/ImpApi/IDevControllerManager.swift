@@ -117,10 +117,10 @@ extension IDevControllerManager{
             log.i("peerVirtualNumber is nil")
             return
         }
-        
+        let cmdName:String = paramDic["commandId"] as? String ?? "";
         let jsonString = paramDic.convertDictionaryToJSONString()
         let data:Data = jsonString.data(using: .utf8) ?? Data()
-        rtm.sendRawMessageDic(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
+        rtm.sendRawMessageDic(sequenceId: "\(sequenceId)",cmdName: cmdName, toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
     }
     
     func sendGeneralData(_ paramDic:[String:Any],_ sequenceId:UInt32,_ cmdListener: @escaping (Int, String) -> Void){
@@ -129,10 +129,10 @@ extension IDevControllerManager{
             log.i("peerVirtualNumber is nil")
             return
         }
-        
+        let cmdName:String = paramDic["commandId"] as? String ?? "";
         let jsonString = paramDic.convertDictionaryToJSONString()
         let data:Data = jsonString.data(using: .utf8) ?? Data()
-        rtm.sendRawMessage(sequenceId: "\(sequenceId)", toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
+        rtm.sendRawMessage(sequenceId: "\(sequenceId)",cmdName: cmdName, toPeer: peer, data: data, description: "\(sequenceId)",cb: cmdListener)
     }
   
     func getSequenceId()->UInt32{
@@ -149,3 +149,4 @@ extension IDevControllerManager{
     }
     
 }
+
