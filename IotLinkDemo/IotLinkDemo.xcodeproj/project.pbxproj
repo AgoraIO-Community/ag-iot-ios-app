@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		241E9514AF5C21D05B21E03E /* Pods_IotLinkDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB6EBD13EF6155EB7EC65C6A /* Pods_IotLinkDemo.framework */; };
 		8429E9412949FC700064B604 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429E9402949FC700064B604 /* NSString+Extension.m */; };
 		8429E943295003180064B604 /* ResetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8429E942295003170064B604 /* ResetPasswordVC.swift */; };
 		844437292A20C3DF002BAF08 /* MDeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844437282A20C3DF002BAF08 /* MDeviceModel.swift */; };
@@ -226,10 +225,11 @@
 		A89E3DFF282A1C5E002FFED9 /* AGDatePickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89E3DFE282A1C5E002FFED9 /* AGDatePickerVC.swift */; };
 		A8A246C5281100FA00EAEA82 /* MainTopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A246C4281100FA00EAEA82 /* MainTopView.swift */; };
 		A8A246C72811143700EAEA82 /* HomeMainDeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A246C62811143700EAEA82 /* HomeMainDeviceCell.swift */; };
+		EA70EBECC2F1774C625AEBBA /* Pods_IotLinkDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3990FB984B330AD69C7D6C96 /* Pods_IotLinkDemo.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3A7F2106BF524F4575B562E1 /* Pods-IotLinkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.release.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.release.xcconfig"; sourceTree = "<group>"; };
+		3990FB984B330AD69C7D6C96 /* Pods_IotLinkDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IotLinkDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8429E93F2949FC700064B604 /* NSString+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		8429E9402949FC700064B604 /* NSString+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		8429E942295003170064B604 /* ResetPasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetPasswordVC.swift; sourceTree = "<group>"; };
@@ -273,8 +273,6 @@
 		84FAAC5D29B0826F00E5BB52 /* PlayerExampleOC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerExampleOC.h; sourceTree = "<group>"; };
 		84FAAC5E29B0826F00E5BB52 /* PlayerExampleOC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerExampleOC.m; sourceTree = "<group>"; };
 		84FFD15528F58FAF0076AD29 /* DeviceDelSuccessVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDelSuccessVC.swift; sourceTree = "<group>"; };
-		8C6A65CBF4F4809C66FEC83C /* Pods-AgoraIotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraIotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-AgoraIotLinkDemo/Pods-AgoraIotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		8DA61631220187EAFBFB57B5 /* Pods-IotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		9601C2FB280D5C6400D3CA49 /* MinePageMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinePageMainVC.swift; sourceTree = "<group>"; };
 		9601C2FE280D5EBF00D3CA49 /* NetWorkTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetWorkTool.swift; sourceTree = "<group>"; };
 		9601C300280D638800D3CA49 /* TDTURLConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDTURLConstant.swift; sourceTree = "<group>"; };
@@ -586,8 +584,8 @@
 		A89E3DFE282A1C5E002FFED9 /* AGDatePickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGDatePickerVC.swift; sourceTree = "<group>"; };
 		A8A246C4281100FA00EAEA82 /* MainTopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTopView.swift; sourceTree = "<group>"; };
 		A8A246C62811143700EAEA82 /* HomeMainDeviceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMainDeviceCell.swift; sourceTree = "<group>"; };
-		AB6EBD13EF6155EB7EC65C6A /* Pods_IotLinkDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IotLinkDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D4C3B17B7C6B1173874ED316 /* Pods-AgoraIotLinkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraIotLinkDemo.release.xcconfig"; path = "Target Support Files/Pods-AgoraIotLinkDemo/Pods-AgoraIotLinkDemo.release.xcconfig"; sourceTree = "<group>"; };
+		DB92329F4D584DDCB0615D63 /* Pods-IotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		FED77FB7F601E8B1C193FC2D /* Pods-IotLinkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.release.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -609,8 +607,8 @@
 				84B3ECA728B470770047EE1A /* AudioToolbox.framework in Frameworks */,
 				963956E028DDBA2B0049B9C8 /* libcrypto.a in Frameworks */,
 				84B3ECA528B470700047EE1A /* MediaPlayer.framework in Frameworks */,
-				241E9514AF5C21D05B21E03E /* Pods_IotLinkDemo.framework in Frameworks */,
 				84D69E5628D0612A004A120C /* NetworkExtension.framework in Frameworks */,
+				EA70EBECC2F1774C625AEBBA /* Pods_IotLinkDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,10 +618,8 @@
 		259CF3997EA6F9BA02FA72C6 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8DA61631220187EAFBFB57B5 /* Pods-IotLinkDemo.debug.xcconfig */,
-				3A7F2106BF524F4575B562E1 /* Pods-IotLinkDemo.release.xcconfig */,
-				8C6A65CBF4F4809C66FEC83C /* Pods-AgoraIotLinkDemo.debug.xcconfig */,
-				D4C3B17B7C6B1173874ED316 /* Pods-AgoraIotLinkDemo.release.xcconfig */,
+				DB92329F4D584DDCB0615D63 /* Pods-IotLinkDemo.debug.xcconfig */,
+				FED77FB7F601E8B1C193FC2D /* Pods-IotLinkDemo.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1556,7 +1552,7 @@
 				84B3ECA828B4707E0047EE1A /* AVFoundation.framework */,
 				84B3ECA628B470770047EE1A /* AudioToolbox.framework */,
 				84B3ECA428B470700047EE1A /* MediaPlayer.framework */,
-				AB6EBD13EF6155EB7EC65C6A /* Pods_IotLinkDemo.framework */,
+				3990FB984B330AD69C7D6C96 /* Pods_IotLinkDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1568,12 +1564,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 96E4C1142807CA5800A53A49 /* Build configuration list for PBXNativeTarget "IotLinkDemo" */;
 			buildPhases = (
-				69C6694549C2BD2959B8FEB0 /* [CP] Check Pods Manifest.lock */,
+				8DFF69C5D69A26352760571D /* [CP] Check Pods Manifest.lock */,
 				96E4C0FC2807CA5500A53A49 /* Sources */,
 				96E4C0FD2807CA5500A53A49 /* Frameworks */,
 				96E4C0FE2807CA5500A53A49 /* Resources */,
-				8EAE152AFA3E634BEADC72F7 /* [CP] Embed Pods Frameworks */,
 				8435323A2AE7B4940086C4FB /* ShellScript */,
+				B81C17A303FD5B923F655A82 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1637,7 +1633,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		69C6694549C2BD2959B8FEB0 /* [CP] Check Pods Manifest.lock */ = {
+		8435323A2AE7B4940086C4FB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n# Type a script or drag a script file from your workspace to insert its path.\n\n\"${PODS_ROOT}/Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo-frameworks.sh\"\n\n";
+		};
+		8DFF69C5D69A26352760571D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1659,24 +1672,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8435323A2AE7B4940086C4FB /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\n# Type a script or drag a script file from your workspace to insert its path.\n\n\"${PODS_ROOT}/Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo-frameworks.sh\"\n\n";
-		};
-		8EAE152AFA3E634BEADC72F7 /* [CP] Embed Pods Frameworks */ = {
+		B81C17A303FD5B923F655A82 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2070,7 +2066,7 @@
 		};
 		96E4C1152807CA5800A53A49 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8DA61631220187EAFBFB57B5 /* Pods-IotLinkDemo.debug.xcconfig */;
+			baseConfigurationReference = DB92329F4D584DDCB0615D63 /* Pods-IotLinkDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2078,7 +2074,7 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1115;
+				CURRENT_PROJECT_VERSION = 1116;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -2109,9 +2105,7 @@
 				);
 				INFOPLIST_FILE = IotLinkDemo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "需要您的同意，才能访问蓝牙";
 				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问摄像头";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要您的同意,才能保存图片到相册";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相册";
@@ -2206,7 +2200,7 @@
 					"-weak_framework",
 					"\"SwiftUI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iot.iotsdk;
+				PRODUCT_BUNDLE_IDENTIFIER = io.agora.Iot.AgoraIoT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
@@ -2221,7 +2215,7 @@
 		};
 		96E4C1162807CA5800A53A49 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3A7F2106BF524F4575B562E1 /* Pods-IotLinkDemo.release.xcconfig */;
+			baseConfigurationReference = FED77FB7F601E8B1C193FC2D /* Pods-IotLinkDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2229,7 +2223,7 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1115;
+				CURRENT_PROJECT_VERSION = 1116;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -2260,9 +2254,7 @@
 				);
 				INFOPLIST_FILE = IotLinkDemo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "灵隼";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "需要您的同意，才能访问蓝牙";
 				INFOPLIST_KEY_NSCameraUsageDescription = "需要您的同意,才能访问摄像头";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要您的同意,才能保存图片到相册";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要您的同意,才能访问相册";
@@ -2357,7 +2349,7 @@
 					"-weak_framework",
 					"\"SwiftUI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.agora.iot.iotsdk;
+				PRODUCT_BUNDLE_IDENTIFIER = io.agora.Iot.AgoraIoT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
