@@ -265,7 +265,7 @@ extension LoginMainVC{
         AGToolHUD.showNetWorkWait()
         
         let preParam = LoginParam()
-        //24cbe3f57d2b45c58c47004085f3ff03 //"d0177a34373b482a9c4eb4dedcfa586a"
+        //在用的appId：24cbe3f57d2b45c58c47004085f3ff03 //之前的appId:"d0177a34373b482a9c4eb4dedcfa586a"
         preParam.mUserId = acc
         preParam.mClientType = 2
         

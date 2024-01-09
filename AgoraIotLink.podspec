@@ -37,6 +37,12 @@ TODO: Add long description of the pod here.
   s.source_files = 'AgoraIotLink/Source/**/*.{swift,h,m}'
   s.swift_version = '5.5'
   
+#   s.resource_bundles = {
+#     'AgoraIotSdk' => ['AgoraIotLink/Assets/*']
+#   }
+   
+   s.resources = 'AgoraIotLink/Assets/*'
+  
   # s.resource_bundles = {
   #   'AgoraIotSdk' => ['AgoraIotSdk/Assets/*.png']
   # }
