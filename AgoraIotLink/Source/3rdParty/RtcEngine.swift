@@ -44,6 +44,7 @@ class RtcEngine : NSObject{
     private var isSnapShoting : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
     private var isRecording : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
     private var _onImageCaptured:(Int,String,UIImage?)->Void = {ec,msg,img in}
+    private var _onRtcImageCaptured:(Int,Int,Int)->Void = {ec,w,h in}
     private var _networkStatus : RtcNetworkStatus = RtcNetworkStatus()
     
     static private let IDLED = 0
@@ -527,6 +528,30 @@ class RtcEngine : NSObject{
         isSnapShoting.setValue(true)
     }
     
+    func capturePeerVideoFrame(saveFilePath:String,cb:@escaping(Int,Int,Int)->Void)->Int{
+        log.i("rtc try capturePeerVideoFrame ...")
+        if(state != RtcEngine.ENTERED){
+            log.e("rtc state : \(state) error for capturePeerVideoFrame()")
+            return ErrCode.XERR_INVALID_PARAM
+        }
+        if(!peerEntered){
+            log.w("rtc peer not entered for capture")
+            return ErrCode.XERR_INVALID_PARAM
+        }
+        
+        guard let engine = engine else {
+            log.e("rtc engine is nil")
+            return ErrCode.XERR_BAD_STATE
+        }
+        
+        self._onRtcImageCaptured = cb
+        let ret = engine.takeSnapshot(Int(peerUid) , filePath: saveFilePath)
+        if(ret != 0){
+            log.w("rtc takeSnapshot(\(saveFilePath)) faile:\(ret)")
+        }
+        return ret
+    }
+    
     func startRecord(outFilePath:String, result: @escaping (Int, String) -> Void){
         
         log.i("startRecord...")
@@ -635,6 +660,12 @@ extension RtcEngine: AgoraRtcEngineDelegate{
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteAudioFrameOfUid uid: UInt, elapsed: Int) {
         log.i("rtc firstRemoteAudioFrameDecodedOfUid first audio frame decoded \(uid)")
         _onPeerAction(.AudioReady,uid)
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, snapshotTaken uid: UInt, filePath: String, width: Int, height: Int, errCode: Int) {
+        log.i("rtc snapshotTaken \(uid) errCode:\(errCode) filePath:\(filePath)")
+        self._onRtcImageCaptured(errCode,width,height)
+        self._onRtcImageCaptured = {ec,w,h in}
     }
         
     func rtcEngine(_ engine: AgoraRtcEngineKit, reportRtcStats stats: AgoraChannelStats) {

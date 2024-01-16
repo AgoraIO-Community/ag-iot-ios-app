@@ -181,10 +181,10 @@ extension CallkitManager{
     }
     
     func mutePeerAudio(sessionId: String, mute: Bool,result:@escaping (Int,String)->Void){
-        reNewToken(sessionId)
-//        DispatchQueue.main.async {
-//            self.rtc.mutePeerAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
-//        }
+//        reNewToken(sessionId)
+        DispatchQueue.main.async {
+            self.rtc.mutePeerAudio(mute, cb: {ec,msg in self.asyncResult(ec, msg,result)})
+        }
     }
     
     func setVolume(volumeLevel: Int,result:@escaping (Int,String)->Void){
@@ -215,6 +215,10 @@ extension CallkitManager{
         DispatchQueue.main.async {
             self.app.proxy.rtc.capturePeerVideoFrame(cb: {ec,msg,img in self.asyncResultData(ec,msg,img,result)})
         }
+    }
+    
+    func capturePeerVideoFrame(sessionId:String,saveFilePath:String,cb:@escaping(Int,Int,Int)->Void)->Int{
+        return self.app.proxy.rtc.capturePeerVideoFrame(saveFilePath: saveFilePath, cb: cb)
     }
     
     func getNetworkStatus() -> RtcNetworkStatus {

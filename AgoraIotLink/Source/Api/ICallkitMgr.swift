@@ -245,6 +245,15 @@ public protocol ICallkitMgr {
     func capturePeerVideoFrame(sessionId:String, result:@escaping(Int,String,UIImage?)->Void)
     
     /*
+     * @brief 屏幕截屏，仅在通话状态下才能调用
+     * @param sessionId : 会话唯一标识
+     * @param saveFilePath : 输出保存的图片文件路径（应用层确保文件有可写权限,以.jpg为后缀，比如：../App Sandbox/Library/Caches/example.jpg）
+     * @param result: (参数1:错误码，参数2:图片宽度（px),参数3:图片高度（px))，0--截图请求成功,< 0: 截图失败。
+     * @return 错误码:0: 方法调用成功,< 0: 方法调用失败;XERR_INVALID_PARAM--没有找到该会话； XERR_UNSUPPORTED--截图失败
+     */
+    func capturePeerVideoFrame(sessionId:String,saveFilePath:String,cb:@escaping(Int,Int,Int)->Void)->Int
+    
+    /*
      * @brief 获取当前网络状态
      * @return 返回RTC网络状态信息，如果当前没有任何一个会话，则返回null
      */
