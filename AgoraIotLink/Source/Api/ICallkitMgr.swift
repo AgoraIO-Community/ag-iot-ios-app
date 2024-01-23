@@ -142,10 +142,10 @@ public class DialParam : NSObject {
  * 视频超分程度
  */
 @objc public enum VideoSuperResolution:Int {
-    case srDegree_100 = 6  // 1倍超分
-    case srDegree_133 = 7  // 1.33倍超分
-    case srDegree_150 = 8  // 1.5倍超分
-    case srDegree_200 = 3  // 2倍超分
+    case srDegree_100 = 100  // 1倍超分
+    case srDegree_133 = 133  // 1.33倍超分
+    case srDegree_150 = 150  // 1.5倍超分
+    case srDegree_200 = 200  // 2倍超分
 }
 
 @objc public class VideoQualityParam : NSObject{
