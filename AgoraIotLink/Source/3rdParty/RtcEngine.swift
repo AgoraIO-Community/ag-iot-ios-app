@@ -581,6 +581,71 @@ class RtcEngine : NSObject{
         return _networkStatus
     }
     
+    /**
+     * 设置指定频道的设备的视频质量
+     */
+    func setPeerVideoQuality(videoQuality: VideoQualityParam) -> Int {
+        guard let engine = engine else {
+            log.e("rtc engine is nil")
+            return ErrCode.XERR_BAD_STATE
+        }
+
+        var ret: Int32
+        var enableSr: String
+        var srType: String
+        var veAlphaBlending: String
+
+        switch videoQuality.mQualityType {
+        case .sr: // 超分
+            switch videoQuality.mSrDegree {
+            case VideoSuperResolution.srDegree_100:
+                srType = "{\"rtc.video.sr_type\" : 6}"
+            case VideoSuperResolution.srDegree_133:
+                srType = "{\"rtc.video.sr_type\" : 7}"
+            case VideoSuperResolution.srDegree_150:
+                srType = "{\"rtc.video.sr_type\" : 8}"
+            default:
+                srType = "{\"rtc.video.sr_type\" : 3}"
+            }
+            ret = engine.setParameters(srType)
+            log.i("<setPeerVideoQuality> [SR] set sr_type=\(srType), ret=\(ret)")
+            if ret != ErrCode.XOK {
+                return Int(ret)
+            }
+
+            enableSr = "{\"rtc.video.enable_sr\": {\"enabled\": true, \"mode\": 0, \"uid\": \(peerUid)}}"
+            ret = engine.setParameters(enableSr)
+            log.i("<setPeerVideoQuality> [SR] set enable_sr=\(enableSr), ret=\(ret)")
+
+        case .si: // 超级画质
+            srType = "{\"rtc.video.sr_type\" : 20}"
+            ret = engine.setParameters(srType)
+            log.i("<setPeerVideoQuality> [SI] set sr_type=\(srType), ret=\(ret)")
+            if ret != ErrCode.XOK {
+                return Int(ret)
+            }
+
+            veAlphaBlending = "{\"rtc.video.ve_alpha_blending\": \(videoQuality.mSiDegree)}"
+            ret = engine.setParameters(veAlphaBlending)
+            log.i("<setPeerVideoQuality> [SI] set ve_alpha_blending=\(veAlphaBlending), ret=\(ret)")
+            if ret != ErrCode.XOK {
+                return Int(ret)
+            }
+
+            enableSr = "{\"rtc.video.enable_sr\": {\"enabled\": true, \"mode\": 0, \"uid\": \(peerUid)}}"
+            ret = engine.setParameters(enableSr)
+            log.i("<setPeerVideoQuality> [SI] set enable_sr=\(enableSr), ret=\(ret)")
+
+        case .normal:
+            enableSr = "{\"rtc.video.enable_sr\": {\"enabled\": false, \"mode\": 0, \"uid\": \(peerUid)}}"
+            ret = engine.setParameters(enableSr)
+            log.i("<setPeerVideoQuality> [NONE] set enable_sr=\(enableSr), ret=\(ret)")
+
+        }
+
+        return Int(ret)
+    }
+
     func setParameters(paramString : String){
         guard let rtc = engine else{
             log.e("rtc engine is nil")

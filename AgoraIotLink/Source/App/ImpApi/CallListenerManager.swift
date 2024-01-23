@@ -99,6 +99,11 @@ class CallListenerManager: NSObject {
         callListen?.updateCallSession(sess)
     }
     
+    func updateCallSessionVideoQuality(_ sessionId:String, _ videoQuality : VideoQualityParam){
+        let callListen = getCurrentCallObjet(sessionId)
+        callListen?.updateCallSessionVideoQuality(videoQuality)
+    }
+    
     func getCurrentCallSession(_ sessionId:String) -> CallSession?{
         let callListen = getCurrentCallObjet(sessionId)
         return callListen?.callSession

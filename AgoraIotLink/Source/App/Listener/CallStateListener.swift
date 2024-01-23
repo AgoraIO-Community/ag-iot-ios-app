@@ -170,6 +170,10 @@ extension CallStateListener {
         callSession?.mRtmToken = sess.mRtmToken
     }
     
+    func updateCallSessionVideoQuality(_ videoQuality : VideoQualityParam){
+        callSession?.mVideoQuality = videoQuality
+    }
+    
 }
 
 extension CallStateListener : CallStateMachineListener{

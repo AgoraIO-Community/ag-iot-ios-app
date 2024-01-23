@@ -133,7 +133,7 @@ class HomePageMainVC: AGBaseVC {
 //        })
         
         
-        
+        //在用的appId：24cbe3f57d2b45c58c47004085f3ff03 //之前的appId:"d0177a34373b482a9c4eb4dedcfa586a"
         let param:InitParam = InitParam()
         param.mAppId = TDUserInforManager.shared.curMasterAppId
         param.mServerUrl = AgoraIotConfig.slaveServerUrl

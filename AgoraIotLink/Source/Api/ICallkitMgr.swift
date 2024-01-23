@@ -84,7 +84,7 @@ public class SessionInfo : NSObject{
     public var mLocalNodeId:String = "" //当前用户的 NodeId
     public var mPeerNodeId:String = ""  //对端设备的 NodeId
     public var mState:CallState = .idle //当前会话状态
-    
+    public var mVideoQuality:VideoQualityParam = VideoQualityParam()   //当前通话视频质量参数
     
     public var uid:UInt = 0
     
@@ -127,6 +127,31 @@ public class DialParam : NSObject {
         self.mAttachMsg = mAttachMsg
         self.mPubLocalAudio = mPubLocalAudio
     }
+}
+
+/**
+ * 视频质量类型
+ */
+@objc public enum  VideoQualityType:Int {
+    case normal = 0   // 默认质量
+    case sr = 1        // 超分
+    case si = 2        // 超级画质
+}
+
+/**
+ * 视频超分程度
+ */
+@objc public enum VideoSuperResolution:Int {
+    case srDegree_100 = 6  // 1倍超分
+    case srDegree_133 = 7  // 1.33倍超分
+    case srDegree_150 = 8  // 1.5倍超分
+    case srDegree_200 = 3  // 2倍超分
+}
+
+@objc public class VideoQualityParam : NSObject{
+    @objc public var mQualityType : VideoQualityType = .normal            ///< 视频质量类型，参考 @VideoQuality
+    @objc public var mSrDegree : VideoSuperResolution = .srDegree_100     ///< 超分程度，参考 @VideoSuperResolution，仅对 typeSR有效
+    @objc public var mSiDegree : Int = 0                                ///< 超级画质程度, 0~256 (256最大程度),仅对 typeSI有效
 }
 
 /*
@@ -252,6 +277,14 @@ public protocol ICallkitMgr {
      * @return 错误码:0: 方法调用成功,< 0: 方法调用失败;XERR_INVALID_PARAM--没有找到该会话； XERR_UNSUPPORTED--截图失败
      */
     func capturePeerVideoFrame(sessionId:String,saveFilePath:String,cb:@escaping(Int,Int,Int)->Void)->Int
+    
+    /*
+     * @brief 设置对端视频质量
+     * @param sessionId : 会话唯一标识
+     * @param videoQuality: 视频质量参数
+     * @return 错误码，XOK--设置成功； XERR_INVALID_PARAM--没有找到该会话； XERR_UNSUPPORTED--设置失败
+     */
+    func setPeerVideoQuality(sessionId:String,videoQuality:VideoQualityParam)->Int
     
     /*
      * @brief 获取当前网络状态

@@ -23,9 +23,10 @@ public class CallSession : NSObject{
     var traceId:UInt = 0                //追踪ID
     var peerNodeId = ""                 //对端nodeId
     
+    var mVideoQuality:VideoQualityParam = VideoQualityParam()   //当前通话视频质量参数
+    
     //------rtm信息------
     var mRtmUid: String = ""             //本地用户的 UserId
-//    var rtm : RtmEngine?                 //当前连接对应的Rtm对象
     var mRtmToken: String = ""           //要会话的 RTM Token
     
 }
@@ -224,6 +225,11 @@ extension CallkitManager{
     func getNetworkStatus() -> RtcNetworkStatus {
         return self.app.proxy.rtc.getNetworkStatus()
     }
+    
+    func setPeerVideoQuality(sessionId: String, videoQuality: VideoQualityParam) -> Int {
+        CallListenerManager.sharedInstance.updateCallSessionVideoQuality(sessionId, videoQuality)
+        return self.app.proxy.rtc.setPeerVideoQuality(videoQuality: videoQuality)
+    }
 
     func setRtcPrivateParam(privateParam: String) -> Int {
         //todo:
@@ -238,8 +244,9 @@ extension CallkitManager{
         let sessionInfor = SessionInfo()
         sessionInfor.mSessionId = callSession.mSessionId
         sessionInfor.mPeerNodeId = callSession.cname
-        sessionInfor.mLocalNodeId = app.config.userId
         sessionInfor.uid = callSession.uid
+        sessionInfor.mVideoQuality = callSession.mVideoQuality
+        sessionInfor.mLocalNodeId = app.config.userId
         sessionInfor.mState = CallListenerManager.sharedInstance.getCurrentCallState(sessionId)
         
         return sessionInfor
@@ -257,7 +264,7 @@ extension CallkitManager{
         
         let appId = app.config.masterAppId
         let headerParam = ["traceId": curTimestamp, "timestamp": curTimestamp, "nodeToken": nodeToken, "method": "refresh-token"] as [String : Any]
-        let payloadParam = ["appId": appId, "deviceId": sessionObj?.mPeerNodeId,"uid":sessionObj?.uid ,"cname": sessionObj?.mPeerNodeId] as [String : Any]
+        let payloadParam = ["appId": appId, "deviceId": sessionObj?.mPeerNodeId ?? "","uid":sessionObj?.uid ?? "" ,"cname": sessionObj?.mPeerNodeId ?? ""] as [String : Any]
         let paramDic = ["header":headerParam,"payload":payloadParam]
         let jsonString = paramDic.convertDictionaryToJSONString()
         self.app.proxy.cocoaMqtt.publishCallData(sessionId: sessionId,data: jsonString)
