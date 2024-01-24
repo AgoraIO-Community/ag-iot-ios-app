@@ -99,34 +99,34 @@ class DoorBellManager: NSObject {
     //设置设备属性
     func setSynDevicecProperty(_ dev:IotDevice,pointId:Int,value: Int, _ cb:@escaping(Bool,String)->Void){
         
-        let doorBell = dev.toDoorBell()
-        switch pointId {
-        case 101:
-            doorBell.nightView = value
-            break
-        case 102:
-            let valueB : Bool = value == 1 ? true:false
-            doorBell.motionAlarm = valueB
-            break
-        case 103:
-            doorBell.pirSwitch = value
-            break
-        case 105:
-            let valueB : Bool = value == 1 ? true:false
-            doorBell.forceAlarm = valueB
-            break
-        default:
-            break
-        }
-                
-        guard let devMgr = sdk?.deviceMgr else{
-            log.e("demo app manager not inited")
-            return
-        }
-        doorBell.sync(devMgr: devMgr, result: {ec,msg in
-            log.i("demo app sync result:\(msg)(\(ec))")
-            cb(ec == ErrCode.XOK ? true : false,msg)
-        })
+//        let doorBell = dev.toDoorBell()
+//        switch pointId {
+//        case 101:
+//            doorBell.nightView = value
+//            break
+//        case 102:
+//            let valueB : Bool = value == 1 ? true:false
+//            doorBell.motionAlarm = valueB
+//            break
+//        case 103:
+//            doorBell.pirSwitch = value
+//            break
+//        case 105:
+//            let valueB : Bool = value == 1 ? true:false
+//            doorBell.forceAlarm = valueB
+//            break
+//        default:
+//            break
+//        }
+//                
+//        guard let devMgr = sdk?.deviceMgr else{
+//            log.e("demo app manager not inited")
+//            return
+//        }
+//        doorBell.sync(devMgr: devMgr, result: {ec,msg in
+//            log.i("demo app sync result:\(msg)(\(ec))")
+//            cb(ec == ErrCode.XOK ? true : false,msg)
+//        })
     }
     
     
