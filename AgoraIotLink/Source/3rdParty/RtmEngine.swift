@@ -326,7 +326,7 @@ class RtmEngine : NSObject{
                 cb(code,[:])
             }
         }
-        _completionMsgObjs[sequenceId] = rtmMsgObj
+        _completionMsgObjs.updateValue(rtmMsgObj, forKey: sequenceId)
         log.e("setCallDicback  sequenceId:\(sequenceId) _completionBlocks:\(String(describing: _completionMsgObjs)) count:\(String(describing: _completionMsgObjs.count))")
         
     }
@@ -340,7 +340,7 @@ class RtmEngine : NSObject{
                 cb(code,strResult)
             }
         }
-        _completionMsgObjs[sequenceId] = rtmMsgObj
+        _completionMsgObjs.updateValue(rtmMsgObj, forKey: sequenceId)
         log.i("setCallStringback  sequenceId:\(sequenceId) _completionBlocks:\(String(describing: _completionMsgObjs)) count:\(String(describing: _completionMsgObjs.count))")
         
     }
@@ -538,7 +538,7 @@ extension RtmEngine{
                 cb(code,[:])
             }
         }
-        _completionMsgObjs[sequenceId] = rtmMsgObj
+        _completionMsgObjs.updateValue(rtmMsgObj, forKey: sequenceId)
         log.i("setCallDicback  sequenceId:\(sequenceId) _completionBlocks:\(String(describing: _completionMsgObjs)) count:\(String(describing: _completionMsgObjs.count))")
         
     }
