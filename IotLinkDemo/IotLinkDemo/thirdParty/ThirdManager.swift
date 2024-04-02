@@ -389,7 +389,7 @@ class ThirdAccountManager{
     
     class func nodeCreate(_ account : String, _ rsp:@escaping(Int,String,String)->Void){
         let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8","traceId":"123456789"]
-        let params = ["userId":account,"clientType":"2","masterAppId":TDUserInforManager.shared.curMasterAppId]//d0177a34373b482a9c4eb4dedcfa586a
+        let params = ["userId":account,"clientType":"2","masterAppId":"24cbe3f57d2b45c58c47004085f3ff03"]//d0177a34373b482a9c4eb4dedcfa586a
         let paramsDic = ["payload":params]
         let url = api.http_3rdParty + api.nodeCreate
         
