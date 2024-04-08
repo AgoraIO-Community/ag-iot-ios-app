@@ -4,6 +4,31 @@ import UIKit
 
  extension String{
 
+     static func getDictionaryWithJSONString(data:[UInt8]) -> Dictionary<String, Any> {
+         if let string = String(bytes: data, encoding: .utf8) {
+             // 将字符串转化为字典
+             if let dictionary = try? JSONSerialization.jsonObject(with: string.data(using: .utf8)!, options: []) as? [String: Any] {
+                 return dictionary
+             }else{
+                 return  Dictionary<String, Any>()
+             }
+         }else{
+             return  Dictionary<String, Any>()
+         }
+     }
+     
+     static func getDictionaryWithData(data:Data) -> Dictionary<String, Any> {
+         
+         guard let dataString = String(data: data, encoding: .utf8) else { return Dictionary<String, Any>()}
+         let cleanedJsonString = dataString.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "\t", with: "").replacingOccurrences(of: "\0", with: "")
+         // 将字符串转化为字典
+         if let dictionary = try? JSONSerialization.jsonObject(with: cleanedJsonString.data(using: .utf8)!, options: []) as? [String: Any] {
+             return dictionary
+         }else{
+             return  Dictionary<String, Any>()
+         }
+     }
+     
     public func isEmaiNumber() -> Bool{
     
         if self.count == 0 {
@@ -731,6 +756,15 @@ extension NSMutableAttributedString {
         attributedStr.addAttribute(.font, value: decFont, range: NSRange(location: unit.count + (firstStr?.count ?? 0), length: lastStr?.count ?? 0))
         
         return attributedStr
+    }
+    
+}
+
+public extension String{//国际化
+    
+    var L:String{
+            
+            return NSLocalizedString(self, comment: "")
     }
     
 }

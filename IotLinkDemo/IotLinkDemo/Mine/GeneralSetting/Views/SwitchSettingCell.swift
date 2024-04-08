@@ -12,21 +12,6 @@ class SwitchSettingCell: UITableViewCell {
 
     var curIndexPath : IndexPath?
     
-    var model:DeviceSetUpModel?{
-
-        didSet{
-
-            guard let model = model else { return }
-
-            titleLabel.text = model.funcName
-            if model.funcBoolValue == true {
-                aSwitch.setOn(true, animated: true)
-            }else{
-                aSwitch.setOn(false, animated: true)
-            }
-            
-        }
-    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?){
         super.init(style: style, reuseIdentifier: reuseIdentifier)

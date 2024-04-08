@@ -1,10 +1,462 @@
-/* 
+/*
   Localizable.strings
   AgoraIoT
 
   Created by wanghaipeng on 2022/6/9.
   
 */
-"User agreement and privacy policy" = "User agreement and privacy policy";
-"Privacy policy" = "Privacy policy";
-"User agreement" = "User agreement";
+
+"userAgreementAndPrivacyPolicy" = "User Agreement & Privacy Policy";
+"privacyPolicy" = "Privacy Policy";
+"userAgreement" = "User Agreement";
+"and" = "and";
+"agree" = "agree";
+"disagree" = "disagree";
+
+"login" = "login";
+"register" = "register";
+
+"getVerificationCode" = "Get verification code";
+
+"pleaseEnterVerificationCode" = "Please enter verification code";
+"verificationCodeHasBeenSent" = "Verification code has been sent";
+
+"setPassword" = "Set password";
+"password" = "password";
+"includingLettersAndNumbers" = "8-20 characters, including letters and numbers";
+"finished" = "finished";
+
+"pleaseEnterYourAccount" = "Please enter your account";
+"forgetPassword" = "Forget password";
+"wrongAccountOrPassword" = "Wrong account or password";
+
+"wrongAccount" = "Wrong account";
+
+"myDevices" = "My Devices";
+"noDevices" = "No Devices";
+"addDevices" = "Add Devices";
+"home" = "home";
+"me" = "me";
+
+"addDevicesByScanning" = "Add devices by scanning";
+"pleaseScanTheQRCodeOnTheDeviceOrManual" = "Please scan the QR code on the device or manual";
+"addItManuallyIfThereIsNoQRCode" = "Add it manually if there is no QR code";
+"album" = "album";
+"flashlight" = "flashlight";
+
+"theCurrentNetworkIsNotAvailable" = "The current network is not available";
+"pleaseCheck" = "please check";
+"visualDoorbell" = "Visual doorbell";
+"offline" = "offline";
+"motionDetection" = "Motion Detection";
+"sharesIReceived" = "Shares I received";
+
+"resetTheDevice" = "Reset the device";
+"cancel" = "cancel";
+"installTheBatteryOrConnectThePowerSupply" = "Install the battery or connect the power supply";
+"pressTheButtonInBatteryCompartment" = "Press the SET button in battery compartment for 5 seconds";
+"hearTheBeepAndConfirmThatTheLightIsFlashing" = "Hear the beep and confirm that the light is flashing";
+"pleaseMakeSureTheLightIsFlashingOrYouHearABeep" = "Please make sure the light is flashing
+or you hear a beep";
+
+"selectWiFiAndEnterThePassword" = "Select 2.4GHz WiFi and enter the password";
+"supportedCurrently " = "Only 2.4G WiFi is supported currently ";
+"name" = "name";
+"thePhoneIsNotConnected" = "The phone is not connected to WiFi currently";
+"next" = "next";
+"noPassword" = "No password for WiFi";
+"pleaseSelect" = "Current WiFi is 5GHz, please select 2.4G WiFi, or configure router to open 2.4G network";
+
+"ThePhoneShouldConnectsTo" = "The phone should connects to WiFi before it can network with the device";
+"connect" = "connect";
+"configureRouterToOpen" = "Current WiFi is 5GHz, please select 2.4G WiFi, or configure router to open 2.4G network";
+"Switch" = "Switch WiFi";
+
+"rightInFrontOfTheCamera" = "Place the QR code right in front of the camera, keeping a distance of 15-20cm";
+"holdStillForAFewSeconds" = "Hold still for a few seconds, then you will hear a beep";
+"ifYouDoNotHearTheBeep" = "If you do not hear the beep, please check the camera";
+"adjustTheDistance" = "Adjust the distance, angle, try more times";
+"heardTheBeep" = "Heard the beep";
+
+"addingDevices" = "Adding devices...";
+"pleaseKeepTheDevicePoweredOn" = "Please keep the device powered on";
+"connecting" = "Connecting";
+
+"close" = "close";
+"deviceConnectionNetworkTimeout" = "Device connection network timeout";
+"pleaseTroubleshootTheFollowingProblemsAndTryAgain" = "Please troubleshoot the following problems and try again";
+"checkWhetherTheEquipmentIsInTheStateOfPendingDistribution" = "Check whether the equipment is in the state of pending distribution";
+"checkIf" = "Check if WiFi is 2.4G";
+"verifyPassword" = "Verify that WiFi password is correct";
+"whetherToHearABeep" = "Whether to hear a beep when scanning the QR code";
+"checkIfCloseToRouter" = "Check if the device is close to the router";
+"retry" = "Retry by step";
+
+"failedToAdd" = "Failed to add";
+"deviceHasBeenBoundByOtherUsers" = "The device has been bound by other users and cannot be bound repeatedly";
+"pleaseGoToTheOriginalAccountForRemoval" = "Please go to the original account for removal, or contact customer service to submit an unbinding application";
+"finished" = "Finished";
+
+"deviceUnbundlingApplication" = "Device unbundling application";
+"problemDescription" = "Problem Description";
+"pleaseDescribeYourProblem" = "Please describe your problem";
+"deviceID" = "Device ID";
+"equipmentCategory" = "Equipment category";
+"timeOfProblem" = "Time of problem";
+"contactInformation" = "Contact information";
+"submit" = "Submit";
+
+"addedSuccessfully" = "Added successfully";
+"rename" = "Rename";
+"update" = "Update";
+
+"remoteVideoLoading" = "Remote video loading";
+"playback" = "Playback";
+"album" = "Album";
+"function" = "Function";
+"message" ="Message";
+"videoLoadingFailure" = "Video loading failure";
+"clickToRetry" = "Click to retry";
+"deviceOffline" = "Device offline";
+"pleaseCheckTheDeviceStatus" = "Please check the device status";
+"deviceSleeping" = "Device sleeping";
+"clickToReboot" = "Click to reboot";
+
+"HD" = "HD";
+"nightVision" = "IR night vision";
+"voiceDetection" = "Voice Detection";
+"motionDetection" = "Motion Detection";
+"passiveInfraredSwitch" = "PIR switch";
+"siren" = "Siren";
+
+"open" = "Open";
+"highSensitivity" = "High sensitivity";
+"screenshotHasBeenSavedToTheAlbum" = "Screenshot has been saved to the album";
+"videoHasBeenSavedToTheAlbum" = "Video has been saved to the album";
+"goToAlbum" = "Go to album";
+
+"voiceChangeCallingUncleVoice" = "Voice change calling (uncle voice)...";
+"voiceChangeCallingChildVoice" = "Voice change calling (child voice)...";
+"childVoice" = "Child voice";
+"uncleVoice" = "Uncle voice";
+
+"deleteOrNot" = "Delete?";
+"yes" = "Yes";
+"no" = "No";
+"selectAll" = "Select All";
+"delete" = "Delete";
+
+"objectMovementIsDetected" = "Object movement is detected";
+"someoneRingsTheDoorbell" = "Someone rings the doorbell";
+"someoneRingsTheVisualDoorbell" = "Someone rings the visual doorbell";
+"recent" = "Recent";
+"allMessages" = "All messages";
+
+"alarmMessages" = "Alarm messages";
+"today" = "Today";
+"allTypes" = "All types";
+
+"settings" = "Settings";
+"deviceInformation" = "Device Information";
+"basicFunction" = "Basic Function";
+"detectingAlarms" = "Detecting alarms";
+"sharedDevices" = "Shared Devices";
+"deviceFirmware update" = "Device firmware update";
+"latestVersion" = "latest version";
+"removeTheDevice" = "Remove the device";
+"rebootTheDevice" = "Reboot the device";
+
+"deviceFrom" = "Device from";
+"userName" = "User name";
+"removeShare" = "Remove Share";
+
+"statusIndicator" = "Status Indicator";
+
+"notSharedWithOthersYet" = "Visual doorbell, Not shared with others yet";
+"notSharedPleaseAdd" = "Not shared with others yet, please add";
+"addAShare" = "Add a Share";
+
+"visualDoorbellSharedWith" = "Visual doorbell Shared with";
+
+"sharingDetails" = "Sharing Details";
+"avatar" = "Avatar";
+"account" = "Account";
+"expirationDte" = "Expiration date";
+"permanent" = "Permanent";
+"unshare" = "Unshare";
+
+"addAShare" = "Add a Share";
+"countryRegion" = "Country/Region";
+"china" = "China";
+"pleaseEnterYourAccount" = "Please enter your account";
+"thisUserAlreadyHasThisDevice" = "This user already has this device";
+
+"sharedASmartDeviceWithYou" = "Shared a smart device with you";
+"intelligentVisualDoorbell" = "Intelligent visual doorbell";
+"acceptSharing" = "Accept sharing";
+
+"firmwareUpgrade" ="Firmware Upgrade";
+"newVersionDetected" = "New Version Detected";
+"updates" = "Updates";
+"fixSeveralBugs" ="Fix several bugs";
+"add" = "Add";
+"function" = "function";
+"updateImmediately?" = "Update immediately?";
+"update" = "Update";
+"checkUpdates" = "Check updates";
+"importantTips" = "Important Tips";
+"noPowerFailureDuringTheProcess" = "No power failure during the process, otherwise it will cause the upgrade to fail and the device may not be powered on";
+"confirmToUpdate" = "Confirm to update?";
+"updating" = "Updating...";
+
+"hangUp" = "Hang up";
+"connect" = "Connect";
+"voiceChangeCall" = "Voice Change Call";
+
+"onCall" = "On call...";
+
+"devices" = "Devices";
+"currentNetworkIsNotAvailable" = "Current network is not available, please check.";
+"messageCenter" = "Message Center";
+"generalSettings" = "General Settings";
+"about" = "About";
+
+"pleaseSelectAvatar" = "Please Select Avatar";
+
+"alarm" = "Alarm";
+"notification" = "Notification";
+"noMessages" = "No messages";
+
+"device" = "Device";
+"fromTheDeviceVisualDoorbell" = "From the device Visual doorbell";
+
+"upgradeNotice" = "Upgrade Notice";
+"thereIsANewUpgradedVersion" ="There is a new upgraded version!";
+"abnormalLogin" = "Abnormal login";
+"itIsLoggedInOnTheNoneUsefulTerminal!" = "It is logged in on the non-useful terminal!";
+
+"messages" = "Messages";
+"checkForAppUpdates" = "Check for app updates";
+"accountSecurity" = "Account Security";
+"systemPermissionSettings" = "System permission settings";
+"logOut" = "Log out";
+
+"alarmMessages" = "Alarm messages";
+"notificationMessages" = "Notification messages";
+
+"changePassword" = "Change password";
+"cancelAccount" = "Cancel account";
+
+"changePassword" = "Change password";
+"enterOldPassword" = "Enter old password";
+"enterNewPassword" = "Enter new password";
+"includingLettersAndNumbers" = "includingLettersAndNumbers";
+
+"clickgetVerificationCode" = "Click ‘Get Verification Code’ and the verification code will be sent to your registered account";
+"dearUser" = "dear user";
+"ifYouConfirmToCancel" = "if you confirm to cancel";
+"weWillAtOnce" = "we will at once";
+"deletePersonalDataFromYourAccount" = "delete personal data from your account";
+"thankYou" = "thank you";
+"continueToCancel" = "continue to cancel";
+"confirmToCancel" = "confirm to cancel";
+"confirm" = "confirm";
+
+"systemPermissionSettings" = "System permission settings";
+"licensed" = "Licensed";
+"notificationReminder" = "Notification Reminder";
+"forTechniciansToReceiveAlarmMessages" = "For technicians to receive alarm messages, it is recommended to enable this permission";
+"allowBackgroundOperation" = "Allow background operation";
+"notReceivingRemoteCallsOrNotifications" = "Not receiving remote calls or notifications, it is recommended to enable this permission";
+
+"youAgreeToServiceAgreementAndPrivacyPolicy" = "By using the application, you agree to the Service Agreement and the Privacy Policy";
+"versionNumber" = "Version number";
+
+
+
+
+"deleteFailed" = "Delete failed";
+"sureToRemoveTheDevice" = "Sure to remove the device?";
+"removeSharing" = "Remove Sharing";
+"sharedDeviceSettings" = "Shared Device Settings";
+"shareRemoved" = "Share Removed";
+"setUpSuccessfully" = "Set up successfully";
+"sharedDeviceListObtainedSuccessfully" = "Shared device list obtained successfully";
+"visualDoorbellHasBeenSharedWith" = "Visual doorbell has been shared with";
+"visualDoorbellIsNotSharedToOthersYet" = "Visual doorbell is not shared to others yet";
+"notSharedWithOthersYet" = "Not shared with others yet";
+"pleaseAdd" = "Please add";
+"unshare" = "Unshare";
+"confirmedToCancelSharing" = "Confirmed to cancel sharing?";
+"shareCanceled" = "Share canceled";
+"oldAccount" = "Old account";
+"modifyDeviceName" = "Modify device name";
+"unknown" = "<unknown>";
+"modificationFailed" = "Modification failed";
+"unnamed" = "<unnamed>";
+"visualDoorbellWiFi" = "Visual doorbell (Wi-Fi)";
+"thisFeatureIsNotOpenYetSoStayTuned" = "This feature is not open yet, so stay tuned!";
+"3m" = "3 meters";
+"1.5m" = "1.5 meters";
+"08m" = "0.8 meters";
+"auto" = "Auto";
+"close" = "close";
+"open" = "open";
+"imageQualitySettings" = "Image quality settings";
+"SD" = "SD";
+"voiceChangingDuringCall" = "Voice changing during a call";
+"pictureScreenshotFailed" = "Picture screenshot failed!";
+"ScreenshotSaveFailed" = "Screenshot save failed!";
+"pickUp" = "Pick up";
+"someoneRingsTheDoorbell" = "Someone rings the doorbell...";
+"deviceName" = "Device Name";
+"imilabVisualDoorbell" = "Device name: Imilab Visual Doorbell D1";
+"screenshotSavedToAlbum" = "Screenshot saved to album";
+"videoSavedToAlbum" = "Video saved to album";
+"viewAlbum" = "View Album";
+"deviceIsOfflinePleaseCheckItsStatus" = "Device is offline, please check its status";
+"voiceChange" = "Voice Change";
+"infraredDetection" = "PIR infrared detection";
+"buttonAlarm" = "Button Alarm";
+"otherAlarms" = "Other alarms";
+"playing" = "Playing";
+"fromTheDevice" = "From the device";
+"date" = "Date";
+"edit" = "Edit";
+"soundDetection" = "Sound Detection";
+"reachingMaximumNumberOfDownloads" = "Reaching maximum number of downloads";
+"downloadAddressError" = "Download address error";
+"tips" = "Tips";
+"sureToDeleteTheMessageBeingPlayed" = "Sure to delete the message being played?";
+"sureToDeleteTheSelectedMessage" = "Sure to delete the selected message?";
+"pleaseSelectTheMessagesToDlete" = "Please select the messages to delete";
+"failedToCeckInformationDetails" = "Failed to check information details";
+"failedToGetPlayAddress" = "Failed to get play address";
+"failedToDeleteWarning" = "Failed to delete warning";
+"deleteSuccessfully" = "Delete successfully";
+"failedToSave" = "Failed to save";
+"savedSuccessfullyPleaseCheck" = "Saved successfully, please check in the album";
+"canceled" = "Canceled";
+"completed" = "Completed";
+"downloadProgress" = "Download Progress";
+"smartDoorbell" = "Smart Doorbell";
+"networkConnectionFailedPleaseCheck" = "Network connection failed, please check your network settings";
+"pleaseEnterTheSharingAccount" = "Please enter the sharing account";
+"wifiName" = "WiFi Name";
+"currentWiFiMayBe5GHzPleaseSelect2.4G" = "Current WiFi may be 5GHz, please select 2.4G WiFi or configure your router to turn on 2.4G";
+"ifYouDontHearTheBeepPleaseCheck" = "If you don't hear the beep, please check the camera. Adjust the distance, angle, try more times";
+"resetDevice" = "Reset Device";
+"connectToWiFi" = "Connect to WiFi";
+"positioningIsNotTurnedOn" = "Positioning is not turned on";
+"pleaseGoToTheSettingsToTurnOn" = "Please go to the settings to turn on positioning";
+"goToSettings" = "Go to Settings";
+"scanDeviceCode" = "Scan Device Code";
+"addingDevice" = "Adding device";
+"pleaseMakeSureDeviceIsPoweredOn" = "Please make sure the device is powered on.";
+"checkIfDeviceIsInPending" = "Check if the device is in pending distribution status";
+"checkIfWiFiIs2.4G" = "Check if WiFi is 2.4G";
+"checkIfWiFiPasswordIsCorrect" = "Check if the WiFi password is correct";
+"doYouHearABeepWhenScanning" = "Do you hear a beep when scanning the QR code";
+"checkIfTheDeviceIsCloseToRouter" = "Check if the device is close to the router";
+"contactCustomerServiceToSubmitAnUnbundlingRequest" = "Contact customer service to submit an unbundling request";
+"theDeviceHasBeenBoundByAnotherUser" = "The device has been bound by another user and cannot be bound repeatedly";
+"pleaseGoToOriginalAccountToRemoveOr" = "Please go to the original account to remove, or ";
+"mySharedDevices" = "My Shared Devices";
+"scanTheCode" = "Scan the Code";
+"noQRCodeIsRecognized" = "No QR code is recognized";
+"illegalQRCode" = "Illegal QR Code";
+"ok" = "OK";
+"nickname" = "Nickname";
+"personalInformation" = "Personal Information";
+"avatarModifiedSuccessfully" = "Avatar modified successfully";
+"failedToModifyAvatar" = "Failed to modify avatar";
+"pleaseEnterANickname" = "Please enter a nickname";
+"failedToChangeNickname" = "Failed to change nickname";
+"byUsingThisApplicationYouAgree" = "By using this application, you agree";
+"unauthorized" = "Unauthorized";
+"alarmMessageSwitchSetSuccessfully" = "Alarm message switch set successfully!";
+"logOutSuccessfully" = "Log out successfully";
+"sureToCancelYourAccount" = "Sure to cancel your account?";
+"ifYouDetermineToCancelYourAccount" = "If you determine to cancel your account, we immediately delete your personal data from your account, thank you for using it!";
+"accountCanceled" = "Account canceled";
+"pleaseEnterYourOldPassword" = "Please enter your old password";
+"pleaseEnterANewPassword" = "Please enter a new password";
+"theOldPassword" = "The old password was 8 to 20 upper and lower case letters and numbers";
+"theNewPassword" = "The new password was 8 to 20 upper and lower case letters and numbers";
+"passwordChangeSuccessfully" = "Password change successfully";
+"toReceiveAlarmMessagesInTime" = "To receive alarm messages in time, it is recommended to turn on this option";
+"pleaseCheckTheNotificationMessage" = "Please check the notification message";
+"deviceOnLine" = "Device on line";
+"deviceOffLine" = "Device off line";
+"deviceBonding" = "Device Bonding";
+"deviceUnbundling" = "Device Unbundling";
+"others" = "Others";
+"failedToQueryAlarmRecords" = "Failed to query alarm records";
+"devices" = "devices";
+"registerAnAccount" = "Register an account";
+"accountInputError" = "Account input error";
+"accountIsEmpty" = "Account is empty";
+"passwordIsEmpty" = "Password is empty";
+"pleaseUseYourMobileNumber" = "Please use your mobile number to register";
+"pleaseEnterTheCorrectMobileNumber" = "Please enter the correct mobile number";
+"verificationCodeSentSuccessfully" = "Verification code sent successfully";
+"registerSuccessfully" = "Register successfully";
+"registerFailed" = "Register Failed";
+"passwordResetSuccessfully" = "Password reset successfully";
+"failedToResetPassword" = "Failed to reset password";
+"loginSuccessfully" = "Login successfully";
+"loginFailed" = "Login failed";
+"agoraLink" = "Agora Link";
+"pleaseEnterYourPassword" = "Please enter your password";
+"registerAnAccount" = "Register an account";
+"resetPassword" = "Reset Password";
+"pleaseEnterTheRegisteredAccount" = "Please enter the registered account";
+"theAccountFormatIsIncorrect" = "The account format is incorrect";
+"resend" = "Resend";
+"usa" = "USA";
+"selectCountryRegion" = "Select country/region";
+"pleaseNoteThatIfTheCountryRegionIsIncorrect" = "Please note that if the country/region selected is incorrect, it may affect normal use";
+"thePasswordIs8To20LettersAndNumbers" = "The password is 8 to 20 upper and lower case letters and numbers";
+"passwordResetSuccessfully" = "Password reset successfully";
+"demolitionAlarm" = "Demolition alarm";
+"original" = "Original";
+"uncle" = "Uncle";
+"lori" = "Lori";
+"teenager" = "Teenager";
+
+//------2.0新增------
+"screenShot" = "screenShot";
+"record" = "record";
+"stop" = "stop";
+"call" = "call";
+"fullScreen" = "fullScreen";
+"mute" = "mute";
+"unmute" = "unmute";
+"converse" = "converse";
+"forbitConverse" = "forbitConverse";
+"number" = "number";
+"deviceClosed" = "deviceClosed";
+"in call" = "in call";
+"call failed" = "call failed";
+"please enter nodeId" = "please enter nodeId";
+"Clear AppId data" = "Clear AppId data";
+
+
+//------以下为服务器返回msg字段------
+"账号不存在" = "Account does not exist";
+"账号已经存在" = "Account already exists";
+"密码错误" = "Wrong password";
+"账号未登录" = "Account not logged in";
+"账号注册失败" = "Account registration failed";
+"账号注销失败" = "Account logout failed";
+"账号登录失败" = "Account login failed";
+"账号登出失败" = "Account logout failed";
+"账号更换密码失败" = "Account change password failed";
+"账号重置密码失败" = "Account reset password failed";
+"获取验证码失败" = "Failed to get verification code";
+"查询用户信息失败" = "Failed to query user information";
+"更新用户信息失败" = "Failed to update user information";
+"当前状态不正确，不能操作" = "The current state is incorrect and cannot be operated";
+"Token过期" = "Token expired";
+"当前状态不正确，不能操作" = "The current state is incorrect and cannot be operated";
+

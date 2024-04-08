@@ -14,10 +14,12 @@ class GeneralSettingVC: AGBaseVC {
     
     private var dataArray = Array<Array<String>>()
 
-    private let pushMsgTitle = "消息推送"
+    private let pushMsgTitle = "messages".L
     private var versionTitle = "检查应用更新"
-    private let accountSafeTitle = "账号安全"
-    private let systemSetUpTitle = "系统权限设置"
+    private let accountSafeTitle = "accountSecurity".L
+    private let systemSetUpTitle = "systemPermissionSettings".L
+    private let appIdTitle = "Clear AppId data".L
+    private let cacheTitle = "清除缓存数据".L
     
     private let bgColor = UIColor(hexRGB: 0xF6F6F6)
 
@@ -29,7 +31,7 @@ class GeneralSettingVC: AGBaseVC {
     
     
     private func setupUI() {
-        navigationItem.title = "通用设置"
+        navigationItem.title = "generalSettings".L
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalTo(UIEdgeInsets.zero)
@@ -43,10 +45,12 @@ class GeneralSettingVC: AGBaseVC {
     private func setupData(){
         dataArray = [
             [
-                pushMsgTitle,
+//                pushMsgTitle,
 //                versionTitle,
                 accountSafeTitle,
-                systemSetUpTitle,
+//                systemSetUpTitle,
+                appIdTitle,
+                cacheTitle
             ],
         ]
         tableView.reloadData()
@@ -122,6 +126,12 @@ extension GeneralSettingVC: UITableViewDelegate,UITableViewDataSource {
         case systemSetUpTitle:
             showSystemSettingVC()
             break
+        case appIdTitle:
+            showAppIdClearAlert()
+            break
+        case cacheTitle:
+            clearCacheData()
+            break
         default:
             break
         }
@@ -130,8 +140,6 @@ extension GeneralSettingVC: UITableViewDelegate,UITableViewDataSource {
     // MARK: - 下一页
     // 消息推送设置
     private func showPushMsgSettingVC(){
-        let vc = PushMsgSettingVC()
-        navigationController?.pushViewController(vc, animated: true)
     }
     
     // 账号安全
@@ -144,6 +152,50 @@ extension GeneralSettingVC: UITableViewDelegate,UITableViewDataSource {
     private func showSystemSettingVC(){
         let vc = SystemSettingVC()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func showAppIdClearAlert(){
+        AGAlertViewController.showTitle("Clear AppId data".L, message: "温馨提示：清除AppId数据后，应用将自动退出,需重新启动应用才生效") {
+            TDUserInforManager.shared.clearMasterAppId()
+            TDUserInforManager.shared.userSignOut()
+            AGToolHUD.showInfo(info: "已清除appId,应用即将自动退出,请重新打开")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                TDUserInforManager.shared.exitApplication()
+            }
+        }
+    }
+    
+    private func clearCacheData(){
+        
+        let fileManager = FileManager.default
+            guard let folderPath = recordVideoFolder else {
+                print("文件夹路径为空")
+                return
+            }
+            
+            do {
+                let files = try fileManager.contentsOfDirectory(atPath: folderPath)
+                for file in files {
+                    let filePath = NSString(string: folderPath).appendingPathComponent(file)
+                    try fileManager.removeItem(atPath: filePath)
+                    print("删除文件：\(filePath)")
+                }
+            } catch {
+                print("清除文件失败：\(error.localizedDescription)")
+            }
+        
+    }
+    
+    //MARK: ----- property
+    var recordVideoFolder: String? {//NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory
+        if let path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first {
+            let direc = NSString(string: path).appendingPathComponent("VideoFile") as String
+            if !FileManager.default.fileExists(atPath: direc) {
+                try? FileManager.default.createDirectory(atPath: direc, withIntermediateDirectories: true, attributes: [:])
+            }
+            return direc
+        }
+        return nil
     }
 
 }

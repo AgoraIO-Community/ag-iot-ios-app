@@ -1,0 +1,15 @@
+/* 
+  InfoPlist.strings
+  IotLinkDemo
+
+  Created by admin on 2023/7/28.
+  
+*/
+
+CFBundleDisplayName = "Agora Link";
+UILaunchStoryboardName = "LaunchScreen_EN";
+
+NSCameraUsageDescription = "Is this app allowed to use the camera?";
+NSMicrophoneUsageDescription = "Do you allow this app to use your microphone?";;
+NSPhotoLibraryUsageDescription =  "Do you allow this app to access your photo album?";
+NSLocationWhenInUseUsageDescription = "We need to get relevant data from your location through your location information.";

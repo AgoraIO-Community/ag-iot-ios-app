@@ -9,21 +9,21 @@ import Foundation
 import AgoraIotLink
 
 public class CallkitManager : NSObject,ICallkitMgr{
-
+    
     @objc public func talkingRecordStop(result: @escaping (Int, String) -> Void) {
         return mgr.talkingRecordStop(result: result)
     }
     
-    @objc public func talkingRecordStart(outFilePath: String, result: @escaping (Int, String) -> Void) {
-        return mgr.talkingRecordStart(outFilePath: outFilePath,result: result)
+    @objc public func talkingRecordStart(result: @escaping (Int, String) -> Void) {
+        return mgr.talkingRecordStart(result: result)
     }
     
     @objc public func capturePeerVideoFrame(result: @escaping (Int, String, UIImage?) -> Void) {
         return mgr.capturePeerVideoFrame(result: result)
     }
     
-    @objc public func register(incoming: @escaping (String, String, AgoraIotLink.ActionAck) -> Void, memberState: ((AgoraIotLink.MemberState, [UInt]) -> Void)?) {
-        return mgr.register(incoming: incoming, memberState: memberState)
+    @objc public func register(incoming: @escaping (String,String, ActionAck) -> Void) {
+        return mgr.register(incoming: incoming)
     }
     
     @objc public func callDial(device: IotDevice, attachMsg: String, result: @escaping (Int, String) -> Void, actionAck: @escaping (ActionAck) -> Void, memberState: (((MemberState, [UInt]) -> Void)?)) {
@@ -241,11 +241,6 @@ public class DeviceManager : NSObject,IDeviceMgr,IDeviceStateListener{
 }
 
 public class AlarmManager : NSObject,IAlarmMgr{
-    
-    public func queryAlarmVideoUrl(deviceId: String, tenantId: String, beginTime: UInt64, result: @escaping (Int, String, AgoraIotLink.AlarmVideoInfo?) -> Void) {
-        return mgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId:tenantId, beginTime: beginTime, result: result)
-    }
-    
     @objc public func addAlarm(device: IotDevice, desc: String, result: @escaping (Int, String) -> Void) {
         return mgr.addAlarm(device: device, desc: desc, result: result)
     }
@@ -254,6 +249,9 @@ public class AlarmManager : NSObject,IAlarmMgr{
         return mgr.queryAlarmImage(alertImageId: alertImageId, result: result)
     }
     
+    @objc public func queryAlarmVideoUrl(deviceId: String, tenantId:String, beginTime: UInt64, result: @escaping (Int, String, String?) -> Void) {
+        return mgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId:tenantId, beginTime: beginTime, result: result)
+    }
     
     public func querySysCount(productId: String?, deviceIds: [String], messageType: Int?, status: Int?, createDateBegin: Date?, createDateEnd: Date?, result: @escaping (Int, String, UInt) -> Void) {
         return mgr.querySysCount(productId: productId, deviceIds: deviceIds, messageType: messageType, status: status, createDateBegin: createDateBegin, createDateEnd: createDateEnd, result: result)
@@ -339,7 +337,6 @@ public class AlarmManager : NSObject,IAlarmMgr{
 }
 
 public class NotificationManager : NSObject,INotificationMgr{
-    
     @objc public func getEid() -> String {
         return mgr.getEid()
     }
@@ -352,7 +349,7 @@ public class NotificationManager : NSObject,INotificationMgr{
         return notifyEnabled()
     }
     
-    @objc public func queryAll(result: @escaping (UNNotification, String) -> Void) {
+    @objc public func queryAll(result:@escaping(Int,String)->Void) {
         return mgr.queryAll(result: result)
     }
     
@@ -379,11 +376,6 @@ public class NotificationManager : NSObject,INotificationMgr{
 }
 
 public class AccountManager : NSObject,IAccountMgr{
-    
-    @objc public func publicKeySet(publicKey: String, _ result: @escaping (Int, String) -> Void) {
-        return mgr.publicKeySet(publicKey: publicKey, result)
-    }
-    
     @objc public func login(param: LoginParam, result: @escaping (Int, String) -> Void) {
         return mgr.login(param: param, result: result)
     }
@@ -439,12 +431,8 @@ public class AccountManager : NSObject,IAccountMgr{
                 result(ec,msg)
                 return
             }
-            self.mgr.logoutAccount(true,result: result)
+            self.mgr.logout(result: result)
         }
-    }
-    
-    @objc public func logoutAccount(_ isSourceOut: Bool,result: @escaping (Int, String) -> Void) {
-        self.mgr.logoutAccount(true,result: result)
     }
 
     @objc public func getUserId() -> String {
@@ -501,9 +489,5 @@ public class IotSdk: NSObject {
     
     @objc public func getNotificationManager()->NotificationManager{
         return NotificationManager(mgr:iotsdk.notificationMgr)
-    }
-    
-    @objc public func getMqttIsConnected()->Bool{
-        return iotsdk.getMqttIsConnected()
     }
 }

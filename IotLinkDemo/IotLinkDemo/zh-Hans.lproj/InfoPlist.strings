@@ -1,0 +1,16 @@
+/* 
+  InfoPlist.strings
+  IotLinkDemo
+
+  Created by admin on 2023/7/28.
+  
+*/
+
+CFBundleDisplayName = "灵隼";
+UILaunchStoryboardName = "LaunchScreen";
+
+
+//NSCameraUsageDescription = "需要您的同意,才能访问相机";
+//NSMicrophoneUsageDescription = "需要您的同意,才能访问麦克风";
+//NSPhotoLibraryUsageDescription =  "需要您的同意,才能访问相册";
+//NSLocationWhenInUseUsageDescription = "需要您的同意,才能访问位置";

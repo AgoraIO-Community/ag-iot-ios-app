@@ -19,27 +19,47 @@ class MainTopView: UIView {
     }
     
     var clickAddButtonAction:(()->(Void))?
+    var clickDeleteButtonAction:(()->(Void))?
     
     
     private lazy var titleLabel:UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 24)
         label.textColor = .black
-        label.text = "我的设备"
+        label.text = "myDevices".L
         return label
     }()
     
     private lazy var addButton:UIButton = {
         let button = UIButton(type: .custom)
-        button.setBackgroundImage(UIImage(named: ""), for: .normal)
-        button.setImage(UIImage(named: "device_add"), for: .normal)
+        button.setTitle("addDevices".L, for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.minimumScaleFactor = 0.5
+//        button.setBackgroundImage(UIImage(named: ""), for: .normal)
+//        button.setImage(UIImage(named: "device_add"), for: .normal)
         button.addTarget(self, action: #selector(didClickAddButton), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var deleteButton:UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle("delete".L, for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.minimumScaleFactor = 0.3
+//        button.setBackgroundImage(UIImage(named: ""), for: .normal)
+//        button.setImage(UIImage(named: "device_add"), for: .normal)
+        button.addTarget(self, action: #selector(didClickDeleteButton), for: .touchUpInside)
         return button
     }()
     
     private func createSubviews(){
         addSubview(titleLabel)
         addSubview(addButton)
+        addSubview(deleteButton)
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(20)
             make.bottom.equalTo(-10)
@@ -47,11 +67,21 @@ class MainTopView: UIView {
         addButton.snp.makeConstraints { make in
             make.centerY.equalTo(titleLabel)
             make.right.equalTo(-20)
+            make.width.height.equalTo(70)
+        }
+        
+        deleteButton.snp.makeConstraints { make in
+            make.centerY.equalTo(titleLabel)
+            make.right.equalTo(addButton.snp.left).offset(-20)
             make.width.height.equalTo(40)
         }
     }
     
     @objc private func didClickAddButton(){
         clickAddButtonAction?()
+    }
+    
+    @objc private func didClickDeleteButton(){
+        clickDeleteButtonAction?()
     }
 }

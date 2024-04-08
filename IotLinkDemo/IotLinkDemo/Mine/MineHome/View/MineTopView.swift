@@ -104,7 +104,8 @@ class MineTopView: UIView {
     func setHeadImg(_ img:String?, name:String?, count:Int = 0,uid:String = "") {
         imageView.kf.setImage(with: URL(string: img ?? ""), placeholder: UIImage(named: "userimage"))
         nameLabel.text = name
-        countLabel.text = "\(count)台设备"
+//        countLabel.text = "\(count)台设备"
+        countLabel.isHidden = true
         userId.text = uid
     }
 }

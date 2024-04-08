@@ -57,6 +57,15 @@ class TDUserInforManager: NSObject {
     //当前蓝牙配网成功
     var curBluefiSuc : Bool = false
     
+    //本地设备管理
+    var markPeerNodeIdArray = [String]()
+    
+    //当前用户使用的masterAppId
+    var curMasterAppId : String = ""
+    
+    //当前用户使用的nodeId
+    var mUserNodeId : String = ""
+    
  
     fileprivate lazy var loginVM = LoginMainVM()
 
@@ -96,6 +105,51 @@ class TDUserInforManager: NSObject {
         //退出登录发通知
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginOutNotify), object: nil)
 
+    }
+    
+    //MARK: - 清除masterAppId
+    func clearMasterAppId() {
+        
+        curMasterAppId = ""
+        let uDefault = getUserDefault()
+        uDefault.setValue(nil, forKey: "masterAppId")
+        uDefault.synchronize()
+        
+    }
+    
+    /// 保存最新的设备id
+    ///
+    /// - Parameters:
+    ///   - peerNodeId: 添加的设备ID
+    func savePeerNodeId(_ peerNodeId : String) {
+        
+        var muIdArray = readMarkPeerNodeId()
+        muIdArray.append(peerNodeId)
+        
+        let uDefault = getUserDefault()
+        uDefault.setValue(muIdArray, forKey: getPeerNodeArrKey())
+        uDefault.synchronize()
+    }
+    
+    /// 删除选中的设备id
+    ///
+    /// - Parameters:
+    ///   - peerNodeIdArray: 需要保留的设备id数组
+    func deletePeerNodeIdArray(_ peerNodeIdArray : [String]) {
+        
+        let uDefault = getUserDefault()
+        uDefault.setValue(peerNodeIdArray, forKey: getPeerNodeArrKey())
+        uDefault.synchronize()
+    }
+    
+    func getPeerNodeArrKey()->String{
+        var peerKey = "markPeerNodeId"
+        let accountInfor = readKeyChainAccountAndPwd()
+        if accountInfor.acc != "" {
+            peerKey = accountInfor.acc
+        }
+        print("peerKey: \(peerKey)")
+        return peerKey
     }
     
     /// 保存上次登录的账号与上次登录的账号的属性
@@ -148,20 +202,46 @@ class TDUserInforManager: NSObject {
         
     }
     
+    func getKeyChainAllAccount()->[String]{
+        
+        var tempAccountArray = [String]()
+        guard let  accountArr = SSKeychain.accounts(forService: kSSToolkitServiceName) else {
+            return tempAccountArray
+        }
+        for item in accountArr {
+            if let dict = item as? Dictionary<String, Any>, let acct = dict["acct"] as? String , acct.hasPrefix(kSSToolkitAccountKeyName) == true{
+                let tempAcc = acct.replacingOccurrences(of: kSSToolkitAccountKeyName, with: "")
+                tempAccountArray.append(tempAcc)
+            }
+        }
+        return tempAccountArray
+        
+    }
+    
     func readKeyChainAccountAndPwd()->(acc:String,pwd:String){
         
         let acc = getKeyChainAccount()
         guard let passWord = SSKeychain.password(forService: kSSToolkitServiceName, account: kSSToolkitAccountKeyName+acc)  else {
             return("","")
         }
-
         return (acc,passWord)
     }
     
     func deleteKeyChainInfor(){
         
-        let acc = getKeyChainAccount()
-        SSKeychain.deletePassword(forService: kSSToolkitServiceName, account: kSSToolkitAccountKeyName+acc)
+        let accArray = getKeyChainAllAccount()
+        for item in accArray{
+            SSKeychain.deletePassword(forService: kSSToolkitServiceName, account: kSSToolkitAccountKeyName+item)
+        }
+        
+    }
+    
+    /// 保存masterAppId
+    func saveUserMasterAppId(_ masterAppId: String){
+        curMasterAppId = masterAppId
+        let uDefault = getUserDefault()
+        uDefault.setValue(masterAppId, forKey: "masterAppId")
+        uDefault.synchronize()
         
     }
     
@@ -172,6 +252,15 @@ class TDUserInforManager: NSObject {
         uDefault.setValue(true, forKey: "ProcolType")
         uDefault.synchronize()
         
+    }
+    
+    //读取本地的设备Id
+    func readMarkPeerNodeId() -> [String]{
+        var idArray = [String]()
+        if let nodeIdArray = getUserDefault().object(forKey: getPeerNodeArrKey()) as? [String] {
+            idArray = nodeIdArray
+        }
+        return idArray
     }
     
     //读取上次登录的账号
@@ -212,6 +301,14 @@ class TDUserInforManager: NSObject {
         return accNum
     }
     
+    /// 读取上次保存的masterAppId
+    func readUserMasterAppId() -> String {
+        var accNum = ""
+        if let num = getUserDefault().object(forKey: "masterAppId") as? String {
+            accNum = num
+        }
+        return accNum
+    }
     
     //检查用户登陆状态
     func checkLoginState(){
@@ -219,39 +316,40 @@ class TDUserInforManager: NSObject {
         //检查隐私协议状态
         guard checkloginProtocolState() == true else { return }
         
-//        let account = readAccountNumber()
-//        let password = readPasswordNumber()
-        let accountInfor = readKeyChainAccountAndPwd()
+    
+//        let accountInfor = readKeyChainAccountAndPwd()
         
-        if accountInfor.acc.isEmpty == false {
-            loginAction(accountInfor.acc,accountInfor.pwd)
-        }else{
-            
-            DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
-            
-//            loginAction(acc,pwd)
-//            saveAccountNumberAndLoginType(account: acc, type: false)
-//            saveAccountPassWord(pwd: pwd)
-        }
+        DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
+        
+//        if accountInfor.acc.isEmpty == false {
+//            loginAction(accountInfor.acc,accountInfor.pwd)
+//        }else{
+//
+//            DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
+//
+////            loginAction(acc,pwd)
+////            saveAccountNumberAndLoginType(account: acc, type: false)
+////            saveAccountPassWord(pwd: pwd)
+//        }
         
     }
     
     //登录
-    func loginAction(_ account : String, _ password : String){
-        
-        loginVM.login2(account, password) { [weak self] success, msg in
-            if (success) {
-                debugPrint("登录成功")
-                self?.isLogin = true
-                //登录成功发通知
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
-            }else{
-                debugPrint("登录失败")
-                DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
-            }
-            
-        }
-    }
+//    func loginAction(_ account : String, _ password : String){
+//        
+//        loginVM.login2(account, password) { [weak self] success, msg in
+//            if (success) {
+//                debugPrint("登录成功")
+//                self?.isLogin = true
+//                //登录成功发通知
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
+//            }else{
+//                debugPrint("登录失败")
+//                DispatchCenter.DispatchType(type: .login, vc: nil, style: .present)
+//            }
+//            
+//        }
+//    }
     
     
     fileprivate func getUserDefault() -> UserDefaults {
@@ -298,6 +396,39 @@ extension TDUserInforManager{
         proAlertVC.modalPresentationStyle = .overFullScreen
         UIApplication.shared.keyWindow?.rootViewController?.present(proAlertVC, animated: true, completion: nil)
         
+    }
+    
+    func checkIsHaveMasterAppId() ->Bool{
+        
+        let masterAppId = readUserMasterAppId()
+        //协议如果是同意过就不再弹出
+        if masterAppId == ""{
+            return false
+        }
+        curMasterAppId = masterAppId
+        return true
+        
+    }
+    
+    func showEditAppIdAlert(){
+        AGConfirmEditAlertVC.showTitleTop("请输入AppId", editText: "请输入AppId") {[weak self] appId in
+            self?.saveUserMasterAppId(appId)
+            AGToolHUD.showInfo(info: "已重置appId,应用即将自动退出,请重新打开")
+            print("------重置appId------\(appId)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.exitApplication()
+            }
+        }
+    }
+    
+    func exitApplication(){
+        
+        let window = AppDelegate().window
+        UIView.animate(withDuration: 1.0, animations: {
+            window?.alpha = 0
+        }, completion: { finished in
+            exit(0)
+        })
     }
 }
 

@@ -145,18 +145,18 @@ extension ResetPasswordVC{
         
 //        let phone = "+" + TDUserInforManager.shared.currentCountryCode + accountText
         let phone = accountText //"+" + TDUserInforManager.shared.currentCountryCode + accountText
-        loginVM.doGetResetPwdPhoneCode(phone, type:"PWD_RESET_SMS","ZH_CN") { [weak self] success, msg in
-           
-            AGToolHUD.disMiss()
-            if success == true {
-                debugPrint("验证码发送成功")
-                AGToolHUD.showInfo(info: msg)
-                DispatchCenter.DispatchType(type: .verifyCode(account: accountText, type: type), vc: self, style: .push)
-                
-            }else{
-                AGToolHUD.showInfo(info: msg)
-            }
-        }
+//        loginVM.doGetResetPwdPhoneCode(phone, type:"PWD_RESET_SMS","ZH_CN") { [weak self] success, msg in
+//           
+//            AGToolHUD.disMiss()
+//            if success == true {
+//                debugPrint("验证码发送成功")
+//                AGToolHUD.showInfo(info: msg)
+//                DispatchCenter.DispatchType(type: .verifyCode(account: accountText, type: type), vc: self, style: .push)
+//                
+//            }else{
+//                AGToolHUD.showInfo(info: msg)
+//            }
+//        }
         
     }
 }

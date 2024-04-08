@@ -80,7 +80,7 @@ class LoginProtocolAlertVC: UIViewController {
             agreeBtn.setTitle("确定", for: .normal)
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(backforeground), name: Notification.Name(cApplicationWillEnterForegroundNotify), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(backforeground), name: Notification.Name(cApplicationWillEnterForegroundNotify), object: nil)
     }
     
     @objc private func backforeground(){
@@ -376,7 +376,7 @@ class LoginProtocolAlertVC: UIViewController {
             //退出应用
     //      UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
             //退出应用安全过审修改为停留在背景页
-//            exitApplication()
+            exitApplication()
             bgV.isHidden = true
             
         }else if pageSource == .aboutPage{
@@ -388,6 +388,7 @@ class LoginProtocolAlertVC: UIViewController {
         
     }
     
+    //退出应用
     func exitApplication(){
         
         let window = AppDelegate().window

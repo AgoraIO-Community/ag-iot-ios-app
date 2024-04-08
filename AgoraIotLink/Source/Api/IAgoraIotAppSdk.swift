@@ -21,85 +21,90 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
+    
 /*
- * @brief 初始化参数
+ * @brief 声音特效类型
  */
-public class InitParam : NSObject{
-    @objc public var rtcAppId: String = ""              // appId
-    @objc public var logFilePath : String? = ""         // 设置日志路径 ,nil:不保存到文件,"":保存到默认路径
-    @objc public var publishAudio = true                // 通话时是否推流本地音频
-    @objc public var publishVideo = false               // 通话时是否推流本地视频
-    @objc public var subscribeAudio = true              // 通话时是否订阅对端音频
-    @objc public var subscribeVideo = true              // 通话时是否订阅对端视频
-    @objc public var ntfAppKey: String = ""             // 离线推送的appkey
-    @objc public var ntfApnsCertName:String = ""        // 离线推送的AnpsCertName
-    @objc public var masterServerUrl:String = ""        // 主服务器后台地址
-    @objc public var slaveServerUrl:String = ""         // 副服务器后台地址
-    @objc public var projectId:String = ""              // 项目Id,作为查询产品列表的过滤条件
+@objc public enum AudioEffectId:Int{
+    case NORMAL         ///< 原声
+    case KTV            ///< KTV
+    case CONCERT        ///< 演唱会
+    case STUDIO         ///< 录音棚
+    case PHONOGRAPH     ///< 留声机
+    case VIRTUALSTEREO  ///< 虚拟立体声
+    case SPACIAL        ///< 空旷
+    case ETHEREAL       ///< 空灵
+    case VOICE3D        ///< 3D人声
+    case UNCLE          ///< 大叔
+    case OLDMAN         ///< 老男人
+    case BOY            ///< 男孩
+    case SISTER         ///< 少女
+    case GIRL           ///< 女孩
+    case PIGKING        ///< 猪八戒
+    case HULK           ///< 绿巨人 浩克
+    case RNB            ///< R&B
+    case POPULAR        ///< 流行
+    case PITCHCORRECTION ///< 电音
 }
 
 /*
- * @brief sdk状态
+ * @brief SDK初始化参数
  */
-@objc public enum SdkStatus : Int{
-    case NotReady                                       //登录成功但还在初始化各个子模块中，处于未就绪状态
-    case InitCallFail                                   //登录成功后，初始化呼叫模块出错
-    case InitMqttFail                                   //登录成功后，初始化Mqtt模块出错
-    case InitPushFail                                   //登录成功后，初始化推送模块出错
-    case InitRtmFail                                    //登录成功后，初始化RTM模块出错
-    case AllReady                                       //登录成功后，初始化过程完毕，处于就绪状态
-    case Reconnected                                    //登录成功后，Mqtt重连成功
-    case Disconnected                                   //登录成功后，Mqtt断开连接
+public class InitParam : NSObject{
+  
+    @objc public var mAppId: String = ""                  // 项目的 appId
+    @objc public var mLocalNodeId: String = ""            // 本地 NodeId
+    @objc public var mLocalNodeToken: String = ""         // 本地 NodeToken
+    @objc public var mRegion:Int = 1                      // 地区标识符
+    @objc public var mCustomerKey: String = ""            // 定制认证的Key
+    @objc public var mCustomerSecret: String = ""         // 定制认证的Secret
+    @objc public var mLogFileName : String? = ""          // 日志文件名，路径会固定在应用缓存目录
+    
 }
 
 /*
  * @brief SDK引擎接口
  */
 public protocol IAgoraIotAppSdk {
+
+    /*
+     * @brief 初始化Sdk
+     * @param initParam : 初始化参数
+     * @retrun 返回错误码，XOK--初始化成功，SDK状态会切换到 SDK_STATE_INITIALIZED
+     *                   XERR_INVALID_PARAM--参数有错误；XERR_BAD_STATE--当前状态不正确
+     */
+    func initialize(initParam: InitParam) -> Int
+    
+    /*
+     * @brief 释放SDK所有资源，所有的组件模块也会被释放
+     *        调用该函数后，SDK状态会切换到 SDK_STATE_INVALID
+     */
+    func release()
+    
+    /*
+     * @brief 获取呼叫系统接口
+     * @return 返回呼叫组件接口，如果当前还未进行初始化，则返回null
+     */
+    var connectionMgr: IConnectionMgr{get}
+    
+    /**
+     * @brief 设置音效效果（通常是变声等音效）
+     * @param effectId: 音效Id
+     * @return 错误码，XOK--设置成功； XERR_UNSUPPORTED--设置失败
+     */
+    func setPublishAudioEffect(effectId:AudioEffectId, result: @escaping (Int, String) -> Void)->Int
+    
+    /**
+     * @brief 获取当前推流的音效
+     * @return 返回当前设置的音效
+     */
+    func getPublishAudioEffect()->AudioEffectId
+    
     /*
      * @biref 获取sdk版本信息
      */
     func getSdkVersion()->String
-    /*
-     * @biref 获取当前mqtt是否连接 连接:true 断开:false
-     */
-    func getMqttIsConnected() -> Bool
-    /*
-     * @brief 初始化Sdk
-     * @param netStatus:返回当前mqtt网络状态
-     * @param callBackFilter：回调函数返回错误码集中回调(可作为返回错误码/错误消息)过滤。所有带有result回调的接口，都会在调用前触发该回调，参数1:ErrCode,参数2:ErrMessage,返回值:新的(ErrCode,ErrMessage)
-     */
-    func initialize(initParam: InitParam,sdkStatus:@escaping(SdkStatus,String)->Void,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int
+    
 
-    /*
-     * @brief 释放SDK所有资源
-     */
-    func release()
-
-    /*
-     * @brief 获取账号管理接口
-     */
-    var accountMgr: IAccountMgr{get}
-
-    /*
-     * @brief 获取呼叫系统接口
-     */
-    var callkitMgr: ICallkitMgr{get}
-
-    /*
-     * @brief 获取设备管理接口
-     */
-    var deviceMgr: IDeviceMgr{get}
-
-    /*
-     * @brief 获取告警信息管理接口
-     */
-    var alarmMgr: IAlarmMgr{get}
-
-    /*
-     * @brief 获取通知信息管理接口
-     */
-    var notificationMgr: INotificationMgr{get}
 }
-
-public let IAgoraIotSdkVersion = "1.0.1.6"

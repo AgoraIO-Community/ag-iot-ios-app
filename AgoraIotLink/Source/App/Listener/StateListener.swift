@@ -6,52 +6,23 @@
 //
 
 import Foundation
+import AgoraRtmKit
 
-class StateListener : FsmState.IListener{
-    func do_INITRTM_FAIL(_ srcState: FsmState.State) {
-        _statusHandler(.InitRtmFail,"rtm init faill")
-    }
+class StateListener : NSObject{
+
+    let app:IotLibrary
+    var _signalingStatusHandler:(Bool)->Void = {s in}
     
-    func do_INITPUSH_FAIL(_ srcState: FsmState.State) {
-        _statusHandler(.InitPushFail,"push init fail")
-    }
-    
-    func do_INITCALL_FAIL(_ srcState: FsmState.State) {
-        _statusHandler(.InitCallFail,"callkit init fail")
-    }
-    
-    func do_INITMQTT_FAIL(_ srcState: FsmState.State) {
-        _statusHandler(.InitMqttFail,"Mqtt init fail")
-    }
-    
-    func do_NOTREADY(_ srcState: FsmState.State) {
-        _statusHandler(.NotReady,"not ready")
-    }
-    
-    func do_ALLREADY(_ srcState: FsmState.State) {
-        _statusHandler(.AllReady,"all ready")
-    }
-    
-    let app:Application
-    var _statusHandler:(SdkStatus,String)->Void = {n,s in}
-    func setStatusHandler(handler:@escaping(SdkStatus,String)->Void){
-        _statusHandler = handler
-    }
-    func onMqttStatusChanged(status:IotMqttSession.Status){
-        if(status == .Connecting){
-            _statusHandler(.Disconnected,"Mqtt connecting")
-        }
-        else if(status == .ConnectionError){
-            _statusHandler(.Disconnected,"Mqtt connect fail")
-        }
-        else if(status == .Disconnected){
-            _statusHandler(.Disconnected,"Mqtt disconnected")
-        }
-        else if(status == .Connected){
-            _statusHandler(.Reconnected, "Mqtt auto connected")
-        }
-    }
-    init(_ app:Application){
+    init(_ app:IotLibrary){
         self.app = app;
     }
+
+    func do_Invalid() {
+        app.sdkState = .invalid
+    }
+    
+    func do_Initialized() {
+        app.sdkState = .running
+    }
+
 }

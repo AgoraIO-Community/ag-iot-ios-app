@@ -112,19 +112,19 @@ public class MediaPlayer: UIView {
         self.toPlay()
     }
     
-    public func play(alarm:IotAlarm) {
-        Utils.loadAlertVideoUrl(alarm.deviceId,alarm.tenantId, alarm.beginTime) { ec, msg, info in
-            if(info != nil){
-                self.url = URL.init(string: info!.url)
-                self.toPlay()
-            }
-            else{
-                log.w("demo load video url failed,use test m3u8")
-                self.url = URL.init(string: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8")
-                self.toPlay()
-            }
-        }
-    }
+//    public func play(alarm:IotAlarm) {
+//        Utils.loadAlertVideoUrl(alarm.deviceId,alarm.tenantId, alarm.beginTime) { ec, msg, info in
+//            if(info != nil){
+//                self.url = URL.init(string: info!.url)
+//                self.toPlay()
+//            }
+//            else{
+//                log.w("demo load video url failed,use test m3u8")
+//                self.url = URL.init(string: "https://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/ts_muxer.m3u8")
+//                self.toPlay()
+//            }
+//        }
+//    }
     
     func toPlay() {
         

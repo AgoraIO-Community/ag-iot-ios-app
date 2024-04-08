@@ -92,7 +92,7 @@ class RegisterView: UIView {
         let label = UILabel()
         label.textColor = UIColor.init(hexString: "#000000")
         label.font = FontPFMediumSize(28)
-        label.text = "注册账号"
+        label.text = "registerAnAccount".L
         return label
     }()
 
@@ -116,7 +116,7 @@ class RegisterView: UIView {
         
         let vew = PhoneInputView()
         vew.leftImage = UIImage.init(named: "login_user")
-        vew.textField.placeholder = "请输入账号"
+        vew.textField.placeholder = "pleaseEnterYourAccount".L
         vew.textField.delegate = self
         vew.textField.tag = 88
         vew.textField.addTarget(self, action: #selector(textDidChangeNotification(textField:)), for: .editingChanged)
@@ -132,13 +132,13 @@ class RegisterView: UIView {
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 0
         label.isHidden = true
-        label.text = "账号输入有误"
+        label.text = "accountInputError".L
         return label
     }()
     
     lazy var loginBtn: UIButton = {
         let btn = UIButton()
-        btn.setTitle("获取验证码", for: .normal)
+        btn.setTitle("confirm".L, for: .normal)
         btn.backgroundColor = UIColor.init(hexString: "#1A1A1A")
         
         btn.titleLabel?.font = FontPFMediumSize(18)

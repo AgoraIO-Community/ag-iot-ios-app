@@ -8,83 +8,83 @@
 import Foundation
 
 open class IotAppSdk : IAgoraIotAppSdk{
+    
     public func getSdkVersion() -> String {
         return IAgoraIotSdkVersion
     }
     
-    public func getMqttIsConnected() -> Bool {
-        return app!.proxy.mqtt.curMtConnected
-    }
-    
-    private var _callbackFilter:(Int,String)->(Int,String) = {ec,msg in return (ec,msg)}
-    private func onCallbackFilter(ec:Int,msg:String)->(Int,String){
-        if(ec == ErrCode.XERR_TOKEN_INVALID){
-            log.i("sdk token invalid,try logout")
-            self.accountMgr.logoutAccount(false) { ec, msg in
-                log.i("sdk logout done")
-            }
+    public func isSignalingReady() -> Bool {
+        if app!.proxy.rtm.curUpdateState  == .Connected{
+            return true
         }
-        return _callbackFilter(ec,msg)
+        return false
     }
     
-    public func initialize(initParam: InitParam, sdkStatus:@escaping (SdkStatus, String)->Void,callbackFilter:@escaping(Int,String)->(Int,String)) -> Int {
-        _callbackFilter = callbackFilter
-        return app!.initialize(initParam: initParam,sdkStatus:sdkStatus,callbackFilter: onCallbackFilter)
+    public func getStateMachine() -> SdkState? {
+        return app?.sdkState ?? nil
     }
     
-    private var app:Application?
+    public func initialize(initParam: InitParam) -> Int {
+        if app == nil { app = IotLibrary.shared }
+        return app!.initialize(initParam: initParam)
+
+    }
     
-    var application:Application{set{
-        app = newValue
-    }get{
-        return app!
-    }}
+    private var app:IotLibrary?
     
     public func release() {
+        
+        leaveRtm()
+        
+        _iotAppSdkManager = nil
+        _connectionManager = nil
         app!.release()
+        app = nil
+        
     }
     
-    private var _accountManager : IAccountMgr? = nil
-    private var _callkitManager: CallkitManager? = nil
-    private var _deviceManager:IDeviceMgr? = nil
-    private var _alarmManager:IAlarmMgr? = nil
-    private var _notifyManager:INotificationMgr? = nil
+    func leaveRtm(){
+        log.i("leaveRtm:")
+        app?.proxy.rtm.leave(cb: { succ in
+            if(!succ){
+                log.w("rtm leave fail")
+            }else{
+                log.i("rtm leave success")
+            }
+        })
+    }
     
-    public var callkitMgr: ICallkitMgr{get{
-        if(_callkitManager == nil){
-            _callkitManager = CallkitManager(app: app!)
+    public func setPublishAudioEffect(effectId: AudioEffectId, result: @escaping (Int, String) -> Void) -> Int {
+        DispatchQueue.main.async {
+            self.app?.proxy.rtc.setAudioEffect(effectId, cb: result)
         }
-        return _callkitManager!
+        return ErrCode.XOK
+    }
+    
+    public func getPublishAudioEffect() -> AudioEffectId {
+        //todo:
+        return .NORMAL
+    }
+    
+    private  var _iotAppSdkManager : IotAppSdkManager? = nil
+    
+    private var _connectionManager: IConnectionManager? = nil
+    
+    public var iotAppSdkMgr: IotAppSdkManager{get{
+        if(_iotAppSdkManager == nil){
+            _iotAppSdkManager = IotAppSdkManager(app: app!)
+        }
+        return _iotAppSdkManager!
         
     }}
     
-    public var deviceMgr: IDeviceMgr{get{
-        if(_deviceManager == nil){
-            _deviceManager = DeviceManager(app: app!)
+    public var connectionMgr: IConnectionMgr{get{
+        if(_connectionManager == nil){
+            _connectionManager = IConnectionManager(app: app!)
         }
-        return _deviceManager!
+        return _connectionManager!
         
     }}
-
     
-    public var alarmMgr: IAlarmMgr{get{
-        if(_alarmManager == nil){
-            _alarmManager = AlarmManager(app:app!)
-        }
-        return _alarmManager!
-    }}
     
-    public var notificationMgr: INotificationMgr{get{
-        if(_notifyManager == nil){
-            _notifyManager = NotificationManager(app:app!)
-        }
-        return _notifyManager!
-    }}
-    
-    public var accountMgr: IAccountMgr{get{
-        if(_accountManager == nil){
-            _accountManager = AccountManager(app: app!)
-        }
-        return _accountManager!
-    }}
 }

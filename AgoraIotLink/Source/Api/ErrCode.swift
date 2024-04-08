@@ -29,7 +29,7 @@ public class ErrCode : NSObject{
     // 0: 表示正确
     @objc public static let XERR_NONE = 0                               ///< 成功
     @objc public static let XOK = 0                                     ///< 成功
-    //@objc public static let XERR_TOKEN_INVALID = -3                     ///< Token过期
+    ///
     //
     // 通用错误码
     //
@@ -45,24 +45,59 @@ public class ErrCode : NSObject{
     @objc public static let XERR_TIMEOUT = -10009                       ///< 操作超时
     @objc public static let XERR_NETWORK = -10012                       ///< 网络错误
     @objc public static let XERR_TOKEN_INVALID = -10015                 ///< Token无效
-    @objc public static let XERR_API_RET_FAIL = -10016                  ///< 调用依赖api返回失败
+    @objc public static let XERR_SYSTEM = -10016                        ///< 系统错误
+    @objc public static let XERR_APPID_INVALID = -10017                 ///< AppId不支持
+    @objc public static let XERR_NODEID_INVALID = -10018                ///< NodeId无效
+    @objc public static let XERR_NOT_AUTHORIZED = -10019                ///< 未认证
+    @objc public static let XERR_INVOKE_TOO_OFTEN = -10020              ///< 调用太频繁
+    @objc public static let  XERR_JSON_READ = -10022                    ///< JSON解析错误
+    @objc public static let  XERR_JSON_WRITE = -10023                   ///< JSON写入错误
+    
     //
-    // 账号相关错误
+    // 链接模块相应的错误
     //
-    @objc public static let XERR_ACCOUNT_BASE = -30000;
-    @objc public static let XERR_ACCOUNT_NOT_EXIST = -30001;             ///< 账号不存在
-    @objc public static let XERR_ACCOUNT_ALREADY_EXIST = -30002;         ///< 账号已经存在
-    @objc public static let XERR_ACCOUNT_PASSWORD_ERR = -30003;          ///< 密码错误
-    @objc public static let XERR_ACCOUNT_NOT_LOGIN = -30004;             ///< 账号未登录
-    @objc public static let XERR_ACCOUNT_REGISTER = -30005;              ///< 账号注册失败
-    @objc public static let XERR_ACCOUNT_UNREGISTER = -30006;            ///< 账号注销失败
-    @objc public static let XERR_ACCOUNT_LOGIN = -30007;                 ///< 账号登录失败
-    @objc public static let XERR_ACCOUNT_LOGOUT = -30008;                ///< 账号登出失败
-    @objc public static let XERR_ACCOUNT_CHGPSWD = -30009;               ///< 账号更换密码失败@objc
-    @objc public static let XERR_ACCOUNT_RESETPSWD = -30010;             ///< 账号重置密码失败
-    @objc public static let XERR_ACCOUNT_GETCODE = -30011;               ///< 获取验证码失败
-    @objc public static let XERR_ACCOUNT_USRINFO_QUERY = -30013;         ///< 查询用户信息失败
-    @objc public static let XERR_ACCOUNT_USRINFO_UPDATE = -30014;        ///< 更新用户信息失败
+    @objc public static let  XERR_CONNOBJ_BASE = -40000;
+    @objc public static let XERR_CONNOBJ_SUBSCRIBE_CMD = -40001;    ///< 订阅命令发送失败
+    @objc public static let XERR_CONNOBJ_NO_FRAME = -40002;         ///< 订阅后超时没有视频帧过来
+    
+    //
+    // 消息模块相应的错误
+    //
+    @objc public static let XERR_RTMMGR_BASE = -50000;
+    @objc public static let XERR_RTMMGR_LOGIN_UNKNOWN = -50001;            ///< RTM登录失败
+    @objc public static let XERR_RTMMGR_LOGIN_REJECTED = -50002;           ///< RTM登录被拒绝
+    @objc public static let XERR_RTMMGR_LOGIN_INVALID_ARGUMENT = -50003;   ///< RTM登录时参数错误
+    @objc public static let XERR_RTMMGR_LOGIN_INVALID_APP_ID = -50004;     ///< RTM登录时appId错误
+    @objc public static let XERR_RTMMGR_LOGIN_INVALID_TOKEN = -50005;      ///< RTM登录时token错误
+    @objc public static let XERR_RTMMGR_LOGIN_TOKEN_EXPIRED = -50006;      ///< RTM登录时token过期
+    @objc public static let XERR_RTMMGR_LOGIN_NOT_AUTHORIZED = -50007;     ///< RTM登录时鉴权失败
+    @objc public static let XERR_RTMMGR_LOGIN_ALREADY_LOGIN = -50008;      ///< RTM已经登录
+    @objc public static let XERR_RTMMGR_LOGIN_TIMEOUT = -50009;            ///< RTM登录超时
+    @objc public static let XERR_RTMMGR_LOGIN_TOO_OFTEN = -50010;          ///< RTM登录太频繁
+    @objc public static let XERR_RTMMGR_LOGIN_NOT_INITIALIZED = -50011;    ///< RTM未初始化
+    @objc public static let XERR_RTMMGR_MSG_FAILURE = -50012;              ///< 发送RTM消息失败
+    @objc public static let XERR_RTMMGR_MSG_TIMEOUT = -50013;              ///< 发送RTM消息超时
+    @objc public static let XERR_RTMMGR_MSG_PEER_UNREACHABLE = -50014;     ///< 消息不可到达
+    @objc public static let XERR_RTMMGR_MSG_CACHED_BY_SERVER = -50015;     ///< 消息未发送被缓存了
+    @objc public static let XERR_RTMMGR_MSG_TOO_OFTEN = -50016;           ///< 消息发送太频繁
+    @objc public static let XERR_RTMMGR_MSG_INVALID_USERID = -50017;       ///< RTM用户账号无效
+    @objc public static let XERR_RTMMGR_MSG_INVALID_MESSAGE = -50018;      ///< RTM消息无效
+    @objc public static let XERR_RTMMGR_MSG_IMCOMPATIBLE_MESSAGE = -50019; ///< 消息不兼容
+    @objc public static let XERR_RTMMGR_MSG_NOT_INITIALIZED = -50020;      ///< RTM未初始化发消息
+    @objc public static let XERR_RTMMGR_MSG_USER_NOT_LOGGED_IN = -50021;   ///< RTM未登录发消息
+    @objc public static let XERR_RTMMGR_LOGOUT_REJECT = -50022;            ///< RTM登出被拒绝
+    @objc public static let XERR_RTMMGR_LOGOUT_NOT_INITIALIZED = -50023;   ///< RTM未初始化登出
+    @objc public static let XERR_RTMMGR_LOGOUT_NOT_LOGGED_IN = -50024;     ///< RTM未登录就登出
+    @objc public static let XERR_RTMMGR_RENEW_FAILURE = -50025;            ///< RTM Renew token失败
+    @objc public static let XERR_RTMMGR_RENEW_INVALID_ARGUMENT = -50026;   ///< RTM Renew参数错误
+    @objc public static let XERR_RTMMGR_RENEW_REJECTED = -50027;           ///< RTM Renew被拒绝
+    @objc public static let XERR_RTMMGR_RENEW_TOO_OFTEN = -50028;          ///< RTM Renew太频繁
+    @objc public static let XERR_RTMMGR_RENEW_TOKEN_EXPIRED = -50029;      ///< RTM Renew过期
+    @objc public static let XERR_RTMMGR_RENEW_INVALID_TOKEN = -50030;      ///< RTM Renew无效
+    @objc public static let XERR_RTMMGR_RENEW_NOT_INITIALIZED = -50031;    ///< RTM未初始化Renew
+    @objc public static let XERR_RTMMGR_RENEW_NOT_LOGGED_IN = -50032;      ///< RTM未登录就Renew
+    
+    
     //
     // 呼叫系统相关错误
     //
@@ -73,30 +108,9 @@ public class ErrCode : NSObject{
     @objc public static let XERR_CALLKIT_ANSWER = -40004                 ///< 呼叫接听失败
     @objc public static let XERR_CALLKIT_REJECT = -40005                 ///< 呼叫拒绝失败
     @objc public static let XERR_CALLKIT_PEER_BUSY = -40006              ///< 对端忙
-    @objc public static let XERR_CALLKIT_PEERTIMEOUT = -40007            ///< 对端超时无响应
-    @objc public static let XERR_CALLKIT_LOCAL_BUSY = -40008             ///< 本地端忙
-    @objc public static let XERR_CALLKIT_ERR_OPT = -40009                ///< 不支持的错误操作
-    @objc public static let XERR_CALLKIT_PEER_UNREG = -40010             ///< 对端未注册
-    @objc public static let XERR_CALLKIT_NO_APPID = -40011               ///< 未上报appid
-    @objc public static let XERR_CALLKIT_SAME_ID = -40012                ///< 主叫和被叫同一个id
-    @objc public static let XERR_CALLKIT_APPID_DIFF = -4001              ///< 主控和被控方app id不一致
-    @objc public static let XERR_CALLKIT_UPDATE_SHADOW_FAIL = -40013     ///<aws设备影子更新失败
-    @objc public static let XERR_CALLKIT_CREAT_RTCTOKEN_FAIL = -40014    ///<生成rtc token错误
-    //
-    // 设备管理相关错误
-    //
-    @objc public static let XERR_DEVMGR_BASE = -50000
-    @objc public static let XERR_DEVMGR_NO_DEVICE = -50001               ///< 没有找到设备
-    @objc public static let XERR_DEVMGR_ONLINE = -50002                  ///< 设已解决在线
-    @objc public static let XERR_DEVMGR_OFFLINE = -50003                 ///< 设备不在线
-    @objc public static let XERR_DEVMGR_QUEYR = -50004                   ///< 设备查询失败
-    @objc public static let XERR_DEVMGR_ADD = -50005                     ///< 设备添加失败
-    @objc public static let XERR_DEVMGR_DEL = -50006                     ///< 设备删除失败
-    @objc public static let XERR_DEVMGR_CMD = -50007                     ///< 设备命令失败
-    @objc public static let XERR_DEVMGR_PROPERTY = -50008                ///< 设备命属性查询失败
-    @objc public static let XERR_DEVMGR_RENAME = -50009                  ///< 设备重命名失败
-    @objc public static let XERR_DEVMGR_SHARE_ALREADY_BIND = -50010      ///< 共享的设备已经被绑定
-    @objc public static let XERR_DEVMGR_SHARE_TARGET_NOT_EXIST = -50011  ///< 共享的用户不存在
-
-    @objc public static let XERR_ALARM_NOT_FOUND = -60001                ///< 没有找到告警信息
+    @objc public static let XERR_CALLKIT_LOCAL_BUSY = -40007             ///< 本地端忙
+    @objc public static let XERR_CALLKIT_ERR_OPT = -40008                ///< 不支持的错误操作
+    
+    
+ 
 }

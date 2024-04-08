@@ -7,24 +7,14 @@
 
 import Foundation
 
+
 extension AgoraLab{
     class api{
         //内部临时测试使用接口
-        //static let http_dev = "https://third-user.sh.agoralab.co/third-party" //for alert test
-        //static let http_lab = "http://iot-api-gateway.sh.agoralab.co:80/api"  //for rtm test
-        //static let http_multicall = "https://iot-api-gateway.sh.agoralab.co/api" //for multicall test
                                
         static let authLogin =          "/auth/login"
         static let oauthRegister =      "/oauth/register"
         static let oauthResetToken =    "/oauth/rest-token"
-        
-        static let control =            "/call-service/v1/control/start"
-        static let call =               "/call-service/v1/call"
-        static let simpleCall =         "/call-service/v1/simple-call"
-        static let answer =             "/call-service/v1/answer"
-        static let rtcToken =           "/call-service/v1/getRtcToken"
-        static let callV2 =             "/call-service/v2/call"
-        static let answerV2 =           "/call-service/v2/answer"
         
         static let add =                "/alert-center/alert-message/v1/add"
         static let delete =             "/alert-center/alert-message/v1/delete"
@@ -35,30 +25,20 @@ extension AgoraLab{
         static let getById =            "/alert-center/alert-message/v1/getById"
         static let getPage =            "/alert-center/alert-message/v1/getPage"
         static let getAlertCount =      "/alert-center/alert-message/v1/count"
-
-        static let getPageV2 =          "/alert-center/alarm-message/v2/getPage"
-        static let getByIdV2 =          "/alert-center/alarm-message/v2/getById"
-        static let singleReadV2 =       "/alert-center/alarm-message/v2/readMessage"
-        static let deleteV2 =           "/alert-center/alarm-message/v2/delete"
-        static let batchDeleteV2 =      "/alert-center/alarm-message/v2/deleteBatch"
-        static let batchReadV2 =        "/alert-center/alarm-message/v2/readMessageBatch"
-        static let addV2 =              "/alert-center/alarm-message/v2/add"
-        static let getAlertCountV2 =    "/alert-center/alarm-message/v2/count"
-        
-        static let sysReadMsg =         "/alert-center/system-message/v1/readMessage"
-        static let sysReadMsgBatch =    "/alert-center/system-message/v1/readMessageBatch"
-        static let sysGetById =         "/alert-center/system-message/v1/getById"
-        static let sysGetPage =         "/alert-center/system-message/v1/getPage"
-        static let sysGetAlertCount =   "/alert-center/system-message/v1/count"
-        
-        static let uploadHeadIcon =     "/file-system/image/v1/uploadFile"
-        static let getImageUrl =        "/file-system/image-record/v1/getByImageId"
-        static let getVideoUrl =        "/cloud-recorder/video-record/v1/getByTimePoint"
         
         //重置设备
         static let  resetDevice = "/call-service/v1/reset"
         //设置用户公钥
         static let  publicKeySet = "/oauth/public-key/set"
+        
+        //激活用户node
+//        static let  nodeActivate = "/iot-core/v2/secret-node/user/activate"
+        static let  nodeActivate = "/open-api/v2/iot-core/secret-node/user/activate"
+        
+        
+        //与设备建立链接（2.x）
+        static let  connectCreat = "/open-api/v2/connect/create"
+
     }
 
     static let tokenExpiredCode = 401
@@ -123,6 +103,70 @@ extension AgoraLab{
         }
         
     }
+    
+    class ActivateNode{
+        
+        struct Payload : Encodable{
+            let clientType:String
+            let userId:String
+            let masterAppId:String
+            let pusherId:String
+        }
+        struct Req : Encodable{
+            let payload:Payload
+        }
+        
+        struct Data : Decodable{
+            let nodeId:String
+            let nodeToken:String
+            let nodeRegion:String
+            let mqttServer:String
+            let mqttPort:UInt
+            let mqttUsername:String
+            let mqttSalt:String
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let success:Bool
+            let data:Data?
+        }
+        
+    }
+    
+    class ConnectCreat{
+        
+        struct Payload : Encodable{
+            let nodeToken:String
+            let localNodeId:String
+            let peerNodeId:String
+            let appId:String
+        }
+        struct Req : Encodable{
+//            let payload:Payload
+            let nodeToken:String
+            let localNodeId:String
+            let peerNodeId:String
+            let appId:String
+        }
+        
+        struct Data : Decodable{
+            let token:String
+            let uid:UInt
+            let cname:String
+        }
+        struct Rsp : Decodable{
+            let code:Int
+            let msg:String
+            let timestamp:UInt64
+            let traceId:String
+            let success:Bool
+            let data:Data?
+        }
+        
+    }
+
     
     class Login{
         struct LsToken : Decodable{
@@ -984,6 +1028,10 @@ extension AgoraLab{
         }
     }
     
+    //osspinlock
+    //os_unfair_lock
+    
+    //322  284
     class CallSimple{
         struct Payload : Encodable{
             let appId:String
@@ -1034,42 +1082,6 @@ extension AgoraLab{
         }
     }
     
-    func handleRspGetAlarmByIdV2(_ ret:AlertMessageGetByIdV2.Rsp,_  rsp:@escaping (Int,String,IotAlarm?) -> Void){
-        if(ret.code == AgoraLab.tokenExpiredCode){
-            log.w("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
-            rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
-            return
-        }
-        
-        if(ret.code != 0){
-            log.w("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
-        }
-        
-        guard let data = ret.data else{
-            log.e("al handleRspGetAlarmById rsp with no data")
-            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
-        }
-        
-        let alert:IotAlarm = IotAlarm(messageId: data.alarmMessageId)
-        alert.createdDate = data.createdDate
-        alert.messageType = data.messageType
-        alert.status = data.status
-        alert.desc = data.description ?? ""
-        alert.fileUrl = data.fileUrl ?? ""
-        alert.productId = data.productId
-        alert.deviceId = data.deviceId
-        alert.deviceName = data.deviceName
-        alert.beginTime = data.beginTime
-        alert.deleted = data.deleted
-        alert.createdBy = data.createdBy
-        alert.createdDate = data.createdDate
-        alert.changedBy = data.changedBy ?? 0
-        alert.changedDate = data.changedDate ?? 0
-        alert.tenantId = data.tenantId
-        rsp(ErrCode.XOK,ret.msg,alert)
-    }
-    
     func handleRspGetImageUrl(_ ret:AlertImageUrl.Rsp,_ rsp:@escaping (Int,String,String?)->Void){
         if(ret.code == AgoraLab.tokenExpiredCode){
             log.w("al handleRspGetImageUrl fail \(ret.msg)(\(ret.code))")
@@ -1079,7 +1091,7 @@ extension AgoraLab{
         
         if(ret.code != 0){
             log.w("al handleRspGetImageUrl fail \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
+            return rsp(ErrCode.XERR_SYSTEM,ret.msg,nil)
         }
         
         guard let data = ret.data else{
@@ -1088,130 +1100,5 @@ extension AgoraLab{
         }
         
         rsp(ErrCode.XOK,ret.msg,data.vodUrl)
-    }
-    
-    func handleRspGetVideoUrl(_ ret:AlertVideoUrl.Rsp,_ rsp:@escaping (Int,String,AlarmVideoInfo?)->Void){
-        if(ret.code == AgoraLab.tokenExpiredCode){
-            log.w("al handleRspGetVideoUrl fail \(ret.msg)(\(ret.code))")
-            rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
-            return
-        }
-        
-        if(ret.code != 0){
-            log.w("al handleRspGetVideoUrl fail \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
-        }
-        
-        guard let data = ret.data else{
-            log.w("al handleRspGetVideoUrl rsp no data found,the premission may be expired")
-            return rsp(ErrCode.XERR_UNKNOWN,"no data found",nil)
-        }
-        let info = AlarmVideoInfo()
-        info.url = data.vodUrl
-        info.videoSecretKey = data.videoSecretKey ?? ""
-        rsp(ErrCode.XOK,ret.msg,info)
-    }
-    
-    func handleRspGetAlarmPageV2(_ ret:AlertMessageGetPageV2.Rsp,_ rsp:@escaping (Int,String,[IotAlarm]?)->Void){
-        if(ret.code == AgoraLab.tokenExpiredCode){
-            log.w("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
-            rsp(ErrCode.XERR_TOKEN_INVALID,ret.msg,nil)
-            return
-        }
-        
-        if(ret.code != 0){
-            log.w("al handleRspGetPage fail \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
-        }
-        
-        guard let data = ret.data else{
-            log.e("al handleRspGetPage rsp no data found")
-            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
-        }
-        
-        var alerts:[IotAlarm] = []
-        if(data.totalCount == 0){
-            return rsp(ErrCode.XOK,ret.msg,alerts)
-        }
-        
-        guard let pageResults = data.pageResults else {
-            log.e("al handleRspGetPage rsp no pageResults found")
-            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
-        }
-        
-        for item in pageResults{
-            let alert:IotAlarm = IotAlarm(messageId: item.alarmMessageId)
-            alert.createdDate = item.createdDate
-            alert.messageType = item.messageType
-            alert.status = item.status
-            alert.desc = item.description ?? ""
-            alert.fileUrl = item.fileUrl ?? ""
-            alert.productId = item.productId
-            alert.deviceId = item.deviceId
-            alert.deviceName = item.deviceName
-            alert.beginTime = item.beginTime
-            alert.deleted = item.deleted
-            alert.createdBy = item.createdBy
-            alert.createdDate = item.createdDate
-            alert.changedBy = item.changedBy ?? 0
-            alert.changedDate = item.changedDate ?? 0
-            alert.imageId = item.imageId ?? ""
-            alerts.append(alert)
-            log.v("alert item \(item)")
-        }
-        rsp(ErrCode.XOK,ret.msg,alerts)
-    }
-    
-    func handleRspLogin(_ ret:Login.Rsp,_ rsp:@escaping (Int,String,LoginRspData?)->Void){
-        if(ret.code != 0){
-            log.w("al handleRspLogin fail \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_API_RET_FAIL,ret.msg,nil)
-        }
-        guard let data = ret.data else{
-            log.e("al handleRspLogin data is nil \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
-        }
-        guard let lsToken = data.lsToken else {
-            log.e("al handleRspLogin lsToken is nil \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
-        }
-        guard let gyToken = data.gyToken else {
-            log.e("al handleRspLogin gyToken is nil \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
-        }
-        guard let pool = gyToken.pool else {
-            log.e("al handleRspLogin pool is nil \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
-        }
-        guard let proof = gyToken.proof else {
-            log.e("al handleRspLogin proof is nil \(ret.msg)(\(ret.code))")
-            return rsp(ErrCode.XERR_UNKNOWN,ret.msg,nil)
-        }
-        
-        let ls = AgoraLabToken(tokenType: lsToken.token_type,
-                               accessToken: lsToken.access_token,
-                               refreshToken: "",
-                               expireIn: lsToken.expires_in,
-                               scope: lsToken.scope)
-        
-        let gy = IotLinkSession(granwin_token: gyToken.granwin_token,
-                                expiration: gyToken.expiration,
-                                endPoint: gyToken.endpoint,
-                                region: gyToken.region,
-                                account: gyToken.account,
-                                
-                                proof_sessionToken: proof.sessionToken,
-                                proof_secretKey: proof.secretKey,
-                                proof_accessKeyId: proof.accessKeyId,
-                                proof_sessionExpiration:proof.sessionExpiration,
-                                
-                                pool_token: pool.token,
-                                pool_identityId: pool.identityId,
-                                pool_identityPoolId: pool.identityPoolId,
-                                pool_identifier: pool.identifier)
-        
-        let rspData = LoginRspData(agToken: ls, gyToken: gy)
-        
-        rsp(ErrCode.XOK,ret.msg,rspData)
     }
 }

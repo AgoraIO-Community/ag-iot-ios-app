@@ -15,20 +15,12 @@ import UIKit
     
  }
 
-enum CallState {
-    case idle           // 空闲状态
-    case callRequest    // 呼叫请求状态
-    case outgoing       // 去电状态
-    case onCall         // 通话状态
-    case incoming       // 来电状态
-}
-
 enum CallEvent {
     case startCall             // 发起呼叫请求
-    case makeCalling           // 发起去电呼叫事件
+    case localJoining          // 本地开始加入频道
+    case localJoinSuc          // 本地加入频道成功
     case peerOnline            // 对端上线
     case peerOffline           // 对端离线
-    case incomingCall          // 来电事件
     case endCall               // 结束通话事件
 }
 
@@ -36,58 +28,45 @@ class CallStateMachine: NSObject {
     
     weak var delegate : CallStateMachineListener?
     
-    var currentState: CallState = .idle
+    var currentState: ConnectState = .disconnected
     
     func handleEvent(_ event: CallEvent) {
         switch currentState {
-        case .idle:
+        case .disconnected:
             switch event {
             case .startCall:
-                currentState = .callRequest
-            case .incomingCall:
-                currentState = .incoming
-                delegate?.do_CREATEANDENTER()
-                break
+                currentState = .connectReqing
             default:
                 break
             }
             
-        case .callRequest:
+        case .connectReqing:
             switch event {
-            case .makeCalling:
-                currentState = .outgoing
+            case .localJoining:
                 delegate?.do_CREATEANDENTER()
+            case .localJoinSuc:
+                currentState = .connecting
             case .endCall:
-                currentState = .idle
+                currentState = .disconnected
                 break
             default:
                 break
             }
             
-        case .outgoing:
+        case .connecting:
             switch event {
             case .peerOnline:
-                currentState = .onCall
+                currentState = .connected
             case .endCall:
-                currentState = .idle
+                currentState = .disconnected
             default:
                 break
             }
             
-        case .incoming:
-            switch event {
-            case .peerOnline:
-                currentState = .onCall
-            case .endCall:
-                currentState = .idle
-            default:
-                break
-            }
-            
-        case .onCall:
+        case .connected:
             switch event {
             case .endCall:
-                currentState = .idle
+                currentState = .disconnected
             default:
                 break
             }

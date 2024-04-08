@@ -12,38 +12,36 @@ import SwiftyRSA
 import Kingfisher
 
 class ThirdAccountManager{
+     
     class api{
     #if false //dev 国内环境
         static let http_3rdParty = "https://third-user.sh.agoralab.co/third-party"
-    #elseif true //prd 国内环境
+    #elseif false //prd 国内环境
         static let http_3rdParty = "https://third-user.sh3.agoralab.co/third-party"
     #elseif false //dev 国外
         static let http_3rdParty = "https://third-user.la3.agoralab.co/third-party"
+    #elseif true //dev 2.0
+        static let http_3rdParty = "http://api-test-huzhou1.agora.io/cn/iot/link" //"https://api-test-huzhou1.agora.io/cn/iot/link"//"https://api.sd-rtn.com/agoralink/cn/api"
     #elseif false //prd 国外
         
     #endif
-        static let authRegister =    "/auth/register" //不需要短信验证码
-        static let authRegister2 =    "/auth/register2" //需短信验证码
-        static let resetPassword =    "/auth/resetPwd" //重置密码，需短信验证码
-        static let authLogin =       "/auth/login"
-        static let authUnRegister =  "/auth/removeAccount"
-        static let getUid =          "/auth/getUidByUsername"
         static let getVerifyCode =   "/sys-verification-code/v1/sendRegisterCode" //注册 发送验证码
         static let getResetPwdVerifyCode =   "/sys-verification-code/v1/sendResetPwdCode" //重置密码 发送验证码
+        
+        //创建用户mode
+//        static let  nodeCreate = "/iot-core/v2/secret-node/user/create"
+        static let  nodeCreate = "/open-api/v2/iot-core/secret-node/user/create"
+        //激活用户node
+        static let  nodeActivate = "/open-api/v2/iot-core/secret-node/user/activate"
+
+        //激活设备node
+        static let  nodeDeviceActivate = "/open-api/v2/iot-core/secret-node/device/activate"
         
         struct Rsp:Decodable{
             let code:Int
             let msg:String
             let timestamp:UInt64
             let success:Bool
-        }
-        
-        struct GetUidRsp:Decodable{
-            let code:Int
-            let msg:String
-            let success:Bool
-            let timestamp:UInt64
-            let data:String?
         }
         
         class Login{
@@ -88,57 +86,39 @@ class ThirdAccountManager{
             }
         }
         
-        public class func handleLoginRsp(_ ret:Login.Rsp,_ rsp:@escaping (Int,String,LoginParam?)->Void){
-            if(ret.code != 0){
-                log.e("3rd handleLoginRsp fail \(ret.msg)(\(ret.code))")
-                return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
-            }
-            guard let data = ret.data else{
-                log.e("3rd handleLoginRsp data is nil \(ret.msg)(\(ret.code))")
-                return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
-            }
-            guard let lsToken = data.lsToken else {
-                log.e("3rd handleLoginRsp lsToken is nil \(ret.msg)(\(ret.code))")
-                return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
-            }
-            guard let gyToken = data.gyToken else {
-                log.e("3rd handleLoginRsp gyToken is nil \(ret.msg)(\(ret.code))")
-                return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
-            }
-            guard let pool = gyToken.pool else {
-                log.e("3rd handleLoginRsp pool is nil \(ret.msg)(\(ret.code))")
-                return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
-            }
-            guard let proof = gyToken.proof else {
-                log.e("3rd handleLoginRsp proof is nil \(ret.msg)(\(ret.code))")
-                return rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,nil)
-            }
+        class createNode{
             
-            let param = LoginParam()
+            struct Data : Decodable{
+                let nodeId:String
+                let region:String
+            }
+            struct Rsp : Decodable{
+                let code:Int
+                let msg:String
+                let timestamp:UInt64
+                let success:Bool
+                let data:Data?
+            }
+        }
+        
+        class activateNode{
             
-            param.tokenType = lsToken.token_type
-            param.accessToken = lsToken.access_token
-            param.refreshToken = lsToken.refresh_token
-            param.expireIn = lsToken.expires_in
-            param.scope = lsToken.scope
-            
-            param.grawin_token = gyToken.granwin_token
-            param.expiration = gyToken.expiration
-            param.endPoint = gyToken.endpoint
-            param.region = gyToken.region
-            param.account = gyToken.account
-            
-            param.proof_secretKey = proof.secretKey
-            param.proof_sessionToken = proof.sessionToken
-            param.proof_accessKeyId = proof.accessKeyId
-            param.proof_sessionExpiration = proof.sessionExpiration
-            
-            param.pool_token = pool.token
-            param.pool_identifier = pool.identifier
-            param.pool_identityId = pool.identityId
-            param.pool_identityPoolId = pool.identityPoolId
-            
-            rsp(ErrCode.XOK,ret.msg,param)
+            struct Data : Decodable{
+                let nodeId:String
+                let nodeToken:String
+                let nodeRegion:String
+                let mqttServer:String
+                let mqttPort:Int
+                let mqttUsername:String
+            }
+            struct Rsp : Decodable{
+                let code:Int
+                let msg:String
+                let timestamp:UInt64
+                let success:Bool
+                let traceId:String
+                let data:Data?
+            }
         }
         
         static var privateKey : PrivateKey? = nil
@@ -150,224 +130,122 @@ class ThirdAccountManager{
                 return
             }
             
-            AgoraIotLink.iotsdk.accountMgr.publicKeySet(publicKey: publicKey) { code, msg in
-                debugPrint("\(code)")
-            }
+//            AgoraIotLink.iotsdk.accountMgr.publicKeySet(publicKey: publicKey) { code, msg in
+//                debugPrint("\(code)")
+//            }
             
         }
         
     }
+    
+    //配置请求头的通用参数
+    class func configCommonHeader()->HTTPHeaders {
         
-    class func reqRegister(_ userName:String,_ password:String,_ rsp:@escaping(Int,String)->Void){
-        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
-        let params = ["username":userName,"password":password]
-        let url = api.http_3rdParty + api.authRegister
+        let headers:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8","traceId":"123456789","Authorization":"Basic " + getAuthorizationText()]
+        return headers
+    }
+    
+    //获取Authorization Base64编码
+    class func getAuthorizationText()-> String {
+        
+        if let storedAuthBase64Str = UserDefaults.standard.string(forKey: KeyCenter.kAuthorizationBase64Key) {
+            
+            return storedAuthBase64Str
+            
+        }else{
+            
+            let plainCredentials = KeyCenter.customerKey + ":" + KeyCenter.customerSecret
+            let authData = plainCredentials.data(using: .utf8)
+            
+            guard let base64Credentials = authData?.base64EncodedString(options: .endLineWithLineFeed) else {
+                print("转base64失败")
+                return ""
+            }
+            UserDefaults.standard.set(base64Credentials, forKey: KeyCenter.kAuthorizationBase64Key)
+            UserDefaults.standard.synchronize()
+        
+            return base64Credentials
+        }
+        
+    }
+    
+    class func nodeCreate(_ account : String, _ rsp:@escaping(Int,String,String)->Void){
+        let header = ThirdAccountManager.configCommonHeader()
+        let paramsDic = ["userId":account,"clientType":"2","appId":TDUserInforManager.shared.curMasterAppId]
+        let url = api.http_3rdParty + api.nodeCreate
+        print("url:\(url) header:\(header) paramsDic:\(paramsDic)")
+        
+//        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in
+//
+//            guard  reData != nil else{
+//                return
+//            }
+//
+//            print("123456")
+//
+//        }
 
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
+        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
             .validate()
-            .responseDecodable(of:api.Rsp.self){(dataRsp:AFDataResponse<api.Rsp>) in
+            .responseDecodable(of:api.createNode.Rsp.self){(dataRsp:AFDataResponse<api.createNode.Rsp>) in
             URLCache.shared.removeAllCachedResponses()
             switch dataRsp.result{
             case .success(let ret):
                 if(ret.code != 0){
-                    log.e("第三方 reqRegister fail \(ret.msg)(\(ret.code))")
+                    log.e("3rd nodeCreate fail \(ret.msg)(\(ret.code))")
                 }
-                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
+                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret.data?.nodeId ?? "")
             case .failure(let error):
-                log.e("第三方 reqRegister \(url) fail for \(userName), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
+                log.e("3rd nodeCreate \(url) , detail: \(error) ")
+                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error","")
             }
         }
     }
     
-    class func reqGetVerifyCode( phoneNumber:String, _ rsp:@escaping(Int,String)->Void){
-        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
-        let params = ["mobile":phoneNumber]
-        let url = api.http_3rdParty + api.getVerifyCode
+    class func nodeActivate(_ account : String,_ rsp:@escaping(Int,String,api.activateNode.Rsp?)->Void){
+        
+        
+        //------------激活设备请求参数，仅在绑定设备demo时需要-------------
+//        let header = ThirdAccountManager.configCommonHeader()
+//        let paramsDic = ["appId":"5ea8ad97b4684c798966b99a965beb9a","nodeId":"01HR439Q2WKYM8AC2EKY0J4MN2","nodeSecret":"655bad4ca9691dd5bff47325975a18a7",]
+//        let url = api.http_3rdParty + api.nodeDeviceActivate
+//        print("url:\(url) header:\(header) paramsDic:\(paramsDic)")
+        //------------激活设备请求参数，仅在绑定设备demo时需要-------------
+        
+//        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8","traceId":"123456"]
+        let header = ThirdAccountManager.configCommonHeader()
+        let paramsDic = ["userId":account,"clientType":"2","appId":TDUserInforManager.shared.curMasterAppId,"pusherId":"d0177a34"]
+        let url = api.http_3rdParty + api.nodeActivate
+   
+//        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in
+//
+//            guard  reData != nil else{
+//                return
+//            }
+//            print("123456")
+//
+//        }
 
-        AF.request(url,method:.get,parameters:params,encoder: URLEncodedFormParameterEncoder.default,headers: header)
+        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
             .validate()
-            .responseDecodable(of:api.Rsp.self){(dataRsp:AFDataResponse<api.Rsp>) in
+            .responseDecodable(of:api.activateNode.Rsp.self){(dataRsp:AFDataResponse<api.activateNode.Rsp>) in
             URLCache.shared.removeAllCachedResponses()
             switch dataRsp.result{
             case .success(let ret):
                 if(ret.code != 0){
-                    log.e("3rd reqGetVerifyCode fail \(ret.msg)(\(ret.code))")
+                    log.e("3rd nodeActivate fail \(ret.msg)(\(ret.code))")
                 }
-                if ret.code == 9999{
-                    rsp(ErrCode.XERR_UNKNOWN,ret.msg)
-                }else{
-                    rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
-                }
-                
+                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret)
             case .failure(let error):
-                log.e("3rd reqGetVerifyCode \(url) fail for \(phoneNumber), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
-            }
-        }
-    }
-    
-    class func reqGetResetPwdVerifyCode( phoneNumber:String, _ rsp:@escaping(Int,String)->Void){
-        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
-        let params = ["mobile":phoneNumber]
-        let url = api.http_3rdParty + api.getResetPwdVerifyCode
-
-        AF.request(url,method:.get,parameters:params,encoder: URLEncodedFormParameterEncoder.default,headers: header)
-            .validate()
-            .responseDecodable(of:api.Rsp.self){(dataRsp:AFDataResponse<api.Rsp>) in
-            URLCache.shared.removeAllCachedResponses()
-            switch dataRsp.result{
-            case .success(let ret):
-                if(ret.code != 0){
-                    log.e("3rd reqGetVerifyCode fail \(ret.msg)(\(ret.code))")
-                }
-                if ret.code == 9999{
-                    rsp(ErrCode.XERR_UNKNOWN,ret.msg)
-                }else{
-                    rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
-                }
-                
-            case .failure(let error):
-                log.e("3rd reqGetVerifyCode \(url) fail for \(phoneNumber), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
-            }
-        }
-    }
-    
-    class func reqRegisterByPhone(_ phoneNumber:String,_ password:String,_ verifyCode:String,_ rsp:@escaping(Int,String)->Void){
-        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
-        let params = ["username":phoneNumber,"password":password,"verificationCode":verifyCode]
-        let url = api.http_3rdParty + api.authRegister2
-
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
-            .validate()
-            .responseDecodable(of:api.Rsp.self){(dataRsp:AFDataResponse<api.Rsp>) in
-            URLCache.shared.removeAllCachedResponses()
-            switch dataRsp.result{
-            case .success(let ret):
-                if(ret.code != 0){
-                    log.e("3rd reqRegister fail \(ret.msg)(\(ret.code))")
-                }
-                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
-            case .failure(let error):
-                log.e("3rd reqRegister \(url) fail for \(phoneNumber), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
-            }
-        }
-    }
-    static var privateKey : PrivateKey? = nil
-    class func reqLogin(_ username:String,_ password:String,rsp:@escaping(Int,String,LoginParam?)->Void){
-        
-        let keyPair = try? SwiftyRSA.generateRSAKeyPair(sizeInBits: 1024)
-        privateKey = keyPair?.privateKey
-        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
-        let publicKey = try? keyPair?.publicKey.base64String()
-        
- 
-        let params = ["username":username,"password":password,"publicKey":publicKey]
-        let url = api.http_3rdParty + api.authLogin
-        
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
-            .validate()
-            .responseDecodable(of:api.Login.Rsp.self){(dataRsp:AFDataResponse<api.Login.Rsp>) in
-                URLCache.shared.removeAllCachedResponses()
-                switch dataRsp.result{
-                case .success(let ret):
-                    api.handleLoginRsp(ret,rsp)
-                case .failure(let error):
-                    log.e("3rd reqLogin \(url) fail for \(username), detail: \(error) ")
-                    rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
-                }
-            }
-    }
-    
-    class func reqUnRegister(_ account: String,_ password:String,_ rsp: @escaping (Int,String)->Void){
-        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
-        let params = ["username":account,"password":password]
-        let url = api.http_3rdParty + api.authUnRegister
-
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
-            .validate()
-            .responseDecodable(of:api.Rsp.self){(dataRsp:AFDataResponse<api.Rsp>) in
-            URLCache.shared.removeAllCachedResponses()
-            switch dataRsp.result{
-            case .success(let ret):
-                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
-            case .failure(let error):
-                log.e("3rd reqUnRegister \(url) fail for \(account), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
-            }
-        }
-    }
-    
-    class func reqUseridByAccount(_ account:String,_ rsp:@escaping(Int,String,String?)->Void){
-        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
-        let params = ["username":account]
-        let url = api.http_3rdParty + api.getUid
-
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
-            .validate()
-            .responseDecodable(of:api.GetUidRsp.self){(dataRsp:AFDataResponse<api.GetUidRsp>) in
-            URLCache.shared.removeAllCachedResponses()
-            switch dataRsp.result{
-            case .success(let ret):
-                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret.data)
-            case .failure(let error):
-                log.e("3rd reqUidByAccount \(url) fail for \(account), detail: \(error) ")
+                log.e("3rd nodeActivate \(url) , detail: \(error) ")
                 rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
             }
         }
     }
     
-    class func resetPassword(_ phoneNumber:String,_ password:String,_ verifyCode:String,_ rsp:@escaping(Int,String)->Void){
-        let header:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
-        let params = ["username":phoneNumber,"password":password,"verificationCode":verifyCode]
-        let url = api.http_3rdParty + api.resetPassword
-
-        AF.request(url,method: .post,parameters: params,encoder: JSONParameterEncoder.default,headers: header)
-            .validate()
-            .responseDecodable(of:api.Rsp.self){(dataRsp:AFDataResponse<api.Rsp>) in
-            URLCache.shared.removeAllCachedResponses()
-            switch dataRsp.result{
-            case .success(let ret):
-                if(ret.code != 0){
-                    log.e("3rd resetPassword fail \(ret.msg)(\(ret.code))")
-                }
-                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
-            case .failure(let error):
-                log.e("3rd resetPassword \(url) fail for \(phoneNumber), detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
-            }
-        }
-    }
 }
 
 class Utils{
-    class private func loadAlertById(_ alertImageId:String,_ rsp:@escaping(Int,String,UIImage?)->Void){
-        AgoraIotLink.iotsdk.alarmMgr.queryAlarmImage(alertImageId: alertImageId) { ec, msg, url in
-            if(ec != ErrCode.XOK || url == nil){
-                rsp(ec,msg,nil)
-                return
-            }
-            let fullurl = URL(string: url!)
-            guard let fullurl = fullurl else{
-                log.e("3rd loadImage url:\(url!) error:\(msg) for \(alertImageId)")
-                rsp(ec,msg,nil)
-                return
-            }
-
-            ImageDownloader.default.downloadImage(with: fullurl, options: nil) { result in
-                switch(result){
-                case .success(let data):
-                    ImageCache.default.store(data.image, forKey: String(alertImageId))
-                    rsp(ErrCode.XOK,"cache image:\(alertImageId)",data.image)
-                case .failure(let err):
-                    log.e("3rd ImageDownloader failed(\(err)):\(msg) for \(alertImageId) url:\(url!)")
-                    rsp(ErrCode.XERR_API_RET_FAIL,"download image fail: \(alertImageId)",nil)
-                }
-            }
-        }
-    }
 
     class func loadAlertImage(_ alertImageId:String,_ rsp:@escaping(Int,String,UIImage?)->Void){
         ImageCache.default.retrieveImage(forKey: alertImageId) { result in
@@ -378,43 +256,43 @@ class Utils{
                 }
                 else{
                     log.v("3rd retrieveImage is nil,try download image:\(alertImageId)")
-                    self.loadAlertById(alertImageId, rsp)
+//                    self.loadAlertById(alertImageId, rsp)
                 }
             case .failure(let err):
                 log.e("3rd retrieveImage fail,try load image:\(err)")
                 //log.e("al loadImage failed(\(err)):\(msg) for \(alertMessageId) url:\(String(describing: url))")
-                self.loadAlertById(alertImageId, rsp)
+//                self.loadAlertById(alertImageId, rsp)
             }
         }
     }
     
-    class func loadAlertVideoUrl(_ deviceId:String,_ tenantId:String, _ beginTime:UInt64,_ rsp:@escaping(Int,String,AlarmVideoInfo?)->Void){
-        //rsp(ErrCode.XOK,"","http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/conn-1.m3u8")
-        AgoraIotLink.iotsdk.alarmMgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId: tenantId, beginTime: beginTime,result:{ ec, msg, info in
-            guard let info = info else{
-                return rsp(ec,msg,info)
-            }
-            
-            //如果没有加密，则正常播放
-            guard  info.videoSecretKey != "" else {
-                return rsp(ec,msg,info)
-            }
-            
-            guard let privateKey = ThirdAccountManager.privateKey else{
-                return rsp(ErrCode.XERR_INVALID_PARAM,"3rd private key is nil",info)
-            }
-            
-            let encrypted = try? EncryptedMessage(base64Encoded: info.videoSecretKey)
-            let clear = try? encrypted?.decrypted(with: privateKey, padding: .PKCS1)
-            
-            guard let clear = clear else{
-                return rsp(ErrCode.XERR_INVALID_PARAM,"3d key can't be decoded",info)
-            }
-            
-            info.videoSecretKey = clear.base64String
-            info.url = info.url + "&agora-key=" + info.videoSecretKey
-            return rsp(ec,msg,info)
-            
-        })
-    }
+//    class func loadAlertVideoUrl(_ deviceId:String,_ tenantId:String, _ beginTime:UInt64,_ rsp:@escaping(Int,String,AlarmVideoInfo?)->Void){
+//        //rsp(ErrCode.XOK,"","http://aios-personalized-wuw.oss-cn-beijing.aliyuncs.com/conn-1.m3u8")
+//        AgoraIotLink.iotsdk.alarmMgr.queryAlarmVideoUrl(deviceId: deviceId,tenantId: tenantId, beginTime: beginTime,result:{ ec, msg, info in
+//            guard let info = info else{
+//                return rsp(ec,msg,info)
+//            }
+//            
+//            //如果没有加密，则正常播放
+//            guard  info.videoSecretKey != "" else {
+//                return rsp(ec,msg,info)
+//            }
+//            
+//            guard let privateKey = ThirdAccountManager.privateKey else{
+//                return rsp(ErrCode.XERR_INVALID_PARAM,"3rd private key is nil",info)
+//            }
+//            
+//            let encrypted = try? EncryptedMessage(base64Encoded: info.videoSecretKey)
+//            let clear = try? encrypted?.decrypted(with: privateKey, padding: .PKCS1)
+//            
+//            guard let clear = clear else{
+//                return rsp(ErrCode.XERR_INVALID_PARAM,"3d key can't be decoded",info)
+//            }
+//            
+//            info.videoSecretKey = clear.base64String
+//            info.url = info.url + "&agora-key=" + info.videoSecretKey
+//            return rsp(ec,msg,info)
+//            
+//        })
+//    }
 }

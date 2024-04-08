@@ -55,7 +55,7 @@ class AGAlertViewController: UIViewController {
         }
     }
     
-    static func showTitle(_ title:String?, message:String?,cancelTitle:String = "取消",commitTitle:String = "确定",commitAction: (()->(Void))?,cancelAction:(()->(Void))? = nil)  {
+    static func showTitle(_ title:String?, message:String?,cancelTitle:String = "cancel".L,commitTitle:String = "confirm".L,commitAction: (()->(Void))?,cancelAction:(()->(Void))? = nil)  {
         let vc = AGAlertViewController()
         vc.modalPresentationStyle = .overCurrentContext
         vc.setTitle(title, message: message, cancelTitle: cancelTitle, commitTitle: commitTitle, commitAction: commitAction, cancelAction: cancelAction)

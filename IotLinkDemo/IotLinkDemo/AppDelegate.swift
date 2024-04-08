@@ -61,19 +61,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if screenBrightness > 0 {//home键
             debugPrint("home键")
             //被动呼叫按下电源键挂断发通知
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteSysHangupNotify), object: nil)
+//            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteSysHangupNotify), object: nil)
         }else{//锁屏
             debugPrint("锁屏")
             //被动呼叫按下电源键挂断发通知
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteSysHangupNotify), object: nil)
+//            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cRemoteSysHangupNotify), object: nil)
         }
         
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         debugPrint("回到前台111")
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: cApplicationWillEnterForegroundNotify), object: nil)
+//        NotificationCenter.default.post(name: NSNotification.Name(rawValue: cApplicationWillEnterForegroundNotify), object: nil)
         
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        debugPrint("挂起")
+    }
+    
+    func applicationDidFinishLaunching(_ application: UIApplication) {
+        debugPrint("恢复")
     }
 }
 

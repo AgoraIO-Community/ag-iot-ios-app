@@ -115,7 +115,8 @@ class AGActionSheetVC: UIViewController {
         view.addSubview(tableView)
         let tableHeight = kItemHeight * CGFloat(items.count) + kHeaderTitleHeight + safeAreaBottomSpace()
         tableView.snp.makeConstraints { make in
-            make.left.bottom.right.equalToSuperview()
+            make.left.right.equalToSuperview()
+            make.bottom.equalTo(-49)
             make.height.equalTo(tableHeight)
         }
     }

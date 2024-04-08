@@ -52,7 +52,14 @@ public extension String {
     
     static func dateTimeRounded()->Int {
         let timeInterval: TimeInterval = Date().timeIntervalSince1970
-        let timestamp = Int(timeInterval) //Int((timeInterval * 1000.0).rounded())
+        let timestamp =  Int((timeInterval).rounded()) //Int(timeInterval)
+        return timestamp
+
+    }
+    
+    static func dateCurrentTime()->TimeInterval {
+        let timeInterval: TimeInterval = Date().timeIntervalSince1970
+        let timestamp =  timeInterval * 1000.0 //Int(timeInterval)
         return timestamp
     }
     
@@ -63,6 +70,13 @@ public extension String {
         return timestamp - lastTime
     }
     
+    static func dateTimeSpaceMillion(_ lastTime : TimeInterval)->TimeInterval {
+        let timeInterval: TimeInterval = Date().timeIntervalSince1970
+        let timestamp = timeInterval * 1000.0
+        log.i("dateTimeSpace currentTime:\(timestamp)")
+        return timestamp - lastTime
+    }
+
     var dateFromISO8601: Date? {
         return Formatter.iso8601.date(from: self)
     }

@@ -140,19 +140,19 @@ extension SetPasswordVC{
         }
         
         AGToolHUD.showNetWorkWait()
-        loginVM.register(accountText, pwd, captchaText,email: email,phone: phone) { [weak self] success, msg in
-            
-            AGToolHUD.disMiss()
-            if success {
-                debugPrint("注册成功")
-                AGToolHUD.showInfo(info: "注册成功")
-                self?.jumpRootVC()
-            }else{
-                AGToolHUD.showInfo(info: msg)
-                self?.setPasswordView.showTipsMessage(msg)
-            }
-            print("\(msg)")
-        }
+//        loginVM.register(accountText, pwd, captchaText,email: email,phone: phone) { [weak self] success, msg in
+//            
+//            AGToolHUD.disMiss()
+//            if success {
+//                debugPrint("注册成功")
+//                AGToolHUD.showInfo(info: "注册成功")
+//                self?.jumpRootVC()
+//            }else{
+//                AGToolHUD.showInfo(info: msg)
+//                self?.setPasswordView.showTipsMessage(msg)
+//            }
+//            print("\(msg)")
+//        }
         
     }
     
@@ -160,19 +160,19 @@ extension SetPasswordVC{
     func resetPassword(_ pwd: String){
         
         AGToolHUD.showNetWorkWait()
-        loginVM.resetPassword(accountText, pwd, captchaText) { [weak self] success, msg in
-            
-            AGToolHUD.disMiss()
-            if success {
-                AGToolHUD.showInfo(info: "密码重置成功")
-                debugPrint("密码重置成功")
-                self?.jumpRootVC()
-            }else{
-                AGToolHUD.showInfo(info: msg)
-                self?.setPasswordView.showTipsMessage(msg)
-            }
-            print("\(msg)")
-        }
+//        loginVM.resetPassword(accountText, pwd, captchaText) { [weak self] success, msg in
+//            
+//            AGToolHUD.disMiss()
+//            if success {
+//                AGToolHUD.showInfo(info: "密码重置成功")
+//                debugPrint("密码重置成功")
+//                self?.jumpRootVC()
+//            }else{
+//                AGToolHUD.showInfo(info: msg)
+//                self?.setPasswordView.showTipsMessage(msg)
+//            }
+//            print("\(msg)")
+//        }
         
     }
     

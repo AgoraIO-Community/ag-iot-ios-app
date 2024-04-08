@@ -132,14 +132,5 @@ class NotifyMsgCell: UITableViewCell {
         }
     }
     
-    
-    func setMsgData(_ data: MsgData) {
-        nameLabel.text = messageTypeValues[Int(data.alarm.messageType)] ?? "未知"
-        infoLabel.text = data.alarm.desc
-        let interval = TimeInterval(truncating: (data.alarm.createdDate) as NSNumber) / 1000.0
-        dateLabel.text = formatter.string(from: Date(timeIntervalSince1970: interval))
-        selectedbutton.isHidden = !data.canEdit
-        selectedbutton.isSelected = data.isSelected
-    }
 
 }

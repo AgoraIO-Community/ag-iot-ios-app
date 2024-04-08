@@ -25,11 +25,13 @@ private let kCellID = "MineCell"
 
 class MinePageMainVC: AGBaseVC {
 
+//    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
+    
     var dataArray = Array<MineCellData>()
-    private let messageTitle = "消息中心"
-    private let settingTitle = "通用设置"
-    private let aboutTitle = "关于"
-    private var userInfo :UserInfo?
+    private let messageTitle = "messageCenter".L
+    private let settingTitle = "generalSettings".L
+    private let aboutTitle = "about".L
+//    private var userInfo :UserInfo?
     var message: MineCellData?
     var alamUnreadCount: UInt = 0 {
         didSet{
@@ -63,9 +65,9 @@ class MinePageMainVC: AGBaseVC {
         let topView = MineTopView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 150))
     
         topView.clickArrowButtonAction = {[weak self] in
-            let vc = PersonalInfoVC()
-            vc.userInfo = self?.userInfo
-            self?.navigationController?.pushViewController(vc, animated: true)
+//            let vc = PersonalInfoVC()
+//            vc.userInfo = self?.userInfo
+//            self?.navigationController?.pushViewController(vc, animated: true)
         }
     
         return topView
@@ -97,37 +99,44 @@ class MinePageMainVC: AGBaseVC {
     }
     
     private func updateUIWithUserModel(){
-        var account = TDUserInforManager.shared.getKeyChainAccount() 
+        
+        var account = TDUserInforManager.shared.getKeyChainAccount()
+        let nodeId = TDUserInforManager.shared.mUserNodeId
+        
+        self.mineHeaderView.setHeadImg(nil, name: account,count: 0,uid: nodeId ?? "")
+
+        
         // 如果是电话号码，隐藏中间4位
-        if account.checkPhone() {
-            let startIndex = account.startIndex
-            account.replaceSubrange(account.index(startIndex, offsetBy: 3)...account.index(startIndex, offsetBy: 6), with: "****")
-        }
-        AgoraIotManager.shared.sdk?.accountMgr.getAccountInfo(result: { [weak self] _, _, userInfo in
-            let uid:String = DeviceManager.shared.sdk?.accountMgr.getUserId() ?? ""
-            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: account,count:DeviceManager.shared.devices?.count ?? 0,uid: uid)
-            self?.userInfo = userInfo
-            if(self?.userInfo?.sex == 0){
-                self?.userInfo?.sex = 1
-            }
-            if(self?.userInfo?.age == 0){
-                self?.userInfo?.age = 10
-            }
-        })
-        // 更新是否有告警消息
-        AgoraIotManager.shared.sdk?.alarmMgr.queryCount(productId: nil, deviceId: nil, messageType: nil, status: 0, createDateBegin: nil, createDateEnd: nil, result: {[weak self] _, _, count in
-            DispatchQueue.main.async {
-                self?.alamUnreadCount = count
-            }
-        })
-        // 更新是否有通知消息
-        if let ids = DeviceManager.shared.deviceIds {
-            AgoraIotManager.shared.sdk?.alarmMgr.querySysCount(productId: nil, deviceIds: ids, messageType: nil, status: 0, createDateBegin: nil, createDateEnd: nil, result: {[weak self] ec, msg, count in
-                DispatchQueue.main.async {
-                    self?.notifyUnrendCount = count
-                }
-            })
-        }
+//        if account.checkPhone() {
+//            let startIndex = account.startIndex
+//            account.replaceSubrange(account.index(startIndex, offsetBy: 3)...account.index(startIndex, offsetBy: 6), with: "****")
+//        }
+//        AgoraIotManager.shared.sdk?.accountMgr.getAccountInfo(result: { [weak self] _, _, userInfo in
+////            let uid:String = DeviceManager.shared.sdk?.accountMgr.getUserId() ?? ""
+//            let nodeId = sdk?.getUserNodeId()
+//            self?.mineHeaderView.setHeadImg(userInfo?.avatar, name: account,count:DeviceManager.shared.devices?.count ?? 0,uid: nodeId ?? "")
+//            self?.userInfo = userInfo
+//            if(self?.userInfo?.sex == 0){
+//                self?.userInfo?.sex = 1
+//            }
+//            if(self?.userInfo?.age == 0){
+//                self?.userInfo?.age = 10
+//            }
+//        })
+//        // 更新是否有告警消息
+//        AgoraIotManager.shared.sdk?.alarmMgr.queryCount(productId: nil, deviceId: nil, messageType: nil, status: 0, createDateBegin: nil, createDateEnd: nil, result: {[weak self] _, _, count in
+//            DispatchQueue.main.async {
+//                self?.alamUnreadCount = count
+//            }
+//        })
+//        // 更新是否有通知消息
+//        if let ids = DeviceManager.shared.deviceIds {
+//            AgoraIotManager.shared.sdk?.alarmMgr.querySysCount(productId: nil, deviceIds: ids, messageType: nil, status: 0, createDateBegin: nil, createDateEnd: nil, result: {[weak self] ec, msg, count in
+//                DispatchQueue.main.async {
+//                    self?.notifyUnrendCount = count
+//                }
+//            })
+//        }
     }
     
     private func setupUI() {
@@ -140,12 +149,12 @@ class MinePageMainVC: AGBaseVC {
     }
     
     private func setupData(){
-        message = MineCellData(imgName: "mine_diamond", title: messageTitle)
+//        message = MineCellData(imgName: "mine_diamond", title: messageTitle)
         let setting = MineCellData(imgName: "mine_diamond", title: settingTitle)
         let about = MineCellData(imgName: "mine_vip", title: aboutTitle)
         
         dataArray = [
-            message!,
+//            message!,
             setting,
             about,
         ]
@@ -154,11 +163,7 @@ class MinePageMainVC: AGBaseVC {
     
     // 点击消息中心
     private func didSelectMessageCell(){
-        let vc = MessageCenterVC()
-        vc.alamUnreadCount = Int(alamUnreadCount)
-        vc.notifyUnreadCount = Int(notifyUnrendCount)
-        vc.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
+
     }
     
     // 点击通用设置

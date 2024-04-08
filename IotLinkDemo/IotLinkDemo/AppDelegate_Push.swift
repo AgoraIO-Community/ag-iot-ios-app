@@ -28,8 +28,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
        
         //获取推送token,传给环信后台
-        let sdk = AgoraIotManager.shared.sdk
-        sdk?.notificationMgr.updateToken(deviceToken)
+//        let sdk = AgoraIotManager.shared.sdk
+//        sdk?.notificationMgr.updateToken(deviceToken)
         
         var deviceId = String()
         if #available(iOS 13.0, *) {

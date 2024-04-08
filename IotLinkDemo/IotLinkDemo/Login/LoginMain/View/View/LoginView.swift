@@ -47,7 +47,7 @@ class LoginView: UIView {
 //        backView.addSubview(selectCountry)
         backView.addSubview(forgetBtn)
         backView.addSubview(phoneNumView)
-        backView.addSubview(passwordView)
+//        backView.addSubview(passwordView)
         backView.addSubview(tipsLabel)
         backView.addSubview(loginBtn)
         backView.addSubview(registerBtn)
@@ -63,7 +63,7 @@ class LoginView: UIView {
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalTo(logoTopSpace)
             make.centerX.equalToSuperview()
-            make.width.equalTo(100.S)
+            make.width.equalTo(200.S)
             make.height.equalTo(50.S)
         }
         
@@ -90,27 +90,27 @@ class LoginView: UIView {
             make.height.equalTo(cHeight)
         }
         
-        passwordView.snp.makeConstraints { (make) in
-            make.top.equalTo(phoneNumView.snp.bottom).offset(28.VS)
-            make.left.equalTo(margain)
-            make.right.equalTo(-margain)
-            make.height.equalTo(cHeight)
-        }
+//        passwordView.snp.makeConstraints { (make) in
+//            make.top.equalTo(phoneNumView.snp.bottom).offset(28.VS)
+//            make.left.equalTo(margain)
+//            make.right.equalTo(-margain)
+//            make.height.equalTo(cHeight)
+//        }
         
-        forgetBtn.snp.makeConstraints { (make) in
-            make.top.equalTo(passwordView.snp.bottom).offset(12.VS)
-            make.right.equalTo(passwordView.snp.right).offset(-10.S)
-            make.height.equalTo(18.S)
-        }
+//        forgetBtn.snp.makeConstraints { (make) in
+//            make.top.equalTo(passwordView.snp.bottom).offset(12.VS)
+//            make.right.equalTo(passwordView.snp.right).offset(-10.S)
+//            make.height.equalTo(18.S)
+//        }
         
         tipsLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(passwordView.snp.bottom).offset(8.VS)
-            make.left.equalTo(passwordView.snp.left)
-            make.right.equalTo(passwordView.snp.right).offset(-65.S)
+            make.top.equalTo(phoneNumView.snp.bottom).offset(8.VS)
+            make.left.equalTo(phoneNumView.snp.left)
+            make.right.equalTo(phoneNumView.snp.right).offset(-65.S)
         }
         
         loginBtn.snp.makeConstraints { (make) in
-            make.top.equalTo(passwordView.snp.bottom).offset(81.VS)
+            make.top.equalTo(phoneNumView.snp.bottom).offset(61.VS)
             make.centerX.equalToSuperview()
             make.width.equalTo(140.S)
             make.height.equalTo(56.S)
@@ -142,7 +142,8 @@ class LoginView: UIView {
         let label = UILabel()
         label.textColor = UIColor(hexString: "#000000")
         label.font = FontPFRegularSize(36)
-        label.text = "灵隼"
+        label.textAlignment = .center
+        label.text = "agoraLink".L
         return label
     }()
     
@@ -217,7 +218,7 @@ class LoginView: UIView {
     
     lazy var loginBtn: UIButton = {
         let btn = UIButton()
-        btn.setTitle("登录", for: .normal)
+        btn.setTitle("login".L, for: .normal)
         btn.backgroundColor = UIColor.init(hexString: "#1A1A1A")
         
         btn.titleLabel?.font = FontPFMediumSize(18)
@@ -229,7 +230,7 @@ class LoginView: UIView {
     
     lazy var registerBtn: UIButton = {
         let btn = UIButton()
-        btn.setTitle("注册账号", for: .normal)
+        btn.setTitle("register".L, for: .normal)
         btn.setTitleColor(UIColor(hexString: "#49A0FF"), for: .normal)
         btn.titleLabel?.font = FontPFMediumSize(18)
         btn.titleLabel?.adjustsFontSizeToFitWidth = true

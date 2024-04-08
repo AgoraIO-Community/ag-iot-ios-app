@@ -19,17 +19,16 @@ class VideoRecordManager: NSObject {
     var videoW : Int32 = 0
     var videoH : Int32 = 0
     
-    var outFilePath : String = ""
+    var documentPath : String = ""
     
     var writeManager : DataWriterManager?
-
     
     func startWriter(){
         
         writeManager = DataWriterManager.init(url: nil)
         writeManager?.videoW = CGFloat(videoW)
         writeManager?.videoH = CGFloat(videoH)
-        writeManager?.outFilePath = outFilePath
+        writeManager?.documentPath = documentPath
         index = 0
         indexAudio = 0
         writeManager?.startWrite()

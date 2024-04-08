@@ -127,7 +127,7 @@ public class Logger: NSObject {
         
         
         let _fileName = fileName.split(separator: "/")
-        let text = "\(level.name):\(showThread ? thread.description : "")\(tag ?? ""): \(message) at \(_fileName.last ?? "?")(\(lineNumber))"
+        let text = "[\(_fileName.last ?? "?")(\(lineNumber))]:  \(level.name):\(showThread ? thread.description : "")\(tag ?? ""): \(message)"
         
         switch self.ouput {
             case .fileOnly:

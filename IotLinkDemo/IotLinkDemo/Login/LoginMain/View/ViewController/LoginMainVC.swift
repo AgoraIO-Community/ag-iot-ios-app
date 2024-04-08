@@ -7,10 +7,15 @@
 
 import UIKit
 import IQKeyboardManagerSwift
+import AgoraIotLink
 
 class LoginMainVC: LoginBaseVC {
 
+    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
+    
     fileprivate lazy var loginVM = LoginMainVM()
+    
+    var tapCounter = 0
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
@@ -50,6 +55,10 @@ class LoginMainVC: LoginBaseVC {
         
         setUpViews()
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tapGesture.numberOfTapsRequired = 1
+        view.addGestureRecognizer(tapGesture)
+        
     }
     
     func setUpViews(){
@@ -59,6 +68,9 @@ class LoginMainVC: LoginBaseVC {
             make.top.left.bottom.right.equalToSuperview()
         }
         
+        //获取存储的用户信息，自动填充上次登陆的账号
+        let accountInfor = TDUserInforManager.shared.readKeyChainAccountAndPwd()
+        loginV.phoneNumView.textField.text = accountInfor.acc
     }
     
     lazy var loginV : LoginView = {
@@ -77,6 +89,12 @@ extension LoginMainVC : LoginViewDelegate{
     //登录
     func loginBtnClick(acc: String, pwd: String) {
        
+//
+//                createUserNode(acc)
+//        //        activeUserNode()
+//                return
+
+        
         //去除国家选择需求注释
 //        if TDUserInforManager.shared.currentCountryCode == "" {
 //            AGToolHUD.showInfo(info: "请选择国家/地区")
@@ -91,13 +109,13 @@ extension LoginMainVC : LoginViewDelegate{
         }
         
         //guard verficationPassword(pwd) == true else {
-        guard !pwd.isEmpty else{
-            debugPrint("密码为空")
-            loginV.showTipsMessage("密码为空")
-            return
-        }
+//        guard !pwd.isEmpty else{
+//            debugPrint("密码为空")
+//            loginV.showTipsMessage("密码为空")
+//            return
+//        }
         
-        loginAction(acc:acc,pwd:pwd)
+        loginAction(acc:acc,pwd:"test")
         
 //        if verficationAccount.isEmail == true {
 //            TDUserInforManager.shared.userType = .email
@@ -112,7 +130,82 @@ extension LoginMainVC : LoginViewDelegate{
         //}
  
     }
+      
+    
+    //创建Node
+    func createUserNode(_ acc : String){
+
+        ThirdAccountManager.nodeCreate(acc) { [weak self] success, msg,nodeId in
+
+            print("\(msg)")
+        }
+
+    }
+    
+    //激活Node
+    func activeUserNode(_ acc : String, pwd: String){
         
+        ThirdAccountManager.nodeActivate(acc) { [weak self] success, msg,retData in
+            
+            print("activeUserNode result :\(success)")
+            AGToolHUD.disMiss()
+            if success == ErrCode.XOK {
+                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
+                guard let retModel = retData else { return }
+                TDUserInforManager.shared.mUserNodeId = retModel.data?.nodeId ?? ""
+                self?.initAgoraIot(reqModel: retModel)
+            }else{
+                debugPrint("登录失败")
+                self?.loginV.showTipsMessage(msg)
+            }
+            print("\(msg)---\(String(describing: retData?.data?.nodeToken))---\(String(describing: retData))")
+        }
+        
+    }
+    
+    func initAgoraIot(reqModel : ThirdAccountManager.api.activateNode.Rsp){
+        log.i("AgoraIotManager app initialize()")
+        
+        //在用的appId：5ea8ad97b4684c798966b99a965beb9a //之前的appId:"24cbe3f57d2b45c58c47004085f3ff03"
+        
+        let param:InitParam = InitParam()
+        param.mAppId = TDUserInforManager.shared.curMasterAppId
+        param.mRegion = 1 //todo:
+        param.mCustomerKey = KeyCenter.customerKey
+        param.mCustomerSecret = KeyCenter.customerSecret
+        param.mLogFileName = ""
+        param.mLocalNodeId = reqModel.data?.nodeId ?? ""
+        param.mLocalNodeToken = reqModel.data?.nodeToken ?? ""
+        
+        
+        let ret = iotsdk.initialize(initParam: param)
+        if(ret != ErrCode.XOK){
+            log.e("initialize failed")
+        }else{
+            TDUserInforManager.shared.isLogin = true
+            //登录成功发通知
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
+            self.dismiss(animated: true, completion: { })
+        }
+        
+        
+//        let param:InitParam = InitParam()
+//        param.mAppId = ""
+//        param.mRegion = ""
+//        param.mCustomerKey = ""
+//        param.mCustomerSecret = ""
+//        param.mLogFileName = ""
+//        param.mLocalNodeId = ""
+//        param.mLocalNodeToken = ""
+//        let ret = iotsdk.initialize(initParam: param)
+//        if(ret != ErrCode.XOK){
+//            log.e("initialize failed")
+//            return
+//        }
+        
+    }
+
+    
     //忘记密码点击
     func forgetPwdBtnClick() {
         
@@ -219,49 +312,103 @@ extension LoginMainVC{
     
     //登录
     func loginAction(acc: String, pwd: String){
+        
+        
         loginV.hide()
         AGToolHUD.showNetWorkWait()
-        //note: login2
-        loginVM.login2(acc, pwd) { [weak self] success, msg in
-            
-            AGToolHUD.disMiss()
-            if (success) {
-                debugPrint("登录成功")
-                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
-                TDUserInforManager.shared.isLogin = true
-                //登录成功发通知
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
-                self?.dismiss(animated: true, completion: { })
-            }else{
-                debugPrint("登录失败")
-                self?.loginV.showTipsMessage(msg)
-            }
-
-        }
+        
+        activeUserNode(acc,pwd: pwd)
+        return
+        
+        //todo:
+//        let preParam = LoginParam()
+//        //在用的appId：24cbe3f57d2b45c58c47004085f3ff03 //之前的appId:"d0177a34373b482a9c4eb4dedcfa586a"
+//        preParam.mUserId = acc
+//        preParam.mClientType = 2
+//        
+//        sdk?.login(loginParam: preParam, onLoginListener: {[weak self] code, msg in
+//            print("prepare result :\(code)")
+//            AGToolHUD.disMiss()
+//            if code == ErrCode.XOK {
+//                
+//                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
+//                TDUserInforManager.shared.isLogin = true
+//                //登录成功发通知
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
+//                self?.dismiss(animated: true, completion: { })
+//            }else{
+//                debugPrint("登录失败")
+//                self?.loginV.showTipsMessage(msg)
+//            }
+//        })
+        
+        
+        
+        
+//        loginV.hide()
+//        AGToolHUD.showNetWorkWait()
+//        //note: login2
+//        loginVM.login2(acc, pwd) { [weak self] success, msg in
+//
+//            AGToolHUD.disMiss()
+//            if (success) {
+//                debugPrint("登录成功")
+//                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
+//                TDUserInforManager.shared.isLogin = true
+//                //登录成功发通知
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
+//                self?.dismiss(animated: true, completion: { })
+//            }else{
+//                debugPrint("登录失败")
+//                self?.loginV.showTipsMessage(msg)
+//            }
+//
+//        }
         
     }
     
     func registerAction(acc:String,pwd:String){
         loginV.hide()
         AGToolHUD.showNetWorkWait()
-        loginVM.register2(acc, pwd) { [weak self]succ, msg in
-            AGToolHUD.disMiss()
-            if (succ) {
-                debugPrint("注册成功")
-                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
-                TDUserInforManager.shared.isLogin = false
-                //登录成功发通知
-                //NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
-                //self?.dismiss(animated: true, completion: { })
-                //self?.loginV.showTipsMessage(msg)
-                //
-                AGToolHUD.showInfo(info: msg)
-                
-            }else{
-                debugPrint("注册失败")
-                self?.loginV.showTipsMessage(msg)
-            }
-        }
+//        loginVM.register2(acc, pwd) { [weak self]succ, msg in
+//            AGToolHUD.disMiss()
+//            if (succ) {
+//                debugPrint("注册成功")
+//                TDUserInforManager.shared.saveKeyChainAccountInfor(acc: acc, pwd: pwd)
+//                TDUserInforManager.shared.isLogin = false
+//                //登录成功发通知
+//                //NotificationCenter.default.post(name: NSNotification.Name(rawValue: cUserLoginSuccessNotify), object: nil)
+//                //self?.dismiss(animated: true, completion: { })
+//                //self?.loginV.showTipsMessage(msg)
+//                //
+//                AGToolHUD.showInfo(info: msg)
+//                
+//            }else{
+//                debugPrint("注册失败")
+//                self?.loginV.showTipsMessage(msg)
+//            }
+//        }
     }
     
+}
+
+extension LoginMainVC{
+    
+   @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+         tapCounter += 1
+            
+         if tapCounter >= 6 {
+             // 连击六次触发事件
+             performTriggeredAction()
+             tapCounter = 0 // 重置计数器
+            }
+        }
+        
+   func performTriggeredAction() {
+        // 连击六次触发的事件
+        print("登陆页面：连击六次触发的事件")
+       self.dismiss(animated: true, completion: { })
+       TDUserInforManager.shared.showEditAppIdAlert()
+    }
+       
 }

@@ -11,7 +11,7 @@ import SVProgressHUD
 
 class ReceiveDeviceShareVC: UIViewController {
     
-    var shareInfo: ShareItem?
+//    var shareInfo: ShareItem?
 
 //    private lazy var shareView:ReceiveDeviceShareView = {
 //        let shareView = ReceiveDeviceShareView()
