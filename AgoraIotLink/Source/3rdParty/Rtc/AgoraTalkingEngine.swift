@@ -12,6 +12,7 @@ import CoreMedia
 enum RtcPeerAction{
     case Enter
     case Leave
+    case Lost
     case AudioReady
     case VideoReady
 }
@@ -57,8 +58,6 @@ class AgoraTalkingEngine: NSObject {
     var rtcSetting  : RtcSetting =  RtcSetting()
     var peerDisplayView : UIView?
     
-    private var  _onEnterChannel : TimeCallback<(TaskResult,String)>? = nil
-    
     private var  _onPeerAction : (RtcPeerAction,UInt)->Void = {b,u in}
     private var  _memberState : (MemberState,[UInt])->Void = {s,a in }
     private var  _rdtDataListen : (UInt,Data)->Void = {u,d in }
@@ -73,7 +72,8 @@ class AgoraTalkingEngine: NSObject {
     private var mediaRecorder:AgoraMediaRecorder? = nil
     //stream对象列表
     var streamSessionObjs: [Int: StreamSessionObj] = [:]
-    
+    //rdt 管理对象
+    var rdtTransferMgr : RdtTransferFileMgr = RdtTransferFileMgr(connection: AgoraRtcConnection())
     
     init(setting: RtcSetting,channelInfo: ChannelInfo,cb:@escaping (TaskResult,String)->Void,peerAction:@escaping(RtcPeerAction,UInt)->Void,memberState:@escaping(MemberState,[UInt])->Void){
         super.init()
@@ -98,9 +98,10 @@ class AgoraTalkingEngine: NSObject {
         
         peerDisplayView = setting.peerDisplayView
         log.i("rtc enterChannel when uid:\(channelInfo.uid) token:\(channelInfo.token) name:\(channelInfo.cName)")
-        _onEnterChannel?.invalidate()
         joinChannel(cb: cb)
         creatStreamObjs()
+        
+        rdtTransferMgr = RdtTransferFileMgr(connection: tempCon)
         
     }
     
@@ -141,7 +142,7 @@ class AgoraTalkingEngine: NSObject {
         
     }
     
-    func getRtcObject() -> AgoraRtcEngineKit {
+    func getRtcObject() -> AgoraRtcEngineKit? {
         return AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit()
     }
     
@@ -179,13 +180,11 @@ class AgoraTalkingEngine: NSObject {
         if(ret != 0){
             log.e("rtc enterChannel:\(String(describing: ret))")
             cb(.Fail,"join channel fail")
+        }else{
+            cb(.Succ,"join channel sucess")
         }
+        
         log.i("rtc local joinchannel peerid: \([NSNumber(value: channelInfo?.peerUid ?? 0)])")
-        _onEnterChannel = TimeCallback<(TaskResult,String)>(cb: cb)
-        _onEnterChannel?.schedule(time: 20, timeout: {
-            log.e("rtc join channel timeout")
-            cb(.Fail,"join channel timeout")
-        })
         
         peerEntered = false
 
@@ -208,7 +207,6 @@ class AgoraTalkingEngine: NSObject {
         })
         clearObject()
         clearStreamObjs()
-        _onEnterChannel?.invoke(args:(.Abort,"leaveChannel"))
         log.i("leaveChannelEx ret:\(String(describing: ret)) ")
         cb(true)
     }
@@ -559,22 +557,40 @@ extension AgoraTalkingEngine{
 
         return Int(ret)
     }
+    
+    func setRdtTransferState(_ state:TransferFileState){
+        rdtTransferMgr.setRdtTransferState(state)
+    }
+    
+    func sendRdtMessageStart(startMessage: String)->Int {
+        return rdtTransferMgr.sendRdtMessage(startMessage: startMessage)
+    }
+    
+    func sendRdtMessageStop(stopMessage: String){
+        rdtTransferMgr.sendRdtMessage(stopMessage: stopMessage)
+    }
+    
+    func isFileTransfering()->Bool{
+        if rdtTransferMgr.getRdtTransferState() == .transfering{
+            return true
+        }
+        return false
+    }
+    
 }
 
 extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
 
-    func rtcEngine(_ engine: AgoraRtcEngineKit, receiveRdtMessageFromUid uid: UInt, type: Int, data: Data) {
-        log.i("receiveRdtMessageFromUid :uid：\(uid), type:\(type) data:\(data.count)")
-        _rdtDataListen(uid,data)
-        
-    }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurRdtMessageStateFromUid uid: UInt, state: Int) {
-        log.i("didOccurRdtMessageStateFromUid：uid：\(uid),state:\(state)")
-        if state == 1{
-            log.i("peer rtd online peerUid:\(uid)")
-        }
-    }
+//    func rtcEngine(_ engine: AgoraRtcEngineKit, receiveRdtMessageFromUid uid: UInt, type: AgoraRdtStreamType, data: Data) {
+//        log.i("receiveRdtMessageFromUid :uid：\(uid), type:\(type) data:\(data.count)")
+//        _rdtDataListen(uid,data)
+//    }
+//    
+//    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurRdtMessageStateFromUid uid: UInt, state: AgoraRdtState) {
+//        log.i("didOccurRdtMessageStateFromUid：uid：\(uid),state:\(state)")
+//        rdtTransferMgr.setRdtChannelState(state)
+//    }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, receiveMediaControlMessageFromUid uid: UInt, data: Data) {
         guard let myString = String(data: data, encoding: .utf8) else{
@@ -605,10 +621,15 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
         _onPeerAction(.Leave,uid)
         _memberState(.Leave,[uid])
     }
+    
+    func rtcEngineConnectionDidLost(_ engine: AgoraRtcEngineKit) {
+        log.i("💔💔💔 rtc rtcEngineConnectionDidLost 💔💔💔")
+        peerEntered = false
+        _onPeerAction(.Lost,0)
+    }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
         log.i("rtc local user didJoinChannel \(uid)")
-        _onEnterChannel?.invoke(args:(.Succ,"join channel succ"))
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith status:AgoraChannelStats){
@@ -690,6 +711,9 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
 
 extension AgoraTalkingEngine : AgoraMediaRecorderDelegate{
     
+//    func mediaRecorder(_ recorder: AgoraMediaRecorder, stateDidChanged channelId: String, uid: UInt, state: AgoraMediaRecorderState, reason: AgoraMediaRecorderReasonCode) {
+//        
+//    }
     func mediaRecorder(_ recorder: AgoraMediaRecorder, stateDidChanged channelId: String, uid: UInt, state: AgoraMediaRecorderState, error: AgoraMediaRecorderErrorCode) {
         //todo:
         log.i("mediaRecorder:stateDidChanged: state:\(state) error:\(error)")

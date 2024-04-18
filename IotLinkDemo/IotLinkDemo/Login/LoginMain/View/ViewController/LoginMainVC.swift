@@ -68,6 +68,16 @@ class LoginMainVC: LoginBaseVC {
             make.top.left.bottom.right.equalToSuperview()
         }
         
+        loginV.addSubview(inforLabel)
+        inforLabel.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-20)
+            make.left.equalTo(15)
+            make.right.equalTo(-15)
+            make.height.equalTo(80)
+        }
+        let labelText = "appId:" + TDUserInforManager.shared.curMasterAppId + "\n" + "key:" + TDUserInforManager.shared.curCustomKey + "\n" + "secret:" + TDUserInforManager.shared.curCustomSecret
+        inforLabel.text = labelText
+        
         //获取存储的用户信息，自动填充上次登陆的账号
         let accountInfor = TDUserInforManager.shared.readKeyChainAccountAndPwd()
         loginV.phoneNumView.textField.text = accountInfor.acc
@@ -79,6 +89,18 @@ class LoginMainVC: LoginBaseVC {
         loginV.delegate = self
         return loginV
         
+    }()
+    
+    lazy var inforLabel : UILabel = {
+        let label = UILabel()
+        label.text = ""
+        label.backgroundColor = UIColor.clear
+        label.lineBreakMode = .byCharWrapping
+        label.numberOfLines = 0
+        label.textColor = UIColor.black
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.isHidden = true
+        return label
     }()
 
 
@@ -170,9 +192,9 @@ extension LoginMainVC : LoginViewDelegate{
         
         let param:InitParam = InitParam()
         param.mAppId = TDUserInforManager.shared.curMasterAppId
-        param.mRegion = 1 //todo:
-        param.mCustomerKey = KeyCenter.customerKey
-        param.mCustomerSecret = KeyCenter.customerSecret
+        param.mRegion = Int(reqModel.data?.nodeRegion ?? "0") ?? 0
+        param.mCustomerKey = TDUserInforManager.shared.curCustomKey
+        param.mCustomerSecret = TDUserInforManager.shared.curCustomSecret
         param.mLogFileName = ""
         param.mLocalNodeId = reqModel.data?.nodeId ?? ""
         param.mLocalNodeToken = reqModel.data?.nodeToken ?? ""
@@ -398,11 +420,14 @@ extension LoginMainVC{
          tapCounter += 1
             
          if tapCounter >= 6 {
+             inforLabel.isHidden = false
+         }
+         if tapCounter >= 9{
              // 连击六次触发事件
              performTriggeredAction()
              tapCounter = 0 // 重置计数器
-            }
-        }
+         }
+    }
         
    func performTriggeredAction() {
         // 连击六次触发的事件

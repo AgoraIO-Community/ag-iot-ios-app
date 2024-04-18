@@ -70,7 +70,7 @@ class RtmEngine : NSObject{
     private var config:Config
     private var state:RtmStatus = .IDLED
     var curSession: RtmSession?
-    var curUpdateState : MessageChannelStatus?
+    private var curUpdateState : MessageChannelStatus?
     
     private var _statusUpdated:((MessageChannelStatus,String,AgoraRtmMessage?)->Void)?  = nil
     private var _enterCallback:((Int,String)->Void)? = nil
@@ -268,7 +268,6 @@ class RtmEngine : NSObject{
             self._statusUpdated?(.Reconnecting,"reconnecting",nil)
         case .aborted:
             log.e("sendStateUpdated: 💔💔💔💔💔💔 rtm aborted 💔💔💔💔💔💔")
-            self.state = .IDLED
             curUpdateState = .Aborted
             self._statusUpdated?(.Aborted,"aborted",nil)
         @unknown default:
@@ -310,7 +309,6 @@ extension RtmEngine : AgoraRtmDelegate{
     func rtmKitTokenDidExpire(_ kit: AgoraRtmKit) {
         log.e("rtm rtmKitTokenDidExpire")
         DispatchQueue.main.async {
-            self.curUpdateState = .TokenDidExpire
             self._statusUpdated?(.TokenDidExpire,"",nil)
         }
     }
@@ -318,7 +316,6 @@ extension RtmEngine : AgoraRtmDelegate{
     func rtmKitTokenPrivilegeWillExpire(_ kit: AgoraRtmKit) {
         log.i("rtm rtmKitTokenPrivilegeWillExpire")
         DispatchQueue.main.async {
-            self.curUpdateState = .TokenWillExpire
             self._statusUpdated?(.TokenWillExpire,"",nil)
         }
     }

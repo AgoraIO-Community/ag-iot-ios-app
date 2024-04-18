@@ -30,6 +30,10 @@ class AVStreamVC: UIViewController {
         }
     }
     
+    deinit {
+        log.i("AVStreamVC 销毁了")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white

@@ -13,12 +13,6 @@ open class IotAppSdk : IAgoraIotAppSdk{
         return IAgoraIotSdkVersion
     }
     
-    public func isSignalingReady() -> Bool {
-        if app!.proxy.rtm.curUpdateState  == .Connected{
-            return true
-        }
-        return false
-    }
     
     public func getStateMachine() -> SdkState? {
         return app?.sdkState ?? nil

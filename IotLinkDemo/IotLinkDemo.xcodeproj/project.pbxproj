@@ -38,6 +38,7 @@
 		84CE395828FECA8C007A749C /* RegisterMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395728FECA8C007A749C /* RegisterMainVC.swift */; };
 		84CE395A28FECB48007A749C /* VerifyInputCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */; };
 		84CE395C28FECBAF007A749C /* SetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE395B28FECBAF007A749C /* SetPasswordVC.swift */; };
+		84D46DC02BCE8CB400052954 /* AGConfirmEditMultiAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D46DBF2BCE8CB400052954 /* AGConfirmEditMultiAlertVC.swift */; };
 		84D69E5628D0612A004A120C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D69E5528D0612A004A120C /* NetworkExtension.framework */; };
 		84D6EFAE2BA4303C00411E87 /* AVStreamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D6EFAD2BA4303C00411E87 /* AVStreamVC.swift */; };
 		84D6EFB02BA435BC00411E87 /* AVStreamCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D6EFAF2BA435BC00411E87 /* AVStreamCell.swift */; };
@@ -192,6 +193,7 @@
 		84CE395728FECA8C007A749C /* RegisterMainVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterMainVC.swift; sourceTree = "<group>"; };
 		84CE395928FECB48007A749C /* VerifyInputCodeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyInputCodeVC.swift; sourceTree = "<group>"; };
 		84CE395B28FECBAF007A749C /* SetPasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetPasswordVC.swift; sourceTree = "<group>"; };
+		84D46DBF2BCE8CB400052954 /* AGConfirmEditMultiAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGConfirmEditMultiAlertVC.swift; sourceTree = "<group>"; };
 		84D69E5528D0612A004A120C /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		84D6EFAD2BA4303C00411E87 /* AVStreamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVStreamVC.swift; sourceTree = "<group>"; };
 		84D6EFAF2BA435BC00411E87 /* AVStreamCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVStreamCell.swift; sourceTree = "<group>"; };
@@ -1098,6 +1100,7 @@
 				A805ADC92816C51500E6C6DF /* AGEditAlertVC.swift */,
 				84C4EDE72A726CB8008259B6 /* AGConfirmAlertBaseView.swift */,
 				84C4EDE52A726BAE008259B6 /* AGConfirmEditAlertVC.swift */,
+				84D46DBF2BCE8CB400052954 /* AGConfirmEditMultiAlertVC.swift */,
 				84F74540289CBDCC00702944 /* AGConfirmView.swift */,
 			);
 			path = Common;
@@ -1394,6 +1397,7 @@
 				A8A246C72811143700EAEA82 /* HomeMainDeviceCell.swift in Sources */,
 				9601C315280E4B9D00D3CA49 /* LoginMainVC.swift in Sources */,
 				9697BE982812B25F00447DF9 /* EXT-UIButton.swift in Sources */,
+				84D46DC02BCE8CB400052954 /* AGConfirmEditMultiAlertVC.swift in Sources */,
 				A80D5EB1282CDF690096BBDE /* MineTopView.swift in Sources */,
 				A819965B2834CFCE00870CDA /* EditNicknameVC.swift in Sources */,
 				9697BE702812888200447DF9 /* LoginView.swift in Sources */,
@@ -1682,7 +1686,7 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1137;
+				CURRENT_PROJECT_VERSION = 1143;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -1831,7 +1835,7 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1137;
+				CURRENT_PROJECT_VERSION = 1143;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";

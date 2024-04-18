@@ -28,9 +28,8 @@ class HomePageMainVC: AGBaseVC {
     
     
     fileprivate var  doorbellVM = DoorBellManager.shared
-    var mDevicesArray = [MDeviceModel]()
     var cellArray = [HomeMainDeviceCell]()
-    var members:Int = 0
+    let fullVC = CallFullScreemVC()
     
 
     lazy var topView:MainTopView = {
@@ -68,10 +67,11 @@ class HomePageMainVC: AGBaseVC {
         selectAllView.clickSelectedButtonAction = { [weak self] button in
             button.isSelected = !button.isSelected
             if self == nil { return }
-            for data in self!.mDevicesArray {
-                data.isSelected = button.isSelected
+            for cell in self!.cellArray {
+                let tempDevice = cell.device
+                tempDevice?.isSelected = button.isSelected
+                cell.device = tempDevice
             }
-            self!.tableView.reloadData()
         }
         selectAllView.clickDeleteButtonAction = { [weak self] in
             self?.didClickDeleteButton()
@@ -104,8 +104,9 @@ class HomePageMainVC: AGBaseVC {
     }
     
     func showEditAppIdAlert(){
-        AGConfirmEditAlertVC.showTitleTop("请输入AppId", editText: "请输入AppId") {[weak self] appId in
+        AGConfirmEditMultiAlertVC.showTitleTop("请输入AppId", editText: "请输入AppId") {[weak self] appId,key,secret in
             TDUserInforManager.shared.saveUserMasterAppId(appId)
+            TDUserInforManager.shared.saveUserCustomKeyAndSecret(key, secret)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 self?.checkLoginState()
             }
@@ -115,19 +116,17 @@ class HomePageMainVC: AGBaseVC {
     
     func loadData(){
         
-        mDevicesArray.removeAll()
+        cellArray.removeAll()
         let tempArray = TDUserInforManager.shared.readMarkPeerNodeId()
-        for item in tempArray{
-            let mModel = MDeviceModel()
-            mModel.peerNodeId = item
-            mDevicesArray.append(mModel)
-        }
-        
         // 初始化时创建单元格并保存在数组中
-        for i in 0..<mDevicesArray.count {
+        for i in 0..<tempArray.count {
+            
+            let mModel = MDeviceModel()
+            mModel.peerNodeId = tempArray[i]
+            
             let cell = HomeMainDeviceCell(style: .default, reuseIdentifier: nil)
             cell.tag = 10000 + i
-            cell.device = mDevicesArray[i]
+            cell.device = mModel
             cellArray.append(cell)
         }
     }
@@ -175,9 +174,9 @@ class HomePageMainVC: AGBaseVC {
     }
     
     @objc private func receiveLogoutSuccess(){//退出登陆成功
-        for device in mDevicesArray {
-            if device.connectObj != nil{
-                handUpDevice(device.connectObj!)
+        for cell in cellArray {
+            if  cell.device?.connectObj != nil{
+                handUpDevice((cell.device?.connectObj)!)
             }
         }
     }
@@ -234,7 +233,7 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return mDevicesArray.count
+        return cellArray.count
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -249,7 +248,6 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
         
         // 直接从数组中获取对应的单元格对象
         let cell = cellArray[indexPath.row]
-        print("-------♥️♥️♥️-------index.row:\(indexPath.row)  cell.count:\(String(describing: cellArray.count))-------♥️♥️♥️---------")
         cell.dailBlock = { tag in
             self.callDevice(tag: tag)
         }
@@ -265,11 +263,12 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let device = mDevicesArray[indexPath.row]
-        if device.canEdit {
-            device.isSelected = !device.isSelected
+        let cell = cellArray[indexPath.row]
+        if cell.device?.canEdit == true {
+            guard let tempDevice = cell.device  else { return }
+            tempDevice.isSelected = !tempDevice.isSelected
+            cell.device = tempDevice
             self.selectAllView.selectedbutton.isSelected = isSelectedAll()
-            tableView.reloadData()
         }
     }
 }
@@ -279,8 +278,10 @@ extension HomePageMainVC { //呼叫
     
     func goToStreamVC(tag : Int){
         
-        let device = mDevicesArray[tag-10000]
         let cell = getCellWithTag(tag: tag)
+        guard let device = cell.device else {
+            return
+        }
         
         let sessionInfor = device.connectObj?.getInfo()
         if  sessionInfor?.mState != .connected{//未在通话中，返回
@@ -313,8 +314,10 @@ extension HomePageMainVC { //呼叫
     
     func goToFullVC(tag : Int){
         
-        let device = mDevicesArray[tag-10000]
         let cell = getCellWithTag(tag: tag)
+        guard let device = cell.device else {
+            return
+        }
         
         guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .PUBLIC_STREAM_1),streamStatus.mSubscribed == true else {//未在通话中，返回
             log.i("recordScreen fail streamStatus status is error")
@@ -322,7 +325,6 @@ extension HomePageMainVC { //呼叫
             return
         }
         
-        let fullVC = CallFullScreemVC()
         fullVC.connectObj = device.connectObj
         fullVC.CallFullScreemBlock = {
             cell.configPeerView(true)
@@ -337,7 +339,7 @@ extension HomePageMainVC { //呼叫
         let cell = getCellWithTag(tag: tag)
         cell.handelCallTipType(.loading)
         cell.handelCallStateText(true)
-        let device = mDevicesArray[tag-10000]
+        guard let device = cell.device else { return }
         
         log.i("------callDevice------ \(device.peerNodeId)")
         
@@ -420,24 +422,30 @@ extension HomePageMainVC: IConnectionMgrListener {
 }
 
 extension HomePageMainVC:  ICallbackListener {
-    func onDataTransferRecvStart(connectObj: AgoraIotLink.IConnectionObj?, startDescrption: Data) {
+    
+    func onFileTransRecvStart(connectObj: AgoraIotLink.IConnectionObj?, startDescrption: Data) {
         log.i("收到开始接收数据回调：具体协议数据在startDescrption参数中")
         guard let myString = String(data: startDescrption, encoding: .utf8) else {
             return
         }
+        fullVC.curTransferValue = "file start: " + myString
         
         let descDic = String.getDictionaryWithData(data:startDescrption)
-
-        
     }
     
-    func onDataTransferRecvData(connectObj: AgoraIotLink.IConnectionObj?, recvedData: Data) {
+    func onFileTransRecvData(connectObj: AgoraIotLink.IConnectionObj?, recvedData: Data) {
         log.i("接收具体数据")
+        fullVC.curTransferDataValue = recvedData.count-14
     }
     
-    func onDataTransferRecvDone(connectObj: AgoraIotLink.IConnectionObj?, doneDescrption: Data) {
+    func onFileTransRecvDone(connectObj: AgoraIotLink.IConnectionObj?, transferEnd: Bool, doneDescrption: Data) {
         log.i("收到结束接收数据回调：具体协议数据在doneDescrption参数中")
+        guard let myString = String(data: doneDescrption, encoding: .utf8) else {
+            return
+        }
+        fullVC.curTransferValue = "file done: " + myString
     }
+    
     
     func onStreamFirstFrame(connectObj: AgoraIotLink.IConnectionObj?, subStreamId: AgoraIotLink.StreamId, videoWidth: Int, videoHeight: Int) {
         //首帧回调
@@ -454,7 +462,7 @@ extension HomePageMainVC:  ICallbackListener {
         //要通知cell 改变状态
         log.i("订阅预览时错误回调：onPreviewError errCode:\(errCode)")
         var tempTips = ""
-        if errCode == -10016{
+        if errCode == ErrCode.XERR_RTMMGR_MSG_PEER_UNREACHABLE{
             tempTips = "对端掉线，消息不可达"
             AGToolHUD.showInfo(info: "预览报错，errCode：\(errCode) \(tempTips)")
         }
@@ -499,20 +507,19 @@ extension HomePageMainVC{ //删除，添加
         }
         TDUserInforManager.shared.savePeerNodeId(nodeId)
         let mModel = MDeviceModel()
-        mModel.peerNodeId = nodeId //01GTKG1X7AEZWY7ACB7N2EV7C9
-        mDevicesArray.append(mModel)
+        mModel.peerNodeId = nodeId
         
         let cell = HomeMainDeviceCell(style: .default, reuseIdentifier: nil)
         cell.device = mModel
-        cell.tag = 10000 + (mDevicesArray.count-1)
+        cell.tag = 10000 + cellArray.count
         cellArray.append(cell)
         
         tableView.reloadData()
     }
     
     func isHaveDevice(_ nodeId : String)->Bool{
-        for item in mDevicesArray{
-            if item.peerNodeId == nodeId{
+        for cell in cellArray{
+            if cell.device?.peerNodeId == nodeId{
                 return true
             }
         }
@@ -521,25 +528,28 @@ extension HomePageMainVC{ //删除，添加
     
     // 开始编辑
     private func beginEditList() {
-        for data in mDevicesArray {
-            data.canEdit = true
+
+        for cell in cellArray {
+            let tempDevice = cell.device
+            tempDevice?.canEdit = true
+            cell.device = tempDevice
         }
         showSelectAllView()
-        tableView.reloadData()
     }
     
     // 结束编辑
     private func endEditMsgList() {
-        for data in mDevicesArray {
-            data.canEdit = false
+        for cell in cellArray {
+            let tempDevice = cell.device
+            tempDevice?.canEdit = false
+            cell.device = tempDevice
         }
         hideSelectAllView()
-        tableView.reloadData()
     }
     
     // 显示选中所有
     private func showSelectAllView(){
-        if mDevicesArray.count == 0 {
+        if cellArray.count == 0 {
             return
         }
         
@@ -575,33 +585,33 @@ extension HomePageMainVC{ //删除，添加
     // 删除消息
     private func deleteMessages(_ id: UInt64? = nil ){
         
-        var deviceList = [MDeviceModel]()
+        var newCellList = [HomeMainDeviceCell]()
         var peerNodeIdList = [String]()
-        for item in mDevicesArray {
-            if item.isSelected == false {
-                deviceList.append(item)
-                peerNodeIdList.append(item.peerNodeId)
+        for cell in cellArray {
+            if cell.device?.isSelected == false {
+                newCellList.append(cell)
+                peerNodeIdList.append((cell.device?.peerNodeId)!)
             }else{
-                if item.connectObj != nil{//如果选中的设备正在通话中，则先挂断
+                if cell.device?.connectObj != nil{//如果选中的设备正在通话中，则先挂断
                     print("---delete calling device---")
-                    handUpDevice(item.connectObj!)
+                    handUpDevice((cell.device?.connectObj)!)
                 }
             }
         }
         TDUserInforManager.shared.deletePeerNodeIdArray(peerNodeIdList)
-        mDevicesArray.removeAll()
-        mDevicesArray.append(contentsOf: deviceList)
+        cellArray.removeAll()
+        cellArray.append(contentsOf: newCellList)
         tableView.reloadData()
     }
     
     
     // 判断是否选中所有
     private func isSelectedAll() -> Bool {
-        if mDevicesArray.count == 0 {
+        if cellArray.count == 0 {
             return false
         }
-        for data in mDevicesArray {
-            if !data.isSelected {
+        for cell in cellArray {
+            if cell.device?.isSelected == false {
                 return false
             }
         }
@@ -610,8 +620,8 @@ extension HomePageMainVC{ //删除，添加
     
     // 判断是否有选中
     private func selectedIsNotEmpty() -> Bool {
-        for data in mDevicesArray {
-            if data.isSelected {
+        for cell in cellArray {
+            if cell.device?.isSelected == true {
                 return true
             }
         }
@@ -620,8 +630,8 @@ extension HomePageMainVC{ //删除，添加
     
     // 判断是否处于删除消息的状态
     private func isDeviceEditing() -> Bool {
-        for data in mDevicesArray {
-            if data.canEdit {
+        for cell in cellArray {
+            if cell.device?.canEdit == true {
                 return true
             }
         }

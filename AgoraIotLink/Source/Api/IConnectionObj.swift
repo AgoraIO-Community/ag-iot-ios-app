@@ -163,22 +163,26 @@ public class NetworkStatus : NSObject{
     func onMessageRecved(connectObj:IConnectionObj?, recvedSignalData:Data)
     
     /**
-     * @brief 数据传输接收启动通知
+     * @brief 传输接收单个文件开始回调
+     * @param connectObj : 当前连接对象
      * @param startDescrption : 启动描述
      */
-    func onDataTransferRecvStart(connectObj:IConnectionObj?,startDescrption:Data)
+    func onFileTransRecvStart(connectObj:IConnectionObj?,startDescrption:Data)
     
     /**
-     * @brief 数据传输接收数据回调
+     * @brief 传输接收单个文件数据回调
+     * @param connectObj : 当前连接对象
      * @param recvedData : 接收到的数据内容
      */
-    func onDataTransferRecvData(connectObj:IConnectionObj?,recvedData:Data)
+    func onFileTransRecvData(connectObj:IConnectionObj?,recvedData:Data)
     
     /**
-     * @brief 数据传输接收结束通知
+     * @brief 传输接收单个文件完成回调
+     * @param connectObj : 当前连接对象
+     * @param transferEnd : 是否整个传输都结束
      * @param doneDescrption: 结束描述
      */
-    func onDataTransferRecvDone(connectObj:IConnectionObj?,doneDescrption:Data)
+    func onFileTransRecvDone(connectObj:IConnectionObj?,transferEnd:Bool,doneDescrption:Data)
     
 }
 
@@ -351,5 +355,6 @@ public class NetworkStatus : NSObject{
      */
     func sendMessageData(messageData:Data) -> UInt32
     
+
     
 }

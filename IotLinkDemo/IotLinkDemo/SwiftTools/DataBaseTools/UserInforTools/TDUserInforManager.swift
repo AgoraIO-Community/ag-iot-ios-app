@@ -63,6 +63,12 @@ class TDUserInforManager: NSObject {
     //当前用户使用的masterAppId
     var curMasterAppId : String = ""
     
+    //当前用户使用的custom key
+    var curCustomKey : String = ""
+    
+    //当前用户使用的custom secret
+    var curCustomSecret : String = ""
+    
     //当前用户使用的nodeId
     var mUserNodeId : String = ""
     
@@ -113,6 +119,9 @@ class TDUserInforManager: NSObject {
         curMasterAppId = ""
         let uDefault = getUserDefault()
         uDefault.setValue(nil, forKey: "masterAppId")
+        uDefault.setValue(nil, forKey: "customkey")
+        uDefault.setValue(nil, forKey: "customsecret")
+        uDefault.setValue(nil, forKey: KeyCenter.kAuthorizationBase64Key)
         uDefault.synchronize()
         
     }
@@ -245,6 +254,18 @@ class TDUserInforManager: NSObject {
         
     }
     
+    /// 保存customKey he customSecret
+    func saveUserCustomKeyAndSecret(_ customKey: String,_ customSecret: String){
+        curCustomKey = customKey
+        curCustomSecret = customSecret
+        let uDefault = getUserDefault()
+        uDefault.setValue(customKey, forKey: "customkey")
+        uDefault.setValue(customSecret, forKey: "customsecret")
+        uDefault.synchronize()
+        
+    }
+    
+    
     /// 保存上次登录账号协议是否阅读状态
     func saveUserProcolState(){
         
@@ -309,6 +330,25 @@ class TDUserInforManager: NSObject {
         }
         return accNum
     }
+    
+    /// 读取上次保存的customKey
+    func readUserCustomKey() -> String {
+        var accNum = ""
+        if let num = getUserDefault().object(forKey: "customkey") as? String {
+            accNum = num
+        }
+        return accNum
+    }
+    
+    /// 读取上次保存的customSecert
+    func readUserCustomSecert() -> String {
+        var accNum = ""
+        if let num = getUserDefault().object(forKey: "customsecret") as? String {
+            accNum = num
+        }
+        return accNum
+    }
+    
     
     //检查用户登陆状态
     func checkLoginState(){
@@ -406,13 +446,27 @@ extension TDUserInforManager{
             return false
         }
         curMasterAppId = masterAppId
+        
+        let customKey = readUserCustomKey()
+        if customKey == ""{
+            return false
+        }
+        curCustomKey = customKey
+        
+        let customScert = readUserCustomSecert()
+        if customScert == ""{
+            return false
+        }
+        curCustomSecret = customScert
+
         return true
         
     }
     
     func showEditAppIdAlert(){
-        AGConfirmEditAlertVC.showTitleTop("请输入AppId", editText: "请输入AppId") {[weak self] appId in
+        AGConfirmEditMultiAlertVC.showTitleTop("请输入AppId", editText: "请输入AppId") {[weak self] appId,key,secret in
             self?.saveUserMasterAppId(appId)
+            self?.saveUserCustomKeyAndSecret(key, secret)
             AGToolHUD.showInfo(info: "已重置appId,应用即将自动退出,请重新打开")
             print("------重置appId------\(appId)")
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in

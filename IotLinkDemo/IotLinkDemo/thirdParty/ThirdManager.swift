@@ -21,7 +21,7 @@ class ThirdAccountManager{
     #elseif false //dev 国外
         static let http_3rdParty = "https://third-user.la3.agoralab.co/third-party"
     #elseif true //dev 2.0
-        static let http_3rdParty = "http://api-test-huzhou1.agora.io/cn/iot/link" //"https://api-test-huzhou1.agora.io/cn/iot/link"//"https://api.sd-rtn.com/agoralink/cn/api"
+        static let http_3rdParty = "http://api.sd-rtn.com/cn/iot/link" //"http://api-test-huzhou1.agora.io/cn/iot/link"
     #elseif false //prd 国外
         
     #endif
@@ -138,6 +138,8 @@ class ThirdAccountManager{
         
     }
     
+    static var sessionManager:Alamofire.Session!
+    
     //配置请求头的通用参数
     class func configCommonHeader()->HTTPHeaders {
         
@@ -154,7 +156,7 @@ class ThirdAccountManager{
             
         }else{
             
-            let plainCredentials = KeyCenter.customerKey + ":" + KeyCenter.customerSecret
+            let plainCredentials = TDUserInforManager.shared.curCustomKey + ":" + TDUserInforManager.shared.curCustomSecret
             let authData = plainCredentials.data(using: .utf8)
             
             guard let base64Credentials = authData?.base64EncodedString(options: .endLineWithLineFeed) else {
@@ -226,7 +228,11 @@ class ThirdAccountManager{
 //
 //        }
 
-        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 5 // 设置超时时间为5秒
+        sessionManager = Alamofire.Session(configuration: configuration)
+        
+        sessionManager.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
             .validate()
             .responseDecodable(of:api.activateNode.Rsp.self){(dataRsp:AFDataResponse<api.activateNode.Rsp>) in
             URLCache.shared.removeAllCachedResponses()
@@ -238,9 +244,25 @@ class ThirdAccountManager{
                 rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret)
             case .failure(let error):
                 log.e("3rd nodeActivate \(url) , detail: \(error) ")
+                let errCode = getErrorCode(from: error)
                 rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
             }
         }
+    }
+
+    
+    class func getErrorCode(from error: Error) -> Int? {
+        if let afError = error as? AFError {
+            switch afError {
+            case .sessionTaskFailed(let sessionError):
+                if let nsError = sessionError as NSError?, nsError.domain == NSURLErrorDomain {
+                    return nsError.code
+                }
+            default:
+                break
+            }
+        }
+        return nil
     }
     
 }

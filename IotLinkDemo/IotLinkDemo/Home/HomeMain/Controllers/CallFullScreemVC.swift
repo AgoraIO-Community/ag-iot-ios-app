@@ -18,9 +18,9 @@ class CallFullScreemVC: UIViewController {
     private var originTitleTextAttributes:[NSAttributedString.Key :Any]?
     
     var videoQAlertView: VideoQAlertView?
-    
-    
     var CallFullScreemBlock:(() -> (Void))?
+    var curTransferValue:String = ""
+    var curTransferDataValue:Int = 0
     
     var connectObj: IConnectionObj? {
         didSet{
@@ -30,6 +30,38 @@ class CallFullScreemVC: UIViewController {
             let statusCode : Int = connectObj.setVideoDisplayView(subStreamId: .PUBLIC_STREAM_1, displayView: videoView)
             debugPrint("statusCode:\(statusCode)")
         }
+    }
+    
+    var transferCmdString:String?{
+        didSet{
+            guard let transferCmdString = transferCmdString else {
+                return
+            }
+            var tempTransferData = ""
+            if curTransferDataValue != 0{
+                tempTransferData = "transfer length: \(curTransferDataValue)"
+                curTransferDataValue = 0
+            }
+            curTransferValue.append(tempTransferData + "\n" + transferCmdString)
+            transferResultView.text = curTransferValue
+        }
+        
+    }
+    
+    var transferDataLen:Int?{
+        didSet{
+            guard let transferDataLen = transferDataLen else {
+                return
+            }
+            curTransferDataValue += transferDataLen
+            let tempValue = curTransferValue + "\n" + "transfer length: \(curTransferDataValue)"
+            transferResultView.text = tempValue
+        }
+        
+    }
+    
+    deinit {
+        log.i("CallFullScreemVC 销毁了")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,13 +121,21 @@ class CallFullScreemVC: UIViewController {
 //            make.height.equalTo(50)
 //        }
         
-//        view.addSubview(accecptButton)
-//        accecptButton.snp.makeConstraints { make in
-//            make.top.equalTo(videoView.snp.bottom).offset(30)
-//            make.left.equalTo(15)
-//            make.width.equalTo(80)
-//            make.height.equalTo(50)
-//        }
+        view.addSubview(accecptButton)
+        accecptButton.snp.makeConstraints { make in
+            make.top.equalTo(videoView.snp.top).offset(30)
+            make.left.equalTo(15)
+            make.width.equalTo(80)
+            make.height.equalTo(50)
+        }
+        
+        view.addSubview(transferResultView)
+        transferResultView.snp.makeConstraints { make in
+            make.top.equalTo(accecptButton.snp.bottom).offset(20)
+            make.left.equalTo(15)
+            make.width.equalTo(300)
+            make.height.equalTo(400)
+        }
     }
     
     lazy var videoView:UIView = {
@@ -108,13 +148,15 @@ class CallFullScreemVC: UIViewController {
     
     private lazy var accecptButton:UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("发送数据", for: .normal)
+        button.setTitle("开始传输", for: .normal)
+        button.setTitle("结束传输", for: .selected)
         button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .black
         button.layer.cornerRadius = 50 * 0.5
         button.layer.masksToBounds = true
-        button.addTarget(self, action: #selector(sendMsgButton), for: .touchUpInside)
+        button.isSelected = false
+        button.addTarget(self, action: #selector(sendMsgButton(btn:)), for: .touchUpInside)
         return button
     }()
     
@@ -131,6 +173,20 @@ class CallFullScreemVC: UIViewController {
         return button
     }()
     
+    private lazy var transferResultView:UITextView = {
+        
+        let  textView = UITextView()
+        textView.text = "This is a UITextView."
+        textView.font = UIFont.systemFont(ofSize: 18)
+        textView.textColor = UIColor.green
+        textView.backgroundColor = UIColor.lightGray
+        textView.isEditable = false
+        textView.isScrollEnabled = true
+        
+        return textView
+        
+    }()
+    
     @objc private func videoQAButtonPress(){
         
 //        if videoQAlertView == nil {
@@ -144,12 +200,16 @@ class CallFullScreemVC: UIViewController {
         
     }
 
-    @objc private func sendMsgButton(){
-//        let paramDic = ["key":"value","key1":"value1"]
-//        let paramStr = paramDic.convertDictionaryToJSONString()
-//        let ret = sdk?.callkitMgr.sendCommand(connectId: connectId!, cmd: paramStr, onCmdSendDone: { errCode in
-//            debugPrint("onCmdSendDone:\(errCode)")
-//        })
+    @objc private func sendMsgButton(btn:UIButton){
+        
+//        btn.isSelected = !btn.isSelected
+//        if btn.isSelected == true {
+//            let ret = connectObj?.fileTransferStart(startMessage: "file1,file2,file3")
+//            print("sendMsgButton : ret :\(String(describing: ret))")
+//        }else{
+//            connectObj?.fileTransferStop(stopMessage: "file1,file2,file3")
+//        }
+        
     }
     
     func registerMsgListener(){

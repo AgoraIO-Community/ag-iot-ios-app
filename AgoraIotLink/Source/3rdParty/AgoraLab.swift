@@ -20,7 +20,7 @@ class AgoraLab {
     // http过滤状态码
     let acceptableStatusCodes = Array(200..<300) + [401, 404]
     
-    private let httpPre = "http://api-test-huzhou1.agora.io/"
+    private let httpPre = "http://api.sd-rtn.com/cn" //"http://api-test-huzhou1.agora.io/"
     private let httpEnd = "/iot/link"
     
     private var http:String
@@ -123,10 +123,9 @@ class AgoraLab {
         
         let url = http + api.connectCreat
         log.i("al connect url:\(url) header:\(header) paramsDic:\(paramsDic)")
-        
-        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
+        sessionManager.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
             .validate()
-            .responseDecodable(of:ConnectCreat.Rsp.self){(dataRsp:AFDataResponse<ConnectCreat.Rsp>) in
+            .responseDecodable(of:ConnectCreat.Rsp.self){[weak self] (dataRsp:AFDataResponse<ConnectCreat.Rsp>) in
             URLCache.shared.removeAllCachedResponses()
             switch dataRsp.result{
             case .success(let ret):
@@ -135,12 +134,33 @@ class AgoraLab {
                 }
                 rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret)
             case .failure(let error):
-                log.e("creatConnect \(url) , detail: \(error) ")
+                let errCode = self?.getErrorCode(from:error)
+                log.e("creatConnect \(url) , errCode: \(String(describing: errCode))   detail: \(error) ")
                 rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
             }
         }
     }
     
+    lazy var sessionManager: Alamofire.Session = {
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 5 // 设置超时时间为5秒
+        return Alamofire.Session(configuration: configuration)
+    }()
+    
+    func getErrorCode(from error: Error) -> Int? {
+        if let afError = error as? AFError {
+            switch afError {
+            case .sessionTaskFailed(let sessionError):
+                if let nsError = sessionError as NSError?, nsError.domain == NSURLErrorDomain {
+                    return nsError.code
+                }
+            default:
+                break
+            }
+        }
+        return nil
+    }
+
 }
 
 

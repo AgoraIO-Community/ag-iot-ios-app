@@ -8,7 +8,7 @@
 
 
 class IConnectionObjManager: IConnectionObj {
- 
+
     private var app:IotLibrary
     private let rtc:RtcEngine
     private let rtm:RtmEngine
@@ -256,6 +256,69 @@ extension IConnectionObjManager{
 
 extension IConnectionObjManager{
     
+    func fileTransferStart(startMessage: String)->Int {
+        
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("captureVideoFrame: talkingKit is nil")
+            return ErrCode.XERR_BAD_STATE
+        }
+        
+        let paramString = getRdtParamString(transfering: 1, attachMsg: startMessage)
+        return talkingKit.sendRdtMessageStart(startMessage: paramString)
+    }
+    
+    func fileTransferStop(stopMessage: String) {
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("captureVideoFrame: talkingKit is nil")
+            return
+        }
+        let paramString = getRdtParamString(transfering: 0, attachMsg: stopMessage)
+        talkingKit.sendRdtMessageStop(stopMessage: stopMessage)
+    }
+    
+    func isFileTransfering() -> Bool {
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("captureVideoFrame: talkingKit is nil")
+            return false
+        }
+        return talkingKit.isFileTransfering()
+    }
+    
+    func getRdtParamString(transfering: Int,attachMsg: String)->String {
+        
+        guard let callSession =  getConnectSession() else{
+            log.i("callSession is nil")
+            return ""
+        }
+        
+        guard let localNodeId =  rtm.curSession?.localNodeId else{
+            log.i("localNodeId is nil")
+            return ""
+        }
+        
+        var base64AttachMsg = ""
+        if let attachMsgData = attachMsg.data(using: .utf8) {
+            base64AttachMsg = attachMsgData.base64EncodedString()
+        }
+        
+        
+        let curTransferId : UInt64 = UInt64(String.dateCurrentTime())
+        let curSequenceId : UInt32 = getSequenceId()
+        
+        let commanId:Int = CommandList.command_EnableTranferFile
+        let payloadParam = ["callerNodeId": localNodeId, "calleeNodeId": callSession.peerNodeId, "transferId": curTransferId, "transfering": transfering,"attachMsg": base64AttachMsg ] as [String : Any]
+        let paramDic = ["traceId": callSession.traceId,"sequenceId": curSequenceId, "commandId": commanId, "param": payloadParam] as [String : Any]
+        
+        let jsonString = paramDic.convertDictionaryToJSONString()
+        
+        return jsonString
+    
+    }
+    
+}
+
+extension IConnectionObjManager{
+    
     func sendMessageData(messageData:Data) -> UInt32{
         let curSequenceId : UInt32 = getSequenceId()
         sendGeneralData(messageData,curSequenceId)
@@ -351,5 +414,6 @@ extension IConnectionObjManager{
         })
         
     }
+ 
     
 }

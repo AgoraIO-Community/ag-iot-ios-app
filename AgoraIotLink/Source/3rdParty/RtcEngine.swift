@@ -37,7 +37,12 @@ class RtcEngine : NSObject{
     
     func setAudioEffect(_ effectId:AudioEffectId,cb:@escaping (Int,String)->Void){
         
-        let rtcKit = getRtcObject()
+        guard let rtcKit = getRtcObject() else {
+            log.e("setAudioEffect: rtc engine is nil")
+            cb(ErrCode.XERR_BAD_STATE,"rtc is nil")
+            return
+        }
+        
         var preset: AgoraAudioEffectPreset
         switch effectId {
         case .NORMAL:
@@ -85,19 +90,28 @@ class RtcEngine : NSObject{
     
     func setPlaybackVolume(_ volume: Int,cb:@escaping (Int,String)->Void){
         
-        let rtcKit = getRtcObject()
+        guard let rtcKit = getRtcObject() else {
+            log.e("setPlaybackVolume: rtc engine is nil")
+            cb(ErrCode.XERR_BAD_STATE,"rtc is nil")
+            return
+        }
+        
         let ret = rtcKit.adjustPlaybackSignalVolume(volume)
         return ret == 0 ? cb(ErrCode.XOK,"unimplemented") : cb(ErrCode.XERR_UNSUPPORTED,"unimplemented")
     }
     
     func setParameters(paramString : String)->Int{
         
-        let rtcKit = getRtcObject()
+        guard let rtcKit = getRtcObject() else {
+            log.e("setParameters: rtc engine is nil")
+            return ErrCode.XERR_BAD_STATE
+        }
+        
         let ret = rtcKit.setParameters(paramString)
         return Int(ret)
     }
  
-    func getRtcObject() -> AgoraRtcEngineKit {
+    func getRtcObject() -> AgoraRtcEngineKit? {
         
         return AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit()
     }
@@ -144,7 +158,7 @@ extension RtcEngine{
     
     func setAudioAndVideoDelegate(){
         let rtcKit = getRtcObject()
-        rtcKit.setVideoFrameDelegate(self)
+        rtcKit?.setVideoFrameDelegate(self)
 //        rtcKit.setAudioFrameDelegate(self)
     }
 }

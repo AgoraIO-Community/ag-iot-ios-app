@@ -29,9 +29,11 @@ class ConnectListenerManager: NSObject {
         callLister.callSession?.mConnectId = connectionId
         callLister.innerCallAct = { [weak self] ack,connectId,peerNodeId in
             if (ack == .RemoteHangup){
-                self?.hangUp(connectId) { errCode in log.i("inner disconnect") }
+                self?.hangUp(connectId,ack) { errCode in log.i("inner disconnect") }
             }else if(ack == .connectFail){
                 self?.callRequestFail(connectId)
+            }else if(ack == .LocalNetLost){
+                self?.hangUp(connectId,ack) { errCode in log.i("inner LocalNetLost disconnect") }
             }
         }
         let connectionObj = IConnectionObjManager(app: app, connectId: connectionId)
@@ -70,15 +72,15 @@ class ConnectListenerManager: NSObject {
         }
         
         log.i("disConnect:------connectID:\(String(describing: callListen?.callSession?.mConnectId) )")
-        hangUp(callListen?.callSession?.mConnectId ?? "") { errCode in log.i("disConnect: errCode:\(errCode)") }
+        hangUp(callListen?.callSession?.mConnectId ?? "",.LocalHangup) { errCode in log.i("disConnect: errCode:\(errCode)") }
         log.i("disConnect:  调用了 left current connectDict.keys:\(connectDict.getAllKeys())")
         
         return ErrCode.XOK
     }
     
-    func hangUp(_ connectId:String, result:@escaping(Int)->Void){//挂断
+    func hangUp(_ connectId:String,_ action:ActionAck,result:@escaping(Int)->Void){//挂断
         let callListen = getCurrentConnecObjet(connectId)
-        callListen?.hangUp { isSuc, msg in  }
+        callListen?.hangUp(action) { isSuc, msg in  }
         clearCurrentCallObj(connectId)
         log.i("ConnectListenerManager hangUp 调用了")
     }
@@ -202,45 +204,54 @@ extension ConnectListenerManager{
             log.e("handelInterReceiceData: commandId is nil; dict:\(dict)")
             return
         }
-        guard let traceId = dict["traceId"] as? String else{
-            log.e("handelInterReceiceData: traceId is nil; dict:\(dict)")
-            return
-        }
         guard let paramDic = dict["param"] as? [String:Any], let peerId = paramDic["calleeNodeId"] as? String else {
             log.e("handelInterReceiceData: param is nil; dict:\(dict)")
             return
         }
+        
+        let callObj = getCurrentCallObjetWithPeerId(peerId)
+        guard isValidData(dict, callObj: callObj) == true else {
+            log.e("handelInterReceiceData: isValidData ret is false; dict:\(dict)")
+            return
+        }
+        
         if commandId == CommandList.command_ConnectCompelete{
             
             log.i("handelInterReceiceData: commandId is commandId:\(commandId) dict:\(dict)")
-            let callObj = getCurrentCallObjetWithPeerId(peerId)
-            guard callObj?.callSession?.traceId == traceId else {
-                log.e("handelInterReceiceData: traceId not equal curTraceId:\(String(describing: callObj?.callSession?.traceId))")
-                return
-            }
             callObj?.handelPeerOnlineAction()
             
         }else if commandId == CommandList.command_Disconnect{
-            let callObj = getCurrentCallObjetWithPeerId(peerId)
-            guard callObj?.callSession?.traceId == traceId else {
-                log.e("handelInterReceiceData: traceId not equal curTraceId:\(String(describing: callObj?.callSession?.traceId))")
-                return
-            }
-            hangUp(callObj?.callSession?.mConnectId ?? "" ) { errCode in log.i("handelInterReceiceData: command_Disconnect errCode:\(errCode)") }
+
+            hangUp(callObj?.callSession?.mConnectId ?? "",.RemoteHangup ) { errCode in log.i("handelInterReceiceData: command_Disconnect errCode:\(errCode)") }
             
         }else if commandId == CommandList.command_PeerAct{
             guard let connectRespCode = paramDic["connectRespCode"] as? Bool else {
                 log.e("handelInterReceiceData: connectRespCode is nil; dict:\(dict)")
                 return
             }
-            let callObj = getCurrentCallObjetWithPeerId(peerId)
-            guard callObj?.callSession?.traceId == traceId else {
-                log.e("handelInterReceiceData: traceId not equal curTraceId:\(String(describing: callObj?.callSession?.traceId))")
-                return
-            }
             connectBackListener?.onPeerAnswerOrReject(connectObj: callObj?.callSession?.connectionObj, answer: connectRespCode)
             
         }
+    
+    }
+    
+    func isValidData(_ dict : [String:Any],callObj:ConnectStateListener? )->Bool{
+        
+        guard let traceId = dict["traceId"] as? String else{
+            log.e("handelInterReceiceData: traceId is nil; dict:\(dict)")
+            return false
+        }
+        guard let sequenceId = dict["sequenceId"] as? Int else{
+            log.e("handelInterReceiceData: sequenceId is nil; dict:\(dict)")
+            return false
+        }
+        guard callObj?.callSession?.traceId == traceId, callObj?.callSession?.lastSequenceId != sequenceId else {
+            log.e("handelInterReceiceData: traceId not equal curTraceId:\(String(describing: callObj?.callSession?.traceId))")
+            return false
+        }
+        callObj?.callSession?.lastSequenceId = sequenceId
+        
+        return true
     }
     
 }

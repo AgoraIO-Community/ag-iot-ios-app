@@ -20,7 +20,6 @@ internal class Proxy{
         self._rtc = RtcEngine()
         self._rtm = RtmEngine(cfg: cfg)
         self._al = AgoraLab(cRegion:cfg.cRegion)
-
     }
     
     func destory(){

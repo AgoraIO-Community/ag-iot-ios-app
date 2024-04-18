@@ -15,6 +15,7 @@ import UIKit
     case RemoteHangup                   //对端挂断
     case RemoteVideoReady               //对端首帧出图
     case LocalHangup                    //本地挂断
+    case LocalNetLost                    //本地网络连接丢失
     case UnknownAction                  //未知错误
 }
 
@@ -33,23 +34,24 @@ public class CallSession : NSObject{
     var cname = ""    //对端nodeId
     var uid:UInt = 0
     var traceId:String = ""
+    var lastSequenceId:Int = -1
     var version:UInt = 0
     
-    var peerUid:UInt = 0                //对端id
-    var mPubLocalAudio : Bool = false   //设备端接听后是否立即推送本地音频流
+    var peerUid:UInt = 0                     //对端id
+    var mPubLocalAudio : Bool = false        //设备端接听后是否立即推送本地音频流
     
-    var callType:ConnectType = .unknown    //通话类型
-    var mConnectId = ""                 //链接Id
-    var peerNodeId = ""                 //对端nodeId
+    var callType:ConnectType = .unknown     //通话类型
+    var mConnectId = ""                     //链接Id
+    var peerNodeId = ""                     //对端nodeId
     
     var mVideoQuality:VideoQualityParam = VideoQualityParam()   //当前通话视频质量参数
 
     //------rtm信息------
-    var mRtmUid: String = ""             //本地用户的 UserId
-    var mRtmToken: String = ""           //要会话的 RTM Token
+    var mRtmUid: String = ""                //本地用户的 UserId
+    var mRtmToken: String = ""              //要会话的 RTM Token
     
-    var connectionObj : IConnectionObj?   //设备链接接口对象
-    var connectionCmd : InnerCmdManager?   //设备链接信令对象
+    var connectionObj : IConnectionObj?     //设备链接接口对象
+    var connectionCmd : InnerCmdManager?    //设备链接信令对象
     
 }
 
@@ -84,7 +86,9 @@ class ConnectStateListener: NSObject {
     var talkingEngine : AgoraTalkingEngine?
     
     var callSession : CallSession?
-    var members:Int = 0
+    
+    private var members:Int = 0
+    private var tryCount:Int = 1
     
     var timerTimeout: Timer?
     let commandTimeOut   : TimeInterval = 5*1000  //命令超时时间 ms
@@ -117,20 +121,9 @@ class ConnectStateListener: NSObject {
         callSession = CallSession()
         callSession?.callType = .active
         callSession?.peerNodeId = dialParam.mPeerNodeId
-        
-        callReqTime = TimeCallback<(Int,String)>(cb: { (state, msg) in
-            log.i("callReqTime :\(msg)")
-        })
-        callReqTime?.schedule(time:15 ,timeout: { [weak self] in
-            log.i("callReqTime timeout")
-            self?.callAct(.onConnectDone,self?.callSession?.connectionObj , ErrCode.XERR_CALLKIT_DIAL)
-            self?.innerCallAct(.connectFail,self?.callSession?.mConnectId ?? "",self?.callSession?.peerNodeId ?? "")
-        })
-        
     }
     
     func callRequest(_ suc:Bool){
-        self.endReqTime()
         if suc == true{
             callMachine?.handleEvent(.localJoining)
         }else{
@@ -139,13 +132,24 @@ class ConnectStateListener: NSObject {
         }
     }
     
-    func hangUp(hangUpResult: @escaping (Bool,String) -> Void){
+    func handelNetLost(){
+        
+        if callMachine?.currentState != .connected{
+            self.callAct(.onConnectDone,self.callSession?.connectionObj, ErrCode.XERR_NETWORK)
+            callMachine?.handleEvent(.endCall)
+            self.innerCallAct(.connectFail,self.callSession?.mConnectId ?? "",self.callSession?.peerNodeId ?? "")
+        }else{
+            self.innerCallAct(.LocalNetLost,self.callSession?.mConnectId ?? "",self.callSession?.peerNodeId ?? "")
+        }
+    }
+    
+    func hangUp(_ ack:ActionAck,hangUpResult: @escaping (Bool,String) -> Void){
         
         hangUpRet = hangUpResult
         do_LEAVEANDDESTROY()
-        callAct(.onDisconnected,self.callSession?.connectionObj, ErrCode.XOK)
+        let errCode = ack == .LocalNetLost ? ErrCode.XERR_NETWORK : ErrCode.XOK
+        callAct(.onDisconnected,self.callSession?.connectionObj, errCode)
         endTime()
-        endReqTime()
         stopTimerOut()
         callMachine?.handleEvent(.endCall)
         destory()
@@ -162,9 +166,6 @@ class ConnectStateListener: NSObject {
     
     func endTime(){
         self.callRcbTime?.invoke(args: (ErrCode.XOK,"stop call"))
-    }
-    func endReqTime(){
-        self.callReqTime?.invoke(args: (ErrCode.XOK,"stop request"))
     }
     
     deinit {
@@ -238,7 +239,7 @@ extension ConnectStateListener : CallStateMachineListener{
                 log.i("call reqCall CallForward")
                 self?.timeOutTimer()
                 self?.callMachine?.handleEvent(.localJoinSuc)
-                self?.callRcbTime?.schedule(time:self?.app.config.calloutTimeOut ?? 30,timeout: {
+                self?.callRcbTime?.schedule(time:self?.app.config.calloutTimeOut ?? 15,timeout: {
                     log.i("call reqCall ring remote timeout")
                     self?.callMachine?.handleEvent(.endCall)
                     self?.innerCallAct(.RemoteHangup,self?.callSession?.mConnectId ?? "",self?.callSession?.peerNodeId ?? "")
@@ -262,6 +263,10 @@ extension ConnectStateListener : CallStateMachineListener{
                     self?.innerCallAct(.RemoteHangup,self?.callSession?.mConnectId ?? "",self?.callSession?.peerNodeId ?? "")
 
                 }
+            }
+            else if(act == .Lost){
+                log.i("listener rtc net Lost")
+                self?.handelNetLost()
             }
             else if(act == .VideoReady){
                 log.i("listener VideoReady uid:\(uid)")
@@ -300,18 +305,24 @@ extension ConnectStateListener : CallStateMachineListener{
         let pktType = RdtPktMgr.getPktType(receiveData)
         switch pktType {
         case .pktStart:
-            callBackListener?.onDataTransferRecvData(connectObj: callSession?.connectionObj, recvedData: receiveData)
+            talkingEngine?.setRdtTransferState(.transfering)
+            callBackListener?.onFileTransRecvStart(connectObj: callSession?.connectionObj, startDescrption: receiveData)
         case .pktContentData:
-            callBackListener?.onDataTransferRecvData(connectObj: callSession?.connectionObj, recvedData: receiveData)
+            callBackListener?.onFileTransRecvData(connectObj: callSession?.connectionObj, recvedData: receiveData)
         case .pktEnd:
-            callBackListener?.onDataTransferRecvDone(connectObj: callSession?.connectionObj, doneDescrption: receiveData)
+            talkingEngine?.setRdtTransferState(.ideal)
+            guard let isTransferEnd = RdtPktMgr.getPktEof(receiveData) else {
+                log.e("handelRdtReceiveData: getPktEof ret is nil")
+                return
+            }
+            callBackListener?.onFileTransRecvDone(connectObj: callSession?.connectionObj, transferEnd: isTransferEnd, doneDescrption: receiveData)
         case nil:
             break
         }
     }
     
     func renewTotalToken(){
-        log.i("renewTotalToken: listener TokenWillExpire")
+        log.i("renewTotalToken: listener TokenWillExpire peerNodeId:\(String(describing: callSession?.peerNodeId))")
         let connectParam = ConnectCreateParam(mPeerNodeId: callSession?.peerNodeId ?? "", mAttachMsg: "")
         connectRequest(connectParam)
     }
@@ -389,7 +400,6 @@ extension ConnectStateListener{//rtm
     func handelRtmAlready(){
         
         guard callMachine?.currentState != .connected  else { return }
-        
 //      callSession?.connectionCmd?.sendCmdCreatConnect( cmdListener: { code, msg in })
         
     }
@@ -434,8 +444,12 @@ extension ConnectStateListener{
         self.innerCallAct(.connectFail,self.callSession?.mConnectId ?? "",self.callSession?.peerNodeId ?? "")
     }
     
-    func connectRequest(_ connectParam: ConnectCreateParam){
+    func connectRequest(_ connectParam: ConnectCreateParam,retryCount: Int = 3){
         
+        guard retryCount > 0 else {
+            callRequestFail()
+            return
+        }
         
         let cbRequest = { [weak self] (code:Int, msg:String, rsp:AgoraLab.ConnectCreat.Rsp?) in
             log.i("---connectRequest--\(code)")
@@ -455,7 +469,8 @@ extension ConnectStateListener{
                 
                 
             }else{
-                self?.callRequestFail()
+                log.e("connectRequest reTry fail  count:\(retryCount - 1) perrNodeId:\(connectParam.mPeerNodeId)")
+                self?.connectRequest(connectParam, retryCount: retryCount - 1)
             }
 
         }
@@ -518,7 +533,7 @@ extension ConnectStateListener{
     }
     
     func stopTimerOut() {
-        log.i("RtmEngine timer is nil")
+        log.i("RtcEngine timer is nil")
         timerTimeout?.invalidate()
         timerTimeout = nil
     }

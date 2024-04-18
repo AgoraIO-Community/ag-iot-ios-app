@@ -60,7 +60,7 @@ class AgoraRtcEngineMgr: NSObject {
                """)
         
         let logConFig = AgoraLogConfig()
-        logConFig.level = .error
+        logConFig.level = .info
         if(setting.logFilePath != ""){
             logConFig.filePath = setting.logFilePath
         }
@@ -92,10 +92,10 @@ class AgoraRtcEngineMgr: NSObject {
         return rtcKit
     }
     
-    func loadAgoraRtcEngineKit()->AgoraRtcEngineKit{
+    func loadAgoraRtcEngineKit()->AgoraRtcEngineKit?{
         guard let kit = rtcKit else {
             log.i("loadAgoraRtcEngineKit : rtc create")
-            return loadAgoraRtcEngineKit()
+            return nil
         }
         return kit
     }

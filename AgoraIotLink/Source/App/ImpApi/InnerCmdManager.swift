@@ -8,10 +8,11 @@
 import UIKit
 
 struct CommandList {
-    static let command_ConnectCompelete  = 1001
-    static let command_Disconnect        = 1002
-    static let command_PeerAct           = 1003
-    static let command_EnableAV          = 1004
+    static let command_ConnectCompelete    = 1001
+    static let command_Disconnect          = 1002
+    static let command_PeerAct             = 1003
+    static let command_EnableAV            = 1004
+    static let command_EnableTranferFile   = 1005
 }
 
 class InnerCmdManager: NSObject {
@@ -105,10 +106,6 @@ extension InnerCmdManager{
     
     func sendGeneralData(_ paramDic:[String:Any],_ sequenceId:UInt32,_ cmdListener: @escaping (Int, String) -> Void){
         
-//        guard let peer =  rtm.curSession?.peerVirtualNumber else{
-//            log.i("peerVirtualNumber is nil")
-//            return
-//        }
         guard let callSession =  getConnectSession() else{
             log.i("callSession is nil")
             return
@@ -141,7 +138,7 @@ extension InnerCmdManager{
         if let data = parmStr.data(using: .utf8) {
             
             // 创建目标字节数组
-            var targetArray = [UInt8](repeating: 0, count: insertionIndex + data.count)
+            var targetArray = [UInt8](repeating: 0, count: insertionIndex + data.count + 1)
 
             // 将目标数组的第1和第2两个字节都设置为 0x01
             targetArray[0] = UInt8(0x01)
@@ -153,6 +150,7 @@ extension InnerCmdManager{
             // 将 data 的字节长度按大端写入 targetArray 的第3和第4位
             targetArray[2] = UInt8(((byteDataLength >> 8) & 0xFF))
             targetArray[3] = UInt8((byteDataLength & 0xFF))
+            targetArray[4+dataLength] = UInt8(0x00)
 
             // 将字符串的字节内容复制到目标字节数组中的指定位置
             for (index, byte) in data.enumerated() {
