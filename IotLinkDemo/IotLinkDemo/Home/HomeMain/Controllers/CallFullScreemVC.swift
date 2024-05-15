@@ -20,14 +20,13 @@ class CallFullScreemVC: UIViewController {
     var videoQAlertView: VideoQAlertView?
     var CallFullScreemBlock:(() -> (Void))?
     var curTransferValue:String = ""
-    var curTransferDataValue:Int = 0
     
     var connectObj: IConnectionObj? {
         didSet{
             guard let connectObj = connectObj else {
                 return
             }
-            let statusCode : Int = connectObj.setVideoDisplayView(subStreamId: .PUBLIC_STREAM_1, displayView: videoView)
+            let statusCode : Int = connectObj.setVideoDisplayView(subStreamId: .BROADCAST_STREAM_1, displayView: videoView)
             debugPrint("statusCode:\(statusCode)")
         }
     }
@@ -37,27 +36,19 @@ class CallFullScreemVC: UIViewController {
             guard let transferCmdString = transferCmdString else {
                 return
             }
-            var tempTransferData = ""
-            if curTransferDataValue != 0{
-                tempTransferData = "transfer length: \(curTransferDataValue)"
-                curTransferDataValue = 0
-            }
-            curTransferValue.append(tempTransferData + "\n" + transferCmdString)
+            curTransferValue.append("\n" + transferCmdString)
             transferResultView.text = curTransferValue
         }
         
     }
     
-    var transferDataLen:Int?{
+    var isTransferEnd:Bool?{
         didSet{
-            guard let transferDataLen = transferDataLen else {
+            guard let isTransferEnd = isTransferEnd else {
                 return
             }
-            curTransferDataValue += transferDataLen
-            let tempValue = curTransferValue + "\n" + "transfer length: \(curTransferDataValue)"
-            transferResultView.text = tempValue
+            accecptButton.isSelected = !isTransferEnd
         }
-        
     }
     
     deinit {
@@ -75,8 +66,6 @@ class CallFullScreemVC: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
-        //todo:
-//        connectObj?.muteAudioPlayback(subStreamId: .PUBLIC_STREAM_1, previewAudio: true, result:{errCode ,msg in })
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -93,6 +82,10 @@ class CallFullScreemVC: UIViewController {
         setUpUI()
         view.backgroundColor = UIColor.lightGray
         addRightBarButtonItem()
+        
+        if connectObj?.isFileTransfering() == true{
+            accecptButton.isSelected = true
+        }
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(remoteHangup), name: Notification.Name(cRemoteHangupNotify), object: nil)
         
@@ -129,12 +122,13 @@ class CallFullScreemVC: UIViewController {
             make.height.equalTo(50)
         }
         
+        let tempW = view.frame.size.width
         view.addSubview(transferResultView)
         transferResultView.snp.makeConstraints { make in
             make.top.equalTo(accecptButton.snp.bottom).offset(20)
             make.left.equalTo(15)
-            make.width.equalTo(300)
-            make.height.equalTo(400)
+            make.width.equalTo(tempW-35)
+            make.height.equalTo(450)
         }
     }
     
@@ -176,10 +170,10 @@ class CallFullScreemVC: UIViewController {
     private lazy var transferResultView:UITextView = {
         
         let  textView = UITextView()
-        textView.text = "This is a UITextView."
+        textView.text = ""
         textView.font = UIFont.systemFont(ofSize: 18)
         textView.textColor = UIColor.green
-        textView.backgroundColor = UIColor.lightGray
+        textView.backgroundColor = UIColor.clear
         textView.isEditable = false
         textView.isScrollEnabled = true
         
@@ -191,7 +185,7 @@ class CallFullScreemVC: UIViewController {
         
 //        if videoQAlertView == nil {
 //            videoQAlertView = VideoQAlertView(frame: CGRect.zero)
-//            videoQAlertView?.connectId = connectId
+//            videoQAlertView?.connectId = connectId11
 //            view.addSubview(videoQAlertView!)
 //        } else {
 //            videoQAlertView?.removeFromSuperview()
@@ -201,14 +195,42 @@ class CallFullScreemVC: UIViewController {
     }
 
     @objc private func sendMsgButton(btn:UIButton){
+
+        guard let connectObj = connectObj  else { return }
         
-//        btn.isSelected = !btn.isSelected
-//        if btn.isSelected == true {
-//            let ret = connectObj?.fileTransferStart(startMessage: "file1,file2,file3")
-//            print("sendMsgButton : ret :\(String(describing: ret))")
-//        }else{
-//            connectObj?.fileTransferStop(stopMessage: "file1,file2,file3")
-//        }
+//        // 订阅 UNICAST_STREAM_3 这个流的音视频数据，订阅时还可以附加简短的消息通知到对端
+//        // 应用层可以根据自己的业务需求定义这种简短消息格式，例如：指定播放文件名，开始播放位置等
+//        connectObj.streamSubscribeStart(peerStreamId: .UNICAST_STREAM_3, attachMsg: "file=13.mp4; pos=5000") { errCode, msg in }
+//        
+//        // 设置 UNICAST_STREAM_3这个流的视频帧显示控件，如果不设置，默认不显示视频帧
+//        connectObj.setVideoDisplayView(subStreamId: .UNICAST_STREAM_3, displayView: mVideoView)
+//        
+//        // 设置UNICAST_STREAM_3这个流的音频播放是否静音，如果不设置，默认静音不播放
+//        connectObj.muteAudioPlayback(subStreamId: .UNICAST_STREAM_3, previewAudio: false) { errCode, msg in }
+//        
+//        // 设置 UNICAST_STREAM_3这个流的音频播放播放音量，默认是100，原始音量播放
+//        connectObj.setAudioPlaybackVolume(subStreamId: .UNICAST_STREAM_3, volumeLevel: 120) { errCode, msg in }
+//        
+//        // 取消订阅 UNICAST_STREAM_3 这个流的音视频数据
+//        // 取消订阅后，不能再收看相应流的音视频数据，相应属性(是否禁音、音量、显示控件等) 都恢复默认值
+//        connectObj.streamSubscribeStop(peerStreamId: .UNICAST_STREAM_3)
+        
+        
+        
+        if btn.isSelected == false {
+            let ret = connectObj.fileTransferStart(startMessage: "file1;file2;file3")
+            if ret == ErrCode.XOK {
+                btn.isSelected = !btn.isSelected
+            }else{
+                AGToolHUD.showInfo(info: "开始传输失败:\(String(describing: ret))")
+            }
+            print("sendMsgButton : ret :\(String(describing: ret))")
+        }else{
+            if connectObj.isFileTransfering() {
+                connectObj.fileTransferStop()
+            }
+            btn.isSelected = false
+        }
         
     }
     

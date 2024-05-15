@@ -201,7 +201,7 @@ class AgoraIotConfig{
     public static let appId = "4b31fcfaca7c472cbb07637260953037" //文强测试
     public static let productKey = "EJIJEIm68gl5b5lI4"
     public static let masterServerUrl:String = "https://app.agoralink-iot-cn.sd-rtn.com"
-    public static let slaveServerUrl:String = "http://api-test-huzhou1.agora.io/cn/iot/link"//"https://api.sd-rtn.com/agoralink/cn/api"
+    public static let slaveServerUrl:String = "https://api.sd-rtn.com/agoralink/cn/api"
     public static let projectId:String = "aWZhPaN_C"
 
     public static let ntfAppKey: String = "52116232#400198" //离线推送的appkey

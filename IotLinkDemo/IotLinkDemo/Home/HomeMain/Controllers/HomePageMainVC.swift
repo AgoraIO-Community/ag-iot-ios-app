@@ -13,6 +13,7 @@ import Alamofire
 import MJRefresh
 import SVProgressHUD
 import SwiftDate
+import CryptoKit
 
 
 // 网络监测通知
@@ -29,7 +30,9 @@ class HomePageMainVC: AGBaseVC {
     
     fileprivate var  doorbellVM = DoorBellManager.shared
     var cellArray = [HomeMainDeviceCell]()
-    let fullVC = CallFullScreemVC()
+    var fileReceiveData : Data = Data()
+    var fileReceiveDataList : [String:Data] =  [String:Data]()
+    var fullVC : CallFullScreemVC?
     
 
     lazy var topView:MainTopView = {
@@ -292,7 +295,7 @@ extension HomePageMainVC { //呼叫
         let avStreamVC = AVStreamVC()
         avStreamVC.connectObj = device.connectObj
         avStreamVC.AVStreamVCBlock = { mainStreamModel in
-            let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .PUBLIC_STREAM_1)
+            let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1)
             let connInfor = device.connectObj?.getInfo()
             if streamStatus?.mSubscribed == true {
                 cell.configPeerView(true)
@@ -319,17 +322,19 @@ extension HomePageMainVC { //呼叫
             return
         }
         
-        guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .PUBLIC_STREAM_1),streamStatus.mSubscribed == true else {//未在通话中，返回
+        guard let objInfor = device.connectObj?.getInfo(),objInfor.mState == .connected else {//未在通话中，返回
             log.i("recordScreen fail streamStatus status is error")
             AGToolHUD.showInfo(info: "请在正常预览视频时进入全屏页！")
             return
         }
-        
-        fullVC.connectObj = device.connectObj
-        fullVC.CallFullScreemBlock = {
+        fullVC = CallFullScreemVC()
+        guard let tempFullVC = fullVC else { return }
+        tempFullVC.connectObj = device.connectObj
+        tempFullVC.CallFullScreemBlock = {
             cell.configPeerView(true)
+            self.fullVC = nil
         }
-        self.navigationController?.pushViewController(fullVC, animated: false)
+        self.navigationController?.pushViewController(tempFullVC, animated: false)
     }
     
     //---------设备控制相关-----------
@@ -351,6 +356,16 @@ extension HomePageMainVC { //呼叫
         cell.device = device
         doorbellVM.registerConnectObjListener(connectObj: connectObj, listener: self)
         
+        connectObj?.getInfo()
+        
+//        guard let connectMgr = sdk?.connectionMgr else{ print("sdk.callkitMgr not init") }
+//        let connectParam = ConnectCreateParam(mPeerNodeId: device.peerNodeId, mAttachMsg: "")
+//        let connectObj = connectMgr.connectionCreate(connectParam: connectParam)
+//        guard let connectObj = connectObj  else { print("connectObj is nil") }
+//        let ret = connectObj.registerListener(callBackListener: self)
+//        
+//        // 使用 IConnectionObj 对象实例来断开相应的连接
+//        let errCode = connectMgr.connectionDestroy(connectObj: connectObj)
     }
     
     //挂断设备
@@ -413,45 +428,79 @@ extension HomePageMainVC: IConnectionMgrListener {
     }
     
     func onPeerAnswerOrReject(connectObj: AgoraIotLink.IConnectionObj?, answer: Bool) {
-        let tips = answer == true ? "接听":"挂断"
-        guard let conInfor = connectObj?.getInfo() else {
-            return
-        }
-        AGToolHUD.showInfo(info: "对端\(conInfor.mPeerNodeId):\(tips)")
+//        if !answer {
+//            // 对端拒绝后，可以主动销毁本次链接，
+//            // APP也可以不调用主动销毁方法，过一会对端也会断开，然后APP端也会得到通知并且自动销毁链接
+//            connectMgr.connectionDestroy(connectObj: connectObj)
+//        }
+        let tips = answer == true ? "answer":"reject"
+        guard let connectInfor = connectObj?.getInfo() else { return }
+        AGToolHUD.showInfo(info: "peer \(connectInfor.mPeerNodeId):\(tips)")
     }
 }
 
 extension HomePageMainVC:  ICallbackListener {
     
+    func onFileTransError(connectObj: AgoraIotLink.IConnectionObj?, errCode: Int) {
+        if errCode == ErrCode.XERR_NETWORK {
+            AGToolHUD.showInfo(info: "数据传输失败，请重试！")
+            fullVC?.isTransferEnd = true
+        }
+    }
+    
     func onFileTransRecvStart(connectObj: AgoraIotLink.IConnectionObj?, startDescrption: Data) {
         log.i("收到开始接收数据回调：具体协议数据在startDescrption参数中")
-        guard let myString = String(data: startDescrption, encoding: .utf8) else {
+        let subData = startDescrption.subdata(in: 14..<startDescrption.count)
+        guard let myString = String(data: subData, encoding: .utf8) else {
             return
         }
-        fullVC.curTransferValue = "file start: " + myString
-        
-        let descDic = String.getDictionaryWithData(data:startDescrption)
+        fileReceiveData.removeAll()
+        fullVC?.transferCmdString = "fileStart: " + myString
     }
     
     func onFileTransRecvData(connectObj: AgoraIotLink.IConnectionObj?, recvedData: Data) {
-        log.i("接收具体数据")
-        fullVC.curTransferDataValue = recvedData.count-14
+        log.i("接收具体数据:\(fileReceiveData.count)")
+        let subData = recvedData.subdata(in: 14..<recvedData.count)
+        fileReceiveData.append(subData)
     }
     
     func onFileTransRecvDone(connectObj: AgoraIotLink.IConnectionObj?, transferEnd: Bool, doneDescrption: Data) {
-        log.i("收到结束接收数据回调：具体协议数据在doneDescrption参数中")
-        guard let myString = String(data: doneDescrption, encoding: .utf8) else {
+        log.i("收到结束接收数据回调：具体协议数据在doneDescrption参数中:\(fileReceiveData.count)")
+        let subData = doneDescrption.subdata(in: 14..<doneDescrption.count)
+        guard let doneDescrptionString = String(data: subData, encoding: .utf8) else {
             return
         }
-        fullVC.curTransferValue = "file done: " + myString
+        let realMd5String = calculateMD5(for: fileReceiveData)
+        fileReceiveData.removeAll()
+        var isCorrect = "false"
+        if doneDescrptionString.contains(realMd5String) {
+            isCorrect = "true"
+        }
+        fullVC?.transferCmdString = "fileEnd: " + doneDescrptionString + "(\(isCorrect))"
+        if transferEnd == true {
+            fullVC?.isTransferEnd = transferEnd
+        }
     }
     
+    //todo:
+    func handelReveiveData(connectObj: AgoraIotLink.IConnectionObj?,subData: Data){
+        let connectInfor = connectObj?.getInfo()
+        guard  let peerId = connectInfor?.mPeerNodeId else { return }
+        var tempData = fileReceiveDataList[peerId]
+        tempData?.append(subData)
+       
+    }
+    
+    func calculateMD5(for data: Data) -> String {
+        let md5 = Insecure.MD5.hash(data: data)
+        return md5.map { String(format: "%02hhx", $0) }.joined()
+    }
     
     func onStreamFirstFrame(connectObj: AgoraIotLink.IConnectionObj?, subStreamId: AgoraIotLink.StreamId, videoWidth: Int, videoHeight: Int) {
         //首帧回调
         log.i("首帧回调：onPreviewFirstFrame")
         let cell = getCellWithConnectObj(connectObj!)
-        if subStreamId == .PUBLIC_STREAM_1 {
+        if subStreamId == .BROADCAST_STREAM_1 {
             cell?.handelCallTipType(.playing)
             cell?.handelPreviewBtnStateText(true)
         }
@@ -466,7 +515,7 @@ extension HomePageMainVC:  ICallbackListener {
             tempTips = "对端掉线，消息不可达"
             AGToolHUD.showInfo(info: "预览报错，errCode：\(errCode) \(tempTips)")
         }
-        if subStreamId == .PUBLIC_STREAM_1 {
+        if subStreamId == .BROADCAST_STREAM_1 {
             let cell = getCellWithConnectObj(connectObj!)
             cell?.handelPreviewBtnStateText(false)
         }
@@ -474,11 +523,14 @@ extension HomePageMainVC:  ICallbackListener {
     }
     
     func onMessageSendDone(connectObj: AgoraIotLink.IConnectionObj?, errCode: Int, signalId: UInt32) {
-        
+        //TODO:处理信令发送结果
     }
     
     func onMessageRecved(connectObj: AgoraIotLink.IConnectionObj?, recvedSignalData: Data) {
-        
+        guard let recvedSignalDataString = String(data: recvedSignalData, encoding: .utf8) else {
+            return
+        }
+        AGToolHUD.showInfo(info: "收到消息:\(recvedSignalDataString)")
     }
 
 }

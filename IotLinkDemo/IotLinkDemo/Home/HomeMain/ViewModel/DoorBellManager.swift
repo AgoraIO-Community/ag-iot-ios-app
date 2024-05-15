@@ -62,7 +62,7 @@ class DoorBellManager: NSObject {
             cb(errCode == ErrCode.XOK ? true : false , msg)
         })
         
-//        connectObj?.streamSubscribeStart(peerStreamId: .PUBLIC_STREAM_1, attachMsg: "", result: {errCode ,msg in
+//        connectObj?.streamSubscribeStart(peerStreamId: .BROADCAST_STREAM_1, attachMsg: "", result: {errCode ,msg in
 //            log.i("errCode:\(errCode)")
 //        })
     }

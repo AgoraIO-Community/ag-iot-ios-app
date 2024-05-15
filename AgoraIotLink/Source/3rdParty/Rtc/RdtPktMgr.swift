@@ -81,11 +81,9 @@ class RdtPktMgr {
             // 获取 data 的字节长度
             let dataLength = data.count
             let byteDataLen = UInt16(dataLength)
-            // 将 data 的字节长度按大端写入 targetArray 的第3和第4位
-            targetArray[2] = UInt8(((byteDataLen >> 8) & 0xFF))
-            targetArray[3] = UInt8((byteDataLen & 0xFF))
-            targetArray[4+dataLength] = UInt8(0x00)
-
+            // 将 data 的字节长度按小端写入 targetArray 的第3和第4位
+            targetArray[2] =  UInt8((byteDataLen & 0xFF))
+            targetArray[3] =  UInt8(((byteDataLen >> 8) & 0xFF))
             // 将字符串的字节内容复制到目标字节数组中的指定位置
             for (index, byte) in data.enumerated() {
                 if insertionIndex + index < targetArray.count {
@@ -94,6 +92,7 @@ class RdtPktMgr {
                     break // 如果超出目标数组长度则跳出循环
                 }
             }
+            targetArray[4+dataLength] = UInt8(0x00)
             
             
             let retData = Data(targetArray)

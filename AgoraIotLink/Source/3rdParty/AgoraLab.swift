@@ -20,7 +20,7 @@ class AgoraLab {
     // http过滤状态码
     let acceptableStatusCodes = Array(200..<300) + [401, 404]
     
-    private let httpPre = "http://api.sd-rtn.com/cn" //"http://api-test-huzhou1.agora.io/"
+    private let httpPre = "http://api.sd-rtn.com/" //"http://api-test-huzhou1.agora.io/"
     private let httpEnd = "/iot/link"
     
     private var http:String

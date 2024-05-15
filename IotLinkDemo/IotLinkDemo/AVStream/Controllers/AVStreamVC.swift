@@ -88,13 +88,13 @@ class AVStreamVC: UIViewController {
         for i in 1...9{
             let mModel = MStreamModel()
             mModel.connectObj = connectObj
-            mModel.streamId = StreamId(rawValue: i) ?? .PUBLIC_STREAM_1
+            mModel.streamId = StreamId(rawValue: i) ?? .BROADCAST_STREAM_1
             mStreamArray.append(mModel)
         }
         for i in 11...18{
             let mModel = MStreamModel()
             mModel.connectObj = connectObj
-            mModel.streamId = StreamId(rawValue: i) ?? .PUBLIC_STREAM_1
+            mModel.streamId = StreamId(rawValue: i) ?? .BROADCAST_STREAM_1
             mStreamArray.append(mModel)
         }
         

@@ -28,7 +28,7 @@ class MStreamModel: AGBaseModel {
     
     var connectObj : IConnectionObj?
     
-    var streamId : StreamId = .PUBLIC_STREAM_1 //对端streamId
+    var streamId : StreamId = .BROADCAST_STREAM_1 //对端streamId
     
     var isSubcribedAV : Bool = false
     

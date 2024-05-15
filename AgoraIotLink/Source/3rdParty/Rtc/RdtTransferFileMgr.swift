@@ -28,37 +28,41 @@ class RdtTransferFileMgr: NSObject {
         log.i("InnerCmdManager 销毁了")
     }
     
-//    func setRdtChannelState(_ state:AgoraRdtState){
-//        if state == .opened {
-//            rdtChannelState = .opened
-//        }else if state == .close{
-//            rdtChannelState = .closed
-//        }else{
-//            rdtChannelState = .unknown
-//        }
-//        
-//    }
+    func setRdtChannelState(_ state:AgoraRdtState){
+        if state == .opened {
+            rdtChannelState = .opened
+        }else if state == .close{
+            rdtChannelState = .closed
+        }else{
+            rdtChannelState = .unknown
+        }
+        
+    }
     
     func setRdtTransferState(_ state:TransferFileState){
+        log.i("setRdtTransferState: \(state)")
         rdtTransferState = state
     }
     
     func getRdtTransferState()->TransferFileState{
+        log.i("getRdtTransferState: \(rdtTransferState)")
         return rdtTransferState
     }
     
-    func sendRdtMessage(startMessage: String)->Int {
+    func sendRdtStartMessage(_ peerUid:Int,_ startMessage: String)->Int {
         
         guard let rtcKit = getRtcObject() else {
-           log.e("rtc engine is nil")
+           log.e("sendRdtStartMessage: rtc engine is nil")
            return ErrCode.XERR_BAD_STATE
         }
         
         guard rdtChannelState == .opened else {
+            log.e("sendRdtStartMessage: fail rdtChannelState:\(rdtChannelState)")
             return ErrCode.XERR_BAD_STATE
         }
         
-        guard rdtTransferState == .transfering else {
+        guard rdtTransferState != .transfering else {
+            log.e("sendRdtStartMessage: fail  rdtTransferState:\(rdtTransferState)")
             return ErrCode.XERR_BAD_STATE
         }
         
@@ -67,31 +71,35 @@ class RdtTransferFileMgr: NSObject {
             return ErrCode.XERR_INVALID_PARAM
         }
 
-//       let ret = rtcKit.sendRdtMessageEx(1, type: .data, data: paramData, connection: connection)
+        let ret = rtcKit.sendRdtMessageEx(peerUid, type: .data, data: paramData, connection: connection)
+        if ret == ErrCode.XOK {
+            setRdtTransferState(.transfering)
+        }
+        return Int(ret)
         
-        return  0 //Int(ret)
     }
     
-    func sendRdtMessage(stopMessage: String) {
+    func sendRdtStopMessage(_ peerUid:Int,_ stopMessage: String) {
         
         guard let rtcKit = getRtcObject() else {
-           log.e("rtc engine is nil")
+           log.e("sendRdtStopMessage: rtc engine is nil")
            return
         }
         
         guard rdtChannelState == .opened else {
+            log.e("sendRdtStopMessage: fail  rdtChannelState:\(rdtChannelState)")
             return
         }
         
         guard let paramData = RdtPktMgr.configRdtData(stopMessage) else {
-            log.e("sendRdtMessage: configRdtData stopMessage fail")
+            log.e("sendRdtStopMessage: configRdtData stopMessage fail")
             return
         }
 
         setRdtTransferState(.ideal)
-//        let ret = rtcKit.sendRdtMessageEx(1, type: .data, data: paramData, connection: connection)
-//        log.i("sendRdtMessage stop ret:\(ret)")
-       
+        let ret = rtcKit.sendRdtMessageEx(peerUid, type: .data, data: paramData, connection: connection)
+        log.i("sendRdtStopMessage stop ret:\(ret)")
+
     }
     
     

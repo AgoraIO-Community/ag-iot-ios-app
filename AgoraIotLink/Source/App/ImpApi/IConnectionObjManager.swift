@@ -250,8 +250,9 @@ extension IConnectionObjManager{
         return ErrCode.XOK
     }
     
-    func isStreamRecording(subStreamId: StreamId) { }
-    
+    func isStreamRecording(subStreamId: StreamId) -> Bool {
+        return false
+    }
 }
 
 extension IConnectionObjManager{
@@ -259,7 +260,7 @@ extension IConnectionObjManager{
     func fileTransferStart(startMessage: String)->Int {
         
         guard let talkingKit = getRtcTaklingKit() else {
-            log.e("captureVideoFrame: talkingKit is nil")
+            log.e("fileTransferStart: talkingKit is nil")
             return ErrCode.XERR_BAD_STATE
         }
         
@@ -267,18 +268,18 @@ extension IConnectionObjManager{
         return talkingKit.sendRdtMessageStart(startMessage: paramString)
     }
     
-    func fileTransferStop(stopMessage: String) {
+    func fileTransferStop() {
         guard let talkingKit = getRtcTaklingKit() else {
-            log.e("captureVideoFrame: talkingKit is nil")
+            log.e("fileTransferStop: talkingKit is nil")
             return
         }
-        let paramString = getRdtParamString(transfering: 0, attachMsg: stopMessage)
-        talkingKit.sendRdtMessageStop(stopMessage: stopMessage)
+        let paramString = getRdtParamString(transfering: 0, attachMsg: "")
+        talkingKit.sendRdtMessageStop(stopMessage: paramString)
     }
     
     func isFileTransfering() -> Bool {
         guard let talkingKit = getRtcTaklingKit() else {
-            log.e("captureVideoFrame: talkingKit is nil")
+            log.e("isFileTransfering: talkingKit is nil")
             return false
         }
         return talkingKit.isFileTransfering()
@@ -291,22 +292,21 @@ extension IConnectionObjManager{
             return ""
         }
         
-        guard let localNodeId =  rtm.curSession?.localNodeId else{
-            log.i("localNodeId is nil")
-            return ""
-        }
-        
         var base64AttachMsg = ""
         if let attachMsgData = attachMsg.data(using: .utf8) {
             base64AttachMsg = attachMsgData.base64EncodedString()
         }
         
-        
-        let curTransferId : UInt64 = UInt64(String.dateCurrentTime())
+        var curTransferId : UInt64 = UInt64(String.dateCurrentTime())
+        if transfering == 0 {
+            curTransferId = callSession.transferId
+        }else{
+            callSession.transferId = curTransferId
+        }
         let curSequenceId : UInt32 = getSequenceId()
         
         let commanId:Int = CommandList.command_EnableTranferFile
-        let payloadParam = ["callerNodeId": localNodeId, "calleeNodeId": callSession.peerNodeId, "transferId": curTransferId, "transfering": transfering,"attachMsg": base64AttachMsg ] as [String : Any]
+        let payloadParam = ["callerNodeId": app.config.mLocalNodeId, "calleeNodeId": callSession.peerNodeId, "transferId": curTransferId, "transfering": transfering,"attachMsg": base64AttachMsg ] as [String : Any]
         let paramDic = ["traceId": callSession.traceId,"sequenceId": curSequenceId, "commandId": commanId, "param": payloadParam] as [String : Any]
         
         let jsonString = paramDic.convertDictionaryToJSONString()

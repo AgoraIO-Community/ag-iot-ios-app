@@ -346,7 +346,8 @@ extension DoorbellAbilitySimpleLogicView{
                 AGToolHUD.showInfo(info: "消息转换失败")
                 return
             }
-            _ = conObj.sendMessageData(messageData: paramData)
+
+            let messageId = conObj.sendMessageData(messageData: paramData)
             
             print("showSendMsgAlert：-----\(msg)")
         }
@@ -376,7 +377,7 @@ extension DoorbellAbilitySimpleLogicView{
             return
         }
         
-        DoorBellManager.shared.streamSubscribeStart(device.connectObj, subStreamId: .PUBLIC_STREAM_1, cb: {[weak self] success, msg in
+        DoorBellManager.shared.streamSubscribeStart(device.connectObj, subStreamId: .BROADCAST_STREAM_1, cb: {[weak self] success, msg in
             if success{
                 self?.handelMuteAudioStateText(false)
             }
@@ -386,7 +387,7 @@ extension DoorbellAbilitySimpleLogicView{
     func disEnableAV(){
         
         guard let device = device else { return }
-        DoorBellManager.shared.streamRecordStop(device.connectObj, subStreamId: .PUBLIC_STREAM_1)
+        DoorBellManager.shared.streamRecordStop(device.connectObj, subStreamId: .BROADCAST_STREAM_1)
         previewBtn.isSelected = false
         handelStateNone()
         self.tipType = .connected
@@ -398,7 +399,7 @@ extension DoorbellAbilitySimpleLogicView{
         
         guard let device = device else { return }
         
-        guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .PUBLIC_STREAM_1),streamStatus.mSubscribed == true else {
+        guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
             AGToolHUD.showInfo(info: "请在正常预览视频时进行截图！")
             return
@@ -428,13 +429,13 @@ extension DoorbellAbilitySimpleLogicView{
         
         guard let device = device else { return }
         
-        guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .PUBLIC_STREAM_1),streamStatus.mSubscribed == true else {
+        guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
-            AGToolHUD.showInfo(info: "请在正常预览视频时进行截图！")
+            AGToolHUD.showInfo(info: "请在正常预览视频时设置音放！")
             return
         }
         
-        DoorBellManager.shared.mutePeerAudio(device.connectObj, subStreamId: .PUBLIC_STREAM_1, mute: !btn.isSelected) { success, msg in
+        DoorBellManager.shared.mutePeerAudio(device.connectObj, subStreamId: .BROADCAST_STREAM_1, mute: !btn.isSelected) { success, msg in
             if success{
                 log.i("设置静音成功")
                 btn.isSelected = !btn.isSelected
@@ -508,7 +509,7 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         
         guard let device = device else { return }
         
-        guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .PUBLIC_STREAM_1),streamStatus.mSubscribed == true else {
+        guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
             AGToolHUD.showInfo(info: "请在正常预览视频时进行录制！")
             return
@@ -517,7 +518,7 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         if startRecord == false {
             videoPath = getTempVideoUrl()
             print("startRecord：videoPath:\(videoPath)")
-            DoorBellManager.shared.talkingRecordStart(outFilePath:videoPath, device.connectObj, subStreamId: .PUBLIC_STREAM_1, cb: {[weak self] success, msg in
+            DoorBellManager.shared.talkingRecordStart(outFilePath:videoPath, device.connectObj, subStreamId: .BROADCAST_STREAM_1, cb: {[weak self] success, msg in
                 if success{
                     self?.toolBarView.callBtn.isSelected = true
                     self?.startRecord = true
@@ -526,7 +527,7 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
             })
             
         }else{
-            DoorBellManager.shared.talkingRecordStop(device.connectObj, subStreamId: .PUBLIC_STREAM_1, cb: {[weak self] success, msg in
+            DoorBellManager.shared.talkingRecordStop(device.connectObj, subStreamId: .BROADCAST_STREAM_1, cb: {[weak self] success, msg in
                 if success{
                     self?.toolBarView.callBtn.isSelected = false
                     self?.startRecord = false
@@ -562,14 +563,14 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
     func shotScreen(){
         
         guard let device = device else { return }
-        guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .PUBLIC_STREAM_1),streamStatus.mSubscribed == true else {
+        guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
             AGToolHUD.showInfo(info: "请在正常预览视频时进行截图！")
             return
         }
         
         let imagePath = getTempImageUrl()
-        DoorBellManager.shared.capturePeerVideoFrame(saveFilePath:imagePath,device.connectObj, subStreamId: .PUBLIC_STREAM_1, cb: { [weak self] errCode, w, h in
+        DoorBellManager.shared.capturePeerVideoFrame(saveFilePath:imagePath,device.connectObj, subStreamId: .BROADCAST_STREAM_1, cb: { [weak self] errCode, w, h in
             
             if errCode == 0{
                 debugPrint("截屏成功")

@@ -32,25 +32,25 @@ import Foundation
  * @brief StreamId 定义
  */
 @objc public enum StreamId:Int {
-    case PUBLIC_STREAM_1 = 1      ///< 公有StreamId 1
-    case PUBLIC_STREAM_2 = 2     ///< 公有StreamId 2
-    case PUBLIC_STREAM_3 = 3     ///< 公有StreamId 3
-    case PUBLIC_STREAM_4 = 4     ///< 公有StreamId 4
-    case PUBLIC_STREAM_5 = 5     ///< 公有StreamId 5
-    case PUBLIC_STREAM_6 = 6     ///< 公有StreamId 6
-    case PUBLIC_STREAM_7 = 7     ///< 公有StreamId 7
-    case PUBLIC_STREAM_8 = 8     ///< 公有StreamId 8
-    case PUBLIC_STREAM_9 = 9     ///< 公有StreamId 9
+    case BROADCAST_STREAM_1 = 1      ///< 公有StreamId 1
+    case BROADCAST_STREAM_2 = 2     ///< 公有StreamId 2
+    case BROADCAST_STREAM_3 = 3     ///< 公有StreamId 3
+    case BROADCAST_STREAM_4 = 4     ///< 公有StreamId 4
+    case BROADCAST_STREAM_5 = 5     ///< 公有StreamId 5
+    case BROADCAST_STREAM_6 = 6     ///< 公有StreamId 6
+    case BROADCAST_STREAM_7 = 7     ///< 公有StreamId 7
+    case BROADCAST_STREAM_8 = 8     ///< 公有StreamId 8
+    case BROADCAST_STREAM_9 = 9     ///< 公有StreamId 9
 
-    case PRIVATE_STREAM_1 = 10    ///< 私有StreamId 1，这个保留，应用层不要使用
-    case PRIVATE_STREAM_2 = 11    ///< 私有StreamId 2
-    case PRIVATE_STREAM_3 = 12    ///< 私有StreamId 3
-    case PRIVATE_STREAM_4 = 13    ///< 私有StreamId 4
-    case PRIVATE_STREAM_5 = 14    ///< 私有StreamId 5
-    case PRIVATE_STREAM_6 = 15    ///< 私有StreamId 6
-    case PRIVATE_STREAM_7 = 16    ///< 私有StreamId 7
-    case PRIVATE_STREAM_8 = 17    ///< 私有StreamId 8
-    case PRIVATE_STREAM_9 = 18    ///< 私有StreamId 9
+    case UNICAST_STREAM_1 = 10    ///< 私有StreamId 1，这个保留，应用层不要使用
+    case UNICAST_STREAM_2 = 11    ///< 私有StreamId 2
+    case UNICAST_STREAM_3 = 12    ///< 私有StreamId 3
+    case UNICAST_STREAM_4 = 13    ///< 私有StreamId 4
+    case UNICAST_STREAM_5 = 14    ///< 私有StreamId 5
+    case UNICAST_STREAM_6 = 15    ///< 私有StreamId 6
+    case UNICAST_STREAM_7 = 16    ///< 私有StreamId 7
+    case UNICAST_STREAM_8 = 17    ///< 私有StreamId 8
+    case UNICAST_STREAM_9 = 18    ///< 私有StreamId 9
 }
 
 /*
@@ -82,7 +82,7 @@ import Foundation
  */
 @objc public class StreamStatus : NSObject{
     
-    public var mStreamId:StreamId  = .PUBLIC_STREAM_1  //设备流的唯一标识
+    public var mStreamId:StreamId  = .BROADCAST_STREAM_1  //设备流的唯一标识
     public var mSubscribed:Bool = false                //当前是否已经订阅
     public var mVideoView:UIView? = nil                //当前视频帧显示控件
     public var mAudioMute:Bool = false                 //音频播放是否静音
@@ -184,6 +184,12 @@ public class NetworkStatus : NSObject{
      */
     func onFileTransRecvDone(connectObj:IConnectionObj?,transferEnd:Bool,doneDescrption:Data)
     
+    /**
+    * @brief 传输过程中遇到问题，本次传输失败（可以重新进行下一次传输）
+    * @param connectObj : 当前连接对象
+    * @param errCode : 传输错误码
+    */
+    func onFileTransError(connectObj:IConnectionObj?,errCode:Int)
 }
 
 /*
@@ -341,7 +347,7 @@ public class NetworkStatus : NSObject{
      * @param subStreamId : 指定订阅预览的 对端StreamId
      * @return true 表示正在本地录制频道； false: 不在录制
      */
-    func isStreamRecording(subStreamId:StreamId)
+    func isStreamRecording(subStreamId:StreamId)->Bool
     
     
     //////////////////////////////////////////////////////////////////////
@@ -355,6 +361,28 @@ public class NetworkStatus : NSObject{
      */
     func sendMessageData(messageData:Data) -> UInt32
     
-
+    //////////////////////////////////////////////////////////////////////
+    /////////////////////////// 数据传输控制方法 ////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+    
+    /**
+     * @brief 开始传输
+     * @param startMessage : 发送给对端的请求数据，由应用层自定义
+     * @return 错误码
+     */
+    func fileTransferStart(startMessage:String)->Int
+    
+    /**
+     * @brief 传输停止
+     * @param stopMessage : 发送给对端的停止数据，由应用层自定义
+     * @return 错误码
+     */
+    func fileTransferStop()
+    
+    /**
+     * @brief 判断当前是否正在传输
+     * @return true--当前有个传输正在进行； false--当前没有传输进行
+     */
+    func isFileTransfering()->Bool
     
 }

@@ -160,7 +160,7 @@ class HomeMainDeviceCell: UITableViewCell {
             return
         }
         
-        let ret =  conObj.setVideoDisplayView(subStreamId: .PUBLIC_STREAM_1, displayView:isEnable == true ? videoParentView : nil)
+        let ret =  conObj.setVideoDisplayView(subStreamId: .BROADCAST_STREAM_1, displayView:isEnable == true ? videoParentView : nil)
         debugPrint("--- \(ret)")
 
     }

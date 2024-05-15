@@ -60,7 +60,7 @@ class AgoraTalkingEngine: NSObject {
     
     private var  _onPeerAction : (RtcPeerAction,UInt)->Void = {b,u in}
     private var  _memberState : (MemberState,[UInt])->Void = {s,a in }
-    private var  _rdtDataListen : (UInt,Data)->Void = {u,d in }
+    private var  _rdtDataListen : (UInt,Data,Int)->Void = {u,d,e in }
     
     
     private var  _tokenWillExpire : ()->Void = {}
@@ -115,7 +115,7 @@ class AgoraTalkingEngine: NSObject {
         }
     }
     
-    func registerRdtDataListern(rdtListen:@escaping(UInt,Data)->Void){
+    func registerRdtDataListern(rdtListen:@escaping(UInt,Data,Int)->Void){
         _rdtDataListen = rdtListen
     }
     
@@ -155,7 +155,7 @@ class AgoraTalkingEngine: NSObject {
         option.autoSubscribeVideo = rtcSetting.subscribeVideo
         option.publishCameraTrack = rtcSetting.publishVideo
         option.publishMicrophoneTrack = rtcSetting.publishAudio
-//        option.autoConnectRdt = true
+        option.autoConnectRdt = false
         
         log.i("""
                  rtc try enterChannel: '\(String(describing: channelInfo?.cName))' 
@@ -173,7 +173,7 @@ class AgoraTalkingEngine: NSObject {
         rtc.setAudioAndVideoDelegate()
         
         if let peerView = peerDisplayView{
-            let ret = setupRemoteView(subStreamId: .PUBLIC_STREAM_1, peerView: peerView)
+            let ret = setupRemoteView(subStreamId: .BROADCAST_STREAM_1, peerView: peerView)
             log.i("init setupRemoteView ret:\(ret)")
         }
         
@@ -198,7 +198,7 @@ class AgoraTalkingEngine: NSObject {
         peerEntered = false
         if peerDisplayView != nil{
             log.i("leaveChannel setupRemoteView nil")
-            let ret = setupRemoteView(subStreamId: .PUBLIC_STREAM_1, peerView: nil)
+            let ret = setupRemoteView(subStreamId: .BROADCAST_STREAM_1, peerView: nil)
             log.i("leaveChannel setupRemoteView nil ret:\(ret)")
         }
         log.i("rtc try leaveChannel ... curChannelName:\(self.connection.channelId)")
@@ -563,11 +563,19 @@ extension AgoraTalkingEngine{
     }
     
     func sendRdtMessageStart(startMessage: String)->Int {
-        return rdtTransferMgr.sendRdtMessage(startMessage: startMessage)
+        guard let peerUid =  channelInfo?.peerUid else {
+            log.e("sendRdtMessageStop:peerUid is nil")
+            return ErrCode.XERR_INVALID_PARAM
+        }
+        return rdtTransferMgr.sendRdtStartMessage(Int(peerUid),startMessage)
     }
     
     func sendRdtMessageStop(stopMessage: String){
-        rdtTransferMgr.sendRdtMessage(stopMessage: stopMessage)
+        guard let peerUid =  channelInfo?.peerUid else {
+            log.e("sendRdtMessageStop:peerUid is nil")
+            return
+        }
+        rdtTransferMgr.sendRdtStopMessage(Int(peerUid),stopMessage)
     }
     
     func isFileTransfering()->Bool{
@@ -581,16 +589,18 @@ extension AgoraTalkingEngine{
 
 extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
 
+    func rtcEngine(_ engine: AgoraRtcEngineKit, receiveRdtMessageFromUid uid: UInt, type: AgoraRdtStreamType, data: Data) {
+        log.i("receiveRdtMessageFromUid :uid：\(uid), type:\(type) data:\(data.count)")
+        _rdtDataListen(uid,data,ErrCode.XOK)
+    }
     
-//    func rtcEngine(_ engine: AgoraRtcEngineKit, receiveRdtMessageFromUid uid: UInt, type: AgoraRdtStreamType, data: Data) {
-//        log.i("receiveRdtMessageFromUid :uid：\(uid), type:\(type) data:\(data.count)")
-//        _rdtDataListen(uid,data)
-//    }
-//    
-//    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurRdtMessageStateFromUid uid: UInt, state: AgoraRdtState) {
-//        log.i("didOccurRdtMessageStateFromUid：uid：\(uid),state:\(state)")
-//        rdtTransferMgr.setRdtChannelState(state)
-//    }
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurRdtMessageStateFromUid uid: UInt, state: AgoraRdtState) {
+        log.i("didOccurRdtMessageStateFromUid：uid：\(uid),state:\(state)")
+        rdtTransferMgr.setRdtChannelState(state)
+        if state == .blocked {
+            _rdtDataListen(uid,Data(),ErrCode.XERR_NETWORK)
+        }
+    }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, receiveMediaControlMessageFromUid uid: UInt, data: Data) {
         guard let myString = String(data: data, encoding: .utf8) else{
@@ -620,6 +630,10 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
         }
         _onPeerAction(.Leave,uid)
         _memberState(.Leave,[uid])
+    }
+    
+    func rtcEngineConnectionDidInterrupted(_ engine: AgoraRtcEngineKit) {
+        log.i("💔💔💔 rtc rtcEngineConnectionDidInterrupted 💔💔💔")
     }
     
     func rtcEngineConnectionDidLost(_ engine: AgoraRtcEngineKit) {

@@ -21,7 +21,7 @@ class ThirdAccountManager{
     #elseif false //dev 国外
         static let http_3rdParty = "https://third-user.la3.agoralab.co/third-party"
     #elseif true //dev 2.0
-        static let http_3rdParty = "http://api.sd-rtn.com/cn/iot/link" //"http://api-test-huzhou1.agora.io/cn/iot/link"
+        static let http_3rdParty = "http://api.sd-rtn.com/cn/iot/link" //"http://api.sd-rtn.com/cn/iot/link" //"http://api-test-huzhou1.agora.io/cn/iot/link" 
     #elseif false //prd 国外
         
     #endif
@@ -107,9 +107,7 @@ class ThirdAccountManager{
                 let nodeId:String
                 let nodeToken:String
                 let nodeRegion:String
-                let mqttServer:String
                 let mqttPort:Int
-                let mqttUsername:String
             }
             struct Rsp : Decodable{
                 let code:Int
@@ -150,24 +148,36 @@ class ThirdAccountManager{
     //获取Authorization Base64编码
     class func getAuthorizationText()-> String {
         
-        if let storedAuthBase64Str = UserDefaults.standard.string(forKey: KeyCenter.kAuthorizationBase64Key) {
-            
-            return storedAuthBase64Str
-            
-        }else{
-            
-            let plainCredentials = TDUserInforManager.shared.curCustomKey + ":" + TDUserInforManager.shared.curCustomSecret
-            let authData = plainCredentials.data(using: .utf8)
-            
-            guard let base64Credentials = authData?.base64EncodedString(options: .endLineWithLineFeed) else {
-                print("转base64失败")
-                return ""
-            }
-            UserDefaults.standard.set(base64Credentials, forKey: KeyCenter.kAuthorizationBase64Key)
-            UserDefaults.standard.synchronize()
+        let plainCredentials = TDUserInforManager.shared.curCustomKey + ":" + TDUserInforManager.shared.curCustomSecret
+        let authData = plainCredentials.data(using: .utf8)
         
-            return base64Credentials
+        guard let base64Credentials = authData?.base64EncodedString(options: .endLineWithLineFeed) else {
+            print("转base64失败")
+            return ""
         }
+        UserDefaults.standard.set(base64Credentials, forKey: KeyCenter.kAuthorizationBase64Key)
+        UserDefaults.standard.synchronize()
+    
+        return base64Credentials
+        
+//        if let storedAuthBase64Str = UserDefaults.standard.string(forKey: KeyCenter.kAuthorizationBase64Key) {
+//            
+//            return storedAuthBase64Str
+//            
+//        }else{
+//            
+//            let plainCredentials = TDUserInforManager.shared.curCustomKey + ":" + TDUserInforManager.shared.curCustomSecret
+//            let authData = plainCredentials.data(using: .utf8)
+//            
+//            guard let base64Credentials = authData?.base64EncodedString(options: .endLineWithLineFeed) else {
+//                print("转base64失败")
+//                return ""
+//            }
+//            UserDefaults.standard.set(base64Credentials, forKey: KeyCenter.kAuthorizationBase64Key)
+//            UserDefaults.standard.synchronize()
+//        
+//            return base64Credentials
+//        }
         
     }
     

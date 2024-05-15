@@ -44,6 +44,8 @@ public class CallSession : NSObject{
     var mConnectId = ""                     //链接Id
     var peerNodeId = ""                     //对端nodeId
     
+    var transferId : UInt64 = 0             //当前数据传输Id
+    
     var mVideoQuality:VideoQualityParam = VideoQualityParam()   //当前通话视频质量参数
 
     //------rtm信息------
@@ -57,7 +59,7 @@ public class CallSession : NSObject{
 
 public class StreamSessionObj : NSObject{
     
-    var streamId : StreamId = .PRIVATE_STREAM_1
+    var streamId : StreamId = .UNICAST_STREAM_1
     var peerUid :  UInt = 1
     var timeStamp: TimeInterval = 0       //标记时间戳
     var mVideoPreviewing: Bool = false
@@ -295,8 +297,13 @@ extension ConnectStateListener : CallStateMachineListener{
             self?.renewTotalToken()
         }
         
-        talkingEngine?.registerRdtDataListern(rdtListen: { [weak self] peerUid, receiveData in
-            self?.handelRdtReceiveData(receiveData)
+        talkingEngine?.registerRdtDataListern(rdtListen: { [weak self] peerUid, receiveData,errCode in
+            if errCode !=  ErrCode.XOK{
+                self?.talkingEngine?.setRdtTransferState(.ideal)
+                self?.callBackListener?.onFileTransError(connectObj: self?.callSession?.connectionObj, errCode: ErrCode.XERR_NETWORK)
+            }else{
+                self?.handelRdtReceiveData(receiveData)
+            }
         })
         
     }
@@ -305,15 +312,16 @@ extension ConnectStateListener : CallStateMachineListener{
         let pktType = RdtPktMgr.getPktType(receiveData)
         switch pktType {
         case .pktStart:
-            talkingEngine?.setRdtTransferState(.transfering)
             callBackListener?.onFileTransRecvStart(connectObj: callSession?.connectionObj, startDescrption: receiveData)
         case .pktContentData:
             callBackListener?.onFileTransRecvData(connectObj: callSession?.connectionObj, recvedData: receiveData)
         case .pktEnd:
-            talkingEngine?.setRdtTransferState(.ideal)
             guard let isTransferEnd = RdtPktMgr.getPktEof(receiveData) else {
                 log.e("handelRdtReceiveData: getPktEof ret is nil")
                 return
+            }
+            if isTransferEnd == true{
+                talkingEngine?.setRdtTransferState(.ideal)
             }
             callBackListener?.onFileTransRecvDone(connectObj: callSession?.connectionObj, transferEnd: isTransferEnd, doneDescrption: receiveData)
         case nil:
