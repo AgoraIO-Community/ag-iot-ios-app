@@ -20,7 +20,7 @@ class RtcEngine : NSObject{
     private var  waitFirstRemoteUidArray: [UInt] = []  //等待首帧回调的List
     
     var curChannel : String = ""
-//    var curUid : UInt = 0
+    var curAudioEffectId: AudioEffectId = .NORMAL
     
     //注册首帧返回自管理回调监听
     func waitForMFirstRemoteVideoCbListern(_ mFirstRemoteVideoAction:@escaping(RtcPeerAction,UInt)->Void){
@@ -84,6 +84,7 @@ class RtcEngine : NSObject{
         case .PITCHCORRECTION:
             preset = .pitchCorrection
         }
+        curAudioEffectId = effectId
         let ret = rtcKit.setAudioEffectPreset(preset)
         ret == 0 ? cb(ErrCode.XOK,"switch audio effect succ") : cb(ErrCode.XERR_UNSUPPORTED,"switch audio effect fail:" + String(ret))
     }

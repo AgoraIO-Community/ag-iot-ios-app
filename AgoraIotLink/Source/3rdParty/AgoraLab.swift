@@ -20,7 +20,7 @@ class AgoraLab {
     // http过滤状态码
     let acceptableStatusCodes = Array(200..<300) + [401, 404]
     
-    private let httpPre = "http://api.sd-rtn.com/" //"http://api-test-huzhou1.agora.io/"
+    private let httpPre =  "https://api.sd-rtn.com/"//"http://api-test-huzhou1.agora.io/"
     private let httpEnd = "/iot/link"
     
     private var http:String
@@ -68,8 +68,8 @@ class AgoraLab {
     
     //获取Authorization Base64编码
     func getAuthorizationText()-> String {
-        
-        let plainCredentials = Config.customerKey + ":" + Config.customerSecret
+        let app = IotLibrary.shared
+        let plainCredentials = app.config.customerKey + ":" + app.config.customerSecret
         let authData = plainCredentials.data(using: .utf8)
         
         guard let base64Credentials = authData?.base64EncodedString(options: .endLineWithLineFeed) else {
@@ -111,15 +111,15 @@ class AgoraLab {
             }
         }
     }
-    func creatConnect(_ traceId:String, _ peerNodeId:String, _ rsp:@escaping(Int,String,ConnectCreat.Rsp?)->Void){
+    func creatConnect(_ traceId:String, _ peerNodeId:String, _ mEncrypt:Bool, _ rsp:@escaping(Int,String,ConnectCreat.Rsp?)->Void){
         
         let app = IotLibrary.shared
         let appId = app.config.masterAppId
         let nodeToken = app.config.mAuthToken
         let localNodeId = app.config.mLocalNodeId
-    
+        let encrypt = mEncrypt == true ? 5 : 0
         let header = self.configCommonHeader()
-        let paramsDic = AgoraLab.ConnectCreat.Req(nodeToken: nodeToken, localNodeId: localNodeId, peerNodeId: peerNodeId, appId: appId)
+        let paramsDic = AgoraLab.ConnectCreat.Req(nodeToken: nodeToken, localNodeId: localNodeId, peerNodeId: peerNodeId, appId: appId, encrypt: encrypt)
         
         let url = http + api.connectCreat
         log.i("al connect url:\(url) header:\(header) paramsDic:\(paramsDic)")

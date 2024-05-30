@@ -149,12 +149,15 @@ extension AgoraLab{
             let localNodeId:String
             let peerNodeId:String
             let appId:String
+            let encrypt:Int
         }
         
         struct Data : Decodable{
             let token:String
             let uid:UInt
             let cname:String
+//            let encryptMode:UInt
+//            let secretKey:String
         }
         struct Rsp : Decodable{
             let code:Int

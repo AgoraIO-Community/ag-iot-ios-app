@@ -41,6 +41,8 @@ open class IotLibrary : NSObject{
         _config.cRegion = initParam.mRegion
         _config.mLocalNodeId = initParam.mLocalNodeId
         _config.mAuthToken = initParam.mLocalNodeToken
+        _config.customerKey = initParam.mCustomerKey
+        _config.customerSecret = initParam.mCustomerSecret
         
         _context.call.setting.logFilePath = initParam.mLogFileName ?? ""
         _context.rtm.setting.appId = initParam.mAppId

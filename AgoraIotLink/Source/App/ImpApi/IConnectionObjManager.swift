@@ -63,7 +63,7 @@ extension IConnectionObjManager{
     func getInfo() -> ConnectionInfo {
         
         let conInfor = ConnectionInfo()
-        guard let callObj = getConnectObj(), let callSession = callObj.callSession  else {
+        guard let callObj = getConnectObj(), let callSession = callObj.callSession,let talkingEngine = callObj.talkingEngine else {
             log.e("getInfo:  getConnectSession fail curConnectId:\(curConnectId)")
             return conInfor
         }
@@ -72,6 +72,8 @@ extension IConnectionObjManager{
         conInfor.mLocalNodeId = app.config.mLocalNodeId
         conInfor.mType = callSession.callType
         conInfor.mState = (callObj.callMachine?.currentState) ?? .disconnected
+        conInfor.mAudioPublishing = talkingEngine.rtcSetting.publishAudio
+        conInfor.mVideoPublishing = talkingEngine.rtcSetting.publishVideo
         return conInfor
     }
     
@@ -114,11 +116,6 @@ extension IConnectionObjManager{
             self.rtc.setAudioEffect(effectId, cb: {ec,msg in self.asyncResult(ec, msg,result)})
         }
         return ErrCode.XOK
-    }
-    
-    func getPublishAudioEffect() -> AudioEffectId {
-        //todo:
-        return .NORMAL
     }
     
     func getStreamStatus(peerStreamId: StreamId) -> StreamStatus{
@@ -227,7 +224,6 @@ extension IConnectionObjManager{
             log.e("capturePeerVideoFrame: talkingKit is nil")
             return ErrCode.XERR_BAD_STATE
         }
-        
         return talkingKit.capturePeerVideoFrame(subStreamId,saveFilePath: saveFilePath, cb: cb)
     }
     
@@ -251,7 +247,15 @@ extension IConnectionObjManager{
     }
     
     func isStreamRecording(subStreamId: StreamId) -> Bool {
-        return false
+        guard let talkingKit = getRtcTaklingKit() else {
+            log.e("captureVideoFrame: talkingKit is nil")
+            return false
+        }
+        guard let streamObj = talkingKit.getStreamObj(subStreamId: subStreamId) else {
+            log.e("getStreamObj: StreamObj is nil subStreamId:\(subStreamId)")
+            return false
+        }
+        return streamObj.mRecording
     }
 }
 

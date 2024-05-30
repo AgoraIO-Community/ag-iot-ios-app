@@ -31,14 +31,19 @@ import UIKit
 public class CallSession : NSObject{
     
     var token = ""
-    var cname = ""    //对端nodeId
+    var cname = ""
     var uid:UInt = 0
+    var encryptMode: UInt = 0
+    var secretKey: String = ""
+    
+    
     var traceId:String = ""
     var lastSequenceId:Int = -1
     var version:UInt = 0
     
     var peerUid:UInt = 0                     //对端id
-    var mPubLocalAudio : Bool = false        //设备端接听后是否立即推送本地音频流
+    var mPubLocalAudio: Bool = false        //设备端接听后是否立即推送本地音频流
+    var mEncrypt: Bool = false              //是否开启内容加密
     
     var callType:ConnectType = .unknown     //通话类型
     var mConnectId = ""                     //链接Id
@@ -123,6 +128,7 @@ class ConnectStateListener: NSObject {
         callSession = CallSession()
         callSession?.callType = .active
         callSession?.peerNodeId = dialParam.mPeerNodeId
+        callSession?.mEncrypt = dialParam.mEncrypt
     }
     
     func callRequest(_ suc:Bool){
@@ -187,6 +193,8 @@ extension ConnectStateListener {
         callSession?.callType = sess.callType
         callSession?.mRtmUid = app.config.mLocalNodeId
         callSession?.mRtmToken = sess.token
+        callSession?.encryptMode = sess.encryptMode
+        callSession?.secretKey = sess.secretKey
     }
     
     func updateCallSessionVideoQuality(_ videoQuality : VideoQualityParam){
@@ -202,6 +210,9 @@ extension ConnectStateListener : CallStateMachineListener{
         let name = callSession?.cname ?? ""
         let token = callSession?.token ?? ""
         let peerId = callSession?.peerUid ?? 0
+        let encryptMode = callSession?.encryptMode ?? 5
+        let secretKey = callSession?.secretKey ?? ""
+        let mEncrypt = callSession?.mEncrypt ?? false
 
         let setting = app.context.call.setting
         log.i("listener rtc.createAndEnter(uid:\(uid) channel:\(name))")
@@ -230,6 +241,9 @@ extension ConnectStateListener : CallStateMachineListener{
         channelInfor.cName = name
         channelInfor.token = token
         channelInfor.peerUid = peerId
+        channelInfor.encryptMode = encryptMode
+        channelInfor.secretKey = secretKey
+        channelInfor.mEncrypt = mEncrypt
         
         talkingEngine = AgoraTalkingEngine.init(setting: rtcSetting, channelInfo: channelInfor, cb: {[weak self] ret,msg in
             if(ret == .Fail){
@@ -331,7 +345,7 @@ extension ConnectStateListener : CallStateMachineListener{
     
     func renewTotalToken(){
         log.i("renewTotalToken: listener TokenWillExpire peerNodeId:\(String(describing: callSession?.peerNodeId))")
-        let connectParam = ConnectCreateParam(mPeerNodeId: callSession?.peerNodeId ?? "", mAttachMsg: "")
+        let connectParam = ConnectCreateParam(mPeerNodeId: callSession?.peerNodeId ?? "",mEncrypt: callSession?.mEncrypt ?? false, mAttachMsg: "")
         connectRequest(connectParam)
     }
     
@@ -484,7 +498,7 @@ extension ConnectStateListener{
         }
         
         let traceId:Int = String.dateTimeRounded()
-        app.proxy.al.creatConnect("\(traceId)", connectParam.mPeerNodeId, cbRequest)
+        app.proxy.al.creatConnect("\(traceId)", connectParam.mPeerNodeId, connectParam.mEncrypt, cbRequest)
         
     }
     
@@ -494,6 +508,8 @@ extension ConnectStateListener{
         sess.token = resultData.token
         sess.uid = resultData.uid
         sess.cname = resultData.cname
+//        sess.encryptMode = resultData.encryptMode
+//        sess.secretKey = resultData.secretKey
         sess.traceId = traceId
         updateCallSession(sess)
         

@@ -25,7 +25,7 @@ class RdtTransferFileMgr: NSObject {
     }
     
     deinit {
-        log.i("InnerCmdManager 销毁了")
+        log.i("RdtTransferFileMgr 销毁了")
     }
     
     func setRdtChannelState(_ state:AgoraRdtState){

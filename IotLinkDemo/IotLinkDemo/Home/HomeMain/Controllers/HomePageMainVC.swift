@@ -30,7 +30,6 @@ class HomePageMainVC: AGBaseVC {
     
     fileprivate var  doorbellVM = DoorBellManager.shared
     var cellArray = [HomeMainDeviceCell]()
-    var fileReceiveData : Data = Data()
     var fileReceiveDataList : [String:Data] =  [String:Data]()
     var fullVC : CallFullScreemVC?
     
@@ -349,17 +348,16 @@ extension HomePageMainVC { //呼叫
         log.i("------callDevice------ \(device.peerNodeId)")
         
         doorbellVM.registerConnectMgrListener(listener: self)
-        let connectParam = ConnectCreateParam(mPeerNodeId: device.peerNodeId, mAttachMsg: "")
+        let connectParam = ConnectCreateParam(mPeerNodeId: device.peerNodeId,mEncrypt: true,mAttachMsg: "")
         let connectObj = doorbellVM.connectDevice(connectParam)
         
         device.connectObj = connectObj
         cell.device = device
         doorbellVM.registerConnectObjListener(connectObj: connectObj, listener: self)
         
-        connectObj?.getInfo()
         
 //        guard let connectMgr = sdk?.connectionMgr else{ print("sdk.callkitMgr not init") }
-//        let connectParam = ConnectCreateParam(mPeerNodeId: device.peerNodeId, mAttachMsg: "")
+//        let connectParam = ConnectCreateParam(mPeerNodeId: device.peerNodeId,mEncrypt: true, mAttachMsg: "")
 //        let connectObj = connectMgr.connectionCreate(connectParam: connectParam)
 //        guard let connectObj = connectObj  else { print("connectObj is nil") }
 //        let ret = connectObj.registerListener(callBackListener: self)
@@ -386,15 +384,11 @@ extension HomePageMainVC { //呼叫
     }
         
     func getCellWithConnectObj(_ connectObj : IConnectionObj)->HomeMainDeviceCell?{
-        
-        
         for cell in cellArray {
             let aaa = cell.device?.connectObj?.getInfo()
             let bbb = connectObj.getInfo()
-            print("-----------cell.tag: \(cell.tag)------------cellArray.count:\(cellArray.count)")
             log.i("返回的mPeerNodeId：\(String(describing: bbb.mPeerNodeId) )")
             if cell.device?.connectObj === connectObj{
-                log.i("回调的的mPeerNodeId：\(String(describing: bbb.mPeerNodeId)) ------  cell的 mPeerNodeId：\(String(describing: aaa?.mPeerNodeId))")
                 return cell
             }
         }
@@ -454,24 +448,29 @@ extension HomePageMainVC:  ICallbackListener {
         guard let myString = String(data: subData, encoding: .utf8) else {
             return
         }
-        fileReceiveData.removeAll()
+        let connectInfor = connectObj?.getInfo()
+        guard  let peerId = connectInfor?.mPeerNodeId else { return }
+        fileReceiveDataList[peerId] = Data()
         fullVC?.transferCmdString = "fileStart: " + myString
     }
     
     func onFileTransRecvData(connectObj: AgoraIotLink.IConnectionObj?, recvedData: Data) {
-        log.i("接收具体数据:\(fileReceiveData.count)")
+        log.i("接收具体数据:\(recvedData.count)")
         let subData = recvedData.subdata(in: 14..<recvedData.count)
-        fileReceiveData.append(subData)
+        handelReveiveData(connectObj,subData)
     }
     
     func onFileTransRecvDone(connectObj: AgoraIotLink.IConnectionObj?, transferEnd: Bool, doneDescrption: Data) {
-        log.i("收到结束接收数据回调：具体协议数据在doneDescrption参数中:\(fileReceiveData.count)")
+        log.i("收到结束接收数据回调：具体协议数据在doneDescrption参数中:\(transferEnd)")
         let subData = doneDescrption.subdata(in: 14..<doneDescrption.count)
         guard let doneDescrptionString = String(data: subData, encoding: .utf8) else {
             return
         }
-        let realMd5String = calculateMD5(for: fileReceiveData)
-        fileReceiveData.removeAll()
+        let connectInfor = connectObj?.getInfo()
+        guard  let peerId = connectInfor?.mPeerNodeId,let tempData = fileReceiveDataList[peerId] else { return }
+        let realMd5String = calculateMD5(for: tempData)
+        fileReceiveDataList[peerId] = nil
+        
         var isCorrect = "false"
         if doneDescrptionString.contains(realMd5String) {
             isCorrect = "true"
@@ -482,13 +481,11 @@ extension HomePageMainVC:  ICallbackListener {
         }
     }
     
-    //todo:
-    func handelReveiveData(connectObj: AgoraIotLink.IConnectionObj?,subData: Data){
+    func handelReveiveData(_ connectObj: AgoraIotLink.IConnectionObj?,_ subData: Data){
         let connectInfor = connectObj?.getInfo()
-        guard  let peerId = connectInfor?.mPeerNodeId else { return }
-        var tempData = fileReceiveDataList[peerId]
-        tempData?.append(subData)
-       
+        guard  let peerId = connectInfor?.mPeerNodeId, let tempData = fileReceiveDataList[peerId] else { return }
+        fileReceiveDataList[peerId]?.append(subData)
+        log.i("receive tempData.count:\(tempData.count) peerId:\(peerId) count:\(fileReceiveDataList.count)")
     }
     
     func calculateMD5(for data: Data) -> String {

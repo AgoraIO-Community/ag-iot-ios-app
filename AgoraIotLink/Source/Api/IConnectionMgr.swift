@@ -55,13 +55,16 @@ import Foundation
  */
 public class ConnectCreateParam : NSObject {
     @objc public var mPeerNodeId: String = ""          //要链接对端设备的 NodeId
+    @objc public var mEncrypt: Bool = false            //开启内容加密
     @objc public var mAttachMsg: String = ""           //链接附带信息
     
     @objc public init(
                 mPeerNodeId:String,
+                mEncrypt:Bool,
                 mAttachMsg:String){
         self.mPeerNodeId = mPeerNodeId
         self.mAttachMsg = mAttachMsg
+        self.mEncrypt = mEncrypt
     }
 }
 

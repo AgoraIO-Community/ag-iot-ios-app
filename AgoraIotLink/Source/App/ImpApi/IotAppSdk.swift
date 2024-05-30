@@ -56,8 +56,7 @@ open class IotAppSdk : IAgoraIotAppSdk{
     }
     
     public func getPublishAudioEffect() -> AudioEffectId {
-        //todo:
-        return .NORMAL
+        return self.app?.proxy.rtc.curAudioEffectId ?? .NORMAL
     }
     
     private  var _iotAppSdkManager : IotAppSdkManager? = nil

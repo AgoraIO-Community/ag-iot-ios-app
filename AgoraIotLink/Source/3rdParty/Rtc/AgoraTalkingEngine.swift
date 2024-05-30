@@ -34,6 +34,7 @@ struct RtcSetting{
     var subscribeVideo = false  ///< 通话时是否订阅对端视频
     
     var peerDisplayView : UIView? //对端渲染视图
+    var isRecordingVideo  = false //是否正在录制视频
 }
 
 public class ChannelInfo : NSObject{
@@ -43,7 +44,10 @@ public class ChannelInfo : NSObject{
     var cName  : String = ""    //频道名
     var token  : String = ""    //token
     var appId  : String = ""    //appId
-
+    var encryptMode : UInt = 0  //加密算法
+    var secretKey : String = "" //密钥
+    
+    var mEncrypt : Bool = false //是否开启加密
 }
 
 class AgoraTalkingEngine: NSObject {
@@ -73,11 +77,10 @@ class AgoraTalkingEngine: NSObject {
     //stream对象列表
     var streamSessionObjs: [Int: StreamSessionObj] = [:]
     //rdt 管理对象
-    var rdtTransferMgr : RdtTransferFileMgr = RdtTransferFileMgr(connection: AgoraRtcConnection())
+    var rdtTransferMgr : RdtTransferFileMgr? = nil
     
     init(setting: RtcSetting,channelInfo: ChannelInfo,cb:@escaping (TaskResult,String)->Void,peerAction:@escaping(RtcPeerAction,UInt)->Void,memberState:@escaping(MemberState,[UInt])->Void){
         super.init()
-        
         let rtcKit = AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit(appId: channelInfo.appId, setting: setting)
         self.rtcKit = rtcKit
         self.channelInfo = channelInfo
@@ -97,12 +100,14 @@ class AgoraTalkingEngine: NSObject {
         connection = tempCon
         
         peerDisplayView = setting.peerDisplayView
+        //加入频道前进行内容加密
+        encryptionChannel()
         log.i("rtc enterChannel when uid:\(channelInfo.uid) token:\(channelInfo.token) name:\(channelInfo.cName)")
+        //加入频道
         joinChannel(cb: cb)
         creatStreamObjs()
         
         rdtTransferMgr = RdtTransferFileMgr(connection: tempCon)
-        
     }
     
     
@@ -146,6 +151,22 @@ class AgoraTalkingEngine: NSObject {
         return AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit()
     }
     
+    func encryptionChannel(){
+        guard let channelInfo = channelInfo else {
+            log.i("channelInfo is nil")
+            return
+        }
+        let encryptConfig = AgoraEncryptionConfig()
+        encryptConfig.encryptionMode = .AES128GCM
+        encryptConfig.encryptionKdfSalt = getEncryptionSalt()
+        encryptConfig.encryptionKey = channelInfo.secretKey
+        let ret = rtcKit?.enableEncryptionEx(channelInfo.mEncrypt, encryptionConfig: encryptConfig, connection: connection)
+        if ret != 0 {
+            log.e("encryptionChannel: enableEncryptionEx fail ret:\(String(describing: ret))")
+        }
+        log.i("encryptionChannel mEncrypt:\(channelInfo.mEncrypt) ret:\(String(describing: ret))")
+    }
+    
     func joinChannel(cb:@escaping(TaskResult,String)->Void){
         
         let option:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
@@ -155,7 +176,7 @@ class AgoraTalkingEngine: NSObject {
         option.autoSubscribeVideo = rtcSetting.subscribeVideo
         option.publishCameraTrack = rtcSetting.publishVideo
         option.publishMicrophoneTrack = rtcSetting.publishAudio
-        option.autoConnectRdt = false
+        option.autoConnectRdt = true
         
         log.i("""
                  rtc try enterChannel: '\(String(describing: channelInfo?.cName))' 
@@ -196,6 +217,7 @@ class AgoraTalkingEngine: NSObject {
         _onPeerAction = {b,u in}
         _memberState = {s,a in}
         peerEntered = false
+        rdtTransferMgr = nil
         if peerDisplayView != nil{
             log.i("leaveChannel setupRemoteView nil")
             let ret = setupRemoteView(subStreamId: .BROADCAST_STREAM_1, peerView: nil)
@@ -289,7 +311,7 @@ extension AgoraTalkingEngine{
         if(ret != 0){
             log.w("rtc muteLocalVideo(\(mute)) faile:\(String(ret))")
         }
-        
+        rtcSetting.publishVideo = (ret == 0 ? !mute : mute)
         ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNKNOWN,op + " fail:" + String(ret))
     }
     
@@ -348,7 +370,7 @@ extension AgoraTalkingEngine{
         }else{
             log.i("muteLocalAudio ret:\(ret) mute:\(mute)")
         }
-        
+        rtcSetting.publishAudio = (ret == 0 ? !mute : mute)
         ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNSUPPORTED,op + " fail:" + String(ret))
     }
     
@@ -436,7 +458,6 @@ extension AgoraTalkingEngine{
 }
 
 extension AgoraTalkingEngine{
-    
     
     func capturePeerVideoFrame(cb:@escaping(Int,String,UIImage?)->Void){
         log.i("rtc try capturePeerVideoFrame ...")
@@ -559,11 +580,11 @@ extension AgoraTalkingEngine{
     }
     
     func setRdtTransferState(_ state:TransferFileState){
-        rdtTransferMgr.setRdtTransferState(state)
+        rdtTransferMgr?.setRdtTransferState(state)
     }
     
     func sendRdtMessageStart(startMessage: String)->Int {
-        guard let peerUid =  channelInfo?.peerUid else {
+        guard let peerUid =  channelInfo?.peerUid, let rdtTransferMgr = rdtTransferMgr else {
             log.e("sendRdtMessageStop:peerUid is nil")
             return ErrCode.XERR_INVALID_PARAM
         }
@@ -571,7 +592,7 @@ extension AgoraTalkingEngine{
     }
     
     func sendRdtMessageStop(stopMessage: String){
-        guard let peerUid =  channelInfo?.peerUid else {
+        guard let peerUid =  channelInfo?.peerUid, let rdtTransferMgr = rdtTransferMgr else {
             log.e("sendRdtMessageStop:peerUid is nil")
             return
         }
@@ -579,7 +600,7 @@ extension AgoraTalkingEngine{
     }
     
     func isFileTransfering()->Bool{
-        if rdtTransferMgr.getRdtTransferState() == .transfering{
+        if rdtTransferMgr?.getRdtTransferState() == .transfering{
             return true
         }
         return false
@@ -596,7 +617,7 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurRdtMessageStateFromUid uid: UInt, state: AgoraRdtState) {
         log.i("didOccurRdtMessageStateFromUid：uid：\(uid),state:\(state)")
-        rdtTransferMgr.setRdtChannelState(state)
+        rdtTransferMgr?.setRdtChannelState(state)
         if state == .blocked {
             _rdtDataListen(uid,Data(),ErrCode.XERR_NETWORK)
         }
@@ -853,3 +874,13 @@ extension AgoraTalkingEngine{
     
 }
 
+extension AgoraTalkingEngine {
+    
+    func getEncryptionSalt() -> Data {
+       // 将 Base64 编码的盐转换成 uint8_t
+        let saltValue = (channelInfo?.cName ?? "") + "000000"
+        log.i("getEncryptionSalt: saltValue:\(saltValue)")
+        return  saltValue.data(using: .utf8)!
+    }
+    
+}

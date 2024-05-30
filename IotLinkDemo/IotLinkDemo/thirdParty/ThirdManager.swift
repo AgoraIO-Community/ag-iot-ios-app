@@ -20,8 +20,8 @@ class ThirdAccountManager{
         static let http_3rdParty = "https://third-user.sh3.agoralab.co/third-party"
     #elseif false //dev 国外
         static let http_3rdParty = "https://third-user.la3.agoralab.co/third-party"
-    #elseif true //dev 2.0
-        static let http_3rdParty = "http://api.sd-rtn.com/cn/iot/link" //"http://api.sd-rtn.com/cn/iot/link" //"http://api-test-huzhou1.agora.io/cn/iot/link" 
+    #elseif true //dev 2.1.0.4
+        static let http_3rdParty = "https://api.sd-rtn.com/cn/iot/link" //"http://api.sd-rtn.com/cn/iot/link"
     #elseif false //prd 国外
         
     #endif

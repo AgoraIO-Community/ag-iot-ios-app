@@ -42,7 +42,7 @@ class Config {
     
     static let kAuthorizationBase64Key = "kAuthorizationBase64Key"
     // 客户 ID
-    static let customerKey = "59a44ef2b37745fe93c6c660f0700184"
+    var customerKey = ""
     // 客户密钥
-    static let customerSecret = "65825d8c98b5461291f91726ef9cfb85"
+    var customerSecret = ""
 }

@@ -46,13 +46,13 @@ TODO: Add long description of the pod here.
   # s.dependency 'AFNetworking', '~> 2.3'
   
   #本地引入库的方式引入rtc
-#  s.vendored_frameworks = 'AgoraIotLink/AgoraRtc_iOS/*.xcframework'
+  s.vendored_frameworks = 'AgoraIotLink/AgoraRtc_iOS/*.xcframework'
   
   s.dependency 'Alamofire','5.6.0'
 #  s.dependency 'AWSMobileClient','2.27.6'
 #  s.dependency 'AWSIoT','2.27.6'
 #  s.dependency 'EMPush'
-  s.dependency 'AgoraRtcEngine_iOS', '4.2.0'
+#  s.dependency 'AgoraRtcEngine_iOS', '4.3.1'
   s.dependency 'AgoraRtm_iOS','1.5.0'
   
 end
