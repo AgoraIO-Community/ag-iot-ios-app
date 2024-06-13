@@ -156,9 +156,10 @@ extension AgoraLab{
             let token:String
             let uid:UInt
             let cname:String
-//            let encryptMode:UInt
-//            let secretKey:String
+            let encryptMode:Int?
+            let secretKey:String?
         }
+        
         struct Rsp : Decodable{
             let code:Int
             let msg:String

@@ -63,17 +63,16 @@ extension IConnectionObjManager{
     func getInfo() -> ConnectionInfo {
         
         let conInfor = ConnectionInfo()
-        guard let callObj = getConnectObj(), let callSession = callObj.callSession,let talkingEngine = callObj.talkingEngine else {
+        guard let callObj = getConnectObj(), let callSession = callObj.callSession else {
             log.e("getInfo:  getConnectSession fail curConnectId:\(curConnectId)")
             return conInfor
         }
-        log.i("🐱🐱🐱getInfo: peerNodeId:\(callSession.peerNodeId) mState:\(String(describing: callObj.callMachine?.currentState.rawValue))🐱🐱🐱")
         conInfor.mPeerNodeId = callSession.peerNodeId
         conInfor.mLocalNodeId = app.config.mLocalNodeId
         conInfor.mType = callSession.callType
         conInfor.mState = (callObj.callMachine?.currentState) ?? .disconnected
-        conInfor.mAudioPublishing = talkingEngine.rtcSetting.publishAudio
-        conInfor.mVideoPublishing = talkingEngine.rtcSetting.publishVideo
+        conInfor.mAudioPublishing = callObj.talkingEngine?.rtcSetting.publishAudio ?? false
+        conInfor.mVideoPublishing = callObj.talkingEngine?.rtcSetting.publishVideo ?? false
         return conInfor
     }
     

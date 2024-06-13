@@ -45,4 +45,8 @@ class Config {
     var customerKey = ""
     // 客户密钥
     var customerSecret = ""
+    
+    //内容加密
+    var encryptMode: Int = 7
+    var encryptSecretKey: String = "RvcDbGGofvuBgYoWQHmGiaCCViNRdddd"
 }

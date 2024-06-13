@@ -16,15 +16,28 @@ class RtcEngine : NSObject{
     private var isRecording : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
     private var _onImageCaptured:(Int,String,UIImage?)->Void = {ec,msg,img in}
     
-    private var  _onMFirstRemoteVideoDecodedAction : (RtcPeerAction,UInt)->Void = {b,u in log.i("onMFirstRemoteVideoDecodedAction init")} //自管理首帧返回回调
+    private var  _onMFirstRemoteVideoDecodedAction : (RtcPeerAction,UInt,ActionExtraInfo?)->Void = {b,u,e in log.i("onMFirstRemoteVideoDecodedAction init")} //自管理首帧返回回调
     private var  waitFirstRemoteUidArray: [UInt] = []  //等待首帧回调的List
     
+    typealias RenderDataListern = (AgoraOutputVideoFrame, UInt)->Void
+    private var _renderDataListernObjs = ThreadSafeDictionary<String,RenderDataListern>()
+
     var curChannel : String = ""
     var curAudioEffectId: AudioEffectId = .NORMAL
     
     //注册首帧返回自管理回调监听
-    func waitForMFirstRemoteVideoCbListern(_ mFirstRemoteVideoAction:@escaping(RtcPeerAction,UInt)->Void){
+    func waitForMFirstRemoteVideoCbListern(_ mFirstRemoteVideoAction:@escaping(RtcPeerAction,UInt,ActionExtraInfo?)->Void){
         _onMFirstRemoteVideoDecodedAction = mFirstRemoteVideoAction
+    }
+    
+    //注册视频帧回调监听
+    func registerMRenderVideoFrameListern(_ channel:String, _ mRenderVideoFrameAction:@escaping(AgoraOutputVideoFrame, UInt)->Void){
+        _renderDataListernObjs.setValue(mRenderVideoFrameAction, forKey: channel)
+    }
+    
+    //移除视频帧回调监听
+    func unRegisterMRenderVideoFrameListern(_ channel:String){
+        _ = _renderDataListernObjs.removeValue(forKey: channel)
     }
      
     //设置是否已回调首帧返回
@@ -195,10 +208,22 @@ extension RtcEngine : AgoraVideoFrameDelegate{
         
         if channelId == curChannel, let index = waitFirstRemoteUidArray.firstIndex(of: uid) {
             log.i("onRenderVideoFrame: mFirstRemoteVideoDecodedAction uid:\(uid)")
+            let exdata = ActionExtraInfo()
+            exdata.width = Int(videoFrame.width)
+            exdata.height = Int(videoFrame.height)
             waitFirstRemoteUidArray.remove(at: index)
-            _onMFirstRemoteVideoDecodedAction(.VideoReady,uid)
+            _onMFirstRemoteVideoDecodedAction(.VideoReady,uid,exdata)
         }
         
+        let allListernObjs = _renderDataListernObjs.getAllKeysAndValues()
+        for (key,obj) in allListernObjs{
+            if key == channelId {
+                obj(videoFrame,uid)
+            }else{
+                log.i("onRenderVideoFrame: allListernObjs not contain channel: \(key)")
+            }
+        }
+
         if channelId != curChannel{//如果不是当前频道的视频帧，则返回
             return true
         }

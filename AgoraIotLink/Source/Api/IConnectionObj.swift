@@ -135,6 +135,15 @@ public class NetworkStatus : NSObject{
     func onStreamFirstFrame(connectObj:IConnectionObj?, subStreamId:StreamId, videoWidth:Int, videoHeight:Int)
     
     /**
+     * @brief 对端视频帧数据
+     * @param connectObj : 当前连接对象
+     * @param subStreamId : 指定订阅预览的 对端StreamId
+     * @param videoWidth : 视频帧宽度
+     * @param videoHeight : 视频帧高度
+     */
+    func onStreamVideoFrame(connectObj:IConnectionObj?, subStreamId:StreamId, pixelBuffer: CVPixelBuffer, videoWidth:Int, videoHeight:Int)
+
+    /**
      * @brief 错误事件，在订阅预览视频时错误发生
      * @param connectObj : 当前连接对象
      * @param subStreamId : 指定订阅预览的 对端StreamId

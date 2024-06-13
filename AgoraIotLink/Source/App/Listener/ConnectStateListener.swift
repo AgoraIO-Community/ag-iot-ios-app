@@ -33,7 +33,7 @@ public class CallSession : NSObject{
     var token = ""
     var cname = ""
     var uid:UInt = 0
-    var encryptMode: UInt = 0
+    var encryptMode: Int = 0
     var secretKey: String = ""
     
     
@@ -210,7 +210,7 @@ extension ConnectStateListener : CallStateMachineListener{
         let name = callSession?.cname ?? ""
         let token = callSession?.token ?? ""
         let peerId = callSession?.peerUid ?? 0
-        let encryptMode = callSession?.encryptMode ?? 5
+        let encryptMode = callSession?.encryptMode ?? 7
         let secretKey = callSession?.secretKey ?? ""
         let mEncrypt = callSession?.mEncrypt ?? false
 
@@ -265,7 +265,7 @@ extension ConnectStateListener : CallStateMachineListener{
             else {//Abort
                 log.i("listener rtc.createAndEnter aborted:\(msg)")
             }
-        }, peerAction: {[weak self] act,uid in
+        }, peerAction: {[weak self] act,uid,exData in
             if(act == .Enter){
                 log.i("listener Enter uid:\(uid)")
                 if(self?.callSession?.peerUid == uid){
@@ -287,7 +287,7 @@ extension ConnectStateListener : CallStateMachineListener{
             else if(act == .VideoReady){
                 log.i("listener VideoReady uid:\(uid)")
                 let streamId = StreamIdToUIdMap.getStreamId(baseUid: self?.callSession?.uid  ?? 1, uId: uid)
-                self?.callBackListener?.onStreamFirstFrame(connectObj: self?.callSession?.connectionObj, subStreamId: StreamId(rawValue: streamId)!, videoWidth: 0, videoHeight: 0)
+                self?.callBackListener?.onStreamFirstFrame(connectObj: self?.callSession?.connectionObj, subStreamId: StreamId(rawValue: streamId)!, videoWidth: exData?.width ?? 0, videoHeight: exData?.height ?? 0)
             }
         }, memberState: {[weak self]s,a in
             if(s == .Enter){
@@ -320,6 +320,17 @@ extension ConnectStateListener : CallStateMachineListener{
             }
         })
         
+        talkingEngine?.registeronRenderVideoFrameListern(renderDatalistern: { [weak self] videoFrame, uid in
+            
+            let streamId = StreamIdToUIdMap.getStreamId(baseUid: self?.callSession?.uid  ?? 1, uId: uid)
+            if(videoFrame.type == 12){//CVPixelBufferRef
+                if let buffer = videoFrame.pixelBuffer{
+                    self?.callBackListener?.onStreamVideoFrame(connectObj: self?.callSession?.connectionObj, subStreamId: StreamId(rawValue: streamId)!, pixelBuffer: buffer, videoWidth: Int(videoFrame.width), videoHeight: Int(videoFrame.height))
+                }else{
+                    log.e("rtc capture pixelBuffer is nil")
+                }
+            }
+        })
     }
     
     func handelRdtReceiveData(_ receiveData:Data){
@@ -508,8 +519,8 @@ extension ConnectStateListener{
         sess.token = resultData.token
         sess.uid = resultData.uid
         sess.cname = resultData.cname
-//        sess.encryptMode = resultData.encryptMode
-//        sess.secretKey = resultData.secretKey
+        sess.encryptMode = resultData.encryptMode != 0 ? resultData.encryptMode! : app.config.encryptMode
+        sess.secretKey = resultData.secretKey ?? app.config.encryptSecretKey
         sess.traceId = traceId
         updateCallSession(sess)
         

@@ -44,10 +44,15 @@ public class ChannelInfo : NSObject{
     var cName  : String = ""    //频道名
     var token  : String = ""    //token
     var appId  : String = ""    //appId
-    var encryptMode : UInt = 0  //加密算法
+    var encryptMode : Int = 0  //加密算法
     var secretKey : String = "" //密钥
     
     var mEncrypt : Bool = false //是否开启加密
+}
+
+public class ActionExtraInfo : NSObject{
+    var width    : Int = 0      // 帧宽
+    var height   : Int = 0      // 帧高
 }
 
 class AgoraTalkingEngine: NSObject {
@@ -62,7 +67,7 @@ class AgoraTalkingEngine: NSObject {
     var rtcSetting  : RtcSetting =  RtcSetting()
     var peerDisplayView : UIView?
     
-    private var  _onPeerAction : (RtcPeerAction,UInt)->Void = {b,u in}
+    private var  _onPeerAction : (RtcPeerAction,UInt,ActionExtraInfo?)->Void = {b,u,e in}
     private var  _memberState : (MemberState,[UInt])->Void = {s,a in }
     private var  _rdtDataListen : (UInt,Data,Int)->Void = {u,d,e in }
     
@@ -79,7 +84,7 @@ class AgoraTalkingEngine: NSObject {
     //rdt 管理对象
     var rdtTransferMgr : RdtTransferFileMgr? = nil
     
-    init(setting: RtcSetting,channelInfo: ChannelInfo,cb:@escaping (TaskResult,String)->Void,peerAction:@escaping(RtcPeerAction,UInt)->Void,memberState:@escaping(MemberState,[UInt])->Void){
+    init(setting: RtcSetting,channelInfo: ChannelInfo,cb:@escaping (TaskResult,String)->Void,peerAction:@escaping(RtcPeerAction,UInt,ActionExtraInfo?)->Void,memberState:@escaping(MemberState,[UInt])->Void){
         super.init()
         let rtcKit = AgoraRtcEngineMgr.sharedInstance.loadAgoraRtcEngineKit(appId: channelInfo.appId, setting: setting)
         self.rtcKit = rtcKit
@@ -112,14 +117,22 @@ class AgoraTalkingEngine: NSObject {
     
     
     func registerMFirstRemoteVideoListern(){
-        rtc.waitForMFirstRemoteVideoCbListern {[weak self] act, uid in
+        rtc.waitForMFirstRemoteVideoCbListern {[weak self] act, uid, exData in
             self?.clearStreamObjtimeStamp(uid: uid)
             DispatchQueue.main.async{
-                self?._onPeerAction(act,uid)
+                self?._onPeerAction(act,uid,exData)
             }
         }
     }
     
+    func registeronRenderVideoFrameListern(renderDatalistern:@escaping(AgoraOutputVideoFrame, UInt)->Void){
+        guard let channelName = channelInfo?.cName else {
+            log.e("registeronRenderVideoFrameListern: channelName is nil")
+            return
+        }
+        rtc.registerMRenderVideoFrameListern(channelName,renderDatalistern)
+    }
+
     func registerRdtDataListern(rdtListen:@escaping(UInt,Data,Int)->Void){
         _rdtDataListen = rdtListen
     }
@@ -152,12 +165,14 @@ class AgoraTalkingEngine: NSObject {
     }
     
     func encryptionChannel(){
+        log.i("encryptionChannel mEncrypt:\(String(describing: channelInfo?.mEncrypt)) ret:\(String(describing: channelInfo?.secretKey))")
         guard let channelInfo = channelInfo else {
-            log.i("channelInfo is nil")
+            log.i("channelInfo is nil ")
             return
         }
+        
         let encryptConfig = AgoraEncryptionConfig()
-        encryptConfig.encryptionMode = .AES128GCM
+        encryptConfig.encryptionMode =  AgoraEncryptionMode(rawValue:channelInfo.encryptMode)!
         encryptConfig.encryptionKdfSalt = getEncryptionSalt()
         encryptConfig.encryptionKey = channelInfo.secretKey
         let ret = rtcKit?.enableEncryptionEx(channelInfo.mEncrypt, encryptionConfig: encryptConfig, connection: connection)
@@ -214,7 +229,7 @@ class AgoraTalkingEngine: NSObject {
     func leaveChannel(cb:@escaping (Bool)->Void){
         
         resetNetStatus()
-        _onPeerAction = {b,u in}
+        _onPeerAction = {b,u,e in}
         _memberState = {s,a in}
         peerEntered = false
         rdtTransferMgr = nil
@@ -227,6 +242,7 @@ class AgoraTalkingEngine: NSObject {
         let ret = rtcKit?.leaveChannelEx(connection,leaveChannelBlock: { stats in
             log.i("leaveChannelEx:\(stats)")
         })
+        rtc.unRegisterMRenderVideoFrameListern(channelInfo?.cName ?? "")
         clearObject()
         clearStreamObjs()
         log.i("leaveChannelEx ret:\(String(describing: ret)) ")
@@ -392,9 +408,10 @@ extension AgoraTalkingEngine{
         if(ret != 0){
             log.w("rtc mutePeerVideo(\(mute)) peerUid:\(peerUid) faile:\(ret)")
         }
-        if mute == true {
-            setStreamObjVedio(streamId: subStreamId, isVideo: !mute)
-        }
+//        if mute == true {
+//            setStreamObjVedio(streamId: subStreamId, isVideo: !mute)
+//        }
+        setStreamObjVedio(streamId: subStreamId, isVideo: !mute)
         ret == 0 ? cb(ErrCode.XOK,op + " succ") : cb(ErrCode.XERR_UNSUPPORTED,op + " fail:" + String(ret))
     }
     
@@ -637,7 +654,7 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
         if uid == channelInfo?.peerUid{//只有设备端上线，状态才改变
             peerEntered = true
         }
-        _onPeerAction(.Enter,uid)
+        _onPeerAction(.Enter,uid, nil)
         _memberState(.Enter,[uid])
     }
     
@@ -649,7 +666,7 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
                 log.i("didOfflineOfUid:stopRecord")
             }
         }
-        _onPeerAction(.Leave,uid)
+        _onPeerAction(.Leave,uid,nil)
         _memberState(.Leave,[uid])
     }
     
@@ -660,7 +677,7 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
     func rtcEngineConnectionDidLost(_ engine: AgoraRtcEngineKit) {
         log.i("💔💔💔 rtc rtcEngineConnectionDidLost 💔💔💔")
         peerEntered = false
-        _onPeerAction(.Lost,0)
+        _onPeerAction(.Lost,0,nil)
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
@@ -683,7 +700,7 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteAudioFrameOfUid uid: UInt, elapsed: Int) {
         log.i("rtc firstRemoteAudioFrameDecodedOfUid first audio frame decoded \(uid)")
-        _onPeerAction(.AudioReady,uid)
+        _onPeerAction(.AudioReady,uid,nil)
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, snapshotTaken uid: UInt, filePath: String, width: Int, height: Int, errCode: Int) {
@@ -702,7 +719,7 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
         //Token 已过期回调
         log.i("rtc rtcEngineRequestToken)")
         peerEntered = false
-        _onPeerAction(.Leave,channelInfo?.peerUid ?? 0)
+        _onPeerAction(.Leave,channelInfo?.peerUid ?? 0,nil)
         _memberState(.Leave,[channelInfo?.peerUid ?? 0])
         rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
             log.i("rtcEngineRequestToken:stopRecord")

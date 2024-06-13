@@ -158,6 +158,19 @@
 		A8A246C72811143700EAEA82 /* HomeMainDeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A246C62811143700EAEA82 /* HomeMainDeviceCell.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		8431EDE52BFF691800A3C3B9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		3A7F2106BF524F4575B562E1 /* Pods-IotLinkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.release.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.release.xcconfig"; sourceTree = "<group>"; };
 		8429E93F2949FC700064B604 /* NSString+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
@@ -1252,6 +1265,7 @@
 				96E4C0FE2807CA5500A53A49 /* Resources */,
 				8EAE152AFA3E634BEADC72F7 /* [CP] Embed Pods Frameworks */,
 				84E1A3C62B32EAFD00FDED9F /* ShellScript */,
+				8431EDE52BFF691800A3C3B9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1686,10 +1700,14 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1145;
+				CURRENT_PROJECT_VERSION = 1146;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/IotLinkDemo",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1835,10 +1853,14 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1145;
+				CURRENT_PROJECT_VERSION = 1146;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/IotLinkDemo",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;

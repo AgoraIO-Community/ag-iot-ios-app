@@ -117,7 +117,7 @@ class AgoraLab {
         let appId = app.config.masterAppId
         let nodeToken = app.config.mAuthToken
         let localNodeId = app.config.mLocalNodeId
-        let encrypt = mEncrypt == true ? 5 : 0
+        let encrypt = mEncrypt == true ? 7 : 0
         let header = self.configCommonHeader()
         let paramsDic = AgoraLab.ConnectCreat.Req(nodeToken: nodeToken, localNodeId: localNodeId, peerNodeId: peerNodeId, appId: appId, encrypt: encrypt)
         
