@@ -1,0 +1,11 @@
+framework module AgoraIotLink {
+  umbrella header "AgoraIotLink.h"
+  export *
+
+  module * { export * }
+}
+
+module AgoraIotLink.Swift {
+  header "AgoraIotLink-Swift.h"
+  requires objc
+}
