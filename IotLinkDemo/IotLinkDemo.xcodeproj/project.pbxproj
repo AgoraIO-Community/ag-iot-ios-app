@@ -18,7 +18,6 @@
 		844437332A28A8CB002BAF08 /* DoorbellSelectAllSimpleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844437322A28A8CA002BAF08 /* DoorbellSelectAllSimpleView.swift */; };
 		8446B17D2B95CFDA0005F4B6 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8446B17C2B95CFDA0005F4B6 /* KeyCenter.swift */; };
 		84B3254928A394CA0054B369 /* ThirdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254828A394CA0054B369 /* ThirdManager.swift */; };
-		84B3ECA028B3A0140047EE1A /* MediaPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3EC9F28B3A0140047EE1A /* MediaPlayer.swift */; };
 		84B3ECA528B470700047EE1A /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECA428B470700047EE1A /* MediaPlayer.framework */; };
 		84B3ECA728B470770047EE1A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECA628B470770047EE1A /* AudioToolbox.framework */; };
 		84B3ECA928B4707E0047EE1A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECA828B4707E0047EE1A /* AVFoundation.framework */; };
@@ -44,9 +43,7 @@
 		84D6EFB02BA435BC00411E87 /* AVStreamCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D6EFAF2BA435BC00411E87 /* AVStreamCell.swift */; };
 		84D6EFB22BA5938900411E87 /* StreamSimpleLogicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D6EFB12BA5938800411E87 /* StreamSimpleLogicView.swift */; };
 		84D6EFB42BA593E200411E87 /* StreamTooBarSimpleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D6EFB32BA593E200411E87 /* StreamTooBarSimpleView.swift */; };
-		84EACBFE2A33051B0048938E /* AGAlertSimpleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EACBFD2A33051B0048938E /* AGAlertSimpleViewController.swift */; };
 		84F74541289CBDCC00702944 /* AGConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F74540289CBDCC00702944 /* AGConfirmView.swift */; };
-		84FAAC5F29B0827000E5BB52 /* PlayerExampleOC.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FAAC5E29B0826F00E5BB52 /* PlayerExampleOC.m */; };
 		9601C2FC280D5C6400D3CA49 /* MinePageMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C2FB280D5C6400D3CA49 /* MinePageMainVC.swift */; };
 		9601C2FF280D5EBF00D3CA49 /* NetWorkTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C2FE280D5EBF00D3CA49 /* NetWorkTool.swift */; };
 		9601C301280D638800D3CA49 /* TDTURLConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601C300280D638800D3CA49 /* TDTURLConstant.swift */; };
@@ -60,7 +57,6 @@
 		9618253E2818356600053691 /* VerficaCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9618253D2818356600053691 /* VerficaCodeView.swift */; };
 		96182543281937A300053691 /* LoginProtocolAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96182542281937A300053691 /* LoginProtocolAlertVC.swift */; };
 		9618254D281AA6C000053691 /* VerifyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9618254C281AA6C000053691 /* VerifyManager.swift */; };
-		961825592824FF6E00053691 /* DoorbellAbilityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961825582824FF6E00053691 /* DoorbellAbilityViewModel.swift */; };
 		962FEFE1284F2CD000DCFD59 /* AppDelegate_Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962FEFE0284F2CD000DCFD59 /* AppDelegate_Push.swift */; };
 		962FEFF12851D2B900DCFD59 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962FEFF32851D2B900DCFD59 /* Localizable.strings */; };
 		962FEFF82852F4D600DCFD59 /* PassWordTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962FEFF72852F4D600DCFD59 /* PassWordTextField.swift */; };
@@ -82,7 +78,6 @@
 		963956E828DDBA2B0049B9C8 /* BlufiFrameCtrlData.m in Sources */ = {isa = PBXBuildFile; fileRef = 963956D728DDBA2B0049B9C8 /* BlufiFrameCtrlData.m */; };
 		965B1F9D282D237F0045D002 /* DoorBellManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965B1F9C282D237F0045D002 /* DoorBellManager.swift */; };
 		965B1FA2282E6F2C0045D002 /* AGToolHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965B1FA1282E6F2C0045D002 /* AGToolHUD.swift */; };
-		966BA9012864380000DE8958 /* SelectHeardImgVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966BA9002864380000DE8958 /* SelectHeardImgVC.swift */; };
 		966BA90428643CFB00DE8958 /* UserHeardImgModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966BA90328643CFB00DE8958 /* UserHeardImgModel.swift */; };
 		96827D792867301E0012AC84 /* LoggerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96827D732867301E0012AC84 /* LoggerHelper.swift */; };
 		96827D7A2867301E0012AC84 /* LoggerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96827D742867301E0012AC84 /* LoggerManager.swift */; };
@@ -141,14 +136,9 @@
 		A80D5EC8282D110C0096BBDE /* GeneralSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5EC7282D110C0096BBDE /* GeneralSettingCell.swift */; };
 		A80D5ECC282D16620096BBDE /* SwitchSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ECB282D16620096BBDE /* SwitchSettingCell.swift */; };
 		A80D5ECE282D386E0096BBDE /* AccountSafeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ECD282D386E0096BBDE /* AccountSafeVC.swift */; };
-		A80D5ED2282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED1282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift */; };
-		A80D5ED4282DE4E20096BBDE /* NotifyMsgCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED3282DE4E20096BBDE /* NotifyMsgCell.swift */; };
 		A80D5ED6282DEA890096BBDE /* SystemSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED5282DEA890096BBDE /* SystemSettingVC.swift */; };
 		A80D5ED8282DEAB70096BBDE /* SystemSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D5ED7282DEAB60096BBDE /* SystemSettingCell.swift */; };
 		A81996592834CC4200870CDA /* PersonalInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81996582834CC4200870CDA /* PersonalInfoCell.swift */; };
-		A819965B2834CFCE00870CDA /* EditNicknameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819965A2834CFCE00870CDA /* EditNicknameVC.swift */; };
-		A819965D2834F5F500870CDA /* ReceiveDeviceShareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A819965C2834F5F500870CDA /* ReceiveDeviceShareVC.swift */; };
-		A82A85A42812277A00E27229 /* QRCodeReaderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82A85A32812277A00E27229 /* QRCodeReaderVC.swift */; };
 		A82A85AA28127F6700E27229 /* NetworkTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82A85A928127F6700E27229 /* NetworkTipsView.swift */; };
 		A8598E2B283C929200168244 /* AGBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8598E2A283C929200168244 /* AGBaseModel.swift */; };
 		A89E3DF42827AC29002FFED9 /* UIViewController+RotationControl.m in Sources */ = {isa = PBXBuildFile; fileRef = A89E3DF32827AC29002FFED9 /* UIViewController+RotationControl.m */; };
@@ -159,7 +149,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8431EDE52BFF691800A3C3B9 /* Embed Frameworks */ = {
+		84A930972C2EB400001475E4 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -176,6 +166,7 @@
 		8429E93F2949FC700064B604 /* NSString+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		8429E9402949FC700064B604 /* NSString+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		8429E942295003170064B604 /* ResetPasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetPasswordVC.swift; sourceTree = "<group>"; };
+		842D581C2C2288990029992D /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = ../iot_libs/AgoraIotLink/AgoraIotLink/Alamofire.framework; sourceTree = "<group>"; };
 		844437282A20C3DF002BAF08 /* MDeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MDeviceModel.swift; sourceTree = "<group>"; };
 		8444372A2A24A1ED002BAF08 /* DoorbellAbilitySimpleLogicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilitySimpleLogicView.swift; sourceTree = "<group>"; };
 		8444372C2A24A2E3002BAF08 /* DoorbellAbilityTooBarSimpleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityTooBarSimpleView.swift; sourceTree = "<group>"; };
@@ -184,7 +175,6 @@
 		844437322A28A8CA002BAF08 /* DoorbellSelectAllSimpleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellSelectAllSimpleView.swift; sourceTree = "<group>"; };
 		8446B17C2B95CFDA0005F4B6 /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
 		84B3254828A394CA0054B369 /* ThirdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdManager.swift; sourceTree = "<group>"; };
-		84B3EC9F28B3A0140047EE1A /* MediaPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayer.swift; sourceTree = "<group>"; };
 		84B3ECA428B470700047EE1A /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		84B3ECA628B470770047EE1A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		84B3ECA828B4707E0047EE1A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -212,10 +202,7 @@
 		84D6EFAF2BA435BC00411E87 /* AVStreamCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVStreamCell.swift; sourceTree = "<group>"; };
 		84D6EFB12BA5938800411E87 /* StreamSimpleLogicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSimpleLogicView.swift; sourceTree = "<group>"; };
 		84D6EFB32BA593E200411E87 /* StreamTooBarSimpleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamTooBarSimpleView.swift; sourceTree = "<group>"; };
-		84EACBFD2A33051B0048938E /* AGAlertSimpleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGAlertSimpleViewController.swift; sourceTree = "<group>"; };
 		84F74540289CBDCC00702944 /* AGConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGConfirmView.swift; sourceTree = "<group>"; };
-		84FAAC5D29B0826F00E5BB52 /* PlayerExampleOC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerExampleOC.h; sourceTree = "<group>"; };
-		84FAAC5E29B0826F00E5BB52 /* PlayerExampleOC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerExampleOC.m; sourceTree = "<group>"; };
 		8C6A65CBF4F4809C66FEC83C /* Pods-AgoraIotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraIotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-AgoraIotLinkDemo/Pods-AgoraIotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		8DA61631220187EAFBFB57B5 /* Pods-IotLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IotLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-IotLinkDemo/Pods-IotLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		9601C2FB280D5C6400D3CA49 /* MinePageMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinePageMainVC.swift; sourceTree = "<group>"; };
@@ -232,7 +219,6 @@
 		9618253D2818356600053691 /* VerficaCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerficaCodeView.swift; sourceTree = "<group>"; };
 		96182542281937A300053691 /* LoginProtocolAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginProtocolAlertVC.swift; sourceTree = "<group>"; };
 		9618254C281AA6C000053691 /* VerifyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyManager.swift; sourceTree = "<group>"; };
-		961825582824FF6E00053691 /* DoorbellAbilityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellAbilityViewModel.swift; sourceTree = "<group>"; };
 		9622675728D5E5FE00B11758 /* IotLinkDemo-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IotLinkDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		962FEFE0284F2CD000DCFD59 /* AppDelegate_Push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate_Push.swift; sourceTree = "<group>"; };
 		962FEFF22851D2B900DCFD59 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -382,7 +368,6 @@
 		963956D828DDBA2B0049B9C8 /* BlufiNotifyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlufiNotifyData.h; sourceTree = "<group>"; };
 		965B1F9C282D237F0045D002 /* DoorBellManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoorBellManager.swift; sourceTree = "<group>"; };
 		965B1FA1282E6F2C0045D002 /* AGToolHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AGToolHUD.swift; sourceTree = "<group>"; };
-		966BA9002864380000DE8958 /* SelectHeardImgVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectHeardImgVC.swift; sourceTree = "<group>"; };
 		966BA90328643CFB00DE8958 /* UserHeardImgModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHeardImgModel.swift; sourceTree = "<group>"; };
 		96827D732867301E0012AC84 /* LoggerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerHelper.swift; sourceTree = "<group>"; };
 		96827D742867301E0012AC84 /* LoggerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerManager.swift; sourceTree = "<group>"; };
@@ -443,14 +428,9 @@
 		A80D5EC7282D110C0096BBDE /* GeneralSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingCell.swift; sourceTree = "<group>"; };
 		A80D5ECB282D16620096BBDE /* SwitchSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchSettingCell.swift; sourceTree = "<group>"; };
 		A80D5ECD282D386E0096BBDE /* AccountSafeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSafeVC.swift; sourceTree = "<group>"; };
-		A80D5ED1282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMsgSectionHeaderView.swift; sourceTree = "<group>"; };
-		A80D5ED3282DE4E20096BBDE /* NotifyMsgCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMsgCell.swift; sourceTree = "<group>"; };
 		A80D5ED5282DEA890096BBDE /* SystemSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingVC.swift; sourceTree = "<group>"; };
 		A80D5ED7282DEAB60096BBDE /* SystemSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingCell.swift; sourceTree = "<group>"; };
 		A81996582834CC4200870CDA /* PersonalInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalInfoCell.swift; sourceTree = "<group>"; };
-		A819965A2834CFCE00870CDA /* EditNicknameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNicknameVC.swift; sourceTree = "<group>"; };
-		A819965C2834F5F500870CDA /* ReceiveDeviceShareVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveDeviceShareVC.swift; sourceTree = "<group>"; };
-		A82A85A32812277A00E27229 /* QRCodeReaderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeReaderVC.swift; sourceTree = "<group>"; };
 		A82A85A928127F6700E27229 /* NetworkTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTipsView.swift; sourceTree = "<group>"; };
 		A8598E2A283C929200168244 /* AGBaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AGBaseModel.swift; sourceTree = "<group>"; };
 		A89E3DF22827AC29002FFED9 /* UIViewController+RotationControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+RotationControl.h"; sourceTree = "<group>"; };
@@ -505,7 +485,6 @@
 			isa = PBXGroup;
 			children = (
 				965B1F9C282D237F0045D002 /* DoorBellManager.swift */,
-				961825582824FF6E00053691 /* DoorbellAbilityViewModel.swift */,
 				844437282A20C3DF002BAF08 /* MDeviceModel.swift */,
 			);
 			path = ViewModel;
@@ -515,7 +494,6 @@
 			isa = PBXGroup;
 			children = (
 				84B3254828A394CA0054B369 /* ThirdManager.swift */,
-				84B3EC9F28B3A0140047EE1A /* MediaPlayer.swift */,
 			);
 			path = thirdParty;
 			sourceTree = "<group>";
@@ -1087,7 +1065,6 @@
 				A80D5EBE282CEC7D0096BBDE /* PersonInfo */,
 				A80D5EB7282CE8D20096BBDE /* About */,
 				A80D5EB6282CE8A80096BBDE /* GeneralSetting */,
-				A80D5EB5282CE8980096BBDE /* MessageCenter */,
 				A80D5EB4282CE8750096BBDE /* MineHome */,
 			);
 			path = Mine;
@@ -1137,16 +1114,6 @@
 			path = MineHome;
 			sourceTree = "<group>";
 		};
-		A80D5EB5282CE8980096BBDE /* MessageCenter */ = {
-			isa = PBXGroup;
-			children = (
-				A80D5EC3282CEDF70096BBDE /* Views */,
-				84FAAC5D29B0826F00E5BB52 /* PlayerExampleOC.h */,
-				84FAAC5E29B0826F00E5BB52 /* PlayerExampleOC.m */,
-			);
-			path = MessageCenter;
-			sourceTree = "<group>";
-		};
 		A80D5EB6282CE8A80096BBDE /* GeneralSetting */ = {
 			isa = PBXGroup;
 			children = (
@@ -1171,19 +1138,8 @@
 			children = (
 				966BA90228643CC400DE8958 /* Model */,
 				A81996572834CBF400870CDA /* Views */,
-				A819965A2834CFCE00870CDA /* EditNicknameVC.swift */,
-				966BA9002864380000DE8958 /* SelectHeardImgVC.swift */,
 			);
 			path = PersonInfo;
-			sourceTree = "<group>";
-		};
-		A80D5EC3282CEDF70096BBDE /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				A80D5ED1282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift */,
-				A80D5ED3282DE4E20096BBDE /* NotifyMsgCell.swift */,
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		A80D5EC6282D10D80096BBDE /* Views */ = {
@@ -1208,10 +1164,7 @@
 			isa = PBXGroup;
 			children = (
 				96E4C12B280D457500A53A49 /* HomePageMainVC.swift */,
-				A82A85A32812277A00E27229 /* QRCodeReaderVC.swift */,
-				A819965C2834F5F500870CDA /* ReceiveDeviceShareVC.swift */,
 				844437302A28372B002BAF08 /* CallFullScreemVC.swift */,
-				84EACBFD2A33051B0048938E /* AGAlertSimpleViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -1234,6 +1187,7 @@
 		BB6739EF5E0F68176408BBAD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				842D581C2C2288990029992D /* Alamofire.framework */,
 				84D69E5528D0612A004A120C /* NetworkExtension.framework */,
 				84B3ECBA28B4715B0047EE1A /* UIKit.framework */,
 				84B3ECB828B470BD0047EE1A /* libbz2.tbd */,
@@ -1265,7 +1219,7 @@
 				96E4C0FE2807CA5500A53A49 /* Resources */,
 				8EAE152AFA3E634BEADC72F7 /* [CP] Embed Pods Frameworks */,
 				84E1A3C62B32EAFD00FDED9F /* ShellScript */,
-				8431EDE52BFF691800A3C3B9 /* Embed Frameworks */,
+				84A930972C2EB400001475E4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1405,7 +1359,6 @@
 				96827D7D2867301E0012AC84 /* Extension+UIColor.swift in Sources */,
 				963956E428DDBA2B0049B9C8 /* ESPDataConversion.m in Sources */,
 				A80D5ECC282D16620096BBDE /* SwitchSettingCell.swift in Sources */,
-				966BA9012864380000DE8958 /* SelectHeardImgVC.swift in Sources */,
 				9697BE9A2812B25F00447DF9 /* EXT-StringDecimal.swift in Sources */,
 				9697BE5D2811390B00447DF9 /* AgoraIotManager.swift in Sources */,
 				A8A246C72811143700EAEA82 /* HomeMainDeviceCell.swift in Sources */,
@@ -1413,7 +1366,6 @@
 				9697BE982812B25F00447DF9 /* EXT-UIButton.swift in Sources */,
 				84D46DC02BCE8CB400052954 /* AGConfirmEditMultiAlertVC.swift in Sources */,
 				A80D5EB1282CDF690096BBDE /* MineTopView.swift in Sources */,
-				A819965B2834CFCE00870CDA /* EditNicknameVC.swift in Sources */,
 				9697BE702812888200447DF9 /* LoginView.swift in Sources */,
 				A805ADCA2816C51500E6C6DF /* AGEditAlertVC.swift in Sources */,
 				9697BE7A28128ADE00447DF9 /* CountrySelectVC.swift in Sources */,
@@ -1427,13 +1379,10 @@
 				A89E3DFF282A1C5E002FFED9 /* AGDatePickerVC.swift in Sources */,
 				84D6EFAE2BA4303C00411E87 /* AVStreamVC.swift in Sources */,
 				96E4C11A2807FD1F00A53A49 /* AGTabBarVC.swift in Sources */,
-				A819965D2834F5F500870CDA /* ReceiveDeviceShareVC.swift in Sources */,
 				96E4C12C280D457500A53A49 /* HomePageMainVC.swift in Sources */,
 				9699941828153EAA00910792 /* ChooseCountryView.swift in Sources */,
-				A82A85A42812277A00E27229 /* QRCodeReaderVC.swift in Sources */,
 				9601C301280D638800D3CA49 /* TDTURLConstant.swift in Sources */,
 				9601C306280D67FE00D3CA49 /* TDUserInforManager.swift in Sources */,
-				84FAAC5F29B0827000E5BB52 /* PlayerExampleOC.m in Sources */,
 				9697BE722812891E00447DF9 /* PhoneInputView.swift in Sources */,
 				844437332A28A8CB002BAF08 /* DoorbellSelectAllSimpleView.swift in Sources */,
 				96827D7B2867301E0012AC84 /* LoggerViewController.swift in Sources */,
@@ -1454,7 +1403,6 @@
 				9601C2FF280D5EBF00D3CA49 /* NetWorkTool.swift in Sources */,
 				9697BE6328113F6300447DF9 /* AppDelegate_ThidParty.swift in Sources */,
 				963956D928DDBA2B0049B9C8 /* BlufiConstants.m in Sources */,
-				84B3ECA028B3A0140047EE1A /* MediaPlayer.swift in Sources */,
 				9697BE972812B25F00447DF9 /* EXT-View.swift in Sources */,
 				8444372D2A24A2E3002BAF08 /* DoorbellAbilityTooBarSimpleView.swift in Sources */,
 				A80D5EBD282CE9800096BBDE /* AboutVC.swift in Sources */,
@@ -1475,7 +1423,6 @@
 				962FEFF82852F4D600DCFD59 /* PassWordTextField.swift in Sources */,
 				96827D7E2867301E0012AC84 /* Extension+UI.swift in Sources */,
 				84F74541289CBDCC00702944 /* AGConfirmView.swift in Sources */,
-				961825592824FF6E00053691 /* DoorbellAbilityViewModel.swift in Sources */,
 				963956E628DDBA2B0049B9C8 /* ESPFBYBLEHelper.m in Sources */,
 				84C4EDE82A726CB8008259B6 /* AGConfirmAlertBaseView.swift in Sources */,
 				A8A246C5281100FA00EAEA82 /* MainTopView.swift in Sources */,
@@ -1494,18 +1441,15 @@
 				84C4EDE62A726BAE008259B6 /* AGConfirmEditAlertVC.swift in Sources */,
 				9697BE6128113BF500447DF9 /* AgoraIotConfig.swift in Sources */,
 				96E4C11C2807FD7800A53A49 /* AGNavigationVC.swift in Sources */,
-				84EACBFE2A33051B0048938E /* AGAlertSimpleViewController.swift in Sources */,
 				9601C317280E4BE900D3CA49 /* LoginMainVM.swift in Sources */,
 				9697BE7E28128ED800447DF9 /* DispatchCenter.swift in Sources */,
 				9697BEA02812B25F00447DF9 /* EXT-ViewFrame.swift in Sources */,
 				84CE395A28FECB48007A749C /* VerifyInputCodeVC.swift in Sources */,
 				9697BEA12812B25F00447DF9 /* EXT-UIImage.swift in Sources */,
-				A80D5ED4282DE4E20096BBDE /* NotifyMsgCell.swift in Sources */,
 				A80D5EB3282CE5630096BBDE /* MinePageCell.swift in Sources */,
 				8444372B2A24A1ED002BAF08 /* DoorbellAbilitySimpleLogicView.swift in Sources */,
 				96827D792867301E0012AC84 /* LoggerHelper.swift in Sources */,
 				A81996592834CC4200870CDA /* PersonalInfoCell.swift in Sources */,
-				A80D5ED2282DE39D0096BBDE /* NotifyMsgSectionHeaderView.swift in Sources */,
 				9697BE932812B25F00447DF9 /* EXT-StrFromCls.swift in Sources */,
 				963956DC28DDBA2B0049B9C8 /* BlufiStatusResponse.m in Sources */,
 				963956E328DDBA2B0049B9C8 /* BlufiDH.m in Sources */,
@@ -1700,7 +1644,10 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1146;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1151;
+				DEBUG_INFORMATION_FORMAT = None;
+				DEPLOYMENT_POSTPROCESSING = NO;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -1708,6 +1655,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/IotLinkDemo",
 				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1718,13 +1666,10 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/HandyJSON/HandyJSON.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/JXSegmentedView/JXSegmentedView.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/Kingfisher/Kingfisher.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/MJRefresh/MJRefresh.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/Masonry/Masonry.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJBaseVideoPlayer/SJBaseVideoPlayer.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJUIKit/SJUIKit.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJVideoPlayer/SJVideoPlayer.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SVProgressHUD/SVProgressHUD.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SnapKit/SnapKit.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftDate/SwiftDate.framework/Headers\"",
@@ -1796,8 +1741,6 @@
 					"-framework",
 					"\"ImageIO\"",
 					"-framework",
-					"\"JXSegmentedView\"",
-					"-framework",
 					"\"Kingfisher\"",
 					"-framework",
 					"\"MJRefresh\"",
@@ -1834,6 +1777,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "IotLinkDemo/IotLinkDemo-Bridging-Header.h";
@@ -1853,7 +1797,10 @@
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1146;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1151;
+				DEBUG_INFORMATION_FORMAT = None;
+				DEPLOYMENT_POSTPROCESSING = NO;
 				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -1861,6 +1808,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/IotLinkDemo",
 				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1871,13 +1819,10 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/HandyJSON/HandyJSON.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/JXSegmentedView/JXSegmentedView.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/Kingfisher/Kingfisher.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/MJRefresh/MJRefresh.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/Masonry/Masonry.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJBaseVideoPlayer/SJBaseVideoPlayer.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJUIKit/SJUIKit.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SJVideoPlayer/SJVideoPlayer.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SVProgressHUD/SVProgressHUD.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SnapKit/SnapKit.framework/Headers\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftDate/SwiftDate.framework/Headers\"",
@@ -1949,8 +1894,6 @@
 					"-framework",
 					"\"ImageIO\"",
 					"-framework",
-					"\"JXSegmentedView\"",
-					"-framework",
 					"\"Kingfisher\"",
 					"-framework",
 					"\"MJRefresh\"",
@@ -1987,6 +1930,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "IotLinkDemo/IotLinkDemo-Bridging-Header.h";

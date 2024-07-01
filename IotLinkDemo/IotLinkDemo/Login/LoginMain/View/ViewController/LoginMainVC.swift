@@ -180,7 +180,7 @@ extension LoginMainVC : LoginViewDelegate{
                 debugPrint("登录失败")
                 self?.loginV.showTipsMessage(msg)
             }
-            print("\(msg)---\(String(describing: retData?.data?.nodeToken))---\(String(describing: retData))")
+            print("code:\(success)---\(String(describing: retData?.data?.nodeId))")
         }
         
     }
@@ -195,7 +195,7 @@ extension LoginMainVC : LoginViewDelegate{
         param.mRegion = Int(reqModel.data?.nodeRegion ?? "0") ?? 0
         param.mCustomerKey = TDUserInforManager.shared.curCustomKey
         param.mCustomerSecret = TDUserInforManager.shared.curCustomSecret
-        param.mLogFileName = ""
+        param.mLogFileName = "iotdemo"
         param.mLocalNodeId = reqModel.data?.nodeId ?? ""
         param.mLocalNodeToken = reqModel.data?.nodeToken ?? ""
         

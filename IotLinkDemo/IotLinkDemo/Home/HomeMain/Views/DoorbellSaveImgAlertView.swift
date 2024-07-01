@@ -41,9 +41,7 @@ class DoorbellSaveImgAlertView: UIView {
             default:
                 break
             }
-            
             alertIconImageV.image = shotImage
-            
         }
     }
     
@@ -133,7 +131,6 @@ class DoorbellSaveImgAlertView: UIView {
 }
 
 extension DoorbellSaveImgAlertView{
-    
     private func showImagePickerVC(){
         let config = ZLPhotoConfiguration.default()
         config.allowSelectVideo = true

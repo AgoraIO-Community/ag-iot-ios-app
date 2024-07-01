@@ -15,25 +15,28 @@ import SVProgressHUD
 import SwiftDate
 import CryptoKit
 
-
 // 网络监测通知
 let cNetChangeNotify = "cNetChangeNotify"
-
 private let kCellID = "HomeMainDeviceCell"
 
-var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
-
-
-
 class HomePageMainVC: AGBaseVC {
+    private(set) var fileReceiveDataList : [String:Data] =  [String:Data]()
+    private(set) var doorbellVM = DoorBellManager.shared
+    private(set) var cellArray = [HomeMainDeviceCell]()
+    private(set) var fullVC : CallFullScreemVC?
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // 隐藏导航栏
+        navigationController?.navigationBar.isHidden = true
+        
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // 显示导航栏
+        navigationController?.navigationBar.isHidden = false
+    }
     
-    fileprivate var  doorbellVM = DoorBellManager.shared
-    var cellArray = [HomeMainDeviceCell]()
-    var fileReceiveDataList : [String:Data] =  [String:Data]()
-    var fullVC : CallFullScreemVC?
-    
-
     lazy var topView:MainTopView = {
         let topView = MainTopView()
         topView.clickAddButtonAction = {[weak self] in
@@ -52,7 +55,6 @@ class HomePageMainVC: AGBaseVC {
     
     lazy var tableView:UITableView = {
         let tableView = UITableView()
-//        tableView.register(HomeMainDeviceCell.self, forCellReuseIdentifier: kCellID)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.emptyDataSetSource = self
@@ -92,37 +94,13 @@ class HomePageMainVC: AGBaseVC {
         setUpUI()
         // 监听网络状态
         startListeningNetStatus()
-
-        
     }
-    
-    func cheackAppIdIsExist(){
-        //检查用户的masterAppId 是否为空
-        if TDUserInforManager.shared.checkIsHaveMasterAppId() == true{
-            checkLoginState()
-        }else{
-            showEditAppIdAlert()
-        }
-    }
-    
-    func showEditAppIdAlert(){
-        AGConfirmEditMultiAlertVC.showTitleTop("请输入AppId", editText: "请输入AppId") {[weak self] appId,key,secret in
-            TDUserInforManager.shared.saveUserMasterAppId(appId)
-            TDUserInforManager.shared.saveUserCustomKeyAndSecret(key, secret)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-                self?.checkLoginState()
-            }
-            print("-----\(appId)")
-        }
-    }
-    
+ 
     func loadData(){
-        
         cellArray.removeAll()
         let tempArray = TDUserInforManager.shared.readMarkPeerNodeId()
         // 初始化时创建单元格并保存在数组中
         for i in 0..<tempArray.count {
-            
             let mModel = MDeviceModel()
             mModel.peerNodeId = tempArray[i]
             
@@ -133,31 +111,6 @@ class HomePageMainVC: AGBaseVC {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // 隐藏导航栏
-        navigationController?.navigationBar.isHidden = true
-        
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        // 显示导航栏
-        navigationController?.navigationBar.isHidden = false
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
-    //检查用户登录状态
-   private func checkLoginState(){
-       TDUserInforManager.shared.checkLoginState()
-   }
-    
     // 添加监听
     private func addObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(receiveLoginSuccess), name: Notification.Name(cUserLoginSuccessNotify), object: nil)
@@ -167,7 +120,6 @@ class HomePageMainVC: AGBaseVC {
     @objc private func receiveLoginSuccess(){//登陆成功
         loadData()
         tableView.reloadData()
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             for cell in self.cellArray{
                 self.callDevice(tag: cell.tag)
@@ -225,7 +177,6 @@ class HomePageMainVC: AGBaseVC {
 
 
 extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 240
     }
@@ -251,7 +202,7 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
         // 直接从数组中获取对应的单元格对象
         let cell = cellArray[indexPath.row]
         cell.dailBlock = { tag in
-            self.callDevice(tag: tag)
+            self.handelCallAction(tag: tag)
         }
         cell.fullScreenBlock = { tag in
             self.goToFullVC(tag: tag)
@@ -264,7 +215,6 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
         let cell = cellArray[indexPath.row]
         if cell.device?.canEdit == true {
             guard let tempDevice = cell.device  else { return }
@@ -275,11 +225,65 @@ extension HomePageMainVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-
-extension HomePageMainVC { //呼叫
+extension HomePageMainVC {
+    func cheackAppIdIsExist(){
+        //检查用户的masterAppId 是否为空
+        if TDUserInforManager.shared.checkIsHaveMasterAppId() == true{
+            checkLoginState()
+        }else{
+            showEditAppIdAlert()
+        }
+    }
     
-    func goToStreamVC(tag : Int){
+    //检查用户登录状态
+   private func checkLoginState(){
+       TDUserInforManager.shared.checkLoginState()
+   }
+    
+    func showEditAppIdAlert(){
+        AGConfirmEditMultiAlertVC.showTitleTop("请输入AppId", editText: "请输入AppId") {[weak self] appId,key,secret in
+            TDUserInforManager.shared.saveUserMasterAppId(appId)
+            TDUserInforManager.shared.saveUserCustomKeyAndSecret(key, secret)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                self?.checkLoginState()
+            }
+            print("-----\(appId)")
+        }
+    }
+    
+    func handelReveiveData(_ connectObj: AgoraIotLink.IConnectionObj?,_ subData: Data){
+        let connectInfor = connectObj?.getInfo()
+        guard  let peerId = connectInfor?.mPeerNodeId, let tempData = fileReceiveDataList[peerId] else { return }
+        fileReceiveDataList[peerId]?.append(subData)
+        log.i("receive tempData.count:\(tempData.count) peerId:\(peerId) count:\(fileReceiveDataList.count)")
+    }
+    
+    func calculateMD5(for data: Data) -> String {
+        let md5 = Insecure.MD5.hash(data: data)
+        return md5.map { String(format: "%02hhx", $0) }.joined()
+    }
+    
+    func getCellWithTag(tag:Int) -> HomeMainDeviceCell {
+        if let cell = tableView.viewWithTag(tag) as? HomeMainDeviceCell{
+            return cell
+        }
+        debugPrint("未找到对应cell：\(tag)")
+        return HomeMainDeviceCell()
+    }
         
+    func getCellWithConnectObj(_ connectObj : IConnectionObj)->HomeMainDeviceCell?{
+        for cell in cellArray {
+            if cell.device?.connectObj === connectObj{
+                return cell
+            }
+        }
+        return nil
+    }
+}
+
+//*********************----------链接创建和断开等------------*********************
+extension HomePageMainVC {
+    func goToStreamVC(tag : Int){
         let cell = getCellWithTag(tag: tag)
         guard let device = cell.device else {
             return
@@ -305,7 +309,6 @@ extension HomePageMainVC { //呼叫
                 }else{
                     cell.handelCallTipType(.none)
                 }
-                
             }
             cell.handelMuteAudioStateText(streamStatus?.mAudioMute ?? false)
             
@@ -335,20 +338,33 @@ extension HomePageMainVC { //呼叫
         }
         self.navigationController?.pushViewController(tempFullVC, animated: false)
     }
+    func handelCallAction(tag : Int){
+        
+        let alert = UIAlertController(title: "是否加密?", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "加密", style: .default, handler: {[weak self]  _ in
+            print("加密")
+            self?.callDevice(tag: tag,mEncrypt: true)
+        }))
+        alert.addAction(UIAlertAction(title: "不加密", style: .default, handler: { [weak self] _ in
+            print("不加密")
+            self?.callDevice(tag:tag, mEncrypt:false)
+        }))
+        self.present(alert, animated: true, completion: nil)
+        
+    }
     
     //---------设备控制相关-----------
     //呼叫设备
-    func callDevice(tag : Int){
-         
+    func callDevice(tag : Int, mEncrypt: Bool = true){
+        
         let cell = getCellWithTag(tag: tag)
         cell.handelCallTipType(.loading)
         cell.handelCallStateText(true)
         guard let device = cell.device else { return }
-        
-        log.i("------callDevice------ \(device.peerNodeId)")
+        log.i("------callDevice------ peerNodeId:\(device.peerNodeId) tag:\(tag)")
         
         doorbellVM.registerConnectMgrListener(listener: self)
-        let connectParam = ConnectCreateParam(mPeerNodeId: device.peerNodeId,mEncrypt: true,mAttachMsg: "")
+        let connectParam = ConnectCreateParam(mPeerNodeId: device.peerNodeId,mEncrypt: mEncrypt,mAttachMsg: "")
         let connectObj = doorbellVM.connectDevice(connectParam)
         
         device.connectObj = connectObj
@@ -368,34 +384,14 @@ extension HomePageMainVC { //呼叫
     
     //挂断设备
     func handUpDevice(_ connectObj : IConnectionObj){
-        
         doorbellVM.hangupDevice(connectObj) { success, msg in
             debugPrint("调用挂断：\(msg)")
             AGToolHUD.showInfo(info: "挂断成功")
         }
     }
-    
-    func getCellWithTag(tag:Int) -> HomeMainDeviceCell {
-        if let cell = tableView.viewWithTag(tag) as? HomeMainDeviceCell{
-            return cell
-        }
-        debugPrint("未找到对应cell：\(tag)")
-        return HomeMainDeviceCell()
-    }
-        
-    func getCellWithConnectObj(_ connectObj : IConnectionObj)->HomeMainDeviceCell?{
-        for cell in cellArray {
-            let aaa = cell.device?.connectObj?.getInfo()
-            let bbb = connectObj.getInfo()
-            log.i("返回的mPeerNodeId：\(String(describing: bbb.mPeerNodeId) )")
-            if cell.device?.connectObj === connectObj{
-                return cell
-            }
-        }
-        return nil
-    }
 }
 
+//*********************----------链接操作的回调接口------------*********************
 extension HomePageMainVC: IConnectionMgrListener {
     func onConnectionCreateDone(connectObj: AgoraIotLink.IConnectionObj?, errCode: Int) {
         if errCode == ErrCode.XOK {
@@ -433,8 +429,8 @@ extension HomePageMainVC: IConnectionMgrListener {
     }
 }
 
+//*********************----------链接对象操作的回调接口------------*********************
 extension HomePageMainVC:  ICallbackListener {
-    
     func onFileTransError(connectObj: AgoraIotLink.IConnectionObj?, errCode: Int) {
         if errCode == ErrCode.XERR_NETWORK {
             AGToolHUD.showInfo(info: "数据传输失败，请重试！")
@@ -472,25 +468,11 @@ extension HomePageMainVC:  ICallbackListener {
         fileReceiveDataList[peerId] = nil
         
         var isCorrect = "false"
-        if doneDescrptionString.contains(realMd5String) {
-            isCorrect = "true"
-        }
+        if doneDescrptionString.contains(realMd5String) { isCorrect = "true" }
         fullVC?.transferCmdString = "fileEnd: " + doneDescrptionString + "(\(isCorrect))"
         if transferEnd == true {
             fullVC?.isTransferEnd = transferEnd
         }
-    }
-    
-    func handelReveiveData(_ connectObj: AgoraIotLink.IConnectionObj?,_ subData: Data){
-        let connectInfor = connectObj?.getInfo()
-        guard  let peerId = connectInfor?.mPeerNodeId, let tempData = fileReceiveDataList[peerId] else { return }
-        fileReceiveDataList[peerId]?.append(subData)
-        log.i("receive tempData.count:\(tempData.count) peerId:\(peerId) count:\(fileReceiveDataList.count)")
-    }
-    
-    func calculateMD5(for data: Data) -> String {
-        let md5 = Insecure.MD5.hash(data: data)
-        return md5.map { String(format: "%02hhx", $0) }.joined()
     }
     
     func onStreamFirstFrame(connectObj: AgoraIotLink.IConnectionObj?, subStreamId: AgoraIotLink.StreamId, videoWidth: Int, videoHeight: Int) {
@@ -501,7 +483,10 @@ extension HomePageMainVC:  ICallbackListener {
             cell?.handelCallTipType(.playing)
             cell?.handelPreviewBtnStateText(true)
         }
-        
+    }
+    
+    func onStreamVideoFrame(connectObj: AgoraIotLink.IConnectionObj?, subStreamId: AgoraIotLink.StreamId, pixelBuffer: CVPixelBuffer, videoWidth: Int, videoHeight: Int) {
+        //视频帧回调，用于实现自渲染用户
     }
     
     func onStreamError(connectObj: AgoraIotLink.IConnectionObj?, subStreamId: AgoraIotLink.StreamId, errCode: Int) {
@@ -520,33 +505,34 @@ extension HomePageMainVC:  ICallbackListener {
     }
     
     func onMessageSendDone(connectObj: AgoraIotLink.IConnectionObj?, errCode: Int, signalId: UInt32) {
-        //TODO:处理信令发送结果
+        //TODO:消息发送完成
     }
     
     func onMessageRecved(connectObj: AgoraIotLink.IConnectionObj?, recvedSignalData: Data) {
+        //接收到对端的消息事件
         guard let recvedSignalDataString = String(data: recvedSignalData, encoding: .utf8) else {
             return
         }
         AGToolHUD.showInfo(info: "收到消息:\(recvedSignalDataString)")
     }
-
 }
 
-extension HomePageMainVC{ //删除，添加
-    
+
+/*
+*********************----------设备管理------------*********************
+*********************----------设备管理------------*********************
+*********************----------设备管理------------*********************
+ */
+extension HomePageMainVC{ //设备删除，添加
     // 添加设备
     @objc private func addDevice(){
-        print("点击添加设备")
         guard isDeviceEditing() == false else {
             AGToolHUD.showInfo(info: "请将删除操作完成，再进行添加!")
             return
         }
         AGEditAlertVC.showTitleTop("addDevices".L, editText: "please enter nodeId".L,alertType:.modifyDeviceName ) {[weak self] nodeId in
             self?.addDeviceToArray(nodeId)
-            print("-----\(nodeId)")
-        } cancelAction: {
-            
-        }
+        } cancelAction: {}
     }
     
     func addDeviceToArray(_ nodeId : String){
@@ -601,7 +587,6 @@ extension HomePageMainVC{ //删除，添加
         if cellArray.count == 0 {
             return
         }
-        
         UIApplication.shared.keyWindow?.addSubview(selectAllView)
         selectAllView.snp.makeConstraints { make in
             make.left.bottom.right.equalToSuperview()
@@ -631,7 +616,7 @@ extension HomePageMainVC{ //删除，添加
         }
     }
     
-    // 删除消息
+    // 删除
     private func deleteMessages(_ id: UInt64? = nil ){
         
         var newCellList = [HomeMainDeviceCell]()
@@ -688,7 +673,6 @@ extension HomePageMainVC{ //删除，添加
     }
     
     func isFullScreemVisible()->Bool{
-        
         guard let topViewController = UIApplication.topViewController() else { return false}
         guard topViewController.isKind(of: CallFullScreemVC.self) == true else { return false}
         return true
@@ -697,7 +681,6 @@ extension HomePageMainVC{ //删除，添加
                                 
 
 extension HomePageMainVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
-
     func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
         let customView = UIView()
         let titleLabel = UILabel()
@@ -732,9 +715,4 @@ extension HomePageMainVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
         
         return customView
     }
-    
-    func emptyDataSetDidTap(_ scrollView: UIScrollView!) {
-//        getDevicesArray()
-    }
-    
 }

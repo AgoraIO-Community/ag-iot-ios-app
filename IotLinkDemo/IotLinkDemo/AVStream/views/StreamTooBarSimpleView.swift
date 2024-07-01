@@ -198,7 +198,6 @@ extension StreamTooBarSimpleView{
             // 在主线程执行的代码
             self.fullHorBtn.isSelected = isSuccess
             self.fullHorBtn.isEnabled = true
-            print("handelHorBtnSuccess:---\(self.fullHorBtn.isSelected)")
         }
     }
     

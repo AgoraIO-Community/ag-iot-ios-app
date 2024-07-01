@@ -9,8 +9,6 @@ import UIKit
 import AgoraIotLink
 
 class MDeviceModel: AGBaseModel {
-
-//    var connectId = "" //链接Id
     
     var connectObj : IConnectionObj?
     
@@ -23,8 +21,6 @@ class MDeviceModel: AGBaseModel {
 }
 
 class MStreamModel: AGBaseModel {
-
-//    var connectId = "" //链接Id
     
     var connectObj : IConnectionObj?
     

@@ -17,28 +17,20 @@ public enum VideoAlertTipType: Int{
     case loadFail = 2
     ///设备休眠
     case deviceSleep = 3
-    
+    ///已链接
     case connected = 4
-    ///
+    ///预览中
     case playing = 5
-    
 }
 
 //视频上层逻辑操作View
 class DoorbellAbilitySimpleLogicView: UIView {
-    
     var isOnCalling : Bool = false //正在通话中
-    var isChangeSodSeting : Bool = false //正在变声设置中
     
     var topMarginH : CGFloat = 66.VS
     let toolBarH : CGFloat = 45.VS
     
-    var logicLeftBackHBlock:(() -> (Void))?
-    var logicfullHorBtnBlock:(() -> (Void))?
-    
-    
-    var callHunpBtnBlock:(() -> (Void))? //挂断
-    var callAnswerHungUpBlock:(() -> (Void))? //接听
+    var logicfullHorBtnBlock:(() -> (Void))? //发起链接
     var logicFullScreenBlock:(() -> (Void))? //全屏
     var logicAVStreamBlock:(() -> (Void))? //流媒体点击
     var logicEnableAVStreamBlock:(() -> (Void))? //开启拉流
@@ -71,6 +63,7 @@ class DoorbellAbilitySimpleLogicView: UIView {
             }
         }
     }
+    
     var device: MDeviceModel?{
         didSet{
             topControlView.device = device
@@ -96,11 +89,9 @@ class DoorbellAbilitySimpleLogicView: UIView {
             screenShotBtn.snp.updateConstraints{ (make) in
                 make.centerY.equalToSuperview().offset(0)
             }
-            
         }
     }
-    
-    
+        
     override init(frame: CGRect) {
         self.tipType = .deviceSleep
         super.init(frame: frame)
@@ -111,20 +102,17 @@ class DoorbellAbilitySimpleLogicView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
+        
     deinit {
         debugPrint("DoorbellAbilitySimpleLogicView 被释放了")
         NotificationCenter.default.removeObserver(self)
     }
     
     func setUpViews(){
-        
         addSubview(topControlView)
         topControlView.snp.makeConstraints { (make) in
             make.top.left.right.equalToSuperview()
             make.height.equalTo(topMarginH)
-            
         }
         
         addSubview(toolBarView)
@@ -148,7 +136,6 @@ class DoorbellAbilitySimpleLogicView: UIView {
             make.centerY.equalToSuperview().offset(-25)
             make.size.equalTo(CGSize.init(width: 60.S, height: 30.S))
         }
-
         
         addSubview(rtmSendMsgBtn)
         rtmSendMsgBtn.snp.makeConstraints { (make) in
@@ -177,20 +164,17 @@ class DoorbellAbilitySimpleLogicView: UIView {
             make.bottom.equalTo(toolBarView.snp.top).offset(-10.VS)
             make.size.equalTo(CGSize.init(width: 80.S, height: 40.S))
         }
-        
     }
     
     fileprivate lazy var topControlView:TopControTooBarSimpleView = {
-        
         let view = TopControTooBarSimpleView()
         return view
     }()
     
 
     lazy var toolBarView:DoorbellAbilityTooBarSimpleView = {
-
         let view = DoorbellAbilityTooBarSimpleView()
-        view.doorfullHorBtnBlock = {[weak self] button in
+        view.connectBtnBlock = {[weak self] button in
             if button.isSelected == false{
                 self?.tipType = .loading
                 self?.logicfullHorBtnBlock?()
@@ -198,11 +182,11 @@ class DoorbellAbilitySimpleLogicView: UIView {
                 self?.handUpDevice()
             }
         }
-        view.callBtnBlock = {[weak self] button in
+        view.converseBtnBlock = {[weak self] button in
             //本地语音通话tip
             self?.callPhone(button)
         }
-        view.changeSoundBtnBlock = {[weak self] button in
+        view.muteSoundBtnBlock = {[weak self] button in
             //静音
             self?.shutDownAudio(button)
         }
@@ -213,12 +197,10 @@ class DoorbellAbilitySimpleLogicView: UIView {
             //录屏
             self?.recordScreenPre()
         }
-        
         return view
     }()
     
     fileprivate lazy var saveImgAlertView:DoorbellSaveImgAlertView = {
-        
         let view = DoorbellSaveImgAlertView()
         view.isHidden = true
         return view
@@ -294,20 +276,15 @@ class DoorbellAbilitySimpleLogicView: UIView {
         btn.addTarget(self, action: #selector(previewBtnPress(btn:)), for: .touchUpInside)
         return btn
     }()
-
-
 }
 
 extension DoorbellAbilitySimpleLogicView{//下层View传值
-    
     override func layoutSubviews() {
         super.layoutSubviews()
     }
 }
 
 extension DoorbellAbilitySimpleLogicView{
-    
-    
     //点击预览按钮
     @objc func previewBtnPress(btn : UIButton){
         debugPrint("previewBtnPress：点击")
@@ -323,7 +300,6 @@ extension DoorbellAbilitySimpleLogicView{
     //点击流媒体
     @objc func avStreamPress(btn : UIButton){
         debugPrint("avStreamPress：点击")
-        guard let device = device else { return }
         logicAVStreamBlock?()
     }
     
@@ -334,24 +310,20 @@ extension DoorbellAbilitySimpleLogicView{
     }
     
     func showSendMsgAlert(){
-        
         guard let device = device, let conObj = device.connectObj else {
             AGToolHUD.showInfo(info: "请先呼叫设备")
             return
         }
         
         AGConfirmEditAlertVC.showTitleTop("请输入要发送的信息", editText: "请输入要发送的信息") { msg in
-      
             guard let paramData = msg.data(using: .utf8) else{
                 AGToolHUD.showInfo(info: "消息转换失败")
                 return
             }
 
-            let messageId = conObj.sendMessageData(messageData: paramData)
-            
+            _ = conObj.sendMessageData(messageData: paramData)
             print("showSendMsgAlert：-----\(msg)")
         }
-        
     }
 
     //点击截图
@@ -363,10 +335,8 @@ extension DoorbellAbilitySimpleLogicView{
     @objc func fullScreen(btn : UIButton){
         logicFullScreenBlock?()
     }
-    
-    
-    func enableAV(){
         
+    func enableAV(){
         guard let device = device else { return }
         log.i("enableAV:\(String(describing: device.connectObj))")
         let connectObj = device.connectObj
@@ -385,18 +355,15 @@ extension DoorbellAbilitySimpleLogicView{
     }
     
     func disEnableAV(){
-        
         guard let device = device else { return }
         DoorBellManager.shared.streamRecordStop(device.connectObj, subStreamId: .BROADCAST_STREAM_1)
         previewBtn.isSelected = false
         handelStateNone()
         self.tipType = .connected
-
     }
     
-    
+    //语音通话
     func callPhone(_ btn : UIButton){
-        
         guard let device = device else { return }
         
         guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
@@ -419,14 +386,12 @@ extension DoorbellAbilitySimpleLogicView{
                 if isPermitAudio == true {//挂断电话
                     self?.isOnCalling = false
                 }
-                
             }
          })
     }
     
     //静音
     func shutDownAudio(_ btn : UIButton){
-        
         guard let device = device else { return }
         
         guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
@@ -461,18 +426,13 @@ extension DoorbellAbilitySimpleLogicView{
                 AGToolHUD.showInfo(info: msg)
             }
         }
-        
-//        callHunpBtnBlock?()
-        
     }
     
     func handelCallStateText(_ isCallSuc : Bool?){
-        
         toolBarView.handelHorBtnSuccess(isCallSuc ?? false)
     }
     
     func handelMuteAudioStateText(_ isCallSuc : Bool?){
-        
         toolBarView.handelMuteAudioStateText(isCallSuc ?? false)
     }
     
@@ -496,17 +456,13 @@ extension DoorbellAbilitySimpleLogicView{
 
 
 extension DoorbellAbilitySimpleLogicView{//下层View传值
-    
     func recordScreenPre(){
-        
         if fetchPHAuthorization() == true{
             recordScreen()
         }
-        
     }
     
     func recordScreen(){
-        
         guard let device = device else { return }
         
         guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
@@ -520,7 +476,7 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
             print("startRecord：videoPath:\(videoPath)")
             DoorBellManager.shared.talkingRecordStart(outFilePath:videoPath, device.connectObj, subStreamId: .BROADCAST_STREAM_1, cb: {[weak self] success, msg in
                 if success{
-                    self?.toolBarView.callBtn.isSelected = true
+                    self?.toolBarView.recordBtn.isSelected = true
                     self?.startRecord = true
                     debugPrint("开始录制调用成功")
                 }
@@ -529,7 +485,7 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         }else{
             DoorBellManager.shared.talkingRecordStop(device.connectObj, subStreamId: .BROADCAST_STREAM_1, cb: {[weak self] success, msg in
                 if success{
-                    self?.toolBarView.callBtn.isSelected = false
+                    self?.toolBarView.recordBtn.isSelected = false
                     self?.startRecord = false
                     self?.saveAVToAlbum(videoPath: self?.videoPath ?? "")
                     debugPrint("停止录制调用成功")
@@ -537,10 +493,8 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
             })
         }
     }
-    
-    
-    func fetchPHAuthorization()->Bool{
         
+    func fetchPHAuthorization()->Bool{
         let status = PHPhotoLibrary.authorizationStatus()
         if status == .restricted || status == .denied {
             AGToolHUD.show(info: "请开启相册权限")
@@ -550,18 +504,18 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
                 if status == .denied {
                     AGToolHUD.show(info: "请开启相册权限")
                 } else if status == .authorized {
-                    self?.recordScreen()
+                    DispatchQueue.main.async {
+                        self?.recordScreen()
+                    }
                 }
             }
             return false
         } else {
             return true
         }
-        
     }
     
     func shotScreen(){
-        
         guard let device = device else { return }
         guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
@@ -581,20 +535,8 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
                 }
                 self?.saveImgToAlbum(shotImg)
                 self?.handelSaveImgAlert(shotImg)
-                
             }
-            //todo:
-//            if success{
-//                debugPrint("截屏成功")
-//                guard let shotImg = shotImg else {
-//                    AGToolHUD.showInfo(info: "图片截屏失败！")
-//                    return
-//                }
-//                self?.saveImgToAlbum(shotImg)
-//                self?.handelSaveImgAlert(shotImg)
-//            }
         })
-        
     }
  
     func saveAVToAlbum(videoPath: String) {
@@ -618,18 +560,14 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
     }
     
     func saveImgToAlbum(_ image : UIImage){
-        
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(image:didFinishSavingWithError:contextInfo:)), nil)
-        
     }
     
     @objc func image(image: UIImage,didFinishSavingWithError: NSError?,contextInfo: AnyObject) {
-     
         if didFinishSavingWithError != nil {
             AGToolHUD.showInfo(info: "截图保存失败！")
             return
         }
-        
     }
     
     func handelSaveImgAlert(_ shotImage : UIImage){
@@ -641,7 +579,6 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
     
     // 弹出视图动画
     @objc public func hiddenImgAlertView() {
-        
         UIView.animate(withDuration: 0.5, delay: 0, options: []) {
             self.saveImgAlertView.x = self.saveImgAlertView.x + 150
             self.saveImgAlertView.alpha = 0.2
@@ -677,6 +614,4 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         }
         return ""
     }
-
-    
 }

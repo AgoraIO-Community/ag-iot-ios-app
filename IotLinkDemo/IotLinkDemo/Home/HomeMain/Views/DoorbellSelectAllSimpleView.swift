@@ -11,7 +11,6 @@ import UIKit
 private let kBtnHeight :CGFloat = 36
 
 class DoorbellSelectAllSimpleView: UIView {
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         createSubviews()
@@ -94,7 +93,6 @@ class DoorbellSelectAllSimpleView: UIView {
             make.width.equalTo(81)
             make.height.equalTo(kBtnHeight)
         }
-        
     }
     
     // 点击全选

@@ -6,15 +6,8 @@
 //
 
 import UIKit
-import AgoraIotLink
-import Kingfisher
 
 class HomeMainDeviceCell: UITableViewCell {
-    
-    var sdk:IAgoraIotAppSdk?{get{return iotsdk}}
-    
-    var customTag : Int = 0
-    
     var dailBlock:((_ tag : Int) -> (Void))?
     var fullScreenBlock:((_ tag : Int) -> (Void))?
     var aVStreamBlock:((_ tag : Int) -> (Void))?
@@ -26,13 +19,10 @@ class HomeMainDeviceCell: UITableViewCell {
             }
             nameLabel.text = device.peerNodeId
             logicView.device = device
-            
             selectedbutton.isHidden = !device.canEdit
             selectedbutton.isSelected = device.isSelected
         }
     }
-    
-    var indexPath : IndexPath?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -84,14 +74,6 @@ class HomeMainDeviceCell: UITableViewCell {
         logicView.logicDisableAVStreamBlock = { [weak self] in
             self?.configPeerView(false)
         }
-        logicView.callHunpBtnBlock = { [weak self] in
-            
-            self?.device?.connectObj = nil
-            self?.handelCallTipType(.none)
-            self?.handelCallStateText(false)
-            self?.handelStateNone()
-        }
-        
         return logicView
 
     }()
@@ -113,24 +95,7 @@ class HomeMainDeviceCell: UITableViewCell {
         return label
     }()
     
-    private lazy var statusLabel:UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = UIColor(hexRGB: 0xF7B500)
-        return label
-    }()
-    
-    private lazy var iconImgView:UIImageView = {
-        let imgView = UIImageView()
-        imgView.contentMode = .scaleAspectFill
-        imgView.layer.cornerRadius = 10
-        imgView.layer.masksToBounds = true
-        return imgView
-    }()
-    
-    
     private func createSubviews(){
-        
         contentView.addSubview(videoParentView)
         contentView.backgroundColor = UIColor(hexRGB: 0xF8F8F8)
         
@@ -154,14 +119,14 @@ class HomeMainDeviceCell: UITableViewCell {
         
     }
     
-    //设置播放器view
+    //设置对端渲染视图
     func configPeerView(_ isEnable:Bool) {
         guard let conObj = device?.connectObj else {
             return
         }
         
         let ret =  conObj.setVideoDisplayView(subStreamId: .BROADCAST_STREAM_1, displayView:isEnable == true ? videoParentView : nil)
-        debugPrint("--- \(ret)")
+        debugPrint("configPeerView: \(ret)")
 
     }
     

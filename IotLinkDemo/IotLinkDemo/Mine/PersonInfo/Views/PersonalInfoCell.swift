@@ -10,7 +10,6 @@ import UIKit
 private let kHeadImgHeight: CGFloat = 36
 class PersonalInfoCell: UITableViewCell {
     
-    
     private lazy var titleLabel:UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16)

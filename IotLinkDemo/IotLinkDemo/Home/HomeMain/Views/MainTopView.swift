@@ -8,6 +8,8 @@
 import UIKit
 
 class MainTopView: UIView {
+    var clickAddButtonAction:(()->(Void))?
+    var clickDeleteButtonAction:(()->(Void))?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -17,11 +19,7 @@ class MainTopView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    var clickAddButtonAction:(()->(Void))?
-    var clickDeleteButtonAction:(()->(Void))?
-    
-    
+
     private lazy var titleLabel:UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 24)
@@ -37,8 +35,6 @@ class MainTopView: UIView {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.titleLabel?.adjustsFontSizeToFitWidth = true
         button.titleLabel?.minimumScaleFactor = 0.5
-//        button.setBackgroundImage(UIImage(named: ""), for: .normal)
-//        button.setImage(UIImage(named: "device_add"), for: .normal)
         button.addTarget(self, action: #selector(didClickAddButton), for: .touchUpInside)
         return button
     }()
@@ -50,8 +46,6 @@ class MainTopView: UIView {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.titleLabel?.adjustsFontSizeToFitWidth = true
         button.titleLabel?.minimumScaleFactor = 0.3
-//        button.setBackgroundImage(UIImage(named: ""), for: .normal)
-//        button.setImage(UIImage(named: "device_add"), for: .normal)
         button.addTarget(self, action: #selector(didClickDeleteButton), for: .touchUpInside)
         return button
     }()

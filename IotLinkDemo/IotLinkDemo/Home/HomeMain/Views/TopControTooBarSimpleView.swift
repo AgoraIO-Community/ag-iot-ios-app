@@ -10,7 +10,6 @@ import AgoraIotLink
 
 //视频控制操作View
 class TopControTooBarSimpleView: UIView {
-    
     // 当前选中的类型
     private var selectedType = 0
     var device: MDeviceModel? {
@@ -19,7 +18,6 @@ class TopControTooBarSimpleView: UIView {
                 return
             }
             nodeIdLabel.text = device.peerNodeId
-//            tipsLabel.text = ""
         }
     }
     
@@ -40,7 +38,6 @@ class TopControTooBarSimpleView: UIView {
         addSubview(bgView)
         bgView.addSubview(nodeIdLabel)
         bgView.addSubview(tipsLabel)
-//        bgView.addSubview(memberLabel)
     }
     
     fileprivate func setUpConstraints() {
@@ -59,16 +56,9 @@ class TopControTooBarSimpleView: UIView {
             make.top.equalTo(nodeIdLabel.snp.bottom)
             make.size.equalTo(CGSize.init(width: 150.S, height: 17.S))
         }
-        
-//        memberLabel.snp.makeConstraints { (make) in
-//            make.right.equalTo(-40.S)
-//            make.top.equalTo(10.S)
-//            make.size.equalTo(CGSize.init(width: 75.S, height: 17.S))
-//        }
     }
     
     fileprivate lazy var bgView:UIView = {
-
         let view = UIView()
         view.backgroundColor = UIColor.clear
         return view
@@ -76,7 +66,6 @@ class TopControTooBarSimpleView: UIView {
     
     lazy var nodeIdLabel: UILabel = {
         let label = UILabel()
-//        label.frame = CGRect.init(x: 0, y: 0, width: 100.S, height: 17.S)
         label.textColor = UIColor.white //UIColor(hexString: "#25DEDE")
         label.font = FontPFMediumSize(12)
         label.textAlignment = .left
@@ -89,7 +78,6 @@ class TopControTooBarSimpleView: UIView {
     
     lazy var tipsLabel: UILabel = {
         let label = UILabel()
-//        label.frame = CGRect.init(x: 0, y: 0, width: 100.S, height: 17.S)
         label.textColor = UIColor.white //UIColor(hexString: "#25DEDE")
         label.font = FontPFMediumSize(12)
         label.textAlignment = .left
@@ -102,7 +90,6 @@ class TopControTooBarSimpleView: UIView {
     
     lazy var memberLabel: UILabel = {
         let label = UILabel()
-//        label.frame = CGRect.init(x: 0, y: 0, width: 100.S, height: 17.S)
         label.textColor = UIColor.white //UIColor(hexString: "#25DEDE")
         label.font = FontPFMediumSize(12)
         label.textAlignment = .right
