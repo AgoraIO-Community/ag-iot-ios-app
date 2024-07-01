@@ -19,7 +19,7 @@ class AgoraIotLinkTools: NSObject {
     
     open class func loadBundle() -> Bundle? {
         
-     //   debugPrint(Bundle.init(for: TDProfitTools.self).path(forResource: "AgoraIotLink", ofType: "bundle", inDirectory: nil))
+     //   print(Bundle.init(for: TDProfitTools.self).path(forResource: "AgoraIotLink", ofType: "bundle", inDirectory: nil))
         
         return Bundle.init(path: Bundle.init(for: AgoraIotLinkTools.self).path(forResource: "AgoraIotLink", ofType: "bundle", inDirectory: nil)!)
         

@@ -71,9 +71,9 @@ class ConnectListenerManager: NSObject {
             callListen?.callSession?.connectionCmd?.sendCmdDisConnect(cmdListener: { code, msg in })
         }
         
-        log.i("disConnect:------connectID:\(String(describing: callListen?.callSession?.mConnectId) )")
+        log.i("--- disConnect:--- connectID:\(String(describing: callListen?.callSession?.mConnectId) )")
         hangUp(callListen?.callSession?.mConnectId ?? "",.LocalHangup) { errCode in log.i("disConnect: errCode:\(errCode)") }
-        log.i("disConnect:  调用了 left current connectDict.keys:\(connectDict.getAllKeys())")
+        log.i("disConnect: remainder connectDict.keys:\(connectDict.getAllKeys())")
         
         return ErrCode.XOK
     }
@@ -125,9 +125,7 @@ class ConnectListenerManager: NSObject {
                 return true
             }
         }
-        log.i("isCallTaking: peerNodeId :\(peerNodeId) ")
         return false
-        
     }
 }
 

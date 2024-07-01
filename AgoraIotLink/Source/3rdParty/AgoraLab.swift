@@ -20,42 +20,14 @@ class AgoraLab {
     // http过滤状态码
     let acceptableStatusCodes = Array(200..<300) + [401, 404]
     
-    private let httpPre =  "https://api.sd-rtn.com/"//"http://api-test-huzhou1.agora.io/"
+    private let httpPre =  "http://api.sd-rtn.com/"
+//    private let httpPre =  "http://api-test-huzhou1.agora.io/"
     private let httpEnd = "/iot/link"
     
     private var http:String
     init(cRegion:Int){
         let region = RegionToStringMap.getRegionString(cRegion)
         self.http = httpPre + region + httpEnd
-    }
-    
-    func publicKeySet(_ userId:String, _ publicKey:String,_ token:String, _ rsp:@escaping(Int,String)->Void){
-        
-        let header = Header()
-        
-        let nodePayload = AgoraLab.PublicKeySet.Payload(userId: userId, publicKey:publicKey )
-        let paramsDic = AgoraLab.PublicKeySet.Req(header: header, payload: nodePayload)
-        
-        let headers : HTTPHeaders = ["Authorization":token]
-        
-        let url = http + api.publicKeySet
-        log.i("publicKeySet：url: \(url) param:\(paramsDic)")
-
-        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: headers)
-            .validate(statusCode: acceptableStatusCodes)
-            .responseDecodable(of:PublicKeySet.Rsp.self){(dataRsp:AFDataResponse<PublicKeySet.Rsp>) in
-            URLCache.shared.removeAllCachedResponses()
-            switch dataRsp.result{
-            case .success(let ret):
-                if(ret.code != 0){
-                    log.e(" publicKeySet fail \(ret.msg)(\(ret.code))")
-                }
-                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg)
-            case .failure(let error):
-                log.e(" publicKeySet \(url) , detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error")
-            }
-        }
     }
     
     //配置请求头的通用参数
@@ -83,34 +55,6 @@ class AgoraLab {
         
     }
     
-    func nodeActivate(_ traceId:String, _ userId:String,_ masterAppId:String,_ pusherId:String, _ rsp:@escaping(Int,String,ActivateNode.Rsp?)->Void){
-
-        let header = self.configCommonHeader()
-        print("header------\(header)")
-        
-        let nodePayload = AgoraLab.ActivateNode.Payload(clientType: "2", userId: userId, masterAppId: masterAppId, pusherId: pusherId)
-        let paramsDic = AgoraLab.ActivateNode.Req(payload: nodePayload)
-        
-        //https://iot-api-gateway.sh.agoralab.co/api  "https://api.sd-rtn.com/agoralink/cn/api"
-        let url = http + api.nodeActivate
-        log.i("al reqCall \(url)")
-
-        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default,headers: header)
-            .validate()
-            .responseDecodable(of:ActivateNode.Rsp.self){(dataRsp:AFDataResponse<ActivateNode.Rsp>) in
-            URLCache.shared.removeAllCachedResponses()
-            switch dataRsp.result{
-            case .success(let ret):
-                if(ret.code != 0){
-                    log.e("3rd nodeActivate fail \(ret.msg)(\(ret.code))")
-                }
-                rsp(ret.code == 0 ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,ret.msg,ret)
-            case .failure(let error):
-                log.e("3rd nodeActivate \(url) , detail: \(error) ")
-                rsp(ErrCode.XERR_NETWORK,error.errorDescription ?? "network error",nil)
-            }
-        }
-    }
     func creatConnect(_ traceId:String, _ peerNodeId:String, _ mEncrypt:Bool, _ rsp:@escaping(Int,String,ConnectCreat.Rsp?)->Void){
         
         let app = IotLibrary.shared

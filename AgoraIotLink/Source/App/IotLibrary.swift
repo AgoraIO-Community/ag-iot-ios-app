@@ -25,6 +25,7 @@ open class IotLibrary : NSObject{
             log.ouput = .debugerConsoleAndFile
         }
         
+        Logger.shared.setLogFileName(initParam.mLogFileName ?? "")
         Logger.shared.removeAllAsync()
         let tempAppId = initParam.mAppId.substring(to: 1) + "*********************" + initParam.mAppId.substring(from: initParam.mAppId.count - 1)
         log.i("=================  AgoraIotSdk  ======================")

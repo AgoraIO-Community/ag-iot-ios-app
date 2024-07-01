@@ -1,3 +1,4 @@
+
 //
 //  Logger.swift
 //  SwiftyLog
@@ -48,22 +49,26 @@ public class Logger: NSObject {
     public var level: LoggerLevel = .none
     public var ouput: LoggerOutput = .debuggerConsole
     public var showThread: Bool = false
+    public var logFileName: String = ""
     
     // MARK: - Init
     private let isolationQueue = DispatchQueue(label: "com.crafttang.isolation", qos: .background)
     private let serialQueue = DispatchQueue(label: "com.crafttang.swiftylog")
-    private let logSubdiretory = FileManager.documentDirectoryURL.appendingPathComponent(fileExtension)
+    private let logSubdiretory = FileManager.documentDirectoryURL.appendingPathComponent("IotSdkLog")
 
     public static let shared = Logger()
     
     private var _data: [String] = []
     private var data: [String] {
         get { return isolationQueue.sync { return _data } }
-        set { isolationQueue.async(flags: .barrier) { self._data = newValue } }        
+        set { isolationQueue.async(flags: .barrier) { self._data = newValue } }
     }
     
     private var logUrl: URL? {
-        let fileName = "agoraiot"
+        var fileName = "agoraiot"
+        if logFileName != "" {
+            fileName = logFileName
+        }
         try? FileManager.default.createDirectory(at: logSubdiretory, withIntermediateDirectories: false)
         let url = logSubdiretory.appendingPathComponent(fileName).appendingPathExtension(fileExtension)
         return url
@@ -105,6 +110,10 @@ public class Logger: NSObject {
                 print("wrote failed: \(url.absoluteString), \(error.localizedDescription)")
             }
         }
+    }
+    
+    func setLogFileName(_ logFileName : String) {
+        self.logFileName = logFileName
     }
     
     func removeAllAsync() {

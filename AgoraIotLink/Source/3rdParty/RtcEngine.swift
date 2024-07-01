@@ -12,8 +12,8 @@ import CoreMedia
 
 class RtcEngine : NSObject{
     
-    private var isSnapShoting : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
-    private var isRecording : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
+//    private var isSnapShoting : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
+//    private var isRecording : HOPAtomicBoolean = HOPAtomicBoolean(value: false)
     private var _onImageCaptured:(Int,String,UIImage?)->Void = {ec,msg,img in}
     
     private var  _onMFirstRemoteVideoDecodedAction : (RtcPeerAction,UInt,ActionExtraInfo?)->Void = {b,u,e in log.i("onMFirstRemoteVideoDecodedAction init")} //自管理首帧返回回调
@@ -142,6 +142,7 @@ class RtcEngine : NSObject{
 
 extension RtcEngine{
     
+    /*
     func capturePeerVideoFrame(channel:String, cb:@escaping(Int,String,UIImage?)->Void){
         
         self.curChannel = channel
@@ -169,6 +170,7 @@ extension RtcEngine{
         }
         
     }
+     **/
     
     func setAudioAndVideoDelegate(){
         let rtcKit = getRtcObject()
@@ -182,15 +184,13 @@ extension RtcEngine{
     func videoRecoredHanle(_ isStart : Bool){
         
         if isStart == true{
-            debugPrint("videoRecoredHanle：开始录屏")
+            print("videoRecoredHanle：开始录屏")
             videoRecordM.startWriter()
         }else{
-            debugPrint("videoRecoredHanle：停止录屏")
+            print("videoRecoredHanle：停止录屏")
             videoRecordM.stopWriter()
         }
-        
     }
-    
 }
 
 extension RtcEngine : AgoraVideoFrameDelegate{
@@ -233,59 +233,59 @@ extension RtcEngine : AgoraVideoFrameDelegate{
             videoRecordM.videoH = videoFrame.height
         }
         
-        if (isRecording.getValue()){
+//        if (isRecording.getValue()){
+//
+//            if(videoFrame.type == 12){//CVPixelBufferRef
+//                log.i("rtc capture frame is CVPixelBufferRef")
+//                if let buffer = videoFrame.pixelBuffer{
+//                    videoRecordM.videoWithSampleBuffer(buffer)
+//                }else{
+//                    log.e("rtc capture pixelBuffer is nil")
+//                }
+//
+//            }else if(videoFrame.type == 1){
+//
+//                log.i("rtc capture frame is I420")
+//                let  buffer : Unmanaged<CVPixelBuffer> = Utils.i420(toPixelBuffer:videoFrame.yBuffer!, srcU: videoFrame.uBuffer!, srcV: videoFrame.vBuffer!,yStride: Int32(videoFrame.yStride), uStride:Int32(videoFrame.uStride), vStride:Int32(videoFrame.vStride), width: Int32(videoFrame.width), height: Int32(videoFrame.height))
+//                _ = buffer.takeUnretainedValue()
+//                let anOpaque = buffer.toOpaque()
+//                let pixelBuffer : CVPixelBuffer = Unmanaged<CVPixelBuffer>.fromOpaque(anOpaque).takeUnretainedValue()
+//                videoRecordM.videoWithSampleBuffer(pixelBuffer)
+//                Utils.realseCvbuffer(pixelBuffer)
+//
+//            }
+//        }
 
-            if(videoFrame.type == 12){//CVPixelBufferRef
-                log.i("rtc capture frame is CVPixelBufferRef")
-                if let buffer = videoFrame.pixelBuffer{
-                    videoRecordM.videoWithSampleBuffer(buffer)
-                }else{
-                    log.e("rtc capture pixelBuffer is nil")
-                }
-
-            }else if(videoFrame.type == 1){
-
-                log.i("rtc capture frame is I420")
-                let  buffer : Unmanaged<CVPixelBuffer> = Utils.i420(toPixelBuffer:videoFrame.yBuffer!, srcU: videoFrame.uBuffer!, srcV: videoFrame.vBuffer!,yStride: Int32(videoFrame.yStride), uStride:Int32(videoFrame.uStride), vStride:Int32(videoFrame.vStride), width: Int32(videoFrame.width), height: Int32(videoFrame.height))
-                _ = buffer.takeUnretainedValue()
-                let anOpaque = buffer.toOpaque()
-                let pixelBuffer : CVPixelBuffer = Unmanaged<CVPixelBuffer>.fromOpaque(anOpaque).takeUnretainedValue()
-                videoRecordM.videoWithSampleBuffer(pixelBuffer)
-                Utils.realseCvbuffer(pixelBuffer)
-
-            }
-        }
-
-        if (isSnapShoting.getValue()) {
-
-            isSnapShoting.setValue(false)
-            if(videoFrame.type == 1){//1 for zhuban  12 for dcg
-                log.i("rtc capture frame:\(videoFrame.type) width:\(videoFrame.width),height:\(videoFrame.height)")
-                let image = Utils.i420(toImage: videoFrame.yBuffer, srcU: videoFrame.uBuffer, srcV: videoFrame.vBuffer,yStride: Int32(videoFrame.yStride), uStride:Int32(videoFrame.uStride), vStride:Int32(videoFrame.vStride), width: Int32(videoFrame.width), height: Int32(videoFrame.height))
-                DispatchQueue.main.async {
-                    self._onImageCaptured(image != nil ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,"capture screen",image)
-                    self._onImageCaptured = {ec,msg,img in}
-                }
-            }
-            else if(videoFrame.type == 12){//CVPixelBufferRef
-                log.i("rtc capture frame is CVPixelBufferRef")
-                var img:UIImage? = nil
-                if let ref = videoFrame.pixelBuffer{
-                    img = Utils.convert(ref)
-                }
-                else{
-                    log.e("rtc capture pixelBuffer is nil")
-                }
-                DispatchQueue.main.async {
-                    self._onImageCaptured(img != nil ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,"capture screen",img)
-                    self._onImageCaptured = {ec,msg,img in}
-
-                }
-            }
-            else{
-                log.e("rtc capture frame: unknown type:\(videoFrame.type)")
-            }
-        }
+//        if (isSnapShoting.getValue()) {
+//
+//            isSnapShoting.setValue(false)
+//            if(videoFrame.type == 1){//1 for zhuban  12 for dcg
+//                log.i("rtc capture frame:\(videoFrame.type) width:\(videoFrame.width),height:\(videoFrame.height)")
+//                let image = Utils.i420(toImage: videoFrame.yBuffer, srcU: videoFrame.uBuffer, srcV: videoFrame.vBuffer,yStride: Int32(videoFrame.yStride), uStride:Int32(videoFrame.uStride), vStride:Int32(videoFrame.vStride), width: Int32(videoFrame.width), height: Int32(videoFrame.height))
+//                DispatchQueue.main.async {
+//                    self._onImageCaptured(image != nil ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,"capture screen",image)
+//                    self._onImageCaptured = {ec,msg,img in}
+//                }
+//            }
+//            else if(videoFrame.type == 12){//CVPixelBufferRef
+//                log.i("rtc capture frame is CVPixelBufferRef")
+//                var img:UIImage? = nil
+//                if let ref = videoFrame.pixelBuffer{
+//                    img = Utils.convert(ref)
+//                }
+//                else{
+//                    log.e("rtc capture pixelBuffer is nil")
+//                }
+//                DispatchQueue.main.async {
+//                    self._onImageCaptured(img != nil ? ErrCode.XOK : ErrCode.XERR_UNKNOWN,"capture screen",img)
+//                    self._onImageCaptured = {ec,msg,img in}
+//
+//                }
+//            }
+//            else{
+//                log.e("rtc capture frame: unknown type:\(videoFrame.type)")
+//            }
+//        }
         return true
  }
 
@@ -294,7 +294,7 @@ extension RtcEngine : AgoraVideoFrameDelegate{
 extension RtcEngine : AgoraAudioFrameDelegate{
 
     func onRecordAudioFrame(_ frame: AgoraAudioFrame, channelId: String) -> Bool {
-        debugPrint("\(frame)")
+        print("\(frame)")
         return true
     }
 
@@ -304,21 +304,21 @@ extension RtcEngine : AgoraAudioFrameDelegate{
             return true
         }
         
-        if (isRecording.getValue()){
-            videoRecordM.audioWithBuffer(frame)
-        }
+//        if (isRecording.getValue()){
+//            videoRecordM.audioWithBuffer(frame)
+//        }
         return true
     }
 
     //获取采集和播放音频混音后的数据
     func onMixedAudioFrame(_ frame: AgoraAudioFrame, channelId: String) -> Bool {
-        debugPrint("\(frame)")
+        print("\(frame)")
         return true
     }
 
     //获得播放的原始音频数据
     func onPlaybackAudioFrame(beforeMixing frame: AgoraAudioFrame, channelId: String, uid: UInt) -> Bool {
-//        debugPrint("\(frame)")
+//        print("\(frame)")
         return true
     }
 

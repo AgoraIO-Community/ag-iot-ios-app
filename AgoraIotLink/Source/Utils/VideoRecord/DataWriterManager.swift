@@ -283,7 +283,7 @@ public class DataWriterManager: NSObject {
         }
         
         outputSize = CGSize.init(width: videoW, height: videoH)
-        debugPrint("--outputSize--%@---%@",videoW,videoH)
+        print("--outputSize--%@---%@",videoW,videoH)
         
         
         // 获取当前屏幕的最佳分辨率
@@ -292,11 +292,11 @@ public class DataWriterManager: NSObject {
         }
         
         if outputSize.width == 0 {
-            debugPrint("---outputSize.width---%@",outputSize.height)
+            print("---outputSize.width---%@",outputSize.height)
             outputSize.width = 1
         }
         if outputSize.height == 0 {
-            debugPrint("---outputSize.height---%@",outputSize.height)
+            print("---outputSize.height---%@",outputSize.height)
             outputSize.height = 1
         }
           
@@ -304,9 +304,9 @@ public class DataWriterManager: NSObject {
         outputSize.width = screenSize.width
         outputSize.height = wScale * outputSize.height
         
-        debugPrint("---mWScale---%@",wScale)
-        debugPrint("---screenSize---%@",screenSize)
-        debugPrint("--outputSize_New--%@",outputSize)
+        print("---mWScale---%@",wScale)
+        print("---screenSize---%@",screenSize)
+        print("--outputSize_New--%@",outputSize)
         
         
 		//写入视频大小
@@ -354,14 +354,14 @@ public class DataWriterManager: NSObject {
 			}
 		}
 		writeState = .recording
-        debugPrint("setUpWriter：")
+        print("setUpWriter：")
 	}
 	
 	deinit {
 		destroyWriter()
 	}
 	func destroyWriter() {
-        debugPrint("destroyWriter：")
+        print("destroyWriter：")
 		assetWriter = nil
 		assetWriterVideoInput = nil
 		assetWriterAudioInput = nil

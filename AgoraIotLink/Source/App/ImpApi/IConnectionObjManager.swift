@@ -392,7 +392,7 @@ extension IConnectionObjManager{
         guard let callObj = getConnectObj()  else{ return }
         guard let callSession = callObj.callSession else{ return }
         
-        log.i("----------sendEnableAVCmd------------ peerNodeId:\(String(describing: callObj.callSession?.peerNodeId))")
+        log.i("----------sendEnableAVCmd------------ peerNodeId:\(String(describing: callObj.callSession?.peerNodeId)) subscribe:\(String(describing: subscribe))")
         
         let peerUid = StreamIdToUIdMap.getUId(baseUid:callSession.uid , streamId: UInt(subStreamId.rawValue) )
         var enableVideo = 0

@@ -35,7 +35,6 @@ class IConnectionManager: IConnectionMgr {
             log.e("connectionCreate: connect device is already mPeerNodeId:\(connectParam.mPeerNodeId)")
             return nil
         }
-        
         let curTimestamp:Int = String.dateTimeRounded()
         let mConnectionId = connectParam.mPeerNodeId + "&" + "\(curTimestamp)"
         let connectionObj = conListenerMgr.connect(connectionId: mConnectionId, connectParam: connectParam)

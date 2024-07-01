@@ -433,7 +433,7 @@ extension ConnectStateListener{//rtm
     func handelRtmAlready(){
         
         guard callMachine?.currentState != .connected  else { return }
-//      callSession?.connectionCmd?.sendCmdCreatConnect( cmdListener: { code, msg in })
+       // callSession?.connectionCmd?.sendCmdCreatConnect( cmdListener: { code, msg in })
         
     }
     
@@ -485,7 +485,7 @@ extension ConnectStateListener{
         }
         
         let cbRequest = { [weak self] (code:Int, msg:String, rsp:AgoraLab.ConnectCreat.Rsp?) in
-            log.i("---connectRequest--\(code)")
+            log.i("---connect result--- code:\(code)")
             if code == ErrCode.XOK{
                 guard let rsp = rsp else{
                     log.e("connectRequest ret XOK, but rsp is nil")
@@ -497,7 +497,7 @@ extension ConnectStateListener{
                     self?.callRequestFail()
                     return
                 }
-                log.i("------connectRequest---data:\(data) ------ traceId:\(rsp.traceId)")
+                log.i("---connectResult--- uid:\(data.uid) cname:\(data.cname) encryptMode:\(String(describing: data.encryptMode)) secretKey:\(String(describing: data.secretKey)) traceId:\(rsp.traceId)")
                 self?.handelConnectResult(traceId:rsp.traceId,resultData: data)
                 
                 
@@ -519,7 +519,11 @@ extension ConnectStateListener{
         sess.token = resultData.token
         sess.uid = resultData.uid
         sess.cname = resultData.cname
-        sess.encryptMode = resultData.encryptMode != 0 ? resultData.encryptMode! : app.config.encryptMode
+        var encryptModeValue = app.config.encryptMode
+        if let encryptMode = resultData.encryptMode,encryptMode != 0 {
+            encryptModeValue = encryptMode
+        }
+        sess.encryptMode = encryptModeValue
         sess.secretKey = resultData.secretKey ?? app.config.encryptSecretKey
         sess.traceId = traceId
         updateCallSession(sess)

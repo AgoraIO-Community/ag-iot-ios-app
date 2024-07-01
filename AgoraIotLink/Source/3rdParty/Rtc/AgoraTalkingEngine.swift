@@ -107,7 +107,7 @@ class AgoraTalkingEngine: NSObject {
         peerDisplayView = setting.peerDisplayView
         //加入频道前进行内容加密
         encryptionChannel()
-        log.i("rtc enterChannel when uid:\(channelInfo.uid) token:\(channelInfo.token) name:\(channelInfo.cName)")
+        log.i("rtc enterChannel when uid:\(channelInfo.uid) name:\(channelInfo.cName)")
         //加入频道
         joinChannel(cb: cb)
         creatStreamObjs()
@@ -165,7 +165,7 @@ class AgoraTalkingEngine: NSObject {
     }
     
     func encryptionChannel(){
-        log.i("encryptionChannel mEncrypt:\(String(describing: channelInfo?.mEncrypt)) ret:\(String(describing: channelInfo?.secretKey))")
+        log.i("encryptionChannel mEncrypt:\(String(describing: channelInfo?.mEncrypt)) encryptMode:\(String(describing: channelInfo?.encryptMode)) ret:\(String(describing: channelInfo?.secretKey))")
         guard let channelInfo = channelInfo else {
             log.i("channelInfo is nil ")
             return
@@ -476,16 +476,16 @@ extension AgoraTalkingEngine{
 
 extension AgoraTalkingEngine{
     
-    func capturePeerVideoFrame(cb:@escaping(Int,String,UIImage?)->Void){
-        log.i("rtc try capturePeerVideoFrame ...")
-        if(!peerEntered){
-            log.w("rtc peer not entered for capture")
-            cb(ErrCode.XERR_INVALID_PARAM,"rtc peer not joined",nil)
-            return
-        }
-        
-        rtc.capturePeerVideoFrame(channel: channelInfo?.cName ?? "", cb: cb)
-    }
+//    func capturePeerVideoFrame(cb:@escaping(Int,String,UIImage?)->Void){
+//        log.i("rtc try capturePeerVideoFrame ...")
+//        if(!peerEntered){
+//            log.w("rtc peer not entered for capture")
+//            cb(ErrCode.XERR_INVALID_PARAM,"rtc peer not joined",nil)
+//            return
+//        }
+//        
+//        rtc.capturePeerVideoFrame(channel: channelInfo?.cName ?? "", cb: cb)
+//    }
     
     func capturePeerVideoFrame(_ subStreamId:StreamId, saveFilePath:String,cb:@escaping(Int,Int,Int)->Void)->Int{
         log.i("rtc try capturePeerVideoFrame ...")
@@ -508,24 +508,24 @@ extension AgoraTalkingEngine{
         return ret
     }
     
-    func startRecord(documentPath:String,result: @escaping (Int, String) -> Void){
-        
-        log.i("rtc try capturePeerVideoFrame ...")
-        if(!peerEntered){
-            log.i("startRecord: rtc peer not entered for capture")
-            result(ErrCode.XERR_INVALID_PARAM,"rtc peer not joined")
-            return
-        }
-    
-        rtc.startRecord(documentPath:documentPath, channel: channelInfo?.cName ?? "", result: result)
-        
-    }
+//    func startRecord(documentPath:String,result: @escaping (Int, String) -> Void){
+//        
+//        log.i("rtc try capturePeerVideoFrame ...")
+//        if(!peerEntered){
+//            log.i("startRecord: rtc peer not entered for capture")
+//            result(ErrCode.XERR_INVALID_PARAM,"rtc peer not joined")
+//            return
+//        }
+//    
+//        rtc.startRecord(documentPath:documentPath, channel: channelInfo?.cName ?? "", result: result)
+//        
+//    }
 
-    func stopRecord(result: @escaping (Int, String) -> Void){
-        
-        log.i("rtc try stopRecord ...")
-        rtc.stopRecord(channel: channelInfo?.cName ?? "", result: result)
-    }
+//    func stopRecord(result: @escaping (Int, String) -> Void){
+//        
+//        log.i("rtc try stopRecord ...")
+//        rtc.stopRecord(channel: channelInfo?.cName ?? "", result: result)
+//    }
     
     func getNetworkStatus()->NetworkStatus{
         return _networkStatus
@@ -662,9 +662,9 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
         log.i("🐣🐣🐣rtc remote user didOfflineOfUid \(uid) reason:\(reason.rawValue)🐣🐣🐣")
         if uid == channelInfo?.peerUid{//只有设备端离线，状态才改变
             peerEntered = false
-            rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
-                log.i("didOfflineOfUid:stopRecord")
-            }
+//            rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
+//                log.i("didOfflineOfUid:stopRecord")
+//            }
         }
         _onPeerAction(.Leave,uid,nil)
         _memberState(.Leave,[uid])
@@ -721,9 +721,9 @@ extension AgoraTalkingEngine: AgoraRtcEngineDelegate{
         peerEntered = false
         _onPeerAction(.Leave,channelInfo?.peerUid ?? 0,nil)
         _memberState(.Leave,[channelInfo?.peerUid ?? 0])
-        rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
-            log.i("rtcEngineRequestToken:stopRecord")
-        }
+//        rtc.stopRecord(channel: channelInfo?.cName ?? "") { code, msg in
+//            log.i("rtcEngineRequestToken:stopRecord")
+//        }
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode) {

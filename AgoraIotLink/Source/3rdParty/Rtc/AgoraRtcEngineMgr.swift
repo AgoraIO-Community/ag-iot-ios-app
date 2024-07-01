@@ -61,9 +61,6 @@ class AgoraRtcEngineMgr: NSObject {
         
         let logConFig = AgoraLogConfig()
         logConFig.level = .info
-        if(setting.logFilePath != ""){
-            logConFig.filePath = setting.logFilePath
-        }
         
         let config = AgoraRtcEngineConfig()
         config.appId = appId

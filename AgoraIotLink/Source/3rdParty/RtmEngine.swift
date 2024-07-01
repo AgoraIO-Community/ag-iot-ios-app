@@ -105,7 +105,7 @@ class RtmEngine : NSObject{
     }
     
     func enter(_ sess:RtmSession,_ uid:String,_ cb:@escaping (Int,String)->Void){
-        log.i("rtm try enter with token:\(sess.token),local:\(uid)")
+        log.i("rtm try enter uid:\(uid)")
         self.state = .ENTERING
         curSession = sess
         if(self._statusUpdated != nil){
