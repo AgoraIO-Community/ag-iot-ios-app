@@ -12,8 +12,9 @@
 
 ## 软件架构
 
-1.IotLinkDemo目录 ：应用层demo程序代码
-2.iot_libs目录 ：iot库文件
+1.IotLinkDemo目录：应用层demo程序代码
+
+2.iot_libs目录：iot库文件
 
 ## 功能列表
 
@@ -25,9 +26,13 @@
 ## 编译调试
 
 1.安装xcode开发工具(推荐最新版本)，iOS13.0或以上版本的Apple设备
+
 2.在'灵隼'官网平台申请相应的开发者账号，获取相关信息，主要是 appId，key，secret等信息 https://docs.agora.io/cn/iot-apaas/enable_agora_link?platform=All%20Platforms
+
 3.联系声网获取iot库文件，放入 iot_libs 文件夹中
+
 4.cd 至 IotLinkDemo，执行 pod install
+
 5.连接上 iOS 设备后，点击 .xcworkspace 文件打开项目，进行编译和调试
 
 ## APP使用说明
