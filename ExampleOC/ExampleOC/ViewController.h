@@ -6,8 +6,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ExampleOC-Bridging-Header.h"
+#import "ExampleOC-Swift.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<IConnectionMgrListener>
 
 
 @end

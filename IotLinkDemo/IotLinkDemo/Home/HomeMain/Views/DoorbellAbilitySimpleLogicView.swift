@@ -43,23 +43,23 @@ class DoorbellAbilitySimpleLogicView: UIView {
         didSet{
             switch tipType{
             case .none:
-                topControlView.tipsLabel.text = "未连接..."
-                topControlView.memberLabel.text = "人数:0"
+                topControlView.tipsLabel.text = "not connected".L
+                topControlView.memberLabel.text = "number".L + ":0"
             case .loading:
                 self.isOnCalling = false
-                topControlView.tipsLabel.text = "呼叫中..."
-                topControlView.memberLabel.text = "人数:0"
+                topControlView.tipsLabel.text = "calling".L
+                topControlView.memberLabel.text = "number".L + ":0"
             case .loadFail:
-                topControlView.tipsLabel.text = "呼叫失败"
+                topControlView.tipsLabel.text = "call failed".L
             case .deviceSleep:
                 self.isOnCalling = false
-                topControlView.tipsLabel.text = "设备休眠中..."
+                topControlView.tipsLabel.text = "device is sleeping".L
             case .connected:
                 self.isOnCalling = true
-                topControlView.tipsLabel.text = "已连接"
+                topControlView.tipsLabel.text = "connected".L
             case .playing:
                 self.isOnCalling = true
-                topControlView.tipsLabel.text = "预览中..."
+                topControlView.tipsLabel.text = "Previewing".L
             }
         }
     }
@@ -213,7 +213,7 @@ class DoorbellAbilitySimpleLogicView: UIView {
         btn.alpha = 0.8
         btn.layer.cornerRadius = 8.VS
         btn.layer.masksToBounds = true
-        btn.setTitle("截图", for:.normal)
+        btn.setTitle("screenShot".L, for:.normal)
         btn.tag = 1002
         btn.addTarget(self, action: #selector(screenShot(btn:)), for: .touchUpInside)
         return btn
@@ -226,7 +226,7 @@ class DoorbellAbilitySimpleLogicView: UIView {
         btn.alpha = 0.8
         btn.layer.cornerRadius = 8.VS
         btn.layer.masksToBounds = true
-        btn.setTitle("全屏", for:.normal)
+        btn.setTitle("fullScreen".L, for:.normal)
         btn.tag = 1003
         btn.addTarget(self, action: #selector(fullScreen(btn:)), for: .touchUpInside)
         return btn
@@ -239,7 +239,7 @@ class DoorbellAbilitySimpleLogicView: UIView {
         btn.alpha = 0.8
         btn.layer.cornerRadius = 8.VS
         btn.layer.masksToBounds = true
-        btn.setTitle("消息".L, for:.normal)
+        btn.setTitle("message".L, for:.normal)
         btn.titleLabel?.adjustsFontSizeToFitWidth = true
         btn.titleLabel?.minimumScaleFactor = 0.5
         btn.tag = 1004
@@ -254,7 +254,7 @@ class DoorbellAbilitySimpleLogicView: UIView {
         btn.alpha = 0.8
         btn.layer.cornerRadius = 8.VS
         btn.layer.masksToBounds = true
-        btn.setTitle("流媒体".L, for:.normal)
+        btn.setTitle("stream media".L, for:.normal)
         btn.titleLabel?.adjustsFontSizeToFitWidth = true
         btn.titleLabel?.minimumScaleFactor = 0.5
         btn.tag = 1005
@@ -270,8 +270,8 @@ class DoorbellAbilitySimpleLogicView: UIView {
         btn.alpha = 0.8
         btn.layer.cornerRadius = 8.VS
         btn.layer.masksToBounds = true
-        btn.setTitle("预览".L, for:.normal)
-        btn.setTitle("停止".L, for:.selected)
+        btn.setTitle("preview".L, for:.normal)
+        btn.setTitle("stop".L, for:.selected)
         btn.tag = 1006
         btn.addTarget(self, action: #selector(previewBtnPress(btn:)), for: .touchUpInside)
         return btn
@@ -311,13 +311,13 @@ extension DoorbellAbilitySimpleLogicView{
     
     func showSendMsgAlert(){
         guard let device = device, let conObj = device.connectObj else {
-            AGToolHUD.showInfo(info: "请先呼叫设备")
+            AGToolHUD.showInfo(info: "Please call the device first".L)
             return
         }
         
-        AGConfirmEditAlertVC.showTitleTop("请输入要发送的信息", editText: "请输入要发送的信息") { msg in
+        AGConfirmEditAlertVC.showTitleTop("Please enter the information you want to send".L, editText: "Please enter the information you want to send".L) { msg in
             guard let paramData = msg.data(using: .utf8) else{
-                AGToolHUD.showInfo(info: "消息转换失败")
+                AGToolHUD.showInfo(info: "Message conversion failed".L)
                 return
             }
 
@@ -343,7 +343,7 @@ extension DoorbellAbilitySimpleLogicView{
         let connentInfor = connectObj?.getInfo()
         guard  connentInfor?.mState == .connected else {
             log.i("enableAV mPeerNodeId:\(String(describing: connentInfor?.mPeerNodeId)),stare:\(String(describing: connentInfor?.mState.rawValue))")
-            AGToolHUD.showInfo(info: "当前未连接成功，请稍后重试)")
+            AGToolHUD.showInfo(info: "The connection is currently not successful, please try again later".L)
             return
         }
         
@@ -367,8 +367,8 @@ extension DoorbellAbilitySimpleLogicView{
         guard let device = device else { return }
         
         guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
-            log.i("recordScreen fail streamStatus status is error")
-            AGToolHUD.showInfo(info: "请在正常预览视频时进行截图！")
+            log.i("publishAudioEnable fail streamStatus status is error")
+            AGToolHUD.showInfo(info: "Please make a voice call after normal preview".L)
             return
         }
            
@@ -396,13 +396,13 @@ extension DoorbellAbilitySimpleLogicView{
         
         guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
-            AGToolHUD.showInfo(info: "请在正常预览视频时设置音放！")
+            AGToolHUD.showInfo(info: "Please set the audio playback when previewing the video normally".L)
             return
         }
         
         DoorBellManager.shared.mutePeerAudio(device.connectObj, subStreamId: .BROADCAST_STREAM_1, mute: !btn.isSelected) { success, msg in
             if success{
-                log.i("设置静音成功")
+                log.i("Set mute successfully".L)
                 btn.isSelected = !btn.isSelected
             }
         }
@@ -421,7 +421,8 @@ extension DoorbellAbilitySimpleLogicView{
         DoorBellManager.shared.hungUpAnswer(connectObj) { success, msg in
             if success {
                 debugPrint("挂断成功")
-                AGToolHUD.showInfo(info: "挂断成功")
+                AGToolHUD.showInfo(info: 
+                                    "Hang up successfully".L)
             }else{
                 AGToolHUD.showInfo(info: msg)
             }
@@ -442,7 +443,7 @@ extension DoorbellAbilitySimpleLogicView{
     }
     
     func handelUserMembers(_ members : Int){
-        topControlView.memberLabel.text = "人数:\(members)"
+        topControlView.memberLabel.text = "number".L + ":\(members)"
     }
     
     //设置按钮回到初始状态
@@ -467,7 +468,7 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         
         guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
-            AGToolHUD.showInfo(info: "请在正常预览视频时进行录制！")
+            AGToolHUD.showInfo(info: "Please record while previewing the video normally".L)
             return
         }
         
@@ -497,12 +498,12 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
     func fetchPHAuthorization()->Bool{
         let status = PHPhotoLibrary.authorizationStatus()
         if status == .restricted || status == .denied {
-            AGToolHUD.show(info: "请开启相册权限")
+            AGToolHUD.show(info: "Please enable album permissions".L)
             return false
         } else if status == .notDetermined {
             PHPhotoLibrary.requestAuthorization {[weak self] (status) in
                 if status == .denied {
-                    AGToolHUD.show(info: "请开启相册权限")
+                    AGToolHUD.show(info: "Please enable album permissions".L)
                 } else if status == .authorized {
                     DispatchQueue.main.async {
                         self?.recordScreen()
@@ -519,7 +520,7 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
         guard let device = device else { return }
         guard let streamStatus = device.connectObj?.getStreamStatus(peerStreamId: .BROADCAST_STREAM_1),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
-            AGToolHUD.showInfo(info: "请在正常预览视频时进行截图！")
+            AGToolHUD.showInfo(info: "Please take a screenshot when previewing the video normally".L)
             return
         }
         
@@ -530,7 +531,7 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
                 debugPrint("截屏成功")
                 guard let shotImg = UIImage(contentsOfFile: imagePath) else {
                     print("无法加载图像：\(imagePath)")
-                    AGToolHUD.showInfo(info: "图片截屏失败！")
+                    AGToolHUD.showInfo(info: "Picture screenshot failed".L)
                     return
                 }
                 self?.saveImgToAlbum(shotImg)
@@ -546,15 +547,15 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
                 assetRequest?.creationDate = Date() // 可选：设置视频创建日期
             }) { success, error in
                 if success {
-                    AGToolHUD.showInfo(info: "视频保存成功")
+                    AGToolHUD.showInfo(info: "Video saved successfully".L)
                     print("视频保存成功")
                 } else {
-                    AGToolHUD.showInfo(info: "视频保存失败")
+                    AGToolHUD.showInfo(info: "Video saving failed".L)
                     print("视频保存失败：\(error?.localizedDescription ?? "未知错误")")
                 }
             }
         } else {
-            AGToolHUD.showInfo(info: "视频保存失败")
+            AGToolHUD.showInfo(info: "Video saving failed".L)
             print("视频不兼容，无法保存到相册")
         }
     }
@@ -565,7 +566,7 @@ extension DoorbellAbilitySimpleLogicView{//下层View传值
     
     @objc func image(image: UIImage,didFinishSavingWithError: NSError?,contextInfo: AnyObject) {
         if didFinishSavingWithError != nil {
-            AGToolHUD.showInfo(info: "截图保存失败！")
+            AGToolHUD.showInfo(info: "Failed to save screenshot".L)
             return
         }
     }

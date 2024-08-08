@@ -37,7 +37,7 @@ class AVStreamVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
-        self.title = "流媒体"
+        self.title = "stream media".L
         addLeftBarButtonItem()
         loadData()
         setUpUI()

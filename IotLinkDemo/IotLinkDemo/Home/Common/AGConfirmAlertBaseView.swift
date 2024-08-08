@@ -85,7 +85,6 @@ class AGConfirmAlertBaseView: UIView {
     }
     
     // MARK: - actions
-    // 点击听到提示音
     @objc private func didClickCommitButton(_ button:UIButton){
         clickCommitButtonAction?()
     }

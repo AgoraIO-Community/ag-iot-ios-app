@@ -106,8 +106,8 @@ class StreamTooBarSimpleView: UIView, UIImagePickerControllerDelegate & UINaviga
         btn.alpha = 0.8
         btn.layer.cornerRadius = 8.VS
         btn.layer.masksToBounds = true
-        btn.setTitle("预览".L, for:.normal)
-        btn.setTitle("停止".L, for:.selected)
+        btn.setTitle("preview".L, for:.normal)
+        btn.setTitle("stop".L, for:.selected)
         btn.tag = 1001
         btn.addTarget(self, action: #selector(btnEvent(btn:)), for: .touchUpInside)
         return btn
@@ -151,7 +151,7 @@ class StreamTooBarSimpleView: UIView, UIImagePickerControllerDelegate & UINaviga
         btn.alpha = 0.8
         btn.layer.cornerRadius = 8.VS
         btn.layer.masksToBounds = true
-        btn.setTitle("截图".L, for:.normal)
+        btn.setTitle("screenShot".L, for:.normal)
         btn.setTitle("forbitConverse".L, for:.selected)
         btn.tag = 1004
         btn.addTarget(self, action: #selector(btnEvent(btn:)), for: .touchUpInside)
@@ -184,15 +184,10 @@ class StreamTooBarSimpleView: UIView, UIImagePickerControllerDelegate & UINaviga
         default:
             break
         }
-        
     }
-    
 }
 
 extension StreamTooBarSimpleView{
-    
-    
-    
     func handelHorBtnSuccess(_ isSuccess : Bool){//呼叫
         DispatchQueue.main.async {
             // 在主线程执行的代码

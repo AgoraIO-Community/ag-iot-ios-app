@@ -94,6 +94,7 @@ class HomePageMainVC: AGBaseVC {
         setUpUI()
         // 监听网络状态
         startListeningNetStatus()
+        
     }
  
     func loadData(){
@@ -241,9 +242,10 @@ extension HomePageMainVC {
    }
     
     func showEditAppIdAlert(){
-        AGConfirmEditMultiAlertVC.showTitleTop("请输入AppId", editText: "请输入AppId") {[weak self] appId,key,secret in
+        AGConfirmEditMultiAlertVC.showTitleTop("Please enter project information".L, editText: "Please enter project information".L) {[weak self] appId,key,secret,region in
             TDUserInforManager.shared.saveUserMasterAppId(appId)
             TDUserInforManager.shared.saveUserCustomKeyAndSecret(key, secret)
+            TDUserInforManager.shared.saveUserRegion(region)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 self?.checkLoginState()
             }
@@ -291,7 +293,7 @@ extension HomePageMainVC {
         
         let sessionInfor = device.connectObj?.getInfo()
         if  sessionInfor?.mState != .connected{//未在通话中，返回
-            AGToolHUD.showInfo(info: "请在连接设备后进入流媒体页！")
+            AGToolHUD.showInfo(info: "Please enter the streaming page after connecting the device".L)
             return
         }
         
@@ -326,7 +328,7 @@ extension HomePageMainVC {
         
         guard let objInfor = device.connectObj?.getInfo(),objInfor.mState == .connected else {//未在通话中，返回
             log.i("recordScreen fail streamStatus status is error")
-            AGToolHUD.showInfo(info: "请在正常预览视频时进入全屏页！")
+            AGToolHUD.showInfo(info: "Please enter the full-screen page after previewing the video normally".L)
             return
         }
         fullVC = CallFullScreemVC()
@@ -340,12 +342,12 @@ extension HomePageMainVC {
     }
     func handelCallAction(tag : Int){
         
-        let alert = UIAlertController(title: "是否加密?", message: "", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "加密", style: .default, handler: {[weak self]  _ in
+        let alert = UIAlertController(title: "Encrypt or not?".L, message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "encry".L, style: .default, handler: {[weak self]  _ in
             print("加密")
             self?.callDevice(tag: tag,mEncrypt: true)
         }))
-        alert.addAction(UIAlertAction(title: "不加密", style: .default, handler: { [weak self] _ in
+        alert.addAction(UIAlertAction(title: "noEncry".L, style: .default, handler: { [weak self] _ in
             print("不加密")
             self?.callDevice(tag:tag, mEncrypt:false)
         }))
@@ -366,27 +368,37 @@ extension HomePageMainVC {
         doorbellVM.registerConnectMgrListener(listener: self)
         let connectParam = ConnectCreateParam(mPeerNodeId: device.peerNodeId,mEncrypt: mEncrypt,mAttachMsg: "")
         let connectObj = doorbellVM.connectDevice(connectParam)
+        guard let connectObj = connectObj  else {
+            log.i("callDevice result connectObj is nil")
+            return
+        }
         
         device.connectObj = connectObj
         cell.device = device
         doorbellVM.registerConnectObjListener(connectObj: connectObj, listener: self)
         
-        
-//        guard let connectMgr = sdk?.connectionMgr else{ print("sdk.callkitMgr not init") }
-//        let connectParam = ConnectCreateParam(mPeerNodeId: device.peerNodeId,mEncrypt: true, mAttachMsg: "")
-//        let connectObj = connectMgr.connectionCreate(connectParam: connectParam)
-//        guard let connectObj = connectObj  else { print("connectObj is nil") }
-//        let ret = connectObj.registerListener(callBackListener: self)
-//        
+
+//        iotsdk.connectionMgr.registerListener(connectionMgrListener:self)
+//        let peerNodeId = "<DEVICE_NODE_ID>"
+//        let connectParam = ConnectCreateParam(mPeerNodeId: peerNodeId,mEncrypt: true,mAttachMsg: "")
+//        let connectObj = iotsdk.connectionMgr.connectionCreate(connectParam: connectParam)
+//        guard let connectObj = connectObj  else {
+//            print("connectObj is nil")
+//            return
+//        }
+//        connectObj.registerListener(callBackListener: self)
+//
 //        // 使用 IConnectionObj 对象实例来断开相应的连接
 //        let errCode = connectMgr.connectionDestroy(connectObj: connectObj)
+        
+//        iotsdk.release()
     }
     
     //挂断设备
     func handUpDevice(_ connectObj : IConnectionObj){
         doorbellVM.hangupDevice(connectObj) { success, msg in
             debugPrint("调用挂断：\(msg)")
-            AGToolHUD.showInfo(info: "挂断成功")
+            AGToolHUD.showInfo(info: "Hang up successfully".L)
         }
     }
 }
@@ -403,7 +415,7 @@ extension HomePageMainVC: IConnectionMgrListener {
             cell?.handelCallTipType(.loadFail)
             cell?.handelCallStateText(false)
             cell?.handelStateNone()
-            AGToolHUD.showInfo(info: "连接超时,请检查设备状态")
+            AGToolHUD.showInfo(info: "Connection timed out, please check device status".L)
         }
     }
     
@@ -433,7 +445,7 @@ extension HomePageMainVC: IConnectionMgrListener {
 extension HomePageMainVC:  ICallbackListener {
     func onFileTransError(connectObj: AgoraIotLink.IConnectionObj?, errCode: Int) {
         if errCode == ErrCode.XERR_NETWORK {
-            AGToolHUD.showInfo(info: "数据传输失败，请重试！")
+            AGToolHUD.showInfo(info: "Data transfer failed, please try again".L)
             fullVC?.isTransferEnd = true
         }
     }
@@ -494,8 +506,8 @@ extension HomePageMainVC:  ICallbackListener {
         log.i("订阅预览时错误回调：onPreviewError errCode:\(errCode)")
         var tempTips = ""
         if errCode == ErrCode.XERR_RTMMGR_MSG_PEER_UNREACHABLE{
-            tempTips = "对端掉线，消息不可达"
-            AGToolHUD.showInfo(info: "预览报错，errCode：\(errCode) \(tempTips)")
+            tempTips = "The peer is offline and the message is unreachable".L
+            AGToolHUD.showInfo(info: "Preview error，errCode：\(errCode) \(tempTips)")
         }
         if subStreamId == .BROADCAST_STREAM_1 {
             let cell = getCellWithConnectObj(connectObj!)
@@ -513,7 +525,7 @@ extension HomePageMainVC:  ICallbackListener {
         guard let recvedSignalDataString = String(data: recvedSignalData, encoding: .utf8) else {
             return
         }
-        AGToolHUD.showInfo(info: "收到消息:\(recvedSignalDataString)")
+        AGToolHUD.showInfo(info: "Received the news".L + ":\(recvedSignalDataString)")
     }
 }
 
@@ -527,7 +539,7 @@ extension HomePageMainVC{ //设备删除，添加
     // 添加设备
     @objc private func addDevice(){
         guard isDeviceEditing() == false else {
-            AGToolHUD.showInfo(info: "请将删除操作完成，再进行添加!")
+            AGToolHUD.showInfo(info: "Please complete the deletion operation before adding".L)
             return
         }
         AGEditAlertVC.showTitleTop("addDevices".L, editText: "please enter nodeId".L,alertType:.modifyDeviceName ) {[weak self] nodeId in
@@ -537,7 +549,7 @@ extension HomePageMainVC{ //设备删除，添加
     
     func addDeviceToArray(_ nodeId : String){
         guard isHaveDevice(nodeId) == false else{
-            AGToolHUD.showInfo(info: "设备已存在！")
+            AGToolHUD.showInfo(info: "Device already exists".L)
             return
         }
         TDUserInforManager.shared.savePeerNodeId(nodeId)
@@ -603,7 +615,7 @@ extension HomePageMainVC{ //设备删除，添加
         // 选中的数量大于0
         if selectedIsNotEmpty() {
             selectAllView.disabled = true
-            AGAlertViewController.showTitle("提示", message: "确定要删除所选中的设备吗", cancelTitle: "取消", commitTitle: "确定") {[weak self] in
+            AGAlertViewController.showTitle("tips".L, message: "Are you sure you want to delete the selected device?".L, cancelTitle: "cancel".L, commitTitle: "confirm".L) {[weak self] in
                 self?.selectAllView.disabled = false
                 self?.endEditMsgList()
                 self?.deleteMessages()
@@ -611,7 +623,7 @@ extension HomePageMainVC{ //设备删除，添加
                 self?.selectAllView.disabled = false
             }
         }else{
-            SVProgressHUD.showInfo(withStatus: "请选择要删除的设备")
+            SVProgressHUD.showInfo(withStatus: "Please select a device to delete".L)
             SVProgressHUD.dismiss(withDelay: 2)
         }
     }
@@ -684,7 +696,7 @@ extension HomePageMainVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
     func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
         let customView = UIView()
         let titleLabel = UILabel()
-        titleLabel.text = "暂无设备"
+        titleLabel.text = "noDevices".L
         titleLabel.textColor = UIColor(hexRGB: 0x000000, alpha: 0.5)
         titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         customView.addSubview(titleLabel)
@@ -694,7 +706,7 @@ extension HomePageMainVC: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
         }
         
         let button = UIButton(type: .custom)
-        button.setTitle("添加设备", for: .normal)
+        button.setTitle("addDevices".L, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         button.setTitleColor(UIColor(hexRGB: 0x25DEDE), for: .normal)
         button.addTarget(self, action: #selector(addDevice), for: .touchUpInside)

@@ -143,7 +143,7 @@ extension StreamSimpleLogicView{
         let connectObj = streamModel.connectObj
         let connentInfor = connectObj?.getInfo()
         guard  connentInfor?.mState == .connected else {
-            AGToolHUD.showInfo(info: "当前未连接成功，请稍后重试")
+            AGToolHUD.showInfo(info: "The connection is currently not successful, please try again later".L)
             return
         }
         
@@ -172,13 +172,13 @@ extension StreamSimpleLogicView{
         
         guard let streamStatus = streamModel.connectObj?.getStreamStatus(peerStreamId: streamModel.streamId),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
-            AGToolHUD.showInfo(info: "请在正常预览视频时进行静音！")
+            AGToolHUD.showInfo(info: "Please set the audio playback when previewing the video normally".L)
             return
         }
         
         DoorBellManager.shared.mutePeerAudio(streamModel.connectObj, subStreamId: streamModel.streamId, mute: !btn.isSelected) { success, msg in
             if success{
-                log.i("设置静音成功")
+                log.i("Set mute successfully".L)
                 btn.isSelected = !btn.isSelected
             }
         }
@@ -219,7 +219,7 @@ extension StreamSimpleLogicView{//下层View传值
         
         guard let streamStatus = streamModel.connectObj?.getStreamStatus(peerStreamId: streamModel.streamId),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
-            AGToolHUD.showInfo(info: "请在正常预览视频时进行录制！")
+            AGToolHUD.showInfo(info: "Please record while previewing the video normally".L)
             return
         }
         
@@ -252,12 +252,12 @@ extension StreamSimpleLogicView{//下层View传值
         
         let status = PHPhotoLibrary.authorizationStatus()
         if status == .restricted || status == .denied {
-            AGToolHUD.show(info: "请开启相册权限")
+            AGToolHUD.show(info: "Please enable album permissions".L)
             return false
         } else if status == .notDetermined {
             PHPhotoLibrary.requestAuthorization {[weak self] (status) in
                 if status == .denied {
-                    AGToolHUD.show(info: "请开启相册权限")
+                    AGToolHUD.show(info: "Please enable album permissions".L)
                 } else if status == .authorized {
                     self?.recordScreen()
                 }
@@ -275,7 +275,7 @@ extension StreamSimpleLogicView{//下层View传值
         
         guard let streamStatus = streamModel.connectObj?.getStreamStatus(peerStreamId: streamModel.streamId),streamStatus.mSubscribed == true else {
             log.i("recordScreen fail streamStatus status is error")
-            AGToolHUD.showInfo(info: "请在正常预览视频时进行截图！")
+            AGToolHUD.showInfo(info: "Please take a screenshot when previewing the video normally".L)
             return
         }
         
@@ -286,7 +286,7 @@ extension StreamSimpleLogicView{//下层View传值
                 debugPrint("截屏成功")
                 guard let shotImg = UIImage(contentsOfFile: imagePath) else {
                     print("无法加载图像：\(imagePath)")
-                    AGToolHUD.showInfo(info: "图片截屏失败！")
+                    AGToolHUD.showInfo(info: "Picture screenshot failed".L)
                     return
                 }
                 self?.saveImgToAlbum(shotImg)
@@ -305,15 +305,15 @@ extension StreamSimpleLogicView{//下层View传值
                 assetRequest?.creationDate = Date() // 可选：设置视频创建日期
             }) { success, error in
                 if success {
-                    AGToolHUD.showInfo(info: "视频保存成功")
+                    AGToolHUD.showInfo(info: "Video saved successfully".L)
                     print("视频保存成功")
                 } else {
-                    AGToolHUD.showInfo(info: "视频保存失败")
+                    AGToolHUD.showInfo(info: "Video saving failed".L)
                     print("视频保存失败：\(error?.localizedDescription ?? "未知错误")")
                 }
             }
         } else {
-            AGToolHUD.showInfo(info: "视频保存失败")
+            AGToolHUD.showInfo(info: "Video saving failed".L)
             print("视频不兼容，无法保存到相册")
         }
     }
@@ -344,7 +344,7 @@ extension StreamSimpleLogicView{//下层View传值
     @objc func image(image: UIImage,didFinishSavingWithError: NSError?,contextInfo: AnyObject) {
      
         if didFinishSavingWithError != nil {
-            AGToolHUD.showInfo(info: "截图保存失败！")
+            AGToolHUD.showInfo(info: "Picture screenshot failed".L)
             return
         }
         

@@ -21,8 +21,12 @@ class ThirdAccountManager{
     #elseif false //dev 国外
         static let http_3rdParty = "https://third-user.la3.agoralab.co/third-party"
     #elseif true //dev 2.0
-        static let http_3rdParty =  "http://api.sd-rtn.com/cn/iot/link"
-//        static let http_3rdParty =  "http://api-test-huzhou1.agora.io/cn/iot/link"
+//        static let http_3rdParty =  "http://api.sd-rtn.com/cn/iot/link"
+//        static let http_3rdParty =  "http://api-test-huzhou1.agora.io/eu/iot/link"
+        //"https://api.sd-rtn.com/"
+        //"http://api-test-huzhou1.agora.io/"
+        static let httpPre =  "https://api.sd-rtn.com/"
+        static let httpEnd = "/iot/link"
     #elseif false //prd 国外
         
     #endif
@@ -64,6 +68,29 @@ class ThirdAccountManager{
                 let data:Data?
             }
         }
+        
+        class func getRegionString() -> String {
+            let region = TDUserInforManager.shared.curRegion
+            var regionString = ""
+            switch region {
+            case "CN":
+                regionString = "cn"
+                break
+            case "NA":
+                regionString = "na"
+                break
+            case "AP":
+                regionString = "ap"
+                break
+            case "EU":
+                regionString = "eu"
+                break
+            default:
+                break
+            }
+            
+            return regionString
+        }
     }
     
     static var sessionManager:Alamofire.Session!
@@ -90,9 +117,10 @@ class ThirdAccountManager{
     }
     
     class func nodeCreate(_ account : String, _ rsp:@escaping(Int,String,String)->Void){
+        let baseUrl =  api.httpPre + api.getRegionString() + api.httpEnd
         let header = ThirdAccountManager.configCommonHeader()
         let paramsDic = ["userId":account,"clientType":"2","appId":TDUserInforManager.shared.curMasterAppId]
-        let url = api.http_3rdParty + api.nodeCreate
+        let url = baseUrl + api.nodeCreate
         print("url:\(url) header:\(header) paramsDic:\(paramsDic)")
         
 //        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in
@@ -124,6 +152,8 @@ class ThirdAccountManager{
     
     class func nodeActivate(_ account : String,_ rsp:@escaping(Int,String,api.activateNode.Rsp?)->Void){
         
+        let baseUrl =  api.httpPre + api.getRegionString() + api.httpEnd
+        
         //------------激活设备请求参数，仅在绑定设备demo时需要-------------
 //        let header = ThirdAccountManager.configCommonHeader()
 //        
@@ -136,7 +166,8 @@ class ThirdAccountManager{
         
         let header = ThirdAccountManager.configCommonHeader()
         let paramsDic = ["userId":account,"clientType":"2","appId":TDUserInforManager.shared.curMasterAppId,"pusherId":"d0177a34"]
-        let url = api.http_3rdParty + api.nodeActivate
+        let url = baseUrl + api.nodeActivate
+        print("url:\(url) header:\(header) paramsDic:\(paramsDic)")
    
 //        AF.request(url,method: .post,parameters: paramsDic,encoder: JSONParameterEncoder.default, headers: header) .validate().responseString() { reData in
 //

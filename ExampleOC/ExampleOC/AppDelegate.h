@@ -6,10 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AgoraIotLink-Swift.h"
+#import "ExampleOC-Bridging-Header.h"
+//#import "AgoraIotLink-Swift.h"
 #import "IotStateDelegate.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate,IotStateDelegate,IotCallbackDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate,IotStateDelegate,IotCallbackDelegate,IConnectionMgrListener,ICallbackListener>
 
 -(void)DeviceStateUpdate:(BOOL)onoff deviceId:(NSString*)deviceId productId:(NSString*)productId;
 

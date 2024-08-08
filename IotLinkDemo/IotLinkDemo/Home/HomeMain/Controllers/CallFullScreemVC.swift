@@ -119,7 +119,7 @@ class CallFullScreemVC: UIViewController {
             make.top.equalTo(videoView.snp.top).offset(30)
             make.left.equalTo(15)
             make.width.equalTo(80)
-            make.height.equalTo(50)
+            make.height.equalTo(150)
         }
         
         let tempW = view.frame.size.width
@@ -142,8 +142,8 @@ class CallFullScreemVC: UIViewController {
     
     private lazy var accecptButton:UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("开始传输", for: .normal)
-        button.setTitle("结束传输", for: .selected)
+        button.setTitle("start transfer".L, for: .normal)
+        button.setTitle("end transfer".L, for: .selected)
         button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .black
@@ -156,8 +156,8 @@ class CallFullScreemVC: UIViewController {
     
     private lazy var videoQAButton:UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("视频质量", for: .normal)
-        button.setTitle("关闭弹框", for: .selected)
+        button.setTitle("video quality".L, for: .normal)
+        button.setTitle("close popup".L, for: .selected)
         button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .lightGray
@@ -222,7 +222,7 @@ class CallFullScreemVC: UIViewController {
             if ret == ErrCode.XOK {
                 btn.isSelected = !btn.isSelected
             }else{
-                AGToolHUD.showInfo(info: "开始传输失败:\(String(describing: ret))")
+                AGToolHUD.showInfo(info: "Failed to start transfer".L + ":\(String(describing: ret))")
             }
             print("sendMsgButton : ret :\(String(describing: ret))")
         }else{
@@ -288,7 +288,7 @@ class VideoQAlertView: UIView {
         self.frame = CGRect(x: 0, y: screenHeight * 1 / 2, width: screenWidth, height: screenHeight * 1 / 2)
         
         // 添加原视频按钮
-        originalVideoButton.setTitle("原视频", for: .normal)
+        originalVideoButton.setTitle("original video".L, for: .normal)
         originalVideoButton.backgroundColor = UIColor.lightGray
         originalVideoButton.tag = 1
         originalVideoButton.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
@@ -307,14 +307,14 @@ class VideoQAlertView: UIView {
         }
         
         // 添加超级画质按钮
-        superQualityButton.setTitle("超级画质", for: .normal)
+        superQualityButton.setTitle("super picture quality".L, for: .normal)
         superQualityButton.backgroundColor = UIColor.lightGray
         superQualityButton.tag = 6
         superQualityButton.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         addSubview(superQualityButton)
         
         // 添加画质深度 Label 和 UISlider
-        qualityLabel.text = "画质深度: 0"
+        qualityLabel.text = "depth of image quality".L + ": 0"
         qualityLabel.font = UIFont.systemFont(ofSize: 13)
         addSubview(qualityLabel)
         
@@ -389,7 +389,7 @@ class VideoQAlertView: UIView {
     
     @objc func sliderValueChanged(_ sender: UISlider) {
         print("Slider value changed: \(sender.value)")
-        qualityLabel.text = "画质深度: \(sender.value)"
+        qualityLabel.text = "depth of image quality".L + ": \(sender.value)"
     }
     
     @objc func sliderValueEnded(_ sender: UISlider) {

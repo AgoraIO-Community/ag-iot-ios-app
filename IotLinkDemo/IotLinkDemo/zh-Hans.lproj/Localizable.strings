@@ -440,6 +440,65 @@
 "please enter nodeId" = "请输入设备nodeId";
 "Clear AppId data" = "清除AppId数据";
 
+//------2.1.2新增------
+"message" = "消息";
+"stream media" = "流媒体";
+"preview" = "预览";
+"not connected" = "未连接...";
+"calling" = "呼叫中...";
+"device is sleeping" = "设备休眠中";
+"connected" = "已连接";
+"Previewing" = "预览中...";
+"stop" = "停止";
+"Please call the device first" = "请先呼叫设备";
+"Please enter the information you want to send" = "请输入要发送的信息";
+"Message conversion failed" = "消息转换失败";
+"The connection is currently not successful, please try again later" = "当前未连接成功，请稍后重试";
+"Please take a screenshot when previewing the video normally" = "请在正常预览视频时进行截图";
+"Please set the audio playback when previewing the video normally" = "请在正常预览视频时设置音放";
+"Set mute successfully" = "设置静音成功";
+"Hang up successfully" = "挂断成功";
+"Please record while previewing the video normally" = "请在正常预览视频时进行录制";
+"Please enable album permissions" = "请开启相册权限";
+"Please make a voice call after normal preview" = "请在正常预览后语音通话";
+"Picture screenshot failed" = "图片截屏失败";
+"Video saved successfully" = "视频保存成功";
+"Video saving failed" = "视频保存失败";
+"Failed to save screenshot" = "截图保存失败";
+"The screenshot has been saved to the album" = "截图已保存至相册";
+"The video has been saved to the album" = "视频已保存至相册";
+"View Album" = "查看相册";
+"Please select a region" = "请选择区域";
+"The current network is unavailable, please check the mobile network" = "当前网络不可用，请检查手机网络";
+"Please enter the streaming page after connecting the device" = "请在连接设备后进入流媒体页";
+"Please enter the full-screen page after previewing the video normally" = "请在正常预览视频后进入全屏页";
+"Encrypt or not?" = "是否加密?";
+"encry" = "加密";
+"noEncry" = "不加密";
+"Connection timed out, please check device status" = "连接超时,请检查设备状态";
+"Data transfer failed, please try again" = "数据传输失败，请重试";
+"Received the news" = "收到消息";
+"Please complete the deletion operation before adding" = "请将删除操作完成，再进行添加";
+"Device already exists" = "设备已存在";
+"Are you sure you want to delete the selected device?" = "确定要删除所选中的设备吗";
+"Please select a device to delete" = "请选择要删除的设备";
+"start transfer" = "开始传输";
+"end transfer" = "结束传输";
+"video quality" = "视频质量";
+"close popup" = "关闭弹框";
+"Failed to start transfer" = "开始传输失败";
+"original video" = "原视频";
+"super picture quality" = "超级画质";
+"Clear cache data" = "清除缓存数据";
+"please enter" = "请输入";
+"Please enter project information" = "请输入项目信息";
+"not supported yet" = "该功能暂不支持，敬请期待!";
+"clear application tip" = "清除应用配置后进程退出，下次进入需重新配置appid,确定清除？";
+"appId has been cleared tip" = "已清除appId,应用即将自动退出,请重新打开";
+"appId has been reset tip" = "已重置appId,应用即将自动退出,请重新打开";
+"" = "";
+
+
 
 
 //------以下为服务器返回msg字段------

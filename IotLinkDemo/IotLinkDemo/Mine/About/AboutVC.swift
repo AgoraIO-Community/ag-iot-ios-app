@@ -33,7 +33,7 @@ class AboutVC: AGBaseVC {
         versionLabel.font = UIFont.systemFont(ofSize: 12)
         versionLabel.textColor = .black
         if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
-            versionLabel.text = "versionNumber".L + "：2.1.0.1"
+            versionLabel.text = "versionNumber".L + "：2.1.2.0"
 //            versionLabel.text = "versionNumber".L + "：\(version)"
         }
         view.addSubview(versionLabel)
@@ -46,13 +46,14 @@ class AboutVC: AGBaseVC {
         tipsLabel.numberOfLines = 0
         let privacyTips = "privacyPolicy".L
         let userProtocolTips = "userAgreement".L
-        let tips = "byUsingThisApplicationYouAgree".L + "\n\(privacyTips)" + "and" + "\(userProtocolTips)"
+        let tipsHeader = "byUsingThisApplicationYouAgree".L
+        let tips = tipsHeader + "\n\(privacyTips)" + " and " + "\(userProtocolTips)"
         let attributedTips = NSMutableAttributedString.init(string: tips)
         attributedTips.lineSpacing = 10
         attributedTips.alignment = .center
         attributedTips.font = UIFont.systemFont(ofSize: 12)
         attributedTips.color = .black
-        let privacyRange = NSRange(location: tips.count - userProtocolTips.count - privacyTips.count - 1, length: privacyTips.count)
+        let privacyRange = NSRange(location:tipsHeader.count, length: privacyTips.count+1)
         let userProtocolRange =  NSRange(location: tips.count - userProtocolTips.count , length: userProtocolTips.count)
         attributedTips.setTextHighlight(privacyRange, color: UIColor(hexRGB: 0x49A0FF), backgroundColor: .black) { [weak self]  _, _, _, _ in
             debugPrint("点击隐私政策-------")
@@ -67,7 +68,7 @@ class AboutVC: AGBaseVC {
         tipsLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalTo(-120)
-            make.width.equalTo(150)
+            make.width.equalTo(200)
         }
     }
     

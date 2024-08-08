@@ -84,7 +84,7 @@ class TopControTooBarSimpleView: UIView {
         label.adjustsFontSizeToFitWidth = true
         label.backgroundColor = UIColor.clear
         label.textColor = UIColor.green
-        label.text = "未连接..."
+        label.text = "not connected".L
         return label
     }()
     

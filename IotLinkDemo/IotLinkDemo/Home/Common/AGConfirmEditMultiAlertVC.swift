@@ -18,7 +18,7 @@ class AGConfirmEditMultiAlertVC: UIViewController,UITextFieldDelegate {
         let textField = UITextField()
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.clearButtonMode = .always
-        textField.placeholder = "请输入 AppId"
+        textField.placeholder = "please enter".L + " AppId"
         textField.delegate = self
         textField.textColor = UIColor.black//修改颜色
         textField.layer.cornerRadius = 5
@@ -36,7 +36,7 @@ class AGConfirmEditMultiAlertVC: UIViewController,UITextFieldDelegate {
         let textField = UITextField()
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.clearButtonMode = .always
-        textField.placeholder = "请输入 CustomerKey"
+        textField.placeholder = "please enter".L + " CustomerKey"
         textField.delegate = self
         textField.textColor = UIColor.black//修改颜色
         textField.layer.cornerRadius = 5
@@ -54,7 +54,7 @@ class AGConfirmEditMultiAlertVC: UIViewController,UITextFieldDelegate {
         let textField = UITextField()
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.clearButtonMode = .always
-        textField.placeholder = "请输入 CustomerSecret"
+        textField.placeholder = "please enter".L + " CustomerSecret"
         textField.delegate = self
         textField.textColor = UIColor.black//修改颜色
         textField.layer.cornerRadius = 5
@@ -66,6 +66,12 @@ class AGConfirmEditMultiAlertVC: UIViewController,UITextFieldDelegate {
         textField.keyboardType = .asciiCapable
         textField.addTarget(self, action: #selector(textDidChangeNotification(textField:)), for: .editingChanged)
         return textField
+    }()
+    
+    lazy var selectRegionView:DoorbellSelectRegionView = {
+        let regionView = DoorbellSelectRegionView()
+        regionView.backgroundColor = UIColor.clear
+        return regionView
     }()
     
     lazy var alertView:AGConfirmAlertBaseView = {
@@ -86,48 +92,55 @@ class AGConfirmEditMultiAlertVC: UIViewController,UITextFieldDelegate {
         view.addSubview(alertView)
         alertView.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.width.equalTo(300)
+            make.left.equalTo(25)
+            make.right.equalTo(-25)
+            make.height.equalTo(40*4 + 250)
         }
         
         let textbgView = UIView()
         alertView.customView = textbgView
         textbgView.snp.makeConstraints { make in
-            make.left.equalTo(23)
-            make.right.equalTo(-23)
-            make.top.equalTo(74)
-            make.bottom.equalTo(-105)
-            make.height.equalTo(48*4)
+            make.left.equalTo(15)
+            make.right.equalTo(-15)
+            make.top.equalTo(70)
+            make.bottom.equalTo(-75)
         }
         
         textbgView.addSubview(textField)
         textbgView.addSubview(textFieldS)
         textbgView.addSubview(textFieldT)
-        
-        textFieldS.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.left.equalTo(15)
-            make.right.equalTo(-15)
-            make.height.equalTo(48)
-        }
+        textbgView.addSubview(selectRegionView)
         
         textField.snp.makeConstraints { make in
-            make.top.equalTo(textFieldS.bottom).offset(10)
+            make.top.equalToSuperview()
             make.left.equalTo(15)
             make.right.equalTo(-15)
-            make.height.equalTo(48)
+            make.height.equalTo(40)
+        }
+        
+        textFieldS.snp.makeConstraints { make in
+            make.top.equalTo(textField.snp.bottom).offset(15)
+            make.left.equalTo(15)
+            make.right.equalTo(-15)
+            make.height.equalTo(40)
         }
         
         textFieldT.snp.makeConstraints { make in
-            make.bottom.equalTo(textFieldS.top).offset(-10)
+            make.top.equalTo(textFieldS.snp.bottom).offset(15)
             make.left.equalTo(15)
             make.right.equalTo(-15)
-            make.height.equalTo(48)
+            make.height.equalTo(40)
         }
-   
+        
+        selectRegionView.snp.makeConstraints { make in
+            make.top.equalTo(textFieldT.snp.bottom).offset(15)
+            make.left.equalTo(15)
+            make.right.equalTo(-15)
+            make.height.equalTo(70)
+        }
     }
     
-    
-    func setTitle(_ title:String?,editText:String,commitTitle:String ,commitAction: ((String,String,String)->(Void))?) {
+    func setTitle(_ title:String?,editText:String,commitTitle:String ,commitAction: ((String,String,String,String)->(Void))?) {
         
         IQKeyboardManager.shared.enable = true
         IQKeyboardManager.shared.enableAutoToolbar = true
@@ -138,17 +151,22 @@ class AGConfirmEditMultiAlertVC: UIViewController,UITextFieldDelegate {
         alertView.clickCommitButtonAction = {[weak self] in
 
             guard self?.textField.text != "" else {
-                AGToolHUD.showInfo(info: "AppId不能为空!")
+                AGToolHUD.showInfo(info: "AppId cannot be empty")
                 return
             }
             
             guard self?.textFieldS.text != "" else {
-                AGToolHUD.showInfo(info: "customerKey不能为空!")
+                AGToolHUD.showInfo(info: "customerKey cannot be empty")
                 return
             }
             
             guard self?.textFieldT.text != "" else {
-                AGToolHUD.showInfo(info: "customerSecret不能为空!")
+                AGToolHUD.showInfo(info: "customerSecret cannot be empty")
+                return
+            }
+            
+            guard let regionText = self?.selectRegionView.selectedButton?.titleLabel?.text else {
+                AGToolHUD.showInfo(info: "region cannot be empty")
                 return
             }
             
@@ -156,13 +174,13 @@ class AGConfirmEditMultiAlertVC: UIViewController,UITextFieldDelegate {
             IQKeyboardManager.shared.enableAutoToolbar = false
             IQKeyboardManager.shared.shouldShowToolbarPlaceholder = false
             
-            commitAction?((self?.textField.text)!,(self?.textFieldS.text)!,(self?.textFieldT.text)!)
+            commitAction?((self?.textField.text)!,(self?.textFieldS.text)!,(self?.textFieldT.text)!,regionText)
             self?.dismiss(animated: true)
         }
     }
     
     
-    static func showTitleTop(_ title:String?,editText:String,commitTitle:String = "确定", alertType :AGEditAlertType = .none, commitAction: ((String,String,String)->(Void))?)  {
+    static func showTitleTop(_ title:String?,editText:String,commitTitle:String = "confirm".L, alertType :AGEditAlertType = .none, commitAction: ((String,String,String,String)->(Void))?)  {
         let vc = AGConfirmEditMultiAlertVC()
         vc.modalPresentationStyle = .overCurrentContext
         vc.alertType = alertType
@@ -208,7 +226,7 @@ class AGConfirmEditMultiAlertVC: UIViewController,UITextFieldDelegate {
             //限制长度
             if content.getToInt() > 80 {
                 textField.text = hisInputString
-                AGToolHUD.showInfo(info: "最大输入20个字符")
+                AGToolHUD.showInfo(info: "Maximum input length is 20 characters")
             }else{
                 hisInputString = content
             }

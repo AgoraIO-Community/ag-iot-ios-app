@@ -17,6 +17,7 @@
 		844437312A28372B002BAF08 /* CallFullScreemVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844437302A28372B002BAF08 /* CallFullScreemVC.swift */; };
 		844437332A28A8CB002BAF08 /* DoorbellSelectAllSimpleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844437322A28A8CA002BAF08 /* DoorbellSelectAllSimpleView.swift */; };
 		8446B17D2B95CFDA0005F4B6 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8446B17C2B95CFDA0005F4B6 /* KeyCenter.swift */; };
+		84A930992C3692A5001475E4 /* DoorbellSelectRegionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A930982C3692A5001475E4 /* DoorbellSelectRegionView.swift */; };
 		84B3254928A394CA0054B369 /* ThirdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3254828A394CA0054B369 /* ThirdManager.swift */; };
 		84B3ECA528B470700047EE1A /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECA428B470700047EE1A /* MediaPlayer.framework */; };
 		84B3ECA728B470770047EE1A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B3ECA628B470770047EE1A /* AudioToolbox.framework */; };
@@ -174,6 +175,7 @@
 		844437302A28372B002BAF08 /* CallFullScreemVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallFullScreemVC.swift; sourceTree = "<group>"; };
 		844437322A28A8CA002BAF08 /* DoorbellSelectAllSimpleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellSelectAllSimpleView.swift; sourceTree = "<group>"; };
 		8446B17C2B95CFDA0005F4B6 /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
+		84A930982C3692A5001475E4 /* DoorbellSelectRegionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorbellSelectRegionView.swift; sourceTree = "<group>"; };
 		84B3254828A394CA0054B369 /* ThirdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdManager.swift; sourceTree = "<group>"; };
 		84B3ECA428B470700047EE1A /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		84B3ECA628B470770047EE1A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -1180,6 +1182,7 @@
 				8444372E2A24A3FE002BAF08 /* TopControTooBarSimpleView.swift */,
 				96C1B5C8283B9EC3005BCCB9 /* DoorbellSaveImgAlertView.swift */,
 				844437322A28A8CA002BAF08 /* DoorbellSelectAllSimpleView.swift */,
+				84A930982C3692A5001475E4 /* DoorbellSelectRegionView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1408,6 +1411,7 @@
 				A80D5EBD282CE9800096BBDE /* AboutVC.swift in Sources */,
 				A80D5ED8282DEAB70096BBDE /* SystemSettingCell.swift in Sources */,
 				A805ADC82816B85400E6C6DF /* AGAlertViewController.swift in Sources */,
+				84A930992C3692A5001475E4 /* DoorbellSelectRegionView.swift in Sources */,
 				84D6EFB02BA435BC00411E87 /* AVStreamCell.swift in Sources */,
 				9697BE9B2812B25F00447DF9 /* EXT-CheckStr.swift in Sources */,
 				963956E828DDBA2B0049B9C8 /* BlufiFrameCtrlData.m in Sources */,
@@ -1643,12 +1647,14 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1151;
+				CURRENT_PROJECT_VERSION = 1153;
 				DEBUG_INFORMATION_FORMAT = None;
 				DEPLOYMENT_POSTPROCESSING = NO;
-				DEVELOPMENT_TEAM = JDPG69R49Z;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1776,6 +1782,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.Iot.AgoraIoT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "devIot_2024(io.agora.Iot.AgoraIoT)";
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -1796,12 +1803,14 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = IotLinkDemo/IotLinkDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1151;
+				CURRENT_PROJECT_VERSION = 1153;
 				DEBUG_INFORMATION_FORMAT = None;
 				DEPLOYMENT_POSTPROCESSING = NO;
-				DEVELOPMENT_TEAM = JDPG69R49Z;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1929,6 +1938,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.Iot.AgoraIoT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "disIot2024(io.agora.Iot.AgoraIoT)";
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = singlefile;

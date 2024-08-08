@@ -19,7 +19,7 @@ class GeneralSettingVC: AGBaseVC {
     private let accountSafeTitle = "accountSecurity".L
     private let systemSetUpTitle = "systemPermissionSettings".L
     private let appIdTitle = "Clear AppId data".L
-    private let cacheTitle = "清除缓存数据".L
+    private let cacheTitle = "Clear cache data".L
     
     private let bgColor = UIColor(hexRGB: 0xF6F6F6)
 
@@ -155,10 +155,10 @@ extension GeneralSettingVC: UITableViewDelegate,UITableViewDataSource {
     }
     
     private func showAppIdClearAlert(){
-        AGAlertViewController.showTitle("Clear AppId data".L, message: "温馨提示：清除AppId数据后，应用将自动退出,需重新启动应用才生效") {
+        AGAlertViewController.showTitle("Clear AppId data".L, message: "clear application tip".L) {
             TDUserInforManager.shared.clearMasterAppId()
             TDUserInforManager.shared.userSignOut()
-            AGToolHUD.showInfo(info: "已清除appId,应用即将自动退出,请重新打开")
+            AGToolHUD.showInfo(info: "appId has been cleared tip".L)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 TDUserInforManager.shared.exitApplication()
             }

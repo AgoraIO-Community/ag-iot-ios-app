@@ -7,8 +7,8 @@
 */
 
 "userAgreementAndPrivacyPolicy" = "User Agreement & Privacy Policy";
-"privacyPolicy" = "Privacy Policy";
-"userAgreement" = "User Agreement";
+"privacyPolicy" = "PrivacyPolicy";
+"userAgreement" = "UserAgreement";
 "and" = "and";
 "agree" = "agree";
 "disagree" = "disagree";
@@ -209,7 +209,7 @@ or you hear a beep";
 "confirmToUpdate" = "Confirm to update?";
 "updating" = "Updating...";
 
-"hangUp" = "Hang up";
+"hangUp" = "hang up";
 "connect" = "Connect";
 "voiceChangeCall" = "Voice Change Call";
 
@@ -372,7 +372,7 @@ or you hear a beep";
 "failedToModifyAvatar" = "Failed to modify avatar";
 "pleaseEnterANickname" = "Please enter a nickname";
 "failedToChangeNickname" = "Failed to change nickname";
-"byUsingThisApplicationYouAgree" = "By using this application, you agree";
+"byUsingThisApplicationYouAgree" = "by Using App You Agree";
 "unauthorized" = "Unauthorized";
 "alarmMessageSwitchSetSuccessfully" = "Alarm message switch set successfully!";
 "logOutSuccessfully" = "Log out successfully";
@@ -425,11 +425,11 @@ or you hear a beep";
 "teenager" = "Teenager";
 
 //------2.0新增------
-"screenShot" = "screenShot";
+"screenShot" = "scrshot";
 "record" = "record";
 "stop" = "stop";
 "call" = "call";
-"fullScreen" = "fullScreen";
+"fullScreen" = "fullscr";
 "mute" = "mute";
 "unmute" = "unmute";
 "converse" = "converse";
@@ -440,6 +440,67 @@ or you hear a beep";
 "call failed" = "call failed";
 "please enter nodeId" = "please enter nodeId";
 "Clear AppId data" = "Clear AppId data";
+
+//------2.1.2新增------
+"message" = "msg";
+"stream media" = "streaming";
+"preview" = "preview";
+"not connected" = "not connected...";
+"calling" = "calling...";
+"device is sleeping" = "device is sleeping";
+"connected" = "connected";
+"Previewing" = "Previewing...";
+"stop" = "stop";
+"please enter" = "please enter";
+"Please call the device first" = "Please call the device first";
+"Please enter the information you want to send" = "Please enter the information you want to send";
+"Message conversion failed" = "Message conversion failed";
+"The connection is currently not successful, please try again later" = "The connection is currently not successful, please try again later";
+"Please take a screenshot when previewing the video normally" = "Please take a screenshot when previewing the video normally";
+"Please set the audio playback when previewing the video normally" = "Please set the audio playback when previewing the video normally";
+"Set mute successfully" = "Set mute successfully";
+"Hang up successfully" = "Hang up successfully";
+"Please record while previewing the video normally" = "Please record while previewing the video normally";
+"Please enable album permissions" = "Please enable album permissions";
+"Please make a voice call after normal preview" = "Please make a voice call after normal preview";
+"Picture screenshot failed" = "Picture screenshot failed";
+"Video saved successfully" = "Video saved successfully";
+"Video saving failed" = "Video saving failed";
+"Failed to save screenshot" = "Failed to save screenshot";
+"The screenshot has been saved to the album" = "The screenshot has been saved to the album";
+"The video has been saved to the album" = "The video has been saved to the album";
+"View Album" = "viewAlbum";
+"Please select a region" = "Please select a region";
+"The current network is unavailable, please check the mobile network" = "The current network is unavailable, please check the mobile network";
+"Please enter the streaming page after connecting the device" = "Please enter the streaming page after connecting the device";
+"Please enter the full-screen page after previewing the video normally" = "Please enter the full-screen page after previewing the video normally";
+"Encrypt or not?" = "Encrypt or not?";
+"encry" = "encry";
+"noEncry" = "noEncry";
+"Connection timed out, please check device status" = "Connection timed out, please check device status";
+"Data transfer failed, please try again" = "Data transfer failed, please try again";
+"Received the news" = "Received the news";
+"Please complete the deletion operation before adding" = "Please complete the deletion operation before adding";
+"Device already exists" = "Device already exists";
+"Are you sure you want to delete the selected device?" = "Are you sure you want to delete the selected device?";
+"Please select a device to delete" = "Please select a device to delete";
+"start transfer" = "start transfer";
+"end transfer" = "end transfer";
+"video quality" = "video quality";
+"close popup" = "close popup";
+"Failed to start transfer" = "Failed to start transfer";
+"original video" = "original video";
+"super picture quality" = "super picture quality";
+"Clear cache data" = "Clear cache data";
+"Please enter project information" = "Please enter project infor";
+"not supported yet" = "This function is not supported yet, please stay tuned";
+"clear application tip" = "The process exits after clearing the application configuration. You need to reconfigure the appid next time you enter. Are you sure to clear it?";
+"appId has been cleared tip" = "The appId has been cleared. The app will automatically exit. Please reopen it";
+"appId has been reset tip" = "The appId has been reset. The app will exit automatically. Please reopen it.";
+
+
+
+
 
 
 //------以下为服务器返回msg字段------

@@ -21,8 +21,8 @@ class DoorbellAbilityTooBarSimpleView: UIView, UIImagePickerControllerDelegate &
     
     var streamModel: MStreamModel? {
         didSet{
-            connectBtn.setTitle("拉流".L, for:.normal)
-            connectBtn.setTitle("停止".L, for:.selected)
+            connectBtn.setTitle("call".L, for:.normal)
+            connectBtn.setTitle("hangUp".L, for:.selected)
         }
     }
     

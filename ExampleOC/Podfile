@@ -4,7 +4,8 @@ platform :ios, '13.0'
 
 target 'ExampleOC' do
 
-  pod 'AgoraIotLink', :path => '../'
+#  pod 'AgoraIotLink', :path => '../'
+  pod 'AgoraIot_iOS', :path => '../AgoraIot_iOS.podspec'
   pod 'SwiftDate'
   pod 'SDWebImageSwiftUI'
   

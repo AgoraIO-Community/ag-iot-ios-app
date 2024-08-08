@@ -33,10 +33,11 @@ class DoorbellSaveImgAlertView: UIView {
             
             switch type {
             case .saveImg:
-                tipsLabel.text = "截图已保存至相册"
+                tipsLabel.text = "The screenshot has been saved to the album".L
                 break
             case .saveVideo:
-                tipsLabel.text = "视频已保存至相册"
+                tipsLabel.text = "The video has been saved to the album".L
+
                 break
             default:
                 break
@@ -101,13 +102,13 @@ class DoorbellSaveImgAlertView: UIView {
         label.font = FontPFRegularSize(9)
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
-        label.text = "截图已保存至相册"
+        label.text = "The screenshot has been saved to the album".L
         return label
     }()
     
     lazy var handelBtn: UIButton = {
         let btn = UIButton()
-        btn.setTitle("查看相册", for: .normal)
+        btn.setTitle("View Album".L, for: .normal)
         btn.backgroundColor = UIColor.clear
         btn.setTitleColor(UIColor.init(hexString: "#0091FF"), for: .normal)
         btn.titleLabel?.font = FontPFRegularSize(8)

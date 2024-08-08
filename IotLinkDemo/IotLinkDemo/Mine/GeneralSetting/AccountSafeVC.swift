@@ -159,7 +159,7 @@ extension AccountSafeVC: UITableViewDelegate,UITableViewDataSource {
     //注销账号
     private func destoryAccountClick(){
         
-        AGToolHUD.showInfo(info: "该功能暂不支持，敬请期待！")
+        AGToolHUD.showInfo(info: "not supported yet".L)
 //        AGAlertViewController.showTitle("确定注销您的账号吗？", message: "如果您确定注销您的账号，我们立即删除您账户中的个人数据，感谢您的使用!") {[weak self] in
 //            self?.destoryAccount()
 //        }

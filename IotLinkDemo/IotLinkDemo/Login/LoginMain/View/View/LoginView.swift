@@ -175,7 +175,7 @@ class LoginView: UIView {
         
         let vew = PhoneInputView()
         vew.leftImage = UIImage.init(named: "login_user")
-        vew.textField.placeholder = "请输入账号"
+        vew.textField.placeholder = "pleaseEnterYourAccount".L
         vew.textField.delegate = self
         vew.textField.tag = 88
         vew.textField.addTarget(self, action: #selector(textDidChangeNotification(textField:)), for: .editingChanged)

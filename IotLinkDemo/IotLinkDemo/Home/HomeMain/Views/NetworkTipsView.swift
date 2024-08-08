@@ -23,7 +23,7 @@ class NetworkTipsView: UIView {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 13)
         label.textColor = UIColor(hexRGB: 0xFDAB2C)
-        label.text = "当前网络不可用，请检查手机网络"
+        label.text = "The current network is unavailable, please check the mobile network".L
         return label
     }()
     

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		19CE4FD94873F6B1B1C98BFC /* Pods_ExampleOC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E41F2593B6C3F20B16C6B86E /* Pods_ExampleOC.framework */; };
 		8438682928C0B66F009AFF0D /* ThirdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8438682828C0B66F009AFF0D /* ThirdManager.swift */; };
+		843E70252C2956FC008929B8 /* TestSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843E70242C2956FC008929B8 /* TestSwift.swift */; };
 		848212EF2825518500280E21 /* IotSdkBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848212EE2825518500280E21 /* IotSdkBridge.swift */; };
 		848C42282825343200C55412 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 848C42272825343200C55412 /* AppDelegate.m */; };
 		848C422B2825343200C55412 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 848C422A2825343200C55412 /* SceneDelegate.m */; };
@@ -24,6 +25,7 @@
 		7B94BAE7E5E4FA69A6C423B3 /* Pods-ExampleOC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleOC.release.xcconfig"; path = "Target Support Files/Pods-ExampleOC/Pods-ExampleOC.release.xcconfig"; sourceTree = "<group>"; };
 		840BCFC528C9E70000DCE61C /* ExampleOC.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ExampleOC.entitlements; sourceTree = "<group>"; };
 		8438682828C0B66F009AFF0D /* ThirdManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThirdManager.swift; sourceTree = "<group>"; };
+		843E70242C2956FC008929B8 /* TestSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSwift.swift; sourceTree = "<group>"; };
 		847F70CA283E57AB00F481E8 /* IotStateDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IotStateDelegate.h; sourceTree = "<group>"; };
 		848212EB282550FD00280E21 /* AgoraIotSdk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AgoraIotSdk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		848212ED2825518500280E21 /* ExampleOC-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ExampleOC-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 			children = (
 				840BCFC528C9E70000DCE61C /* ExampleOC.entitlements */,
 				8438682828C0B66F009AFF0D /* ThirdManager.swift */,
+				843E70242C2956FC008929B8 /* TestSwift.swift */,
 				848C42262825343200C55412 /* AppDelegate.h */,
 				848C42272825343200C55412 /* AppDelegate.m */,
 				848C42292825343200C55412 /* SceneDelegate.h */,
@@ -233,6 +236,7 @@
 				848C42282825343200C55412 /* AppDelegate.m in Sources */,
 				848C42392825343300C55412 /* main.m in Sources */,
 				848212EF2825518500280E21 /* IotSdkBridge.swift in Sources */,
+				843E70252C2956FC008929B8 /* TestSwift.swift in Sources */,
 				848C422B2825343200C55412 /* SceneDelegate.m in Sources */,
 				8438682928C0B66F009AFF0D /* ThirdManager.swift in Sources */,
 			);
@@ -380,7 +384,8 @@
 				CODE_SIGN_ENTITLEMENTS = ExampleOC/ExampleOC.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LTVVML2TCH;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = JDPG69R49Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ExampleOC/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -388,7 +393,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -414,7 +419,8 @@
 				CODE_SIGN_ENTITLEMENTS = ExampleOC/ExampleOC.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LTVVML2TCH;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = JDPG69R49Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ExampleOC/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -422,7 +428,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

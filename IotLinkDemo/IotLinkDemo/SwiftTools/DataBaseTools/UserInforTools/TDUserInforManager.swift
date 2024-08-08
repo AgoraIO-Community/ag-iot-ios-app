@@ -69,6 +69,9 @@ class TDUserInforManager: NSObject {
     //当前用户使用的custom secret
     var curCustomSecret : String = ""
     
+    //当前用户使用的 region
+    var curRegion : String = ""
+    
     //当前用户使用的nodeId
     var mUserNodeId : String = ""
     
@@ -121,6 +124,7 @@ class TDUserInforManager: NSObject {
         uDefault.setValue(nil, forKey: "masterAppId")
         uDefault.setValue(nil, forKey: "customkey")
         uDefault.setValue(nil, forKey: "customsecret")
+        uDefault.setValue(nil, forKey: "region")
         uDefault.setValue(nil, forKey: KeyCenter.kAuthorizationBase64Key)
         uDefault.synchronize()
         
@@ -265,6 +269,14 @@ class TDUserInforManager: NSObject {
         
     }
     
+    func saveUserRegion(_ region: String){
+        curRegion = region
+        let uDefault = getUserDefault()
+        uDefault.setValue(region, forKey: "region")
+        uDefault.synchronize()
+        
+    }
+    
     
     /// 保存上次登录账号协议是否阅读状态
     func saveUserProcolState(){
@@ -349,6 +361,14 @@ class TDUserInforManager: NSObject {
         return accNum
     }
     
+    /// 读取上次保存的region
+    func readUserRegion() -> String {
+        var region = ""
+        if let num = getUserDefault().object(forKey: "region") as? String {
+            region = num
+        }
+        return region
+    }
     
     //检查用户登陆状态
     func checkLoginState(){
@@ -458,16 +478,23 @@ extension TDUserInforManager{
             return false
         }
         curCustomSecret = customScert
+        
+        let region = readUserRegion()
+        if region == "" {
+            return false
+        }
+        curRegion = region
 
         return true
         
     }
     
     func showEditAppIdAlert(){
-        AGConfirmEditMultiAlertVC.showTitleTop("请输入AppId", editText: "请输入AppId") {[weak self] appId,key,secret in
+        AGConfirmEditMultiAlertVC.showTitleTop("Please enter project information".L, editText: "Please enter project information".L) {[weak self] appId,key,secret,region in
             self?.saveUserMasterAppId(appId)
             self?.saveUserCustomKeyAndSecret(key, secret)
-            AGToolHUD.showInfo(info: "已重置appId,应用即将自动退出,请重新打开")
+            self?.saveUserRegion(region)
+            AGToolHUD.showInfo(info: "appId has been reset tip".L)
             print("------重置appId------\(appId)")
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
                 self?.exitApplication()
