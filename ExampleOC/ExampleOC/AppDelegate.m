@@ -43,7 +43,7 @@
     // Override point for customization after application launch.
     
     InitParam* initParam = [[InitParam alloc] init];
-    initParam.mAppId = @"123456";
+    initParam.mAppId = @"5ea8ad97b4684c798966b99a965beb9a";
     initParam.mRegion = 1;
     
     int ret = [IotSdk.shared initializeWithInitParam:initParam];

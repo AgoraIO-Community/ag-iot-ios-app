@@ -135,6 +135,10 @@ public class ConnectionManager : NSObject,IConnectionMgr {
         return mgr.connectionCreate(connectParam: connectParam)
     }
     
+    @objc public func connectionCreate(customConnectParam: AgoraIotLink.CustomConnectCreateParam) -> AgoraIotLink.IConnectionObj? {
+        return mgr.connectionCreate(customConnectParam: customConnectParam)
+    }
+    
     @objc public func connectionDestroy(connectObj: AgoraIotLink.IConnectionObj) -> Int {
         return mgr.connectionDestroy(connectObj: connectObj)
     }
